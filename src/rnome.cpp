@@ -61,7 +61,7 @@ List rnome(const List& data,
   extern NOMeSeqData SEQUENCES;
   SEQUENCES.create(data,
                    BINDING_OBJECTS.maxwmlen);
-  SEQUENCES.PrintNames();
+  //SEQUENCES.PrintNames();
   
   extern Forward_Backward_algorithm FORWARD_BACKWARD;
   FORWARD_BACKWARD.Create();
@@ -73,15 +73,14 @@ List rnome(const List& data,
   
   List startProbdf = FORWARD_BACKWARD.getStartProbDF();
   List coverProb = FORWARD_BACKWARD.getCoverProbDF();
+  List genSummary = FORWARD_BACKWARD.getGenomeSummaryDF();
   List output_data = List::create( Named("START_PROB") = startProbdf,
-                         Named("COVER_PROB") = coverProb);
+                         Named("COVER_PROB") = coverProb,
+                         Named("SUMMARY") = genSummary);
   
   PARAMS.clear();
   BINDING_OBJECTS.clear();
   SEQUENCES.clear();
   FORWARD_BACKWARD.clear();
-  
-  
-  
   return output_data;
 }

@@ -693,6 +693,42 @@ Rcpp::List  Forward_Backward_algorithm::getCoverProbDF(){
   
 }
 
+
+Rcpp::List  Forward_Backward_algorithm::getGenomeSummaryDF(){
+  
+  // calculate statistics across the whole amplicon (all reads)
+  SetGenomeSummary();
+  Rcpp::List out_list;
+  const char *fnms[] = {"Prior",
+                        "Expected number of sites",
+                        "Coverage",
+                        "Sites<0.5",
+                        "Site>=0.5",
+                        "Positions<0.5",
+                        "Positions>=0.5"};
+  vector<string > field_names(fnms,fnms + 7) ;
+  out_list.push_back(Rcpp::wrap(field_names),"Statistics");
+  for(int wm=0;wm<print_names.size();++wm){
+    out_list.push_back(Rcpp::wrap(genomesummary[wm]),print_names[wm]);
+  }
+  
+  
+  // extern parameters PARAMS;
+  // string filename = PARAMS.priorfile;
+  // if(!filename.empty()){
+  //   SetGenomeSummary();
+  //   ofstream outputstream(filename.c_str());
+  //   outputstream<<"#Name\tPrior\tExp_Numb_Sites\tCoverage\tSite<0.5\tSite>0.5\tPositions<0.5\tPositions>0.5\n";
+  //   for(int wm=0;wm<print_names.size();++wm){
+  //     outputstream<<print_names[wm]<<"\t"<<genomesummary[wm][0]<<"\t"<<genomesummary[wm][1]<<"\t"<<genomesummary[wm][2]<<"\t"<<genomesummary[wm][3]<<"\t"<<genomesummary[wm][4]<<"\t"<<genomesummary[wm][5]<<"\t"<<genomesummary[wm][6]<<endl;
+  //   }
+  //   outputstream.close();
+  // }
+  return out_list;
+}
+
+
+
 void Forward_Backward_algorithm::clear(){
 
   F.clear();//swap(vector<vector<double> >());
