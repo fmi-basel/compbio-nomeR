@@ -23,11 +23,11 @@ Sequence::Sequence(string nm,
 	name = nm;
   
   // add flanking regions to line full off 2's (NA's) to take into account that proteins can start outside amplicon 
-  string tmp_str(maxWMlen * 2,'2');
+  string tmp_str(maxWMlen,'2');
   
   string ext_seq = tmp_str + sequence + tmp_str;
-  firstDatpos = maxWMlen*2;
-  lastDatpos = maxWMlen*2 + sequence.length() - 1;
+  firstDatpos = maxWMlen;
+  lastDatpos = maxWMlen + sequence.length() - 1;
   cout<<"Int Seqeunce contr: maxWMlen="<<maxWMlen<<"; seq length="<< sequence.length()<<"; lastDatpos="<<lastDatpos<<endl;
 	size = ext_seq.length();
 	if(_seq.size()>0){

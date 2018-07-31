@@ -8,4 +8,5 @@ Maintainer: Evgeniy A. Ozonov <evgeniy.ozonov@fmi.ch>
 Description: This package allows disentangle binding patterns of nucleosomes and transcription factors using probabilistic model.
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.12.17)
+Depends: testthat
 LinkingTo: Rcpp

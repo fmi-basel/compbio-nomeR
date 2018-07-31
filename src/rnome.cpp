@@ -17,7 +17,7 @@ Forward_Backward_algorithm FORWARD_BACKWARD;
 
 
 // [[Rcpp::export]]
-List rcpp_hello_world(const List& data,
+List rnome(const List& data,
                       const List& binding_models,
                       const NumericVector& bgcoverprob,
                       const NumericVector& bgprior,
@@ -73,7 +73,7 @@ List rcpp_hello_world(const List& data,
   
   List startProbdf = FORWARD_BACKWARD.getStartProbDF();
   List coverProb = FORWARD_BACKWARD.getCoverProbDF();
-  List z = List::create( Named("START_PROB") = startProbdf,
+  List output_data = List::create( Named("START_PROB") = startProbdf,
                          Named("COVER_PROB") = coverProb);
   
   PARAMS.clear();
@@ -83,5 +83,5 @@ List rcpp_hello_world(const List& data,
   
   
   
-  return z ;
+  return output_data;
 }

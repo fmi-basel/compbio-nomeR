@@ -574,16 +574,16 @@ Rcpp::List  Forward_Backward_algorithm::getStartProbDF(){
   for(int seq=0;seq < SEQUENCES.Size();seq++){
     int firstDatPos = SEQUENCES[seq].firstDatpos;
     int lastDatPos = SEQUENCES[seq].lastDatpos;
-    cout<<"FirstPos="<<firstDatPos<<"\tLastPos="<<lastDatPos<<endl;
-    // for(int position = firstDatPos;position <= lastDatPos;++position){
-    //   seqnames.push_back(SEQUENCES[seq].Name());
-    //   positions.push_back(position - firstDatPos + 1);
-    // }
-    
-    for(int position = 1;position <= SEQUENCES[seq].Size();++position){
+//    cout<<"FirstPos="<<firstDatPos<<"\tLastPos="<<lastDatPos<<endl;
+    for(int position = firstDatPos;position <= lastDatPos;++position){
       seqnames.push_back(SEQUENCES[seq].Name());
       positions.push_back(position - firstDatPos + 1);
     }
+    
+    // for(int position = 1;position <= SEQUENCES[seq].Size();++position){
+    //   seqnames.push_back(SEQUENCES[seq].Name());
+    //   positions.push_back(position - firstDatPos + 1);
+    // }
     
   }
   
@@ -601,7 +601,16 @@ Rcpp::List  Forward_Backward_algorithm::getStartProbDF(){
       int firstDatPos = SEQUENCES[seq].firstDatpos;
       int lastDatPos = SEQUENCES[seq].lastDatpos;
       
-      // for(int position = firstDatPos;position <= lastDatPos;++position){
+      for(int position = firstDatPos;position <= lastDatPos;++position){
+        double totalprob=0;
+        for(int j=0;j<names2indicesinprobarray[i].size();++j){
+          totalprob += Prob[seq][names2indicesinprobarray[i][j]][position];
+        }
+
+        stprob.push_back(totalprob);
+      }
+      
+      // for(int position = 1;position <= SEQUENCES[seq].Size();++position){
       //   double totalprob=0;
       //   for(int j=0;j<names2indicesinprobarray[i].size();++j){
       //     totalprob += Prob[seq][names2indicesinprobarray[i][j]][position];
@@ -609,15 +618,6 @@ Rcpp::List  Forward_Backward_algorithm::getStartProbDF(){
       //   
       //   stprob.push_back(totalprob);
       // }
-      
-      for(int position = 1;position <= SEQUENCES[seq].Size();++position){
-        double totalprob=0;
-        for(int j=0;j<names2indicesinprobarray[i].size();++j){
-          totalprob += Prob[seq][names2indicesinprobarray[i][j]][position];
-        }
-        
-        stprob.push_back(totalprob);
-      }
       
       
       
@@ -647,16 +647,16 @@ Rcpp::List  Forward_Backward_algorithm::getCoverProbDF(){
   for(int seq=0;seq < SEQUENCES.Size();seq++){
     int firstDatPos = SEQUENCES[seq].firstDatpos;
     int lastDatPos = SEQUENCES[seq].lastDatpos;
-    cout<<"FirstPos="<<firstDatPos<<"\tLastPos="<<lastDatPos<<endl;
-    // for(int position = firstDatPos;position <= lastDatPos;++position){
-    //   seqnames.push_back(SEQUENCES[seq].Name());
-    //   positions.push_back(position - firstDatPos + 1);
-    // }
-    //just for testing. uncomment the above code later
-    for(int position = 1;position <= SEQUENCES[seq].Size();++position){
+//    cout<<"FirstPos="<<firstDatPos<<"\tLastPos="<<lastDatPos<<endl;
+    for(int position = firstDatPos;position <= lastDatPos;++position){
       seqnames.push_back(SEQUENCES[seq].Name());
       positions.push_back(position - firstDatPos + 1);
     }
+    //just for testing. uncomment the above code later
+    // for(int position = 1;position <= SEQUENCES[seq].Size();++position){
+    //   seqnames.push_back(SEQUENCES[seq].Name());
+    //   positions.push_back(position - firstDatPos + 1);
+    // }
     
   }
   
@@ -674,15 +674,15 @@ Rcpp::List  Forward_Backward_algorithm::getCoverProbDF(){
       int firstDatPos = SEQUENCES[seq].firstDatpos;
       int lastDatPos = SEQUENCES[seq].lastDatpos;
       
-      // for(int position = firstDatPos;position <= lastDatPos;++position){
-      //   double coverprob=get_coverage_prob_at_pos_name_index(seq,position,i);
-      //   covprob.push_back(coverprob);
-      // }
-      // just for testing. uncomment the above
-      for(int position = 1;position <= SEQUENCES[seq].Size();++position){
+      for(int position = firstDatPos;position <= lastDatPos;++position){
         double coverprob=get_coverage_prob_at_pos_name_index(seq,position,i);
         covprob.push_back(coverprob);
       }
+      // just for testing. uncomment the above
+      // for(int position = 1;position <= SEQUENCES[seq].Size();++position){
+      //   double coverprob=get_coverage_prob_at_pos_name_index(seq,position,i);
+      //   covprob.push_back(coverprob);
+      // }
       
     }
     out_list.push_back(Rcpp::wrap(covprob),print_names[i]);

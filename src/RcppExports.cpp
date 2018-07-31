@@ -5,19 +5,29 @@
 
 using namespace Rcpp;
 
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP _rnome_rcpp_hello_world() {
+// rnome
+List rnome(const List& data, const List& binding_models, const NumericVector& bgcoverprob, const NumericVector& bgprior, const NumericVector& bound_fit_tol, const NumericVector& bound_min_fderiv_val, const IntegerVector& bound_max_steps, const LogicalVector& run_priorEM, const NumericVector& priorEM_fit_tol, const IntegerVector& priorEM_max_steps);
+RcppExport SEXP _rnome_rnome(SEXP dataSEXP, SEXP binding_modelsSEXP, SEXP bgcoverprobSEXP, SEXP bgpriorSEXP, SEXP bound_fit_tolSEXP, SEXP bound_min_fderiv_valSEXP, SEXP bound_max_stepsSEXP, SEXP run_priorEMSEXP, SEXP priorEM_fit_tolSEXP, SEXP priorEM_max_stepsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello_world());
+    Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const List& >::type binding_models(binding_modelsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type bgcoverprob(bgcoverprobSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type bgprior(bgpriorSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type bound_fit_tol(bound_fit_tolSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type bound_min_fderiv_val(bound_min_fderiv_valSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type bound_max_steps(bound_max_stepsSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type run_priorEM(run_priorEMSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type priorEM_fit_tol(priorEM_fit_tolSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type priorEM_max_steps(priorEM_max_stepsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rnome(data, binding_models, bgcoverprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_rnome_rcpp_hello_world", (DL_FUNC) &_rnome_rcpp_hello_world, 0},
+    {"_rnome_rnome", (DL_FUNC) &_rnome_rnome, 10},
     {NULL, NULL, 0}
 };
 
