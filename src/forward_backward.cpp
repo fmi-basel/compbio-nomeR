@@ -138,7 +138,7 @@ double Forward_Backward_algorithm::Calc_PartSum_init(double x0){
   extern parameters PARAMS;
   extern DNAbind_obj_vector BINDING_OBJECTS;
   
-  cout<<"Approximation of initial value of partition sums using Halley's numerical method"<<endl;
+  //cout<<"Approximation of initial value of partition sums using Halley's numerical method"<<endl;
   // Halley's method
   double curr_approx;
   double denom = 2 * pow(df(x0),2) - f(x0) * ddf(x0);
@@ -163,9 +163,9 @@ double Forward_Backward_algorithm::Calc_PartSum_init(double x0){
   }
   
   if(abs(curr_approx - x0) > PARAMS.BOUND_FIT_TOLERANCE){
-    cerr<<"Forward_Backward_algorithm::Calc_PartSum_init: WARNING: Exeeded maximum number of iterations! Approximation can be not precise"<<endl;
+    cerr<<"Forward_Backward_algorithm::Calc_PartSum_init: WARNING: Exceeded maximum number of iterations! Approximation can be not precise"<<endl;
   } else {
-    cout<<"Halleys method finished in "<<stepcnt<<" iteration. Root is "<<curr_approx<<endl;
+    //cout<<"Halleys method finished in "<<stepcnt<<" iteration. Root is "<<curr_approx<<endl;
   }
   
   return(curr_approx);
@@ -367,14 +367,15 @@ void Forward_Backward_algorithm::Run_priorEM()
 	extern NOMeSeqData SEQUENCES;
 
 	int numberofobjects = BINDING_OBJECTS.Size();
+
+	
+	cout<<"####################################"<<endl;
+	cout<<"#### EM for prior probabilities ####"<<endl;
 	
 	vector<double > curr_prior;
 	for(int wm=0;wm<numberofobjects;++wm){
 		curr_prior.push_back(BINDING_OBJECTS[wm]->prior);
 	}
-
-	for(int i=0;i<curr_prior.size();++i)
-		cout<<"i="<<i<<"\tprior"<<curr_prior[i]<<endl;
 
 	Run(curr_prior);
 	
@@ -387,8 +388,8 @@ void Forward_Backward_algorithm::Run_priorEM()
 		prior_err += pow(curr_prior[wm] - new_prior[wm],2);
 	}
 	prior_err = sqrt(prior_err);
-	cout<<"With initial priors the error is "<<prior_err<<endl;
-
+	
+	cout<<"Step 0: prior delta is "<<prior_err<<endl;
 	int stepcount=0;
 	while(stepcount <= PARAMS.PRIOREM_MAX_STEPS && prior_err > PARAMS.PRIOREM_FIT_TOLERANCE){
 		curr_prior = new_prior;
@@ -403,10 +404,10 @@ void Forward_Backward_algorithm::Run_priorEM()
 			prior_err += pow(curr_prior[wm] - new_prior[wm],2);
 		}
 		prior_err = sqrt(prior_err);
-		cout<<"Step "<<stepcount<<"; prior error is "<<prior_err<<endl;
+		cout<<"Step "<<stepcount<<": prior delta is "<<prior_err<<endl;
 	}
-
-
+	cout<<"####################################"<<endl;
+	
 }
 
 

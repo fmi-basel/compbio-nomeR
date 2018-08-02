@@ -1,4 +1,3 @@
-
 #include "parameters.h"
 #include "nomeseqdata.h"
 #include "DNAbindobj_vector.h"
@@ -17,9 +16,9 @@ Forward_Backward_algorithm FORWARD_BACKWARD;
 
 
 // [[Rcpp::export]]
-List rnome(const List& data,
+List run_cpp_rnome(const List& data,
                       const List& binding_models,
-                      const NumericVector& bgcoverprob,
+                      const NumericVector& bgprotectprob,
                       const NumericVector& bgprior,
                       const NumericVector& bound_fit_tol,
                       const NumericVector& bound_min_fderiv_val,
@@ -31,7 +30,7 @@ List rnome(const List& data,
 
   // create object with parameters
   extern parameters PARAMS;
-  double bgcoverprob_ = as<double >(bgcoverprob);
+  double bgcoverprob_ = as<double >(bgprotectprob);
   double bgprior_ = as<double >(bgprior);
   double bound_fit_tol_ = as<double >(bound_fit_tol);
   double bound_min_fderiv_val_ = as<double >(bound_min_fderiv_val);

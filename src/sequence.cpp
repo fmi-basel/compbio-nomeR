@@ -28,7 +28,7 @@ Sequence::Sequence(string nm,
   string ext_seq = tmp_str + sequence + tmp_str;
   firstDatpos = maxWMlen;
   lastDatpos = maxWMlen + sequence.length() - 1;
-  cout<<"Int Seqeunce contr: maxWMlen="<<maxWMlen<<"; seq length="<< sequence.length()<<"; lastDatpos="<<lastDatpos<<endl;
+  
 	size = ext_seq.length();
 	if(_seq.size()>0){
 		_seq.clear();
