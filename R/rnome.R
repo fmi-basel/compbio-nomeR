@@ -2,15 +2,15 @@
 
 
 
-#' Function for running probabilistic model of interpretation of NOMe-Seq data
+#' Function for running probabilistic model to predict binding sites of DNA binding proteins in NOMe-Seq data
 #'
 #' @param data A list containing preprocessed NOMe-Seq data returned from \code{create_data_list}.
 #' @param binding_models A list containing binding models for proteins. 
-#' Each element must have 3 slops:
+#' Each element must have 3 slots:
 #' PROTECT_PROB - a numeric vector with probability to find protected 'C' within the footprint
 #' PRIOR - prior (numeric) probability reflecting how often we expect to find a footprint
 #' NAME - name (character) of a model, e.g. "Nucleosome"
-#' @param bgprotectprob probability to find a protected 'C' in open (in reality uprotected) regions
+#' @param bgprotectprob probability to find a protected 'C' in open (uprotected) regions
 #' @param bgprior prior probability for a free (unprotected, or background) position
 #' @param bound_fit_tol fitting tolerance for estimating initial values of partition sums
 #' @param bound_min_fderiv_val This value used in Haley's numerical method for solving equations and represent a 
