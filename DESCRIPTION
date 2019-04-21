@@ -1,13 +1,14 @@
-Package: rnome
+Package: nomeR
 Type: Package
 Title: Interpreting NOME-Seq data using probabilistic model
 Version: 1.0
 Date: 2018-07-16
 Author: Evgeniy A. Ozonov
 Maintainer: Evgeniy A. Ozonov <evgeniy.ozonov@fmi.ch>
-Description: This package allows disentangle binding patterns of nucleosomes and transcription factors using probabilistic model.
+Description: This package allows disentangle binding patterns of nucleosomes and transcription factors in NOMe-Seq data using probabilistic model.
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.12.17)
 Depends: testthat
 LinkingTo: Rcpp
-RoxygenNote: 6.0.1
+Encoding: UTF-8
+RoxygenNote: 6.1.0

@@ -2,7 +2,7 @@
 
 
 
-#' Function for running probabilistic model to predict binding sites of DNA binding proteins in NOMe-Seq data
+#' @title Function for running probabilistic model to predict binding sites of DNA binding proteins in NOMe-Seq data
 #'
 #' @param data A list containing preprocessed NOMe-Seq data returned from \code{create_data_list}.
 #' @param binding_models A list containing binding models for proteins. 
@@ -16,16 +16,17 @@
 #' @param bound_min_fderiv_val This value used in Haley's numerical method for solving equations and represent a 
 #' minimal value of denominator in first derivative of a function
 #' @param bound_max_steps Maximum number of iterations for algorithm which estimates boundary values for partition sums
-#' @param run_priorEM If TRUE the function runs Expectation Maximization algorithm for fitting prior probabilities of binding objects
+#' @param run_priorEM If TRUE the function runs Expectation Maximization algorithm for fitting prior probabilities of binding objects.
+#' Not recommended for regions with transcription factor binding as the EM overestimates shorter footprints
 #' @param priorEM_fit_tol Fitting tolerance for running prior EM 
 #' @param priorEM_max_steps Maximum number of iterations in prior EM
 #'
-#' @return
+#' @return list of lists
 #' @export
 #'
 #' @examples
-rnome <- function(data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps) {
-  out.list <- run_cpp_rnome(data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps)
+run_nomeR <- function(data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps) {
+  out.list <- run_cpp_nomeR(data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps)
   
   lapply(out.list,as.data.frame)
   
@@ -55,4 +56,22 @@ create_data_list <- function(matr){
          "NAME" = nm)
   })
   dat.out
+}
+
+
+
+#' Function for creating contingency tables of frequencing have 0,0; 0,1, 0,NA etc with spacing S between them
+#'
+#' @param data A list containing preprocessed NOMe-Seq data returned from \code{create_data_list}.
+#' @param maxspacing Maximum spcaing between positions.
+#' @param maxwmlen A priori maximum length of possible footprint in the data.
+#' If \code{maxwmlen} is not 0, then the sequences are flanked by NA filled artificial sequences on the left and on the right.
+#'
+#' @return data.frame containing frequencies for 0,0; 0,1; etc for each spacing between 0 (no gap, adjacent positions) and \code{maxspacing}
+#' @export
+#'
+#' @examples
+count_spacing_frequencies <- function(data, maxspacing, maxwmlen = 0L){
+  out_data <- count_spacing_freq_cpp(data, maxspacing, maxwmlen)
+  as.data.frame(as.data.frame)
 }

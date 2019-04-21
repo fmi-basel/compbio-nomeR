@@ -5,9 +5,9 @@
 
 using namespace Rcpp;
 
-// run_cpp_rnome
-List run_cpp_rnome(const List& data, const List& binding_models, const NumericVector& bgprotectprob, const NumericVector& bgprior, const NumericVector& bound_fit_tol, const NumericVector& bound_min_fderiv_val, const IntegerVector& bound_max_steps, const LogicalVector& run_priorEM, const NumericVector& priorEM_fit_tol, const IntegerVector& priorEM_max_steps);
-RcppExport SEXP _rnome_run_cpp_rnome(SEXP dataSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP bound_fit_tolSEXP, SEXP bound_min_fderiv_valSEXP, SEXP bound_max_stepsSEXP, SEXP run_priorEMSEXP, SEXP priorEM_fit_tolSEXP, SEXP priorEM_max_stepsSEXP) {
+// run_cpp_nomeR
+List run_cpp_nomeR(const List& data, const List& binding_models, const NumericVector& bgprotectprob, const NumericVector& bgprior, const NumericVector& bound_fit_tol, const NumericVector& bound_min_fderiv_val, const IntegerVector& bound_max_steps, const LogicalVector& run_priorEM, const NumericVector& priorEM_fit_tol, const IntegerVector& priorEM_max_steps);
+RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP bound_fit_tolSEXP, SEXP bound_min_fderiv_valSEXP, SEXP bound_max_stepsSEXP, SEXP run_priorEMSEXP, SEXP priorEM_fit_tolSEXP, SEXP priorEM_max_stepsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,17 +21,31 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const LogicalVector& >::type run_priorEM(run_priorEMSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type priorEM_fit_tol(priorEM_fit_tolSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type priorEM_max_steps(priorEM_max_stepsSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_cpp_rnome(data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps));
+    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// count_spacing_freq_cpp
+List count_spacing_freq_cpp(const List& data, int maxspacing, int maxwmlen);
+RcppExport SEXP _nomeR_count_spacing_freq_cpp(SEXP dataSEXP, SEXP maxspacingSEXP, SEXP maxwmlenSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< int >::type maxspacing(maxspacingSEXP);
+    Rcpp::traits::input_parameter< int >::type maxwmlen(maxwmlenSEXP);
+    rcpp_result_gen = Rcpp::wrap(count_spacing_freq_cpp(data, maxspacing, maxwmlen));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_rnome_run_cpp_rnome", (DL_FUNC) &_rnome_run_cpp_rnome, 10},
+    {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 10},
+    {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 3},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_rnome(DllInfo *dll) {
+RcppExport void R_init_nomeR(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

@@ -1,0 +1,3 @@
+useDynLib(rnome, .registration=TRUE)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)

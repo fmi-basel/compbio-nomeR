@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 #include <Rcpp.h>
 
 using namespace std;
@@ -42,7 +43,12 @@ public:
   void PrintNames() const;
 
   void clear();
-
+  
+  
+  // function for counting occurrences of 0,0; 0,1 etc at spacing S
+  vector<vector<int> > count_freq_for_spacings(int maxSpacing) const;
+  // function to export spacing frequencies into R
+  Rcpp::List R_export_spacing_freq(int maxSpacing) const;
 };
 
 #endif

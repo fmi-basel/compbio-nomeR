@@ -16,7 +16,7 @@ Forward_Backward_algorithm FORWARD_BACKWARD;
 
 
 // [[Rcpp::export]]
-List run_cpp_rnome(const List& data,
+List run_cpp_nomeR(const List& data,
                       const List& binding_models,
                       const NumericVector& bgprotectprob,
                       const NumericVector& bgprior,
@@ -82,4 +82,16 @@ List run_cpp_rnome(const List& data,
   SEQUENCES.clear();
   FORWARD_BACKWARD.clear();
   return output_data;
+}
+
+// [[Rcpp::export]]
+List count_spacing_freq_cpp(const List& data,
+                        int maxspacing,
+                        int maxwmlen = 0){
+  NOMeSeqData nome_data;
+  nome_data.create(data,
+         maxwmlen);
+  
+  List spac_freq = nome_data.R_export_spacing_freq(maxspacing);
+  return spac_freq;
 }
