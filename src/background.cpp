@@ -20,9 +20,9 @@ Background::~Background(){
 }
 
 void Background::print() const{
-  cout << "Background parameters:\n";
-  cout << "Background cover probability = "<<bgcoverprob<<endl;
-  cout << "Background prior = "<<prior<<endl;
+  Rcpp::Rcout << "Background parameters:\n";
+  Rcpp::Rcout << "Background cover probability = "<<bgcoverprob<<endl;
+  Rcpp::Rcout << "Background prior = "<<prior<<endl;
   
 }
 void Background::print_normalized() const{
@@ -35,8 +35,10 @@ double Background::get_score(int seq, int position) const{
    
   extern NOMeSeqData SEQUENCES;
   if(seq<0 || seq>=SEQUENCES.Size()){
-	cerr<<"Wm::get_score: Index of sequence is out of range: "<<seq<<endl;
-	exit(1);
+    
+  // Rcpp::Rcerr<<"Wm::get_score: Index of sequence is out of range: "<<seq<<endl;
+    Rcpp::stop("Background::get_score: Index of sequence is out of range:");
+  // exit(1);
   }
 
   double score = 1;

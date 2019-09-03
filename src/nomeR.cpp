@@ -51,11 +51,11 @@ List run_cpp_nomeR(const List& data,
   //PARAMS.print();
   
   // create object with binding models
-  //cout<<"Size "<<binding_models.size()<<endl;
+  //Rcout<<"Size "<<binding_models.size()<<endl;
   extern DNAbind_obj_vector BINDING_OBJECTS;
   BINDING_OBJECTS.create(binding_models,PARAMS);
   //BINDING_OBJECTS.print();
-  //cout<<"MAX WM length "<<BINDING_OBJECTS.maxwmlen<<endl;
+  //Rcout<<"MAX WM length "<<BINDING_OBJECTS.maxwmlen<<endl;
   // create object with NOMeSeq data
   extern NOMeSeqData SEQUENCES;
   SEQUENCES.create(data,
@@ -86,12 +86,21 @@ List run_cpp_nomeR(const List& data,
 
 // [[Rcpp::export]]
 List count_spacing_freq_cpp(const List& data,
-                        int maxspacing,
-                        int maxwmlen = 0){
-  NOMeSeqData nome_data;
-  nome_data.create(data,
-         maxwmlen);
+                            const IntegerVector& maxspacing,
+                            const IntegerVector& maxwmlen){
   
-  List spac_freq = nome_data.R_export_spacing_freq(maxspacing);
-  return spac_freq;
+  Rcout<<"In count_spacing_freq_cpp"<<endl;
+  Rcout<<"Creting object for nome data 0"<<endl;
+  NOMeSeqData nome_data;
+  Rcout<<"Creting object for nome data 1"<<endl;
+  int maxwmlen_ = as<int >(maxwmlen);
+  int maxspacing_ = as<int >(maxspacing);
+  nome_data.create(data,
+         maxwmlen_);
+  Rcout<<"Counting spacings"<<endl;
+  List spac_freq = nome_data.R_export_spacing_freq(maxspacing_);
+  // return spac_freq;
+  Rcpp::List out_list;
+  return out_list;
+  
 }

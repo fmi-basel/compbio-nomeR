@@ -25,7 +25,8 @@ bool Forward_Backward_algorithm::Create()
 			}
 		}
 		if(print_indexes.size() == 0){
-			cerr<<"Forward_Backward_algorithm:: ERROR! Incorrect value of parameter printoutonly. No objects to calculate were found.\n";
+		  Rcpp::stop("Forward_Backward_algorithm:: ERROR! Incorrect value of parameter printoutonly. No objects to calculate were found.\n");
+			// cerr<<"Forward_Backward_algorithm:: ERROR! Incorrect value of parameter printoutonly. No objects to calculate were found.\n";
 		}
   	}
   	else{
@@ -138,15 +139,17 @@ double Forward_Backward_algorithm::Calc_PartSum_init(double x0){
   extern parameters PARAMS;
   extern DNAbind_obj_vector BINDING_OBJECTS;
   
-  //cout<<"Approximation of initial value of partition sums using Halley's numerical method"<<endl;
+  //Rcpp::Rcout<<"Approximation of initial value of partition sums using Halley's numerical method"<<endl;
   // Halley's method
   double curr_approx;
   double denom = 2 * pow(df(x0),2) - f(x0) * ddf(x0);
   if(denom >= PARAMS.BOUND_MIN_FDERIV_VAL){
     curr_approx = x0 - 2 * f(x0) * df(x0)/denom;
   } else {
-    cerr<<"Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters."<<endl;
-    exit(1);
+    Rcpp::stop("Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters.\n");
+    
+    // cerr<<"Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters."<<endl;
+    // exit(1);
   }
   int stepcnt=0;
   
@@ -156,16 +159,18 @@ double Forward_Backward_algorithm::Calc_PartSum_init(double x0){
     if(denom >= PARAMS.BOUND_MIN_FDERIV_VAL){
       curr_approx = x0 - 2 * f(x0) * df(x0)/denom;
     } else {
-      cerr<<"Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters"<<endl;
-      exit(1);
+      
+      Rcpp::stop("Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters.\n");
+      // cerr<<"Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters"<<endl;
+      // exit(1);
     }
     stepcnt++;
   }
   
   if(abs(curr_approx - x0) > PARAMS.BOUND_FIT_TOLERANCE){
-    cerr<<"Forward_Backward_algorithm::Calc_PartSum_init: WARNING: Exceeded maximum number of iterations! Approximation can be not precise"<<endl;
+    Rcpp::Rcerr<<"Forward_Backward_algorithm::Calc_PartSum_init: WARNING: Exceeded maximum number of iterations! Approximation can be not precise"<<endl;
   } else {
-    //cout<<"Halleys method finished in "<<stepcnt<<" iteration. Root is "<<curr_approx<<endl;
+    //Rcpp::Rcout<<"Halleys method finished in "<<stepcnt<<" iteration. Root is "<<curr_approx<<endl;
   }
   
   return(curr_approx);
@@ -182,8 +187,10 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 	extern NOMeSeqData SEQUENCES;
 	if(!priors.empty()){
 		if(priors.size() != BINDING_OBJECTS.numberofobjects){
-			cerr<<"Forward_Backward_algorithm::Run_Low_Mem: ERROR: The size of priors vector doesn't equal the size of BINDING_OBJECTS vector.\n";
-			exit(1);
+		  Rcpp::stop("Forward_Backward_algorithm::Run_Low_Mem: ERROR: The size of priors vector doesn't equal the size of BINDING_OBJECTS vector.\n");
+		  
+			// cerr<<"Forward_Backward_algorithm::Run_Low_Mem: ERROR: The size of priors vector doesn't equal the size of BINDING_OBJECTS vector.\n";
+			// exit(1);
 		}
 		for(int i=0;i<BINDING_OBJECTS.numberofobjects;++i){
 			for(int j=0;j<BINDING_OBJECTS.names2index[i].size();++j){
@@ -208,7 +215,7 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 	*/
 //#pragma omp parallel private(seq)
 //{
-  //cout<<"Number of threads "<<omp_get_num_threads()<<endl;
+  //Rcpp::Rcout<<"Number of threads "<<omp_get_num_threads()<<endl;
 //#pragma omp for schedule(dynamic)
 	for(seq=0;seq < SEQUENCES.Size();++seq){
 		int seqlength = SEQUENCES[seq].Size();
@@ -231,14 +238,14 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 				int objlen = BINDING_OBJECTS[wm]->len;
 				
 				if(BINDING_OBJECTS[wm]->prior > 0){
-					//cout<<pos<<"\t"<<BINDING_OBJECTS[wm]->name<<endl;
+					//Rcpp::Rcout<<pos<<"\t"<<BINDING_OBJECTS[wm]->name<<endl;
 					//int rl = pos - objlen;
 
-					//cout<<"Seq="<<SEQUENCES[seq].Name()<<"; pos="<<pos<<"; name="<<BINDING_OBJECTS[wm]->name<<"; score="<< BINDING_OBJECTS[wm]->get_score(seq, pos - objlen)<<endl;
+					//Rcpp::Rcout<<"Seq="<<SEQUENCES[seq].Name()<<"; pos="<<pos<<"; name="<<BINDING_OBJECTS[wm]->name<<"; score="<< BINDING_OBJECTS[wm]->get_score(seq, pos - objlen)<<endl;
 					
 					pf[wm] = BINDING_OBJECTS[wm]->get_score(seq, pos - objlen);
 					for(int i = pos - objlen + 1; i <= pos - 1; ++i){
-						//cout<<"i="<<i<<"; F="<<F[seq][i]<<endl;
+						//Rcpp::Rcout<<"i="<<i<<"; F="<<F[seq][i]<<endl;
 						if(i>=0){
 							pf[wm] *= F[seq][i];
 						} else {
@@ -255,14 +262,14 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 			//double bgposscore = BINDING_OBJECTS[numberofobjects - 1]->get_score(seq, pos);
 
 			F[seq][pos] = 1/summ;
-			//cout<<"Seq="<<SEQUENCES[seq].Name()<<"; pos=\t"<<pos<<"; sum="<<summ<<"; F=\t"<<F[seq][pos]<<endl;
+			//Rcpp::Rcout<<"Seq="<<SEQUENCES[seq].Name()<<"; pos=\t"<<pos<<"; sum="<<summ<<"; F=\t"<<F[seq][pos]<<endl;
 			if(pos<=seqlength){
 				for(int wm=0;wm<print_indexes.size();++wm){
-					//cout<<"pf "<<pf[print_indexes[i]]<<endl;
+					//Rcpp::Rcout<<"pf "<<pf[print_indexes[i]]<<endl;
 					Prob[seq][wm][pos] = pf[print_indexes[wm]];
 				}
 			}
-			//cout<<"seq="<<SEQUENCES[seq].Name()<<"; pos="<<pos<<"; Pr="<<Pr[1][pos]<<"\n";
+			//Rcpp::Rcout<<"seq="<<SEQUENCES[seq].Name()<<"; pos="<<pos<<"; Pr="<<Pr[1][pos]<<"\n";
 		}
 	
 	
@@ -297,7 +304,7 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 			//double bgposscore = BINDING_OBJECTS[numberofobjects - 1]->get_score(seq, pos-1);
 			
 			R[seq][pos] = 1/summ;
-			//cout<<"Seq="<<SEQUENCES[seq].Name()<<"; pos=\t"<<pos<<"; sum="<<summ<<"; R=\t"<<R[seq][pos]<<endl;
+			//Rcpp::Rcout<<"Seq="<<SEQUENCES[seq].Name()<<"; pos=\t"<<pos<<"; sum="<<summ<<"; R=\t"<<R[seq][pos]<<endl;
 			
 		}
 	
@@ -328,11 +335,11 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 		R[seq][seqlength + 1] = z_init;
 		for(int pos = seqlength;pos >= 1;--pos){
 			R[seq][pos] = F[seq][pos] * R[seq][pos + 1]/R[seq][pos];
-			//cout<<"pos\t"<<pos<<"\tZ=\t"<<R[seq][pos]<<endl;
+			//Rcpp::Rcout<<"pos\t"<<pos<<"\tZ=\t"<<R[seq][pos]<<endl;
 		}
 		//Calculate posteriors
 		for(int pos = 1;pos <= seqlength;++pos){
-			//cout<<pos;
+			//Rcpp::Rcout<<pos;
 			for(int wm=0;wm < print_indexes.size(); ++wm){
 				int objlen = BINDING_OBJECTS[print_indexes[wm]]->len;
 				if(pos + objlen - 1 <= seqlength)
@@ -345,7 +352,7 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 
 //}
 /*	time(&end);
-        cout<<"Forward_Backward_algorithm::Run_Low_Mem():It took "<<difftime(end,start)<<endl;
+        Rcpp::Rcout<<"Forward_Backward_algorithm::Run_Low_Mem():It took "<<difftime(end,start)<<endl;
 */
 }
 
@@ -369,8 +376,8 @@ void Forward_Backward_algorithm::Run_priorEM()
 	int numberofobjects = BINDING_OBJECTS.Size();
 
 	
-	cout<<"####################################"<<endl;
-	cout<<"#### EM for prior probabilities ####"<<endl;
+	Rcpp::Rcout<<"####################################"<<endl;
+	Rcpp::Rcout<<"#### EM for prior probabilities ####"<<endl;
 	
 	vector<double > curr_prior;
 	for(int wm=0;wm<numberofobjects;++wm){
@@ -389,7 +396,7 @@ void Forward_Backward_algorithm::Run_priorEM()
 	}
 	prior_err = sqrt(prior_err);
 	
-	cout<<"Step 0: prior delta is "<<prior_err<<endl;
+	Rcpp::Rcout<<"Step 0: prior delta is "<<prior_err<<endl;
 	int stepcount=0;
 	while(stepcount <= PARAMS.PRIOREM_MAX_STEPS && prior_err > PARAMS.PRIOREM_FIT_TOLERANCE){
 		curr_prior = new_prior;
@@ -404,9 +411,9 @@ void Forward_Backward_algorithm::Run_priorEM()
 			prior_err += pow(curr_prior[wm] - new_prior[wm],2);
 		}
 		prior_err = sqrt(prior_err);
-		cout<<"Step "<<stepcount<<": prior delta is "<<prior_err<<endl;
+		Rcpp::Rcout<<"Step "<<stepcount<<": prior delta is "<<prior_err<<endl;
 	}
-	cout<<"####################################"<<endl;
+	Rcpp::Rcout<<"####################################"<<endl;
 	
 }
 
@@ -430,8 +437,10 @@ vector<double > Forward_Backward_algorithm::getPriors(){
 	}
 
 	if(totsum == 0){
-		cerr<<"Forward_Backward_algorithm::GetPriors(): Error! total sum of probabilities is 0! Exit.\n";
-		exit(1);
+	  Rcpp::stop("Forward_Backward_algorithm::GetPriors(): Error! total sum of probabilities is 0! Exit.\n");
+	  
+		// cerr<<"Forward_Backward_algorithm::GetPriors(): Error! total sum of probabilities is 0! Exit.\n";
+		// exit(1);
 	}
 	for(int wm=0;wm<numberofobjects;++wm){
 		curpriors[wm] /= totsum;
@@ -491,22 +500,30 @@ void Forward_Backward_algorithm::SetGenomeSummary(){
 
 double Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index(int seq, int pos, int name_index){ //wm is the index in print_names
 	if(Prob.empty()){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! Unable to calculate coverage probability. The vector Prob is empty\n";
-		exit(1);
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! Unable to calculate coverage probability. The vector Prob is empty\n");
+	  
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! Unable to calculate coverage probability. The vector Prob is empty\n";
+		// exit(1);
 	}
 	extern DNAbind_obj_vector BINDING_OBJECTS;
   	extern NOMeSeqData SEQUENCES;
 	if(seq < 0 || seq>SEQUENCES.Size() - 1){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! The sequence index is out of range "<<seq<<endl;
-		exit(1);
+	  
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! The sequence index is out of range.\n");
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! The sequence index is out of range "<<seq<<endl;
+		// exit(1);
 	}
 	if(pos<1 || pos>SEQUENCES[seq].Size()){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! The position is out of range "<<pos<<endl;
-		exit(1);
+	  
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! The position is out of range.\n");
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! The position is out of range "<<pos<<endl;
+		// exit(1);
 	}
 	if(name_index<0 || name_index > print_names.size() -1){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! The name_index is out of range "<<name_index<<endl;
-		exit(1);
+	  
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! The name_index is out of range.\n");
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! The name_index is out of range "<<name_index<<endl;
+		// exit(1);
 	}
 	
 	string name = print_names[name_index];
@@ -518,7 +535,9 @@ double Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index(int seq, 
 			}
 	}
 	if(coverage<0 || coverage>1+1e-5){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! Incorrect value of coverage probability: "<<seq<<"\t"<<pos<<"\t"<<name<<"\t"<<coverage<<endl;
+	  
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! Incorrect value of coverage probability.\n");
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index: ERROR! Incorrect value of coverage probability: "<<seq<<"\t"<<pos<<"\t"<<name<<"\t"<<coverage<<endl;
 		//exit(1);
 	}
 	return coverage;
@@ -527,22 +546,30 @@ double Forward_Backward_algorithm::get_coverage_prob_at_pos_name_index(int seq, 
 
 double Forward_Backward_algorithm::get_coverage_prob_at_pos(int seq, int pos, int wm){ //wm is the index in Prob
 	if(Prob.empty()){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! Unable to calculate coverage probability. The vector Prob is empty\n";
-		exit(1);
+	  
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! Unable to calculate coverage probability. The vector Prob is empty\n");
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! Unable to calculate coverage probability. The vector Prob is empty\n";
+		// exit(1);
 	}
 	extern DNAbind_obj_vector BINDING_OBJECTS;
   	extern NOMeSeqData SEQUENCES;
 	if(seq < 0 || seq>SEQUENCES.Size() - 1){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! The sequence indes is out of range "<<seq<<endl;
-		exit(1);
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! The sequence index is out of range.\n");
+	  
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! The sequence indes is out of range "<<seq<<endl;
+		// exit(1);
 	}
 	if(pos<1 || pos>SEQUENCES[seq].Size()){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! The position is out of range "<<pos<<endl;
-		exit(1);
+	  
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! The position is out of range.\n");
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! The position is out of range "<<pos<<endl;
+		// exit(1);
 	}
 	if(wm<0 || wm > Prob[seq].size() -1){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! The wm index is out of range "<<wm<<endl;
-		exit(1);
+	  
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! The wm index is out of range.\n");
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! The wm index is out of range "<<wm<<endl;
+		// exit(1);
 	}
 	
 	
@@ -552,8 +579,10 @@ double Forward_Backward_algorithm::get_coverage_prob_at_pos(int seq, int pos, in
 		coverage += Prob[seq][wm][p];
 		
 	if(coverage < 0 || coverage > 1+1e-5){
-		cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! Incorrect value of coverage probability: "<<seq<<"\t"<<pos<<"\t"<<BINDING_OBJECTS[print_indexes[wm]]->name<<"\t"<<coverage<<endl;
-		exit(1);
+	  Rcpp::stop("Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! Incorrect value of coverage probability.\n");
+	  
+		// cerr<<"Forward_Backward_algorithm::get_coverage_prob_at_pos: ERROR! Incorrect value of coverage probability: "<<seq<<"\t"<<pos<<"\t"<<BINDING_OBJECTS[print_indexes[wm]]->name<<"\t"<<coverage<<endl;
+		// exit(1);
 	}
 	return coverage;
 
@@ -575,7 +604,7 @@ Rcpp::List  Forward_Backward_algorithm::getStartProbDF(){
   for(int seq=0;seq < SEQUENCES.Size();seq++){
     int firstDatPos = SEQUENCES[seq].firstDatpos;
     int lastDatPos = SEQUENCES[seq].lastDatpos;
-//    cout<<"FirstPos="<<firstDatPos<<"\tLastPos="<<lastDatPos<<endl;
+//    Rcpp::Rcout<<"FirstPos="<<firstDatPos<<"\tLastPos="<<lastDatPos<<endl;
     for(int position = firstDatPos;position <= lastDatPos;++position){
       seqnames.push_back(SEQUENCES[seq].Name());
       positions.push_back(position - firstDatPos + 1);
@@ -648,7 +677,7 @@ Rcpp::List  Forward_Backward_algorithm::getCoverProbDF(){
   for(int seq=0;seq < SEQUENCES.Size();seq++){
     int firstDatPos = SEQUENCES[seq].firstDatpos;
     int lastDatPos = SEQUENCES[seq].lastDatpos;
-//    cout<<"FirstPos="<<firstDatPos<<"\tLastPos="<<lastDatPos<<endl;
+//    Rcpp::Rcout<<"FirstPos="<<firstDatPos<<"\tLastPos="<<lastDatPos<<endl;
     for(int position = firstDatPos;position <= lastDatPos;++position){
       seqnames.push_back(SEQUENCES[seq].Name());
       positions.push_back(position - firstDatPos + 1);
@@ -704,7 +733,7 @@ Rcpp::List  Forward_Backward_algorithm::getGenomeSummaryDF(){
                         "Expected number of sites",
                         "Coverage",
                         "Sites<0.5",
-                        "Site>=0.5",
+                        "Sites>=0.5",
                         "Positions<0.5",
                         "Positions>=0.5"};
   vector<string > field_names(fnms,fnms + 7) ;
@@ -755,25 +784,25 @@ void Forward_Backward_algorithm::PrintProfilesToFiles()
 
   int first_dat_pos = SEQUENCES.firstDatPos;
   if(!PARAMS.profilefile.empty()){
-   cout<<PARAMS.profilefile<<endl;
+   Rcpp::Rcout<<PARAMS.profilefile<<endl;
    if(PARAMS.profilefile == "STDOUT"){
-    cout<<"#=== Begining of the profile of start probabilities ===\n";
-    cout<<"#Sequence\tPosition";
+    Rcpp::Rcout<<"#=== Begining of the profile of start probabilities ===\n";
+    Rcpp::Rcout<<"#Sequence\tPosition";
     for(int i=0;i<print_names.size();++i){
-	cout <<"\t"<<print_names[i];
+	Rcpp::Rcout <<"\t"<<print_names[i];
     }
-    cout<<endl;
+    Rcpp::Rcout<<endl;
     for(int seq=0;seq < SEQUENCES.Size();seq++){
 	for(int position = 1;position <= SEQUENCES[seq].Size();++position){
-		cout<<SEQUENCES[seq].Name()<<"\t"<<position - first_dat_pos;
+		Rcpp::Rcout<<SEQUENCES[seq].Name()<<"\t"<<position - first_dat_pos;
 		for(int i=0;i<print_names.size();++i){
 			double totalprob=0;
 			for(int j=0;j<names2indicesinprobarray[i].size();++j){
 				totalprob += Prob[seq][names2indicesinprobarray[i][j]][position];
 			}
-			cout<<"\t"<<scientific<<totalprob;
+			Rcpp::Rcout<<"\t"<<scientific<<totalprob;
 		}
-		cout<<endl;
+		Rcpp::Rcout<<endl;
 	}
     }
    }

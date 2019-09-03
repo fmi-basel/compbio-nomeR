@@ -8,6 +8,7 @@
 #include <math.h>
 #include <string>
 #include <vector>
+#include <Rcpp.h>
 #include "usefullfunctions.h"
 //#include "yaml-cpp/yaml.h"
 using namespace std;

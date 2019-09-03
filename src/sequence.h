@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <Rcpp.h>
 #include "usefullfunctions.h"
 
 using namespace std;

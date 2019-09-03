@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 run_cpp_nomeR <- function(data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps) {
-    .Call('_nomeR_run_cpp_nomeR', PACKAGE = 'nomeR', data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps)
+    .Call(`_nomeR_run_cpp_nomeR`, data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps)
 }
 
-count_spacing_freq_cpp <- function(data, maxspacing, maxwmlen = 0L) {
-    .Call('_nomeR_count_spacing_freq_cpp', PACKAGE = 'nomeR', data, maxspacing, maxwmlen)
+count_spacing_freq_cpp <- function(data, maxspacing, maxwmlen) {
+    .Call(`_nomeR_count_spacing_freq_cpp`, data, maxspacing, maxwmlen)
 }
 

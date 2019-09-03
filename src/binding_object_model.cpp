@@ -31,34 +31,34 @@ binding_object_model::~binding_object_model() {
 }
 
 void binding_object_model::print() const{
-  cout <<"//\n";
-  cout <<"NA\t"<< name <<"\n";
+  Rcpp::Rcout <<"//\n";
+  Rcpp::Rcout <<"NA\t"<< name <<"\n";
 
-  cout <<"PRIOR\t"<< prior <<"\n";
-  cout <<"POS\tPROT\tUNPROT\tNAs\n";
+  Rcpp::Rcout <<"PRIOR\t"<< prior <<"\n";
+  Rcpp::Rcout <<"POS\tPROT\tUNPROT\tNAs\n";
   for(int i=0;i<mat.size();i++){
-    cout <<i+1;
+    Rcpp::Rcout <<i+1;
     for(int j=0;j<mat[i].size();j++)
-      cout << "\t"<< mat[i][j];
-    cout <<"\n";
+      Rcpp::Rcout << "\t"<< mat[i][j];
+    Rcpp::Rcout <<"\n";
   }
-  cout <<"//\n";
+  Rcpp::Rcout <<"//\n";
 }
 
 
 void binding_object_model::print_normalized() const{
-  cout <<"//\n";
-  cout <<"NA\t"<< name <<"\n";
-  //cout <<"Orientation\t"<<orientation<<endl;
-  cout <<"PRIOR\t"<< prior <<"\n";
-  cout <<"POS\tPROT\tUNPROT\tNAs\n";
+  Rcpp::Rcout <<"//\n";
+  Rcpp::Rcout <<"NA\t"<< name <<"\n";
+  //Rcpp::Rcout <<"Orientation\t"<<orientation<<endl;
+  Rcpp::Rcout <<"PRIOR\t"<< prior <<"\n";
+  Rcpp::Rcout <<"POS\tPROT\tUNPROT\tNAs\n";
   for(int i=0;i<normmat.size();i++){
-    cout <<i+1;
+    Rcpp::Rcout <<i+1;
     for(int j=0;j<normmat[i].size();j++)
-      cout << "\t"<< normmat[i][j];
-    cout <<"\n";
+      Rcpp::Rcout << "\t"<< normmat[i][j];
+    Rcpp::Rcout <<"\n";
   }
-  cout <<"//\n";
+  Rcpp::Rcout <<"//\n";
 }
 
 
@@ -66,8 +66,9 @@ double binding_object_model::get_score(int seq, int position) const{
   
   extern NOMeSeqData SEQUENCES;
   if(seq<0 || seq>=SEQUENCES.Size()){
-	cerr<<"Wm::get_score: Index of sequence is out of range: "<<seq<<endl;
-	exit(1);
+    Rcpp::stop("binding_object_model::get_score: Index of sequence is out of range: ");
+	// cerr<<"Wm::get_score: Index of sequence is out of range: "<<seq<<endl;
+	// exit(1);
   }
 
   double score = 1;

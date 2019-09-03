@@ -26,14 +26,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // count_spacing_freq_cpp
-List count_spacing_freq_cpp(const List& data, int maxspacing, int maxwmlen);
+List count_spacing_freq_cpp(const List& data, const IntegerVector& maxspacing, const IntegerVector& maxwmlen);
 RcppExport SEXP _nomeR_count_spacing_freq_cpp(SEXP dataSEXP, SEXP maxspacingSEXP, SEXP maxwmlenSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< int >::type maxspacing(maxspacingSEXP);
-    Rcpp::traits::input_parameter< int >::type maxwmlen(maxwmlenSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type maxspacing(maxspacingSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type maxwmlen(maxwmlenSEXP);
     rcpp_result_gen = Rcpp::wrap(count_spacing_freq_cpp(data, maxspacing, maxwmlen));
     return rcpp_result_gen;
 END_RCPP

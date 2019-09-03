@@ -67,14 +67,14 @@ parameters & parameters::operator = (const parameters & other){
 
 void parameters::print()
 {
-  cout <<"printoutonly\t"<<printoutonly<<endl;
-  cout <<"bgcoverprob\t"<<bgcoverprob<<endl;
-  cout <<"bgprior\t"<<bgprior<<endl;
-  cout <<"BOUND_FIT_TOLERANCE\t"<<BOUND_FIT_TOLERANCE<<endl;
-  cout <<"BOUND_MAX_STEPS\t"<<BOUND_MAX_STEPS<<endl;
-  cout <<"BOUND_MIN_FDERIV_VAL\t"<<BOUND_MIN_FDERIV_VAL<<endl;
-  cout <<"PRIOREM_FIT_TOLERANCE\t"<<PRIOREM_FIT_TOLERANCE<<endl;
-  cout <<"PRIOREM_MAX_STEPS\t"<<PRIOREM_MAX_STEPS<<endl;
+  Rcpp::Rcout <<"printoutonly\t"<<printoutonly<<endl;
+  Rcpp::Rcout <<"bgcoverprob\t"<<bgcoverprob<<endl;
+  Rcpp::Rcout <<"bgprior\t"<<bgprior<<endl;
+  Rcpp::Rcout <<"BOUND_FIT_TOLERANCE\t"<<BOUND_FIT_TOLERANCE<<endl;
+  Rcpp::Rcout <<"BOUND_MAX_STEPS\t"<<BOUND_MAX_STEPS<<endl;
+  Rcpp::Rcout <<"BOUND_MIN_FDERIV_VAL\t"<<BOUND_MIN_FDERIV_VAL<<endl;
+  Rcpp::Rcout <<"PRIOREM_FIT_TOLERANCE\t"<<PRIOREM_FIT_TOLERANCE<<endl;
+  Rcpp::Rcout <<"PRIOREM_MAX_STEPS\t"<<PRIOREM_MAX_STEPS<<endl;
 
 
 }

@@ -15,8 +15,9 @@ DNAbind_obj_vector::~DNAbind_obj_vector(){
 
 DNAbinding_object * DNAbind_obj_vector::operator [](int i){
 	if(i>objvector.size()-1 || i<0){
-		cerr<<"DNAbind_obj_vector::operator[](int i):  The index is out of range: "<<i<<"\n";
-		exit(1);
+	  Rcpp::stop("DNAbind_obj_vector::operator[](int i):  The index is out of range");
+		// Rcpp::Rcerr<<"DNAbind_obj_vector::operator[](int i):  The index is out of range: "<<i<<"\n";
+		// exit(1);
 	}
 	return objvector[i];
 }
@@ -36,15 +37,15 @@ int DNAbind_obj_vector::create(Rcpp::List _bind_objs,
     Rcpp::List pinf = Rcpp::as<Rcpp::List >(_bind_objs[wm]);
     //cout<<"Index="<<wm<<" Data list size "<<pinf.size()<<endl;
     if(!pinf.containsElementNamed("PROTECT_PROB")){
-      cerr<<"DNAbind_obj_vector::create: Error! At least one element in list of sequences does not contain element PROTECT_PROB\n";
+      Rcpp::Rcerr<<"DNAbind_obj_vector::create: Error! At least one element in list of sequences does not contain element PROTECT_PROB\n";
       return(0);
     }
     if(!pinf.containsElementNamed("PRIOR")){
-      cerr<<"DNAbind_obj_vector::create: Error! At least one element in list of sequences does not contain element PRIOR\n";
+      Rcpp::Rcerr<<"DNAbind_obj_vector::create: Error! At least one element in list of sequences does not contain element PRIOR\n";
       return(0);
     }
     if(!pinf.containsElementNamed("NAME")){
-      cerr<<"DNAbind_obj_vector::create: Error! At least one element in list of sequences does not contain element NAME\n";
+      Rcpp::Rcerr<<"DNAbind_obj_vector::create: Error! At least one element in list of sequences does not contain element NAME\n";
       return(0);
     }
     

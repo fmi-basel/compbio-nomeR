@@ -55,8 +55,11 @@ int Sequence::Size() const{
 
 unsigned short Sequence::operator [](int i){
 	if(i<0 || i>size-1){
-		cerr<<"Sequence::operator[]: The index is out of range: index:"<<i<<" size:"<<size<<endl;
-		exit(1);
+	  
+	  Rcpp::Rcerr<<"Sequence::operator[]: The index is out of range: index:"<<i<<" size:"<<size<<endl;
+	  Rcpp::stop("");
+		// cerr<<"Sequence::operator[]: The index is out of range: index:"<<i<<" size:"<<size<<endl;
+		// exit(1);
 	}
 	return _seq[i];
 
@@ -64,8 +67,10 @@ unsigned short Sequence::operator [](int i){
 
 vector<unsigned short> Sequence::subseq(int start,int end){
 	if(start<0 || end>size-1){
-		cerr<<"Sequence::subseq: ERROR! The start or the end is out of range: start:"<<start<<"\tend:"<<end<<"\tsize:"<<size<<endl;
-		exit(1);
+	 
+		Rcpp::Rcerr<<"Sequence::subseq: ERROR! The start or the end is out of range: start:"<<start<<"\tend:"<<end<<"\tsize:"<<size<<endl;
+		Rcpp::stop("");
+		// exit(1);
 	}
 	vector<unsigned short> subsq;
 	for(int i=start;i<=end;++i){
@@ -97,8 +102,8 @@ vector<unsigned short> Sequence::getSequence(){
 
 void Sequence::Print() const{
 	for(int i=0;i<size;++i){
-		cout<<_seq[i];
+		Rcpp::Rcout<<_seq[i];
 	}
-	cout<<endl;
+	Rcpp::Rcout<<endl;
 }
 

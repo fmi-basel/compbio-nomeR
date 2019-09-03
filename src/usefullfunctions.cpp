@@ -7,17 +7,20 @@ int _COLUMN_IND_ = 0;
 
 bool compare_vectors_by_column ( const vector<double> v1,const vector<double> v2) {
 	extern int  _COLUMN_IND_;
-	//cout<<"Index for sorting "<<_COLUMN_IND_<<endl;
+	//Rcpp::Rcout<<"Index for sorting "<<_COLUMN_IND_<<endl;
 	if(v1.size() != v2.size()){
- 		cerr<<"compare_vectors_acc_correlation: Vectors must have the same size\n";
- 		exit(1);
+	  
+	  Rcpp::stop("compare_vectors_acc_correlation: Vectors must have the same size\n");
+ 		// cerr<<"compare_vectors_acc_correlation: Vectors must have the same size\n";
+ 		// exit(1);
  	}
 	if( _COLUMN_IND_ == -1){	// means cort by last column
 		 _COLUMN_IND_ = v1.size() - 1;
 	}
 	if(  _COLUMN_IND_> v1.size()-1 ||  _COLUMN_IND_ < 0){
-		cerr<<"Column index is out of range: "<<_COLUMN_IND_<<endl;
-		exit(1);
+		Rcpp::Rcerr<<"Column index is out of range: "<<_COLUMN_IND_<<endl;
+	  Rcpp::stop("");
+		// exit(1);
 	}
 	if(v1[_COLUMN_IND_] == v2[_COLUMN_IND_]){
 		if(_COLUMN_IND_ == 0){
@@ -193,11 +196,12 @@ int letter2index(char letter){
   }
   else if(letter == 'X'){
 	position = 4;
-	cout<<"WARNING: The sequence consists letters X\n";
+	Rcpp::Rcout<<"WARNING: The sequence consists letters X\n";
   }
   else{
-    cerr<<"letter2index:Error! Unknown letter in the sequence "<< letter <<"\n";
-    exit(1);
+    Rcpp::Rcerr<<"letter2index:Error! Unknown letter in the sequence "<< letter <<"\n";
+    Rcpp::stop("");
+    // exit(1);
   }
   return position;
 }
@@ -216,8 +220,11 @@ int letter2index_NOMe(char letter){
     position = 2;
   }
   else{
-    cerr<<"letter2index_NOMe:Error! Unknown letter in the sequence "<< letter <<". Only 0,1,2 allowed!\n";
-    exit(1);
+    
+    
+    Rcpp::Rcerr<<"letter2index_NOMe:Error! Unknown letter in the sequence "<< letter <<". Only 0,1,2 allowed!\n";
+    Rcpp::stop("");
+    // exit(1);
   }
   return position;
 }

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <string.h>
 #include <vector>
+#include <Rcpp.h>
 using namespace std;
 
 void mychomp(char *s);
