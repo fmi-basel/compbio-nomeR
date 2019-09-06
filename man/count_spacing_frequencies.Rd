@@ -20,6 +20,3 @@ data.frame containing frequencies for 0,0; 0,1; etc for each spacing between 0 (
 \description{
 Function for creating contingency tables of frequencing have 0,0; 0,1, 0,NA etc with spacing S between them
 }
-\examples{
-
-}

@@ -1,0 +1,67 @@
+
+test_that("wrong parameters for run_nomeR are handled correctly",{
+  expect_error(nomeR_predict(data = "aaa"))
+  expect_error(nomeR_predict(data = matrix()))
+})
+
+test_that("nomeR returns correct object",{
+  ## create dummy random data
+  set.seed(3346)
+  nc <- 50
+  nr <- 50
+  rmatr <- matrix(data = as.integer(rnorm(nc * nr) >= 0.5),
+                  ncol = nc,nrow=nr)
+  
+  ## create dummy footprints
+  bg.pr <- 0.5
+  ft.pr <- 1-bg.pr
+  ft.len <- 15
+  
+  ## creating a list of binding models for nomeR
+  ftp.models <- list(list("PROTECT_PROB" = rep(0.99,ft.len),
+                              "COVER_PRIOR" = ft.pr,
+                              "NAME" = "FOOTPRINT"))
+  
+  expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
+                             footprint_models = ftp.models,
+                             bgprotectprob = 0.05,
+                             bgcoverprior = bg.pr))
+  
+  ## check whether slots exist
+  expect_true(all(c("START_PROB", "COVER_PROB","SUMMARY") %in% names(nomeR.out)))
+  
+  ## check whether all required seq exist
+  expect_true(all(as.character(1:nr) %in% nomeR.out[["START_PROB"]][["seq"]]) &
+                all(as.character(1:nr) %in% nomeR.out[["COVER_PROB"]][["seq"]])
+                )
+  
+  ## check all pos exist
+  expect_true(all(1:nc %in% nomeR.out[["START_PROB"]][["pos"]]) &
+                all(1:nc %in% nomeR.out[["COVER_PROB"]][["pos"]])
+  )
+  
+  ## check whether FOOTPRINT and background exist
+  expect_true(all(c("FOOTPRINT","background") %in% colnames(nomeR.out[["START_PROB"]])) &
+                all(c("FOOTPRINT","background") %in% colnames(nomeR.out[["COVER_PROB"]])) &
+                      all(c("FOOTPRINT","background") %in% colnames(nomeR.out[["SUMMARY"]]))
+  )
+  
+  ## check that we do not have incorrect probs
+  expect_false(any(nomeR.out[["START_PROB"]][,c("FOOTPRINT","background")] < 0 - .Machine$double.eps^0.5) | any(nomeR.out[["START_PROB"]][,c("FOOTPRINT","background")] > 1 + .Machine$double.eps^0.5) |
+                 any(nomeR.out[["COVER_PROB"]][,c("FOOTPRINT","background")] < 0 - .Machine$double.eps^0.5) | any(nomeR.out[["COVER_PROB"]][,c("FOOTPRINT","background")] > 1 + .Machine$double.eps^0.5))
+  
+  ## check whether sum of start probs does not exceed 1
+  expect_false(any(rowSums(nomeR.out[["START_PROB"]][,c("FOOTPRINT","background")]) > 1 + .Machine$double.eps^0.5))
+  
+  ## check if sum of cover probs sum up to 1
+  cover.prob.rowsum <- rowSums(nomeR.out[["COVER_PROB"]][,c("FOOTPRINT","background")])
+  a <- sapply(cover.prob.rowsum,
+         function(x){
+           expect_equal(x,1,tolerance = 1.0e-8)
+         })
+  
+  
+})
+
+
+

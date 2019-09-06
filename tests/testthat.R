@@ -1,4 +1,4 @@
 library(testthat)
-library(griph)
+library(nomeR)
 
-test_check("griph")
+test_check("nomeR")
