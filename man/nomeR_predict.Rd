@@ -4,10 +4,18 @@
 \alias{nomeR_predict}
 \title{Function for running probabilistic model to predict binding sites of DNA binding proteins in NOMe-Seq data}
 \usage{
-nomeR_predict(data, footprint_models, bgprotectprob, bgcoverprior,
-  bound_fit_tol = 1e-05, bound_min_fderiv_val = 1e-05,
-  bound_max_steps = 1000, run_priorEM = FALSE,
-  priorEM_fit_tol = 1e-05, priorEM_max_steps = 1000)
+nomeR_predict(
+  data,
+  footprint_models,
+  bgprotectprob,
+  bgcoverprior,
+  bound_fit_tol = 1e-05,
+  bound_min_fderiv_val = 1e-05,
+  bound_max_steps = 1000,
+  run_priorEM = FALSE,
+  priorEM_fit_tol = 1e-05,
+  priorEM_max_steps = 1000
+)
 }
 \arguments{
 \item{data}{A matrix containing NOMe-Seq data. Rows represent reads (or fragments), 

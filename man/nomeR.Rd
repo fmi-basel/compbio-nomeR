@@ -3,7 +3,6 @@
 \docType{package}
 \name{nomeR}
 \alias{nomeR}
-\alias{nomeR-package}
 \title{nomeR: A package that uses a probabilistic model for interpreting NOME-Seq data}
 \description{
 The package uses a probabilistic model for calculating posterior probabilities that a certain position 

@@ -6,9 +6,9 @@ Date: 2018-07-16
 Author: Evgeniy A. Ozonov
 Maintainer: Evgeniy A. Ozonov <evgeniy.ozonov@fmi.ch>
 Description: This package allows to disentangle binding patterns of nucleosomes and transcription factors in NOMe-Seq data using probabilistic model.
-License: GPL (>= 2)
+License: MIT + file LICENSE
 Imports: Rcpp (>= 0.12.17), ArgumentCheck
 Suggests: testthat
 LinkingTo: Rcpp
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
