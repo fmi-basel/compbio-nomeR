@@ -15,6 +15,10 @@
 #' and using a probabilistic model it returns a data.frame with posterior probabilities for each position and fragment to be covered by each footprint.
 #' @docType package
 #' @name nomeR
+#' 
+#' 
+#' 
+#' 
 NULL
 
 
@@ -36,11 +40,12 @@ NULL
 #' @param data A matrix containing NOMe-Seq data. Rows represent reads (or fragments), 
 #' columns represent positions in amplicon. NOTE that \code{data} must contain only positions of selected GpCs where '0' represent unprotected "C", 
 #' '1' represent protected "C" and all other positions must be filled with "NA".
+#' 
 #' @param footprint_models A list containing footprint models for proteins. 
 #' Each element must have 3 slots:
-#' PROTECT_PROB - a numeric vector with probability to find protected 'C' within the footprint
-#' PRIOR - prior (numeric) probability reflecting how often we expect to find a footprint
-#' NAME - name (character) of a model, e.g. "Nucleosome"
+#' PROTECT_PROB - a numeric vector with probability to find protected 'C' within the footprint;
+#' COVER_PRIOR - prior coverage probability (numeric) reflecting what fraction of reads you expect to be covered by a footprint;
+#' NAME - name (character) of a model, e.g. "Nucleosome".
 #' @param bgprotectprob probability to find a protected 'C' in open (uprotected) regions
 #' @param bgcoverprior prior probability for percentage of all fragments to be in a free (unprotected, or background) state
 #' @param bound_fit_tol fitting tolerance for estimating initial values of partition sums
@@ -48,7 +53,7 @@ NULL
 #' minimal value of denominator in first derivative of a function
 #' @param bound_max_steps Maximum number of iterations for algorithm which estimates boundary values for partition sums
 #' @param run_priorEM If TRUE the function runs Expectation Maximization algorithm for fitting prior probabilities of binding objects.
-#' Not recommended for regions with transcription factor binding as the EM overestimates shorter footprints
+#' Not recommended for regions with transcription factor binding as the EM overestimates shorter footprints.
 #' @param priorEM_fit_tol Fitting tolerance for running prior EM 
 #' @param priorEM_max_steps Maximum number of iterations in prior EM
 #'

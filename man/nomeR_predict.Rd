@@ -16,9 +16,9 @@ columns represent positions in amplicon. NOTE that \code{data} must contain only
 
 \item{footprint_models}{A list containing footprint models for proteins. 
 Each element must have 3 slots:
-PROTECT_PROB - a numeric vector with probability to find protected 'C' within the footprint
-PRIOR - prior (numeric) probability reflecting how often we expect to find a footprint
-NAME - name (character) of a model, e.g. "Nucleosome"}
+PROTECT_PROB - a numeric vector with probability to find protected 'C' within the footprint;
+COVER_PRIOR - prior coverage probability (numeric) reflecting what fraction of reads you expect to be covered by a footprint;
+NAME - name (character) of a model, e.g. "Nucleosome".}
 
 \item{bgprotectprob}{probability to find a protected 'C' in open (uprotected) regions}
 
@@ -32,7 +32,7 @@ minimal value of denominator in first derivative of a function}
 \item{bound_max_steps}{Maximum number of iterations for algorithm which estimates boundary values for partition sums}
 
 \item{run_priorEM}{If TRUE the function runs Expectation Maximization algorithm for fitting prior probabilities of binding objects.
-Not recommended for regions with transcription factor binding as the EM overestimates shorter footprints}
+Not recommended for regions with transcription factor binding as the EM overestimates shorter footprints.}
 
 \item{priorEM_fit_tol}{Fitting tolerance for running prior EM}
 
