@@ -1,8 +1,8 @@
 .Rproj.user
+*.Rproj
 .Rhistory
 .RData
 .Ruserdata
 *.o
 Makefile
-compbio-rnome.Rproj
 info.txt

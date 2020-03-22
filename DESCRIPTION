@@ -1,10 +1,10 @@
 Package: nomeR
 Type: Package
 Title: Probabilistic model for interpreting NOME-Seq data
-Version: 1.0
 Date: 2018-07-16
-Author: Evgeniy A. Ozonov
-Maintainer: Evgeniy A. Ozonov <evgeniy.ozonov@fmi.ch>
+Version: 0.1.0
+Authors@R: person(given = "Evgeniy A.", family="Ozonov", email = "evgeniy.ozonov@fmi.ch", role = c("aut", "cre"))
+Maintainer: person(given = "Evgeniy A.", family="Ozonov", email = "evgeniy.ozonov@fmi.ch", role = c("aut", "cre"))
 Description: This package allows to disentangle binding patterns of nucleosomes and transcription factors in NOMe-Seq data using probabilistic model.
 License: MIT + file LICENSE
 Imports: Rcpp (>= 0.12.17), ArgumentCheck

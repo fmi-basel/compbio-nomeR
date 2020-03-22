@@ -1,3 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 test_rnome.R
+^LICENSE\.md$
+^README\.Rmd$
+^TEST_MODEL$
