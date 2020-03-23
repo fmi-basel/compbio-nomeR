@@ -48,6 +48,7 @@ NULL
 #' NAME - name (character) of a model, e.g. "Nucleosome".
 #' @param bgprotectprob probability to find a protected 'C' in open (uprotected) regions
 #' @param bgcoverprior prior probability for percentage of all fragments to be in a free (unprotected, or background) state
+#' @param ncpu number of threads to use
 #' @param bound_fit_tol fitting tolerance for estimating initial values of partition sums
 #' @param bound_min_fderiv_val This value used in Haley's numerical method for solving equations and represent a 
 #' minimal value of denominator in first derivative of a function
@@ -56,6 +57,7 @@ NULL
 #' Not recommended for regions with transcription factor binding as the EM overestimates shorter footprints.
 #' @param priorEM_fit_tol Fitting tolerance for running prior EM 
 #' @param priorEM_max_steps Maximum number of iterations in prior EM
+#' @param verbose verbose mode for bug fixing
 #'
 #' @return A list which contains 3 data frames:
 #'         \code{START_PROB} - data frame with calculated start probabilities for each NOME-Seq fragment (column \code{seq}),
@@ -124,16 +126,17 @@ NULL
 #' 
 nomeR_predict <- function(data,
                           footprint_models,
-                  bgprotectprob,
-                  bgcoverprior,
-                  
-                  bound_fit_tol = 1e-5,
-                  bound_min_fderiv_val = 1e-5,
-                  bound_max_steps = 1000,
-                  run_priorEM = FALSE,
-                  priorEM_fit_tol = 1e-5,
-                  priorEM_max_steps = 1000
-                  
+                          bgprotectprob,
+                          bgcoverprior,
+                          ncpu = 1L,
+                          bound_fit_tol = 1e-5,
+                          bound_min_fderiv_val = 1e-5,
+                          bound_max_steps = 1000,
+                          run_priorEM = FALSE,
+                          priorEM_fit_tol = 1e-5,
+                          priorEM_max_steps = 1000,
+                          verbose = F
+                          
 ) {
   
   ## check arguments
@@ -251,12 +254,35 @@ nomeR_predict <- function(data,
       argcheck = arg.check
     )
   }
+  
+  if(ncpu < 0   ){
+    ArgumentCheck::addError(
+      msg = "ncpu must be non-negative integer",
+      argcheck = arg.check
+    )
+  }
+  
+  avail_ncpu <- parallel::detectCores()
+  
+  if(is.na(avail_ncpu)){
+    .warning_timestamp("Could not detect number of available cpu. Setting ncpu to 1L.")
+    ncpu <- 1L
+  } else if(ncpu > avail_ncpu | ncpu == 0) {
+    .warning_timestamp("Number of ncpu is 0 or exceeds number of available cpu. Setting ncpu to number of available cpus.")
+    ncpu <- avail_ncpu
+  }
+  
+
   ArgumentCheck::finishArgCheck(arg.check)
   
   ## convert data into list of lists
+  if(verbose)
+    .message_timestamp("Converting data matrix to data list...")
   data <- .create_data_list(matr = data)
   
-  ## convert cover priors to start priors and add them into bindin_models
+  ## convert cover priors to start priors and add them into binding_models
+  if(verbose)
+    .message_timestamp("convert cover priors to start priors and add them into binding_models...")
   cover_priors <- c("BG" = bgcoverprior,
                     sapply(footprint_models,function(x){x[["COVER_PRIOR"]]}))
   footpr_lens <- c("BG" = 1,
@@ -272,8 +298,20 @@ nomeR_predict <- function(data,
                              },
                              simplify = F,USE.NAMES = T)
   
-  
-  out.list <- run_cpp_nomeR(data, footprint_models, bgprotectprob, start_priors["BG"], bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps)
+  if(verbose)
+    .message_timestamp("Calling nomeR cpp code...")
+  out.list <- run_cpp_nomeR(data,
+                            footprint_models,
+                            bgprotectprob,
+                            start_priors["BG"],
+                            bound_fit_tol, 
+                            bound_min_fderiv_val, 
+                            bound_max_steps, 
+                            run_priorEM, 
+                            priorEM_fit_tol, 
+                            priorEM_max_steps, 
+                            ncpu,
+                            verbose)
   
   lapply(out.list,as.data.frame,stringsAsFactors = FALSE)
   
@@ -346,10 +384,14 @@ nomeR_predict <- function(data,
     row.names(matr) <- 1:nrow(matr)
   }
   
+  ## convert NAs to 2
+  matr[which(is.na(matr),arr.ind = T)] <- 2
+  
+  
   
   dat.out <- lapply(row.names(matr),function(nm){
     seq <- matr[nm,]
-    seq[is.na(seq)] <- 2
+    #seq[is.na(seq)] <- 2
     seq <- paste(seq,collapse = "")
     list("DATA" = seq,
          "NAME" = nm)
@@ -377,3 +419,18 @@ count_spacing_frequencies <- function(data, maxspacing, maxwmlen = 0L){
   out_data <- count_spacing_freq_cpp(data, maxspacing, maxwmlen)
   as.data.frame(out_data)
 }
+
+
+
+.message_timestamp <- function(msg){
+  message(paste0("[",Sys.time(),"]: ",msg))
+}
+.warning_timestamp <- function(msg){
+  warning(paste0("[",Sys.time(),"]: ",msg))
+}
+
+
+.onUnload <- function (libpath) {
+  library.dynam.unload("nomeR", libpath)
+}
+

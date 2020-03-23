@@ -12,7 +12,7 @@ parameters PARAMS;
 DNAbind_obj_vector BINDING_OBJECTS;
 NOMeSeqData SEQUENCES;
 Forward_Backward_algorithm FORWARD_BACKWARD;
-
+int _NCPU_ = 1;
 
 
 // [[Rcpp::export]]
@@ -25,9 +25,22 @@ List run_cpp_nomeR(const List& data,
                       const IntegerVector& bound_max_steps,
                       const LogicalVector& run_priorEM,
                       const NumericVector& priorEM_fit_tol,
-                      const IntegerVector& priorEM_max_steps
+                      const IntegerVector& priorEM_max_steps,
+                      const NumericVector& Ncpu,
+                      const LogicalVector& verbose
                       ) {
-
+  // set number of threads
+  
+  
+  extern int _NCPU_;
+  _NCPU_ = as<int >(Ncpu);
+  if(verbose){
+    Rcout<<"Input Ncpu "<<Ncpu<<endl;
+    Rcout<<"Set _NCPU_ "<<_NCPU_<<endl;
+  }
+  
+  
+  
   // create object with parameters
   extern parameters PARAMS;
   double bgcoverprob_ = as<double >(bgprotectprob);
@@ -40,6 +53,9 @@ List run_cpp_nomeR(const List& data,
   double priorEM_fit_tol_ = as<double >(priorEM_fit_tol);
   int priorEM_max_steps_ = as<int >(priorEM_max_steps);
   
+  if(verbose){
+    Rcout<<"Creating PARAMS object..."<<endl;
+  }
   PARAMS.setParams(bgcoverprob_,
                    bgprior_,
                    bound_fit_tol_,
@@ -51,22 +67,41 @@ List run_cpp_nomeR(const List& data,
   //PARAMS.print();
   
   // create object with binding models
-  //Rcout<<"Size "<<binding_models.size()<<endl;
+  
+  
+  if(verbose){
+    Rcout<<"Creating BINDING_OBJECTS object..."<<endl;
+  }
   extern DNAbind_obj_vector BINDING_OBJECTS;
   BINDING_OBJECTS.create(binding_models,PARAMS);
   //BINDING_OBJECTS.print();
   //Rcout<<"MAX WM length "<<BINDING_OBJECTS.maxwmlen<<endl;
   // create object with NOMeSeq data
   extern NOMeSeqData SEQUENCES;
+  
+  if(verbose){
+    Rcout<<"Creating SEQUENCES object..."<<endl;
+  }
   SEQUENCES.create(data,
                    BINDING_OBJECTS.maxwmlen);
   //SEQUENCES.PrintNames();
   
   extern Forward_Backward_algorithm FORWARD_BACKWARD;
+  if(verbose){
+    Rcout<<"Creating FORWARD_BACKWARD object..."<<endl;
+  }
   FORWARD_BACKWARD.Create();
+  
+  
   if(run_priorEM_){
+    if(verbose){
+      Rcout<<"Running FORWARD_BACKWARD.Run_priorEM()..."<<endl;
+    }
     FORWARD_BACKWARD.Run_priorEM();
   } else {
+    if(verbose){
+      Rcout<<"Running FORWARD_BACKWARD.Run()..."<<endl;
+    }
     FORWARD_BACKWARD.Run();
   }
   

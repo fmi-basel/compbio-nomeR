@@ -6,3 +6,4 @@
 *.o
 Makefile
 info.txt
+TEST_MODEL/*

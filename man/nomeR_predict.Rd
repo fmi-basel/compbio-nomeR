@@ -9,12 +9,14 @@ nomeR_predict(
   footprint_models,
   bgprotectprob,
   bgcoverprior,
+  ncpu = 1L,
   bound_fit_tol = 1e-05,
   bound_min_fderiv_val = 1e-05,
   bound_max_steps = 1000,
   run_priorEM = FALSE,
   priorEM_fit_tol = 1e-05,
-  priorEM_max_steps = 1000
+  priorEM_max_steps = 1000,
+  verbose = F
 )
 }
 \arguments{
@@ -32,6 +34,8 @@ NAME - name (character) of a model, e.g. "Nucleosome".}
 
 \item{bgcoverprior}{prior probability for percentage of all fragments to be in a free (unprotected, or background) state}
 
+\item{ncpu}{number of threads to use}
+
 \item{bound_fit_tol}{fitting tolerance for estimating initial values of partition sums}
 
 \item{bound_min_fderiv_val}{This value used in Haley's numerical method for solving equations and represent a 
@@ -45,6 +49,8 @@ Not recommended for regions with transcription factor binding as the EM overesti
 \item{priorEM_fit_tol}{Fitting tolerance for running prior EM}
 
 \item{priorEM_max_steps}{Maximum number of iterations in prior EM}
+
+\item{verbose}{verbose mode for bug fixing}
 }
 \value{
 A list which contains 3 data frames:

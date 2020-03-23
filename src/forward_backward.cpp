@@ -81,12 +81,7 @@ bool Forward_Backward_algorithm::Create()
   	vector<double > tmp(7,0);
   	genomesummary.resize(print_names.size(),tmp);
   	
-	// Parameters for OpenMP
-	/*
-	extern int _NUM_THREADS_;
-	omp_set_nested(true);
-	omp_set_num_threads(_NUM_THREADS_);
-	*/
+
 	return 1;
 }
 
@@ -207,16 +202,29 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 	// calculate initial value for forward and backward parition summs
 	double part_init = Calc_PartSum_init(1);
 	
+	
 	// Parameters for OpenMP
-	/*
-	extern int _NUM_THREADS_;
-	omp_set_nested(true);
-	omp_set_num_threads(ceil(_NUM_THREADS_/2));
-	*/
-//#pragma omp parallel private(seq)
-//{
-  //Rcpp::Rcout<<"Number of threads "<<omp_get_num_threads()<<endl;
-//#pragma omp for schedule(dynamic)
+	
+	extern int _NCPU_;
+	Rcpp::Rcout<<"In FWBC _NCPU_ "<<_NCPU_<<endl;
+#ifdef _OPENMP
+	if ( _NCPU_ > 1 )
+	  omp_set_num_threads( _NCPU_ );
+	
+	REprintf("Number of threads=%i\n", omp_get_max_threads());
+#endif
+	
+	
+	// Rcpp::Rcout<<"In FWBC _NCPU_ "<<_NCPU_<<endl;
+	// 
+	// //omp_set_nested(true);
+	// omp_set_num_threads(10);
+	
+	
+#pragma omp parallel private(seq)
+{
+  
+#pragma omp for schedule(dynamic)
 	for(seq=0;seq < SEQUENCES.Size();++seq){
 		int seqlength = SEQUENCES[seq].Size();
 	
@@ -350,7 +358,7 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 		}
 	}
 
-//}
+}
 /*	time(&end);
         Rcpp::Rcout<<"Forward_Backward_algorithm::Run_Low_Mem():It took "<<difftime(end,start)<<endl;
 */

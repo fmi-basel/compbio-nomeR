@@ -13,10 +13,16 @@
 #include <math.h>
 #include <vector>
 #include <string>
-#include <omp.h>
 #include <time.h>
 #include <Rcpp.h>
 using namespace std;
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+
+// [[Rcpp::plugins(openmp)]]
 
 class Forward_Backward_algorithm
 {

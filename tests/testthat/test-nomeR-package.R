@@ -2,6 +2,42 @@
 test_that("wrong parameters for run_nomeR are handled correctly",{
   expect_error(nomeR_predict(data = "aaa"))
   expect_error(nomeR_predict(data = matrix()))
+  
+  ## check whether ncpu handled correctly
+  ## create dummy random data
+  set.seed(3346)
+  nc <- 50
+  nr <- 50
+  rmatr <- matrix(data = as.integer(rnorm(nc * nr) >= 0.5),
+                  ncol = nc,nrow=nr)
+  
+  ## create dummy footprints
+  bg.pr <- 0.5
+  ft.pr <- 1-bg.pr
+  ft.len <- 15
+  
+  ## creating a list of binding models for nomeR
+  ftp.models <- list(list("PROTECT_PROB" = rep(0.99,ft.len),
+                          "COVER_PRIOR" = ft.pr,
+                          "NAME" = "FOOTPRINT"))
+  
+  expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
+                                            footprint_models = ftp.models,
+                                            bgprotectprob = 0.05,
+                                            bgcoverprior = bg.pr,
+                                            ncpu = 0))
+  expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
+                                            footprint_models = ftp.models,
+                                            bgprotectprob = 0.05,
+                                            bgcoverprior = bg.pr,
+                                            ncpu = Inf))
+  
+  expect_error(nomeR.out <- nomeR_predict(data=rmatr,
+                                            footprint_models = ftp.models,
+                                            bgprotectprob = 0.05,
+                                            bgcoverprior = bg.pr,
+                                            ncpu = -1))
+  
 })
 
 test_that("nomeR returns correct object",{
@@ -25,7 +61,8 @@ test_that("nomeR returns correct object",{
   expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
                              footprint_models = ftp.models,
                              bgprotectprob = 0.05,
-                             bgcoverprior = bg.pr))
+                             bgcoverprior = bg.pr,
+                             ncpu = 10))
   
   ## check whether slots exist
   expect_true(all(c("START_PROB", "COVER_PROB","SUMMARY") %in% names(nomeR.out)))
