@@ -278,7 +278,8 @@ nomeR_predict <- function(data,
   ## convert data into list of lists
   if(verbose)
     .message_timestamp("Converting data matrix to data list...")
-  data <- .create_data_list(matr = data)
+  data <- .create_data_list(matr = data,
+                            ncpu = ncpu)
   
   ## convert cover priors to start priors and add them into binding_models
   if(verbose)
@@ -312,7 +313,8 @@ nomeR_predict <- function(data,
                             priorEM_max_steps, 
                             ncpu,
                             verbose)
-  
+  if(verbose)
+    .message_timestamp("convert cpp_nomeR output to data.frame...")
   lapply(out.list,as.data.frame,stringsAsFactors = FALSE)
   
 }
@@ -344,12 +346,14 @@ nomeR_predict <- function(data,
 #' @param matr A matrix containing NOMe-Seq data. Rows represent reads (or fragments), 
 #' columns represent position in an amplicon. NOTE that \code{data} must contain only positions of selected GpCs where '0' represent unprotected "C", 
 #' '1' represent protected "C" and all other positions must be filled with "NA".
+#' @param ncpu number of cores
 #' @return TBA
 #' 
 #'
 #' 
 #' 
-.create_data_list <- function(matr){
+.create_data_list <- function(matr,
+                              ncpu = 1L){
   ## check arguments
   arg.check <- ArgumentCheck::newArgCheck()
   if(!inherits(matr,"matrix")){
@@ -389,13 +393,14 @@ nomeR_predict <- function(data,
   
   
   
-  dat.out <- lapply(row.names(matr),function(nm){
-    seq <- matr[nm,]
-    #seq[is.na(seq)] <- 2
-    seq <- paste(seq,collapse = "")
-    list("DATA" = seq,
-         "NAME" = nm)
-  })
+  dat.out <- parallel::mclapply(row.names(matr),
+                                function(nm){
+                                  seq <- matr[nm,]
+                                  #seq[is.na(seq)] <- 2
+                                  seq <- paste(seq,collapse = "")
+                                  list("DATA" = seq,
+                                       "NAME" = nm)
+                                }, mc.cores = ncpu)
   dat.out
 }
 

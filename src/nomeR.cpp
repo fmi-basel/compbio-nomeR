@@ -13,7 +13,7 @@ DNAbind_obj_vector BINDING_OBJECTS;
 NOMeSeqData SEQUENCES;
 Forward_Backward_algorithm FORWARD_BACKWARD;
 int _NCPU_ = 1;
-
+bool _VERBOSE_ = 0;
 
 // [[Rcpp::export]]
 List run_cpp_nomeR(const List& data,
@@ -29,12 +29,15 @@ List run_cpp_nomeR(const List& data,
                       const NumericVector& Ncpu,
                       const LogicalVector& verbose
                       ) {
+  
+  //set verbose
+  extern bool _VERBOSE_;
+  _VERBOSE_ = as<bool >(verbose);
+  
   // set number of threads
-  
-  
   extern int _NCPU_;
   _NCPU_ = as<int >(Ncpu);
-  if(verbose){
+  if(_VERBOSE_){
     Rcout<<"Input Ncpu "<<Ncpu<<endl;
     Rcout<<"Set _NCPU_ "<<_NCPU_<<endl;
   }
@@ -53,7 +56,7 @@ List run_cpp_nomeR(const List& data,
   double priorEM_fit_tol_ = as<double >(priorEM_fit_tol);
   int priorEM_max_steps_ = as<int >(priorEM_max_steps);
   
-  if(verbose){
+  if(_VERBOSE_){
     Rcout<<"Creating PARAMS object..."<<endl;
   }
   PARAMS.setParams(bgcoverprob_,
@@ -69,7 +72,7 @@ List run_cpp_nomeR(const List& data,
   // create object with binding models
   
   
-  if(verbose){
+  if(_VERBOSE_){
     Rcout<<"Creating BINDING_OBJECTS object..."<<endl;
   }
   extern DNAbind_obj_vector BINDING_OBJECTS;
@@ -79,7 +82,7 @@ List run_cpp_nomeR(const List& data,
   // create object with NOMeSeq data
   extern NOMeSeqData SEQUENCES;
   
-  if(verbose){
+  if(_VERBOSE_){
     Rcout<<"Creating SEQUENCES object..."<<endl;
   }
   SEQUENCES.create(data,
@@ -87,26 +90,34 @@ List run_cpp_nomeR(const List& data,
   //SEQUENCES.PrintNames();
   
   extern Forward_Backward_algorithm FORWARD_BACKWARD;
-  if(verbose){
+  if(_VERBOSE_){
     Rcout<<"Creating FORWARD_BACKWARD object..."<<endl;
   }
   FORWARD_BACKWARD.Create();
   
   
   if(run_priorEM_){
-    if(verbose){
+    if(_VERBOSE_){
       Rcout<<"Running FORWARD_BACKWARD.Run_priorEM()..."<<endl;
     }
     FORWARD_BACKWARD.Run_priorEM();
   } else {
-    if(verbose){
+    if(_VERBOSE_){
       Rcout<<"Running FORWARD_BACKWARD.Run()..."<<endl;
     }
     FORWARD_BACKWARD.Run();
   }
-  
+  if(_VERBOSE_){
+    Rcout<<"Running FORWARD_BACKWARD.getStartProbDF()..."<<endl;
+  }
   List startProbdf = FORWARD_BACKWARD.getStartProbDF();
+  if(_VERBOSE_){
+    Rcout<<"Running FORWARD_BACKWARD.getCoverProbDF()..."<<endl;
+  }
   List coverProb = FORWARD_BACKWARD.getCoverProbDF();
+  if(_VERBOSE_){
+    Rcout<<"Running FORWARD_BACKWARD.getGenomeSummaryDF()..."<<endl;
+  }
   List genSummary = FORWARD_BACKWARD.getGenomeSummaryDF();
   List output_data = List::create( Named("START_PROB") = startProbdf,
                          Named("COVER_PROB") = coverProb,

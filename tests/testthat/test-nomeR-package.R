@@ -21,16 +21,18 @@ test_that("wrong parameters for run_nomeR are handled correctly",{
                           "COVER_PRIOR" = ft.pr,
                           "NAME" = "FOOTPRINT"))
   
-  expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
-                                            footprint_models = ftp.models,
-                                            bgprotectprob = 0.05,
-                                            bgcoverprior = bg.pr,
-                                            ncpu = 0))
-  expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
-                                            footprint_models = ftp.models,
-                                            bgprotectprob = 0.05,
-                                            bgcoverprior = bg.pr,
-                                            ncpu = Inf))
+  
+  # 
+  # expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
+  #                                           footprint_models = ftp.models,
+  #                                           bgprotectprob = 0.05,
+  #                                           bgcoverprior = bg.pr,
+  #                                           ncpu = 0))
+  # expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
+  #                                           footprint_models = ftp.models,
+  #                                           bgprotectprob = 0.05,
+  #                                           bgcoverprior = bg.pr,
+  #                                           ncpu = Inf))
   
   expect_error(nomeR.out <- nomeR_predict(data=rmatr,
                                             footprint_models = ftp.models,
@@ -62,7 +64,7 @@ test_that("nomeR returns correct object",{
                              footprint_models = ftp.models,
                              bgprotectprob = 0.05,
                              bgcoverprior = bg.pr,
-                             ncpu = 10))
+                             ncpu = 1L))
   
   ## check whether slots exist
   expect_true(all(c("START_PROB", "COVER_PROB","SUMMARY") %in% names(nomeR.out)))

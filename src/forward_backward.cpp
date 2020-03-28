@@ -81,6 +81,17 @@ bool Forward_Backward_algorithm::Create()
   	vector<double > tmp(7,0);
   	genomesummary.resize(print_names.size(),tmp);
   	
+  	
+  	// configure openMP
+  	extern int _NCPU_;
+  
+#ifdef _OPENMP
+  	if ( _NCPU_ > 1 )
+  	  omp_set_num_threads( _NCPU_ );
+  	
+  	REprintf("Number of threads=%i\n", omp_get_max_threads());
+#endif
+  	
 
 	return 1;
 }
@@ -204,16 +215,6 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 	
 	
 	// Parameters for OpenMP
-	
-	extern int _NCPU_;
-	Rcpp::Rcout<<"In FWBC _NCPU_ "<<_NCPU_<<endl;
-#ifdef _OPENMP
-	if ( _NCPU_ > 1 )
-	  omp_set_num_threads( _NCPU_ );
-	
-	REprintf("Number of threads=%i\n", omp_get_max_threads());
-#endif
-	
 	
 	// Rcpp::Rcout<<"In FWBC _NCPU_ "<<_NCPU_<<endl;
 	// 
@@ -459,50 +460,77 @@ vector<double > Forward_Backward_algorithm::getPriors(){
 
 
 void Forward_Backward_algorithm::SetGenomeSummary(){
-	for(int i=0;i<genomesummary.size();++i){
-		for(int j=0;j<genomesummary[i].size();++j)
-			genomesummary[i][j] = 0;
-	}
-	extern DNAbind_obj_vector BINDING_OBJECTS;
-  	extern NOMeSeqData SEQUENCES;
-	
-	for(int name=0;name<print_names.size();++name){
-		for(int seq =0;seq<Prob.size();++seq){
-			for(int pos = 1;pos <= SEQUENCES[seq].Size();++pos){
-				double totalprob=0;
-				for(int wm =0;wm<names2indicesinprobarray[name].size();++wm)
-					totalprob += Prob[seq][names2indicesinprobarray[name][wm]][pos];
+  for(int i=0;i<genomesummary.size();++i){
+    for(int j=0;j<genomesummary[i].size();++j)
+      genomesummary[i][j] = 0;
+  }
+  extern DNAbind_obj_vector BINDING_OBJECTS;
+  extern NOMeSeqData SEQUENCES;
+  
+  
+  
+  
+  for(int name=0;name<print_names.size();++name){
+    //double a0=0,a1=0,a2=0,a3=0,a4=0,a5=0,a6=0;
+    
+//#pragma omp parallel
+{
+//#pragma omp for schedule(dynamic) reduction (+:a0,a1,a2,a3,a4,a5,a6)
+  for(int seq =0;seq<Prob.size();++seq){
+    //int proc_id = 
+    Rcpp::Rcout<<"Process id: "<<omp_get_thread_num()<<endl;
+    for(int pos = 1;pos <= SEQUENCES[seq].Size();++pos){
+      double totalprob=0;
+      for(int wm =0;wm<names2indicesinprobarray[name].size();++wm)
+        totalprob += Prob[seq][names2indicesinprobarray[name][wm]][pos];
+      
+      genomesummary[name][0] += totalprob;
+      genomesummary[name][1] += totalprob;
+      genomesummary[name][2] += BINDING_OBJECTS[names2indexes[name][0]]->len * totalprob/SEQUENCES.TotalLength();
+      // a0 += totalprob;
+      // a1 += totalprob;
+      // a2 += BINDING_OBJECTS[names2indexes[name][0]]->len * totalprob/SEQUENCES.TotalLength();
+      if(totalprob < 0.5){
+        genomesummary[name][3] += totalprob;
+        genomesummary[name][5]++;
+        // a3 += totalprob;
+        // a5++;
+      }
+      else{
+        genomesummary[name][4] += totalprob;
+        genomesummary[name][6]++;
+        // a4 += totalprob;
+        // a6++;
+      }
+      
+      
+    }
+  }
+  
+}
+// genomesummary[name][0] = a0;
+// genomesummary[name][1] = a1;
+// genomesummary[name][2] = a2;
+// genomesummary[name][3] = a3;
+// genomesummary[name][5] = a5;
+// genomesummary[name][4] = a4;
+// genomesummary[name][6] = a6;
 
-				genomesummary[name][0] += totalprob;
-				genomesummary[name][1] += totalprob;
-				genomesummary[name][2] += BINDING_OBJECTS[names2indexes[name][0]]->len * totalprob/SEQUENCES.TotalLength();
-				if(totalprob < 0.5){
-					genomesummary[name][3] += totalprob;
-					genomesummary[name][5]++;
-				}
-				else{
-					genomesummary[name][4] += totalprob;
-					genomesummary[name][6]++;
-				}
-
-				
-			}
-		}
-	}
-	// calculate priors as ratio between number of sites and total number of sites for all binding objects
-	double allobjtot = 0;
-	for(int wm=0; wm<BINDING_OBJECTS.Size();++wm){
-		for(int seq =0;seq<Prob.size();++seq){
-			for(int pos = 1;pos <= SEQUENCES[seq].Size();++pos){
-				allobjtot += Prob[seq][wm][pos];
-			}
-		}
-	}
-
-	for(int name=0;name<print_names.size();++name){
-		genomesummary[name][0] /= allobjtot;
-	}
-
+  }
+  // calculate priors as ratio between number of sites and total number of sites for all binding objects
+  double allobjtot = 0;
+  for(int wm=0; wm<BINDING_OBJECTS.Size();++wm){
+    for(int seq =0;seq<Prob.size();++seq){
+      for(int pos = 1;pos <= SEQUENCES[seq].Size();++pos){
+        allobjtot += Prob[seq][wm][pos];
+      }
+    }
+  }
+  
+  for(int name=0;name<print_names.size();++name){
+    genomesummary[name][0] /= allobjtot;
+  }
+  
 }
 
 
@@ -635,6 +663,10 @@ Rcpp::List  Forward_Backward_algorithm::getStartProbDF(){
   for(int i=0;i<print_names.size();++i){
     //Rcpp::NumericVector stprob;
     vector<double > stprob;
+    
+// #pragma omp parallel private(seq)
+// {
+//#pragma omp for schedule(dynamic)
     for(int seq=0;seq < SEQUENCES.Size();seq++){
       int firstDatPos = SEQUENCES[seq].firstDatpos;
       int lastDatPos = SEQUENCES[seq].lastDatpos;
@@ -661,6 +693,7 @@ Rcpp::List  Forward_Backward_algorithm::getStartProbDF(){
       
       
     }
+// }
     out_list.push_back(Rcpp::wrap(stprob),print_names[i]);
 
   }
@@ -705,9 +738,11 @@ Rcpp::List  Forward_Backward_algorithm::getCoverProbDF(){
   //out_list.push_back(Rcpp::as<Rcpp::IntegerVector>(positions),"pos");
   
   // fill coverage probabilities
+
   for(int i=0;i<print_names.size();++i){
     //Rcpp::NumericVector stprob;
     vector<double > covprob;
+//#pragma omp for schedule(dynamic)
     for(int seq=0;seq < SEQUENCES.Size();seq++){
       int firstDatPos = SEQUENCES[seq].firstDatpos;
       int lastDatPos = SEQUENCES[seq].lastDatpos;
