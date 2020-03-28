@@ -5,6 +5,7 @@
 .Ruserdata
 *.o
 *.so
+src/nomeR.so
 Makefile
 info.txt
 TEST_MODEL/*
