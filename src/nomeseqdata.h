@@ -48,7 +48,7 @@ public:
   // function for counting occurrences of 0,0; 0,1 etc at spacing S
   vector<vector<int> > count_freq_for_spacings(int maxSpacing) const;
   // function to export spacing frequencies into R
-  Rcpp::List R_export_spacing_freq(int maxSpacing) const;
+  //Rcpp::List R_export_spacing_freq(int maxSpacing) const;
 };
 
 #endif

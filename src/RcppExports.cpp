@@ -40,10 +40,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// calculate_theor_joint_prob_cpp
+List calculate_theor_joint_prob_cpp(const NumericVector& ftp_cover_priors, const NumericVector& bg_protect_prob, const NumericVector& footprint_protect_prob, const IntegerVector& max_spacing);
+RcppExport SEXP _nomeR_calculate_theor_joint_prob_cpp(SEXP ftp_cover_priorsSEXP, SEXP bg_protect_probSEXP, SEXP footprint_protect_probSEXP, SEXP max_spacingSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type ftp_cover_priors(ftp_cover_priorsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type bg_protect_prob(bg_protect_probSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type footprint_protect_prob(footprint_protect_probSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type max_spacing(max_spacingSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_theor_joint_prob_cpp(ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 12},
     {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 3},
+    {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
     {NULL, NULL, 0}
 };
 

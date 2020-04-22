@@ -141,24 +141,26 @@ void NOMeSeqData::clear(){
 vector<vector<int> > NOMeSeqData::count_freq_for_spacings(int maxSpacing) const
 {
   // here the spacing 0 means that positions are adjacent and gap between them is 0
+  // however output S will be stating from 1
   // create output vector of vectors
-  vector<vector<int> > freq_mat;
-  Rcpp::Rcout<<"Counting frequencies for spacings!"<<endl;
+  vector<vector<int > > freq_mat;
+  //Rcpp::Rcout<<"Counting frequencies for spacings!"<<endl;
+  
   // for each spacing 0:maxSpacing
-  for(int s=0; s<=maxSpacing; ++s){
-    vector<int > freq_vec(7,0); // columns are Spacing, 0,0; 0,1; 0,2; 1,0; 1,1; 1,2.
-    freq_vec[0] = s;
+  for(int s=0; s < maxSpacing; ++s){
+    vector<int > freq_vec(10,0); // columns are Spacing, 0,0; 0,1; 0,2; 1,0; 1,1; 1,2; 2,0; 2,1; 2,2
+    freq_vec[0] = s + 1;
     // for each sequence
     for(int seq=0; seq < _numofseq; ++seq){
       Sequence sequence = _sequences[seq];
       int seq_len = sequence.Size();
       // go from first position to the last - s + 1
       // note that we go across all position, i.e. including those that we artifically added and filled with NAs(2's)
-      for(int pos=0; pos < seq_len - s - 10; pos++){
-        Rcpp::Rcout<<"Spacing= "<<s<<"; seq= "<<seq<<"; pos="<<pos<<endl;
+      for(int pos=0; pos < seq_len - s; pos++){
+        //Rcpp::Rcout<<"Spacing= "<<s<<"; seq= "<<seq<<"; pos="<<pos<<endl;
         int letter_pos = sequence[pos];
-        int letter_spac = sequence[pos + s - 1];
-        Rcpp::Rcout<<"Spacing= "<<s<<"; seq= "<<seq<<"; pos="<<pos<<"; let_pos="<<letter_pos<<"; let_spac="<<letter_spac<<endl;
+        int letter_spac = sequence[pos + s];
+        //Rcpp::Rcout<<"Spacing= "<<s<<"; seq= "<<seq<<"; pos="<<pos<<"; let_pos="<<letter_pos<<"; let_spac="<<letter_spac<<endl;
         // int letter_pos = 0;
         // int letter_spac = 0;
 
@@ -174,9 +176,15 @@ vector<vector<int> > NOMeSeqData::count_freq_for_spacings(int maxSpacing) const
           freq_vec[5]++;
         } else if(letter_pos == 1 && letter_spac == 2){
           freq_vec[6]++;
-        } else {
-          
-          
+        } else if(letter_pos == 2 && letter_spac == 0){
+          freq_vec[7]++;
+        } else if(letter_pos == 2 && letter_spac == 1){
+          freq_vec[8]++;
+        }
+        else if(letter_pos == 2 && letter_spac == 2){
+          freq_vec[9]++;
+        }
+        else {
           Rcpp::Rcerr<<"NOMeSeqData::count_freq_for_spacings: ERROR! Unknown combination "<<letter_pos<<","<<letter_spac<<" encountered!\n";
           Rcpp::stop("");
           // 
@@ -192,44 +200,48 @@ vector<vector<int> > NOMeSeqData::count_freq_for_spacings(int maxSpacing) const
   return freq_mat;
 }
 
-Rcpp::List NOMeSeqData::R_export_spacing_freq(int maxSpacing) const
-{
-  
-  Rcpp::Rcout<<"In R_export_spacing_freq"<<endl;
-  vector<vector<int> > freq_mat = count_freq_for_spacings(maxSpacing);
-  // 
-  // vector<int > spacings;
-  // vector<int > freq00;
-  // vector<int > freq01;
-  // vector<int > freq02;
-  // vector<int > freq10;
-  // vector<int > freq11;
-  // vector<int > freq12;
-  // 
-  // for(int i=0; i<freq_mat.size(); ++i){
-  //   spacings.push_back(freq_mat[i][0]);
-  //   freq00.push_back(freq_mat[i][1]);
-  //   freq01.push_back(freq_mat[i][2]);
-  //   freq02.push_back(freq_mat[i][3]);
-  //   freq10.push_back(freq_mat[i][4]);
-  //   freq11.push_back(freq_mat[i][5]);
-  //   freq12.push_back(freq_mat[i][6]);
-  // }
-  // 
-  // Rcpp::List export_list;
-  // 
-  // export_list.push_back(Rcpp::wrap(spacings),"Spacing");
-  // export_list.push_back(Rcpp::wrap(freq00),"N(0,0)");
-  // export_list.push_back(Rcpp::wrap(freq01),"N(0,1)");
-  // export_list.push_back(Rcpp::wrap(freq02),"N(0,NA)");
-  // export_list.push_back(Rcpp::wrap(freq10),"N(1,0)");
-  // export_list.push_back(Rcpp::wrap(freq11),"N(1,1)");
-  // export_list.push_back(Rcpp::wrap(freq12),"N(1,NA)");
-  // 
-  // return export_list;
-  
-  Rcpp::List export_list;
-  return export_list;
-  
-}
+// Rcpp::List NOMeSeqData::R_export_spacing_freq(int maxSpacing) const
+// {
+//   
+//   //Rcpp::Rcout<<"In R_export_spacing_freq"<<endl;
+//   vector<vector<int> > freq_mat = count_freq_for_spacings(maxSpacing);
+// 
+//   vector<int > spacings;
+//   vector<int > freq00;
+//   vector<int > freq01;
+//   vector<int > freq02;
+//   vector<int > freq10;
+//   vector<int > freq11;
+//   vector<int > freq12;
+// 
+//   vector<int > freq20;
+//   vector<int > freq21;
+//   for(int i=0; i<freq_mat.size(); ++i){
+//     spacings.push_back(freq_mat[i][0]);
+//     freq00.push_back(freq_mat[i][1]);
+//     freq01.push_back(freq_mat[i][2]);
+//     freq02.push_back(freq_mat[i][3]);
+//     freq10.push_back(freq_mat[i][4]);
+//     freq11.push_back(freq_mat[i][5]);
+//     freq12.push_back(freq_mat[i][6]);
+//     freq20.push_back(freq_mat[i][7]);
+//     freq21.push_back(freq_mat[i][8]);
+//     
+//   }
+// 
+//   Rcpp::List export_list;
+// 
+//   export_list.push_back(Rcpp::wrap(spacings),"Spacing");
+//   export_list.push_back(Rcpp::wrap(freq00),"N00");
+//   export_list.push_back(Rcpp::wrap(freq01),"N01");
+//   export_list.push_back(Rcpp::wrap(freq10),"N10");
+//   export_list.push_back(Rcpp::wrap(freq11),"N11");
+//   export_list.push_back(Rcpp::wrap(freq02),"N0na");
+//   export_list.push_back(Rcpp::wrap(freq12),"N1na");
+//   export_list.push_back(Rcpp::wrap(freq20),"Nna0");
+//   export_list.push_back(Rcpp::wrap(freq21),"Nna1");
+//   return export_list;
+//   
+//   
+// }
 

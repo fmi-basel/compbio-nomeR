@@ -9,5 +9,8 @@ src/nomeR.so
 Makefile
 info.txt
 TEST_MODEL/*
+RDS/*
+PLOTS/*
+TABLES/*
 autom4te.cache/*
 TODO

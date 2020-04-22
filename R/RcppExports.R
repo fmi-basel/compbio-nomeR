@@ -9,3 +9,7 @@ count_spacing_freq_cpp <- function(data, maxspacing, maxwmlen) {
     .Call(`_nomeR_count_spacing_freq_cpp`, data, maxspacing, maxwmlen)
 }
 
+calculate_theor_joint_prob_cpp <- function(ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing) {
+    .Call(`_nomeR_calculate_theor_joint_prob_cpp`, ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing)
+}
+
