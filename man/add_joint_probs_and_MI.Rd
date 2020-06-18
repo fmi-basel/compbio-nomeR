@@ -2,7 +2,99 @@
 % Please edit documentation in R/nomeR-package.R
 \name{add_joint_probs_and_MI}
 \alias{add_joint_probs_and_MI}
-\title{Add to a \code{data.frame} with empirical joint frequencies columns with empirical joint probabilities as well as mutual information}
+\title{#' Test function to get prior estimates from empirical joint probs. Not bayesian setting
+#'
+#' @param count.data 
+#' @param max.footprint.len 
+#' @param bg.protect.prob 
+#' @param footprint.protect.prob 
+#'
+#' @return
+#' @export
+#'
+infer_cover_priors8 <- function(count.data,
+                                max.footprint.len,
+                                bg.protect.prob,
+                                footprint.protect.prob
+){
+  #browser()
+  P0 <- subset(count.data,S == 1)$P00
+  P1 <- subset(count.data,S == 1)$P11
+  
+  count.data <- count.data[order(count.data$S),]
+  
+  beta1 <- bg.protect.prob
+  beta0 <- 1-beta1
+  alpha1 <- footprint.protect.prob
+  alpha0 <- 1- alpha1
+  
+  alpha1_vec <- c(beta1,rep(alpha1,max.footprint.len - 1))
+  alpha0_vec <- 1 - alpha1_vec
+  
+  bg_prior <- (P0 - alpha0)/(beta0 - alpha0)
+  
+  
+  P11 <- count.data$P11 
+  names(P11) <- count.data$S
+  P00 <- count.data$P00
+  names(P00) <- count.data$S
+  
+  
+  sigma_vec <- setNames(vector(mode="numeric",
+                               length = max(count.data$S)),
+                        1:max(count.data$S))
+  sigma_vec[] <- NA
+  est_priors <- setNames(vector(mode="numeric",
+                                length = max.footprint.len),
+                         1:max.footprint.len)
+  est_priors[] <- NA
+  
+  ### calculate initial conditions 
+  bg_start_prior <- 1/(beta0 - alpha0) * (alpha1 * P00["2"] + alpha0 * (P11["2"] - alpha1))/(P00["2"] - P11["2"] + alpha1 - P00["1"])
+  
+  #sigma_vec["1"] <- 1/(beta0 - alpha0) * (alpha1 * P00["2"] + alpha0 * (P11["2"] - alpha1))/(P00["1"] - alpha0)
+  sigma_vec["1"] <- bg_start_prior
+  C1 <- unname(bg_prior * (alpha1 + (beta1 - alpha1)* bg_start_prior)/bg_start_prior)
+  C0 <- unname(bg_prior * (alpha0 + (beta0 - alpha0)* bg_start_prior)/bg_start_prior)
+  
+  tmp.cnt.dat <- subset(count.data,S >=2)
+  Y00 <- setNames((tmp.cnt.dat$P00 - P0 * alpha0)/(beta0 - alpha0),
+                  tmp.cnt.dat$S)
+  Y01 <- setNames((tmp.cnt.dat$P01 - P0 * alpha1)/(beta1 - alpha1),
+                  tmp.cnt.dat$S)
+  
+  
+  Y10 <- setNames((tmp.cnt.dat$P10 - P1 * alpha0)/(beta0 - alpha0),
+                  tmp.cnt.dat$S)
+  Y11 <- setNames((tmp.cnt.dat$P11 - P1 * alpha1)/(beta1 - alpha1),
+                  tmp.cnt.dat$S)
+  
+  
+  sigma_vec["2"] <- 1/C1 * (Y11["3"] + bg_prior * beta1 * sigma_vec["1"])
+  est_priors["1"] <- bg_prior
+  #browser()
+  Y00 <- (Y00 + Y01)/2
+  Y11 <- (Y11 + Y10)/2
+  for(S in 3:(max.footprint.len + 1)){
+    ## calc Z
+    Z1 <- sum(est_priors[1:(S-2)]/(1:(S-2)) * sigma_vec[S-1:(S-2)] * alpha1_vec[1:(S-2)])
+    Z0 <- sum(est_priors[1:(S-2)]/(1:(S-2)) * sigma_vec[S-1:(S-2)] * alpha0_vec[1:(S-2)])
+    
+    est_priors[S-1] <- (S-1)/sigma_vec[1] * (C0/(alpha0 * C1 - alpha1)) * (Y11[as.character(S+1)] - C1/C0 * Y00[as.character(S+1)] + Z1 - C1/C0 * Z0)
+    
+    ## shall we set it to 0 if it is negative?
+    # if(est_priors[S-1] < 0){
+    #   est_priors[S-1] <- 0
+    # }
+    
+    sigma_vec[S] <- 1/C0 * (Y00[as.character(S+1)] +  Z0 + alpha0 * est_priors[S-1]/(S-1) * sigma_vec[1])
+    
+  }
+  
+  return(est_priors)
+  
+  #browser()
+}}
 \usage{
 add_joint_probs_and_MI(emp_joint_frequencies)
 }

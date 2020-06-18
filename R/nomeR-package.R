@@ -405,27 +405,47 @@ nomeR_predict <- function(data,
 }
 
 
+truncate_footprint_overhangs <- function(data,trunc_until_nbg = 1L){
+  invert_data <- 1 - data
+  invert_data[is.na(invert_data)] <- 0
+  
+  trunc_data <- do.call(rbind,lapply(1:nrow(data),
+                       function(irow){
+                         row_dat <- data[irow,]
+                         cols_to_truncate <- cumsum(invert_data[irow,]) <= trunc_until_nbg | rev(cumsum(rev(invert_data[irow,]))) <= trunc_until_nbg
+                         if(any(cols_to_truncate)){
+                          row_dat[cols_to_truncate] <- NA
+                         }
+                         return(row_dat)
+                       }))
+  return(trunc_data)
+}
 
-#' Function for creating contingency tables of frequencing have 0,0; 0,1, 0,NA etc with spacing S between them
+
+
+
+
+#' Create contingency table for 00, 01, 10, 11, etc occurences
 #'
-#' @param data A list containing preprocessed NOMe-Seq data returned from \code{create_data_list}.
-#' @param maxspacing Maximum spcaing between positions.
-#' @param maxwmlen A priori maximum length of possible footprint in the data.
-#' If \code{maxwmlen} is not 0, then the sequences are flanked by NA filled artificial sequences on the left and on the right.
-#'
-#' @return data.frame containing frequencies for 0,0; 0,1; etc for each spacing between 0 (no gap, adjacent positions) and \code{maxspacing}
+#' @param data A matrix containing NOMe-Seq data for an amplicon.
+#' @param max_spacing Maximum spacing between positions.
+#' @param max_ftplen A priori maximum length of possible footprint in the data.
+#' If \code{max_ftplen} is not 0, then the sequences are extended by \code{max_ftplen} on the left and on the right and filled with NA.
+#' @param ncpu number of cores to use
+#' 
+#' @return data.frame containing frequencies for 0,0; 0,1; etc for each spacing between 1 (total number of 0s and 1 in the data) and \code{max_spacing}
 #'
 #' @export
 #' 
 #' 
-count_joint_frequencies <- function(data, maxspacing, maxwmlen = 0L,ncpu=1L){
+count_joint_frequencies <- function(data, max_spacing, max_ftplen = 0L,ncpu=1L){
   
   #message(paste0("R function for counting spacing frequencies"))
   
   data <- .create_data_list(matr = data,
                             ncpu = ncpu)
   #browser()
-  out_data <- count_spacing_freq_cpp(data, maxspacing, maxwmlen)
+  out_data <- count_spacing_freq_cpp(data, max_spacing, max_ftplen)
   return(as.data.frame(out_data))
 }
 
@@ -444,7 +464,9 @@ count_joint_frequencies <- function(data, maxspacing, maxwmlen = 0L,ncpu=1L){
 #' @param footprint_protect_prob emission probability for footprints for \code{1}.
 #' @param max_spacing maximum distance
 #'
-#' @return
+#' @return \code{data.frame} containing columns: 
+#' \code{S} - distance where \code{S = 1} corresponds to the same position and probabilities are marginal probabilities to observe 0 and 1; 
+#' \code{P00}, \code{P01}, \code{P10}, \code{P11} - calculated theoretical \code{P(0,0|S)}, \code{P(0,1|S)}, \code{P(1,0|S)}, \code{P(1,1|S)}.
 #' @export
 #'
 calculate_theor_joint <- function(ftp_cover_priors, # here vector of priors also represent lengths, namely ith element of the vector has length i+1, e.g. ftp_cover_priors[0] is a prior for bg with length 1. Make sure that R function passes correct vector with priors
@@ -476,7 +498,7 @@ calculate_theor_joint <- function(ftp_cover_priors, # here vector of priors also
 #' @param GpC_param if scalar between 0 and 1 treated as percentage of GpC pos. If vector of integers treated as predefined positions of GpC.
 #' @param extend_ampl whether to extend amplicon by \code{max(length(footprint_models))} and fill it with \code{NA}.
 #'
-#' @return
+#' @return TODO
 #' @export
 #'
 #' @examples
@@ -763,100 +785,100 @@ generate_synthetic_NOME_data <- function(amplicon_len, # length of the apmlicon
 
 
 
-#' Test function to get prior estimates from empirical joint probs. Not bayesian setting
-#'
-#' @param count.data 
-#' @param max.footprint.len 
-#' @param bg.protect.prob 
-#' @param footprint.protect.prob 
-#'
-#' @return
-#' @export
-#'
-infer_cover_priors8 <- function(count.data,
-                                max.footprint.len,
-                                bg.protect.prob,
-                                footprint.protect.prob
-){
-  #browser()
-  P0 <- subset(count.data,S == 1)$P00
-  P1 <- subset(count.data,S == 1)$P11
-  
-  count.data <- count.data[order(count.data$S),]
-  
-  beta1 <- bg.protect.prob
-  beta0 <- 1-beta1
-  alpha1 <- footprint.protect.prob
-  alpha0 <- 1- alpha1
-  
-  alpha1_vec <- c(beta1,rep(alpha1,max.footprint.len - 1))
-  alpha0_vec <- 1 - alpha1_vec
-  
-  bg_prior <- (P0 - alpha0)/(beta0 - alpha0)
-  
-  
-  P11 <- count.data$P11 
-  names(P11) <- count.data$S
-  P00 <- count.data$P00
-  names(P00) <- count.data$S
-  
-  
-  sigma_vec <- setNames(vector(mode="numeric",
-                               length = max(count.data$S)),
-                        1:max(count.data$S))
-  sigma_vec[] <- NA
-  est_priors <- setNames(vector(mode="numeric",
-                                length = max.footprint.len),
-                         1:max.footprint.len)
-  est_priors[] <- NA
-  
-  ### calculate initial conditions 
-  bg_start_prior <- 1/(beta0 - alpha0) * (alpha1 * P00["2"] + alpha0 * (P11["2"] - alpha1))/(P00["2"] - P11["2"] + alpha1 - P00["1"])
-  
-  #sigma_vec["1"] <- 1/(beta0 - alpha0) * (alpha1 * P00["2"] + alpha0 * (P11["2"] - alpha1))/(P00["1"] - alpha0)
-  sigma_vec["1"] <- bg_start_prior
-  C1 <- unname(bg_prior * (alpha1 + (beta1 - alpha1)* bg_start_prior)/bg_start_prior)
-  C0 <- unname(bg_prior * (alpha0 + (beta0 - alpha0)* bg_start_prior)/bg_start_prior)
-  
-  tmp.cnt.dat <- subset(count.data,S >=2)
-  Y00 <- setNames((tmp.cnt.dat$P00 - P0 * alpha0)/(beta0 - alpha0),
-                  tmp.cnt.dat$S)
-  Y01 <- setNames((tmp.cnt.dat$P01 - P0 * alpha1)/(beta1 - alpha1),
-                  tmp.cnt.dat$S)
-  
-  
-  Y10 <- setNames((tmp.cnt.dat$P10 - P1 * alpha0)/(beta0 - alpha0),
-                  tmp.cnt.dat$S)
-  Y11 <- setNames((tmp.cnt.dat$P11 - P1 * alpha1)/(beta1 - alpha1),
-                  tmp.cnt.dat$S)
-  
-  
-  sigma_vec["2"] <- 1/C1 * (Y11["3"] + bg_prior * beta1 * sigma_vec["1"])
-  est_priors["1"] <- bg_prior
-  #browser()
-  Y00 <- (Y00 + Y01)/2
-  Y11 <- (Y11 + Y10)/2
-  for(S in 3:(max.footprint.len + 1)){
-    ## calc Z
-    Z1 <- sum(est_priors[1:(S-2)]/(1:(S-2)) * sigma_vec[S-1:(S-2)] * alpha1_vec[1:(S-2)])
-    Z0 <- sum(est_priors[1:(S-2)]/(1:(S-2)) * sigma_vec[S-1:(S-2)] * alpha0_vec[1:(S-2)])
-    
-    est_priors[S-1] <- (S-1)/sigma_vec[1] * (C0/(alpha0 * C1 - alpha1)) * (Y11[as.character(S+1)] - C1/C0 * Y00[as.character(S+1)] + Z1 - C1/C0 * Z0)
-    
-    ## shall we set it to 0 if it is negative?
-    # if(est_priors[S-1] < 0){
-    #   est_priors[S-1] <- 0
-    # }
-    
-    sigma_vec[S] <- 1/C0 * (Y00[as.character(S+1)] +  Z0 + alpha0 * est_priors[S-1]/(S-1) * sigma_vec[1])
-    
-  }
-  
-  return(est_priors)
-  
-  #browser()
-}
-
+#' #' Test function to get prior estimates from empirical joint probs. Not bayesian setting
+#' #'
+#' #' @param count.data 
+#' #' @param max.footprint.len 
+#' #' @param bg.protect.prob 
+#' #' @param footprint.protect.prob 
+#' #'
+#' #' @return
+#' #' @export
+#' #'
+#' infer_cover_priors8 <- function(count.data,
+#'                                 max.footprint.len,
+#'                                 bg.protect.prob,
+#'                                 footprint.protect.prob
+#' ){
+#'   #browser()
+#'   P0 <- subset(count.data,S == 1)$P00
+#'   P1 <- subset(count.data,S == 1)$P11
+#'   
+#'   count.data <- count.data[order(count.data$S),]
+#'   
+#'   beta1 <- bg.protect.prob
+#'   beta0 <- 1-beta1
+#'   alpha1 <- footprint.protect.prob
+#'   alpha0 <- 1- alpha1
+#'   
+#'   alpha1_vec <- c(beta1,rep(alpha1,max.footprint.len - 1))
+#'   alpha0_vec <- 1 - alpha1_vec
+#'   
+#'   bg_prior <- (P0 - alpha0)/(beta0 - alpha0)
+#'   
+#'   
+#'   P11 <- count.data$P11 
+#'   names(P11) <- count.data$S
+#'   P00 <- count.data$P00
+#'   names(P00) <- count.data$S
+#'   
+#'   
+#'   sigma_vec <- setNames(vector(mode="numeric",
+#'                                length = max(count.data$S)),
+#'                         1:max(count.data$S))
+#'   sigma_vec[] <- NA
+#'   est_priors <- setNames(vector(mode="numeric",
+#'                                 length = max.footprint.len),
+#'                          1:max.footprint.len)
+#'   est_priors[] <- NA
+#'   
+#'   ### calculate initial conditions 
+#'   bg_start_prior <- 1/(beta0 - alpha0) * (alpha1 * P00["2"] + alpha0 * (P11["2"] - alpha1))/(P00["2"] - P11["2"] + alpha1 - P00["1"])
+#'   
+#'   #sigma_vec["1"] <- 1/(beta0 - alpha0) * (alpha1 * P00["2"] + alpha0 * (P11["2"] - alpha1))/(P00["1"] - alpha0)
+#'   sigma_vec["1"] <- bg_start_prior
+#'   C1 <- unname(bg_prior * (alpha1 + (beta1 - alpha1)* bg_start_prior)/bg_start_prior)
+#'   C0 <- unname(bg_prior * (alpha0 + (beta0 - alpha0)* bg_start_prior)/bg_start_prior)
+#'   
+#'   tmp.cnt.dat <- subset(count.data,S >=2)
+#'   Y00 <- setNames((tmp.cnt.dat$P00 - P0 * alpha0)/(beta0 - alpha0),
+#'                   tmp.cnt.dat$S)
+#'   Y01 <- setNames((tmp.cnt.dat$P01 - P0 * alpha1)/(beta1 - alpha1),
+#'                   tmp.cnt.dat$S)
+#'   
+#'   
+#'   Y10 <- setNames((tmp.cnt.dat$P10 - P1 * alpha0)/(beta0 - alpha0),
+#'                   tmp.cnt.dat$S)
+#'   Y11 <- setNames((tmp.cnt.dat$P11 - P1 * alpha1)/(beta1 - alpha1),
+#'                   tmp.cnt.dat$S)
+#'   
+#'   
+#'   sigma_vec["2"] <- 1/C1 * (Y11["3"] + bg_prior * beta1 * sigma_vec["1"])
+#'   est_priors["1"] <- bg_prior
+#'   #browser()
+#'   Y00 <- (Y00 + Y01)/2
+#'   Y11 <- (Y11 + Y10)/2
+#'   for(S in 3:(max.footprint.len + 1)){
+#'     ## calc Z
+#'     Z1 <- sum(est_priors[1:(S-2)]/(1:(S-2)) * sigma_vec[S-1:(S-2)] * alpha1_vec[1:(S-2)])
+#'     Z0 <- sum(est_priors[1:(S-2)]/(1:(S-2)) * sigma_vec[S-1:(S-2)] * alpha0_vec[1:(S-2)])
+#'     
+#'     est_priors[S-1] <- (S-1)/sigma_vec[1] * (C0/(alpha0 * C1 - alpha1)) * (Y11[as.character(S+1)] - C1/C0 * Y00[as.character(S+1)] + Z1 - C1/C0 * Z0)
+#'     
+#'     ## shall we set it to 0 if it is negative?
+#'     # if(est_priors[S-1] < 0){
+#'     #   est_priors[S-1] <- 0
+#'     # }
+#'     
+#'     sigma_vec[S] <- 1/C0 * (Y00[as.character(S+1)] +  Z0 + alpha0 * est_priors[S-1]/(S-1) * sigma_vec[1])
+#'     
+#'   }
+#'   
+#'   return(est_priors)
+#'   
+#'   #browser()
+#' }
+#' 
 
 
 

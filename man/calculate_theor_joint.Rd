@@ -22,7 +22,9 @@ IMPORTANT! This must be a vector where \code{ftp_cover_priors[1]} is coverage pr
 \item{max_spacing}{maximum distance}
 }
 \value{
-
+\code{data.frame} containing columns: 
+\code{S} - distance where \code{S = 1} corresponds to the same position and probabilities are marginal probabilities to observe 0 and 1; 
+\code{P00}, \code{P01}, \code{P10}, \code{P11} - calculated theoretical \code{P(0,0|S)}, \code{P(0,1|S)}, \code{P(1,0|S)}, \code{P(1,1|S)}.
 }
 \description{
 Using assumption that all non-background footprints have the same emission probabilities we calculate 

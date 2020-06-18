@@ -2,21 +2,23 @@
 % Please edit documentation in R/nomeR-package.R
 \name{count_joint_frequencies}
 \alias{count_joint_frequencies}
-\title{Function for creating contingency tables of frequencing have 0,0; 0,1, 0,NA etc with spacing S between them}
+\title{Create contingency table for 00, 01, 10, 11, etc occurences}
 \usage{
-count_joint_frequencies(data, maxspacing, maxwmlen = 0L, ncpu = 1L)
+count_joint_frequencies(data, max_spacing, max_ftplen = 0L, ncpu = 1L)
 }
 \arguments{
-\item{data}{A list containing preprocessed NOMe-Seq data returned from \code{create_data_list}.}
+\item{data}{A matrix containing NOMe-Seq data for an amplicon.}
 
-\item{maxspacing}{Maximum spcaing between positions.}
+\item{max_spacing}{Maximum spacing between positions.}
 
-\item{maxwmlen}{A priori maximum length of possible footprint in the data.
-If \code{maxwmlen} is not 0, then the sequences are flanked by NA filled artificial sequences on the left and on the right.}
+\item{max_ftplen}{A priori maximum length of possible footprint in the data.
+If \code{max_ftplen} is not 0, then the sequences are extended by \code{max_ftplen} on the left and on the right and filled with NA.}
+
+\item{ncpu}{number of cores to use}
 }
 \value{
-data.frame containing frequencies for 0,0; 0,1; etc for each spacing between 0 (no gap, adjacent positions) and \code{maxspacing}
+data.frame containing frequencies for 0,0; 0,1; etc for each spacing between 1 (total number of 0s and 1 in the data) and \code{max_spacing}
 }
 \description{
-Function for creating contingency tables of frequencing have 0,0; 0,1, 0,NA etc with spacing S between them
+Create contingency table for 00, 01, 10, 11, etc occurences
 }

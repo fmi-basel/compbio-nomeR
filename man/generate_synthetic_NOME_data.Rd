@@ -27,7 +27,7 @@ generate_synthetic_NOME_data(
 \item{extend_ampl}{whether to extend amplicon by \code{max(length(footprint_models))} and fill it with \code{NA}.}
 }
 \value{
-
+TODO
 }
 \description{
 Generate synthetic NOME-Seq like dataset
