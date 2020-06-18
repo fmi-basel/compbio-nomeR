@@ -86,7 +86,7 @@ bool Forward_Backward_algorithm::Create()
   	extern int _NCPU_;
   
 #ifdef _OPENMP
-  	if ( _NCPU_ > 1 )
+  	if ( _NCPU_ >= 1 )
   	  omp_set_num_threads( _NCPU_ );
   	
   	REprintf("Number of threads=%i\n", omp_get_max_threads());
@@ -478,7 +478,7 @@ void Forward_Backward_algorithm::SetGenomeSummary(){
 //#pragma omp for schedule(dynamic) reduction (+:a0,a1,a2,a3,a4,a5,a6)
   for(int seq =0;seq<Prob.size();++seq){
     //int proc_id = 
-    Rcpp::Rcout<<"Process id: "<<omp_get_thread_num()<<endl;
+    //Rcpp::Rcout<<"Process id: "<<omp_get_thread_num()<<endl;
     for(int pos = 1;pos <= SEQUENCES[seq].Size();++pos){
       double totalprob=0;
       for(int wm =0;wm<names2indicesinprobarray[name].size();++wm)

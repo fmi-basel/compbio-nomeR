@@ -7,10 +7,25 @@ Authors@R: person(given = "Evgeniy A.", family="Ozonov", email = "evgeniy.ozonov
 Description: This package allows to disentangle binding patterns of nucleosomes and transcription factors in NOMe-Seq data using probabilistic model.
 License: MIT + file LICENSE
 Imports: 
-    Rcpp (>= 0.12.17),
     ArgumentCheck,
-    parallel
+    methods,
+    parallel,
+    Rcpp (>= 0.12.17),
+    rstan (>= 2.18.1),
+    rstantools (>= 2.0.0),
+    truncdist,
+    extraDistr,
+    stats
 Suggests: testthat
-LinkingTo: Rcpp
+LinkingTo: 
+    BH (>= 1.66.0),
+    Rcpp (>= 0.12.0),
+    RcppEigen (>= 0.3.3.3.0),
+    rstan (>= 2.18.1),
+    StanHeaders (>= 2.18.0)
 Encoding: UTF-8
 RoxygenNote: 7.1.0
+Biarch: true
+Depends: 
+    R (>= 3.4.0)
+SystemRequirements: GNU make

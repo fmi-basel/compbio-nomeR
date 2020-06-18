@@ -750,7 +750,7 @@ generate_synthetic_NOME_data <- function(amplicon_len, # length of the apmlicon
       model_prot_prob <- footprint_models[[emit_model]][["PROTECT_PROB"]]
       ## draw random data using binomial distribution
       
-      model_synth_data <- rbinom(n = model_len, size = 1, prob = model_prot_prob)
+      model_synth_data <- stats::rbinom(n = model_len, size = 1, prob = model_prot_prob)
       fill.idx <- pos:(min(pos + model_len - 1,ampl.len.ext))
       dat[1,fill.idx] <- model_synth_data[1:length(fill.idx)]
       pos <- pos + model_len
