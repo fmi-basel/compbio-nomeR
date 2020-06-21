@@ -46,10 +46,10 @@ class Forward_Backward_algorithm
   ~Forward_Backward_algorithm();
   double Calc_PartSum_init(double x0);
   
-  void Run(vector<double > priors);
-  void Run();
+  void Run(vector<double > priors,
+           int ncpu);
+  void Run(int ncpu);
 
-  void Run_priorEM();
   vector<double > getPriors();
   
   
@@ -58,17 +58,7 @@ class Forward_Backward_algorithm
   Rcpp::List getCoverProbDF();
   Rcpp::List getGenomeSummaryDF();
   
-  
-  /*
-  void Run_Prediction();
 
-  void PrintProfilesToFiles();
-
-  void PrintCoverageProfilesToFiles();
-  void PrintGenomeSummaryToFile();
-  */
-  
-  
   void SetGenomeSummary();
   double get_coverage_prob_at_pos_name_index(int seq, int pos, int name_index);
 

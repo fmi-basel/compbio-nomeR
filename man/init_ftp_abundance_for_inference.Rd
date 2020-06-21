@@ -33,3 +33,13 @@ list of length `nchains` containing initial values for `ftp_abundances` and `foo
 \description{
 Create initial values for HMC sampling
 }
+\examples{
+
+## parameters for dirichlet distribution
+footprint_prior_diralphas <- c(10,rep(1,14))
+
+#' ## get initial values for sampling for vb
+stan_initvals <- init_ftp_abundance_for_inference(dir_alpha = footprint_prior_diralphas)
+
+
+}

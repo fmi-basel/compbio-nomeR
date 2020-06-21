@@ -12,7 +12,7 @@ truncate_footprint_overhangs(data_matr, trunc_until_nbg = 1L)
 \item{trunc_until_nbg}{number of unprotected positions to stop truncation.}
 }
 \value{
-
+same matrix as `data_matr` but flanking protected positions are replaced by `NA`.
 }
 \description{
 This function for each row in a matrix containing NOMe-Seq data fills with NA all protected positions from left and right sides until it meets \code{trunc_until_nbg} unprotected positions.

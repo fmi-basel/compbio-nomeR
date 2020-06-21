@@ -12,7 +12,7 @@ parameters PARAMS;
 DNAbind_obj_vector BINDING_OBJECTS;
 NOMeSeqData SEQUENCES;
 Forward_Backward_algorithm FORWARD_BACKWARD;
-int _NCPU_ = 1;
+//int _NCPU_ = 1;
 bool _VERBOSE_ = 0;
 
 // [[Rcpp::export]]
@@ -34,16 +34,12 @@ List run_cpp_nomeR(const List& data,
   extern bool _VERBOSE_;
   _VERBOSE_ = as<bool >(verbose);
   
-  // set number of threads
-  extern int _NCPU_;
-  _NCPU_ = as<int >(Ncpu);
-  if(_VERBOSE_){
-    Rcout<<"Input Ncpu "<<Ncpu<<endl;
-    Rcout<<"Set _NCPU_ "<<_NCPU_<<endl;
-  }
   
-  
-  
+  int Ncpu_ = as<int >(Ncpu);
+#ifndef _OPENMP
+  Rcout<<"nomeR was compiled without OpenMP. Ncpu does not have effect!\n";
+#endif
+
   // create object with parameters
   extern parameters PARAMS;
   double bgcoverprob_ = as<double >(bgprotectprob);
@@ -96,17 +92,13 @@ List run_cpp_nomeR(const List& data,
   FORWARD_BACKWARD.Create();
   
   
-  if(run_priorEM_){
-    if(_VERBOSE_){
-      Rcout<<"Running FORWARD_BACKWARD.Run_priorEM()..."<<endl;
-    }
-    FORWARD_BACKWARD.Run_priorEM();
-  } else {
-    if(_VERBOSE_){
-      Rcout<<"Running FORWARD_BACKWARD.Run()..."<<endl;
-    }
-    FORWARD_BACKWARD.Run();
+  // run prediction
+  if(_VERBOSE_){
+    Rcout<<"Running FORWARD_BACKWARD.Run()..."<<endl;
   }
+  FORWARD_BACKWARD.Run(Ncpu_);
+  
+  
   if(_VERBOSE_){
     Rcout<<"Running FORWARD_BACKWARD.getStartProbDF()..."<<endl;
   }
@@ -127,6 +119,7 @@ List run_cpp_nomeR(const List& data,
   BINDING_OBJECTS.clear();
   SEQUENCES.clear();
   FORWARD_BACKWARD.clear();
+  _VERBOSE_ = 0;
   return output_data;
 }
 

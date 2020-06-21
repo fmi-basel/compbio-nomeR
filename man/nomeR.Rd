@@ -3,17 +3,34 @@
 \docType{package}
 \name{nomeR}
 \alias{nomeR}
-\title{nomeR: A package that uses a probabilistic model for interpreting NOME-Seq data}
+\title{nomeR: Probabilistic model for NOME-Seq data analysis}
 \description{
-The package uses a probabilistic model for calculating posterior probabilities that a certain position 
-in a NOME-Seq read is covered by a certain footprint.
+This packages uses a probabilistic model for analysis of NOMe-Seq data, 
+or any other kind of data that gives single molecule occupancy read out.
 }
-\section{nomeR functions}{
+\details{
+The model allows to perform two types of analysis.
+}
+\section{1. Inference of footprint abundances in NOMe-seq data}{
 
 
-  
-\code{run_nomeR} - function which takes as input 1) a matrix with NOME-Seq data where rows represent reads (or fragments)
-and columns represent positions in the amplicon, 2) models for a set of user-defined footprints,
-and using a probabilistic model it returns a data.frame with posterior probabilities for each position and fragment to be covered by each footprint.
+
+This analysis can be done when the main question is what footprints are present in the data.
+By counting occurences of observing combinations of protected/unprotected positions at all possible distances
+and using a bayesian model we make avalilable two algorithms for footprint inference.
+
+\itemize{
+\item {Sampling from posterior distribution using Monte Carlo methods from `rstan` package (\code{infer_footprints_stan_sampling});
+}
+\item {Approximation of posterior distribution using variational Bayes from `rstan` package (\code{infer_footprints_stan_vb}).}
+}
+}
+
+\section{2. Prediction of footprint positions in NOMe-seq data}{
+
+
+When footprint abundances are known or inferred from the analysis in previous section one can predict positions of 
+footprints in the NOMe-seq data (\code{predict_footprints}). We calculate posterior probabilities for each footprint to start or to cover 
+each position in each fragment.
 }
 

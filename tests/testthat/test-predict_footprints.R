@@ -1,5 +1,4 @@
-
-test_that("wrong parameters for run_nomeR are handled correctly",{
+test_that("wrong parameters for predict_footprints are handled correctly",{
   expect_error(predict_footprints(data = "aaa"))
   expect_error(predict_footprints(data = matrix()))
   
@@ -35,14 +34,15 @@ test_that("wrong parameters for run_nomeR are handled correctly",{
   #                                           ncpu = Inf))
   
   expect_error(nomeR.out <- predict_footprints(data=rmatr,
-                                            footprint_models = ftp.models,
-                                            bgprotectprob = 0.05,
-                                            bgcoverprior = bg.pr,
-                                            ncpu = -1))
+                                               footprint_models = ftp.models,
+                                               bgprotectprob = 0.05,
+                                               bgcoverprior = bg.pr,
+                                               ncpu = -1))
   
 })
 
-test_that("nomeR returns correct object",{
+
+test_that("predict_footprints returns correct object",{
   ## create dummy random data
   set.seed(3346)
   nc <- 50
@@ -57,14 +57,14 @@ test_that("nomeR returns correct object",{
   
   ## creating a list of binding models for nomeR
   ftp.models <- list(list("PROTECT_PROB" = rep(0.99,ft.len),
-                              "COVER_PRIOR" = ft.pr,
-                              "NAME" = "FOOTPRINT"))
+                          "COVER_PRIOR" = ft.pr,
+                          "NAME" = "FOOTPRINT"))
   
   expect_warning(nomeR.out <- predict_footprints(data=rmatr,
-                             footprint_models = ftp.models,
-                             bgprotectprob = 0.05,
-                             bgcoverprior = bg.pr,
-                             ncpu = 1L))
+                                                 footprint_models = ftp.models,
+                                                 bgprotectprob = 0.05,
+                                                 bgcoverprior = bg.pr,
+                                                 ncpu = 1L))
   
   ## check whether slots exist
   expect_true(all(c("START_PROB", "COVER_PROB","SUMMARY") %in% names(nomeR.out)))
@@ -72,7 +72,7 @@ test_that("nomeR returns correct object",{
   ## check whether all required seq exist
   expect_true(all(as.character(1:nr) %in% nomeR.out[["START_PROB"]][["seq"]]) &
                 all(as.character(1:nr) %in% nomeR.out[["COVER_PROB"]][["seq"]])
-                )
+  )
   
   ## check all pos exist
   expect_true(all(1:nc %in% nomeR.out[["START_PROB"]][["pos"]]) &
@@ -82,7 +82,7 @@ test_that("nomeR returns correct object",{
   ## check whether FOOTPRINT and background exist
   expect_true(all(c("FOOTPRINT","background") %in% colnames(nomeR.out[["START_PROB"]])) &
                 all(c("FOOTPRINT","background") %in% colnames(nomeR.out[["COVER_PROB"]])) &
-                      all(c("FOOTPRINT","background") %in% colnames(nomeR.out[["SUMMARY"]]))
+                all(c("FOOTPRINT","background") %in% colnames(nomeR.out[["SUMMARY"]]))
   )
   
   ## check that we do not have incorrect probs
@@ -95,11 +95,9 @@ test_that("nomeR returns correct object",{
   ## check if sum of cover probs sum up to 1
   cover.prob.rowsum <- rowSums(nomeR.out[["COVER_PROB"]][,c("FOOTPRINT","background")])
   a <- sapply(cover.prob.rowsum,
-         function(x){
-           expect_equal(x,1,tolerance = 1.0e-8)
-         })
-  
-  
+              function(x){
+                expect_equal(x,1,tolerance = 1.0e-8)
+              })
 })
 
 

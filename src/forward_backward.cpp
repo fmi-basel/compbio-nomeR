@@ -71,28 +71,14 @@ bool Forward_Backward_algorithm::Create()
   	  F.push_back(tmp);
   	  tmp.resize(SEQUENCES[seq].Size() + 2,1);
   	  R.push_back(tmp);
-  	  //if(PARAMS.fitting_nucleosome_data != "off" || PARAMS.COMPARE_WITH_EXPERIMENT != "no"){
   	  vector<double > tmp2(SEQUENCES[seq].Size() + 1, 0);
   	  vector<vector<double > > tmp1(print_indexes.size(),tmp2);
   	  Prob.push_back(tmp1);
-  	  //}
+  	  
   	}
   	// Allocate genomesummary
   	vector<double > tmp(7,0);
   	genomesummary.resize(print_names.size(),tmp);
-  	
-  	
-  	// configure openMP
-  	extern int _NCPU_;
-  
-#ifdef _OPENMP
-  	if ( _NCPU_ >= 1 )
-  	  omp_set_num_threads( _NCPU_ );
-  	
-  	REprintf("Number of threads=%i\n", omp_get_max_threads());
-#endif
-  	
-
 	return 1;
 }
 
@@ -186,17 +172,16 @@ double Forward_Backward_algorithm::Calc_PartSum_init(double x0){
   
 }
 
-void Forward_Backward_algorithm::Run(vector<double > priors) 
+void Forward_Backward_algorithm::Run(vector<double > priors,
+                                     int ncpu) 
 {
 
 	extern DNAbind_obj_vector BINDING_OBJECTS;
 	extern NOMeSeqData SEQUENCES;
+	extern bool _VERBOSE_;
 	if(!priors.empty()){
 		if(priors.size() != BINDING_OBJECTS.numberofobjects){
 		  Rcpp::stop("Forward_Backward_algorithm::Run_Low_Mem: ERROR: The size of priors vector doesn't equal the size of BINDING_OBJECTS vector.\n");
-		  
-			// cerr<<"Forward_Backward_algorithm::Run_Low_Mem: ERROR: The size of priors vector doesn't equal the size of BINDING_OBJECTS vector.\n";
-			// exit(1);
 		}
 		for(int i=0;i<BINDING_OBJECTS.numberofobjects;++i){
 			for(int j=0;j<BINDING_OBJECTS.names2index[i].size();++j){
@@ -213,14 +198,12 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 	// calculate initial value for forward and backward parition summs
 	double part_init = Calc_PartSum_init(1);
 	
-	
-	// Parameters for OpenMP
-	
-	// Rcpp::Rcout<<"In FWBC _NCPU_ "<<_NCPU_<<endl;
-	// 
-	// //omp_set_nested(true);
-	// omp_set_num_threads(10);
-	
+#ifdef _OPENMP
+	omp_set_nested(true);
+	omp_set_num_threads(ncpu);
+	if(_VERBOSE_)
+	  Rcpp::Rcout<<"Running prediction with "<<omp_get_max_threads()<<" cpu."<<endl;
+#endif
 	
 #pragma omp parallel private(seq)
 {
@@ -367,64 +350,15 @@ void Forward_Backward_algorithm::Run(vector<double > priors)
 
 
 
-void Forward_Backward_algorithm::Run() 
+void Forward_Backward_algorithm::Run(int ncpu) 
 {
 	vector<double > priors;
-	Run(priors);
+	Run(priors,
+      ncpu);
 }
 
 
 
-// This function runs expectation maximiization of priors for binding proteins and background
-void Forward_Backward_algorithm::Run_priorEM()
-{
-	extern parameters PARAMS;
-	extern DNAbind_obj_vector BINDING_OBJECTS;
-	extern NOMeSeqData SEQUENCES;
-
-	int numberofobjects = BINDING_OBJECTS.Size();
-
-	
-	Rcpp::Rcout<<"####################################"<<endl;
-	Rcpp::Rcout<<"#### EM for prior probabilities ####"<<endl;
-	
-	vector<double > curr_prior;
-	for(int wm=0;wm<numberofobjects;++wm){
-		curr_prior.push_back(BINDING_OBJECTS[wm]->prior);
-	}
-
-	Run(curr_prior);
-	
-	vector<double > new_prior = getPriors();
-
-	//calculate error
-	double prior_err=0;
-	
-	for(int wm=0;wm< numberofobjects;++wm){
-		prior_err += pow(curr_prior[wm] - new_prior[wm],2);
-	}
-	prior_err = sqrt(prior_err);
-	
-	Rcpp::Rcout<<"Step 0: prior delta is "<<prior_err<<endl;
-	int stepcount=0;
-	while(stepcount <= PARAMS.PRIOREM_MAX_STEPS && prior_err > PARAMS.PRIOREM_FIT_TOLERANCE){
-		curr_prior = new_prior;
-		stepcount++;
-		Run(curr_prior);
-		new_prior = getPriors();
-
-		//calculate error
-		prior_err=0;
-	
-		for(int wm=0;wm< numberofobjects;++wm){
-			prior_err += pow(curr_prior[wm] - new_prior[wm],2);
-		}
-		prior_err = sqrt(prior_err);
-		Rcpp::Rcout<<"Step "<<stepcount<<": prior delta is "<<prior_err<<endl;
-	}
-	Rcpp::Rcout<<"####################################"<<endl;
-	
-}
 
 
 vector<double > Forward_Backward_algorithm::getPriors(){
@@ -630,9 +564,8 @@ Rcpp::List  Forward_Backward_algorithm::getStartProbDF(){
   extern parameters PARAMS;
   extern NOMeSeqData SEQUENCES;
   extern DNAbind_obj_vector BINDING_OBJECTS;
-  
-  
-  //Rcpp::List out_list(2 + print_names.size());
+  extern bool _VERBOSE_;
+
   Rcpp::List out_list;
   vector<string > seqnames;
   vector<int > positions;
@@ -663,11 +596,11 @@ Rcpp::List  Forward_Backward_algorithm::getStartProbDF(){
   for(int i=0;i<print_names.size();++i){
     //Rcpp::NumericVector stprob;
     vector<double > stprob;
-    
+    int seq=0;
 // #pragma omp parallel private(seq)
 // {
-//#pragma omp for schedule(dynamic)
-    for(int seq=0;seq < SEQUENCES.Size();seq++){
+// #pragma omp for schedule(dynamic)
+    for(seq=0;seq < SEQUENCES.Size();seq++){
       int firstDatPos = SEQUENCES[seq].firstDatpos;
       int lastDatPos = SEQUENCES[seq].lastDatpos;
       
@@ -693,7 +626,7 @@ Rcpp::List  Forward_Backward_algorithm::getStartProbDF(){
       
       
     }
-// }
+//}
     out_list.push_back(Rcpp::wrap(stprob),print_names[i]);
 
   }
