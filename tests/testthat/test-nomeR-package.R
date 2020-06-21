@@ -1,7 +1,7 @@
 
 test_that("wrong parameters for run_nomeR are handled correctly",{
-  expect_error(nomeR_predict(data = "aaa"))
-  expect_error(nomeR_predict(data = matrix()))
+  expect_error(predict_footprints(data = "aaa"))
+  expect_error(predict_footprints(data = matrix()))
   
   ## check whether ncpu handled correctly
   ## create dummy random data
@@ -23,18 +23,18 @@ test_that("wrong parameters for run_nomeR are handled correctly",{
   
   
   # 
-  # expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
+  # expect_warning(nomeR.out <- predict_footprints(data=rmatr,
   #                                           footprint_models = ftp.models,
   #                                           bgprotectprob = 0.05,
   #                                           bgcoverprior = bg.pr,
   #                                           ncpu = 0))
-  # expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
+  # expect_warning(nomeR.out <- predict_footprints(data=rmatr,
   #                                           footprint_models = ftp.models,
   #                                           bgprotectprob = 0.05,
   #                                           bgcoverprior = bg.pr,
   #                                           ncpu = Inf))
   
-  expect_error(nomeR.out <- nomeR_predict(data=rmatr,
+  expect_error(nomeR.out <- predict_footprints(data=rmatr,
                                             footprint_models = ftp.models,
                                             bgprotectprob = 0.05,
                                             bgcoverprior = bg.pr,
@@ -60,7 +60,7 @@ test_that("nomeR returns correct object",{
                               "COVER_PRIOR" = ft.pr,
                               "NAME" = "FOOTPRINT"))
   
-  expect_warning(nomeR.out <- nomeR_predict(data=rmatr,
+  expect_warning(nomeR.out <- predict_footprints(data=rmatr,
                              footprint_models = ftp.models,
                              bgprotectprob = 0.05,
                              bgcoverprior = bg.pr,

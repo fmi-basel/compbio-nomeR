@@ -1,4 +1,4 @@
-test_that("footprint_inference_stan_sampling works", {
+test_that("infer_footprints_stan_sampling works", {
   
   ## simple data with two ftp of 5 and 10 bps
   ftp_5_10_data <- data.frame("S" = 1:15,
@@ -36,21 +36,21 @@ test_that("footprint_inference_stan_sampling works", {
                                         297930))
   
   
-  expect_error(sampling_res <- footprint_inference_stan_sampling(ftp_5_10_data,
+  expect_error(sampling_res <- infer_footprints_stan_sampling(ftp_5_10_data,
                                                                    footprint_prior_diralphas = -c(10,rep(1,14)),
                                                                    nchains = 1,
                                                                    iter=1))
-  expect_error(sampling_res <- footprint_inference_stan_sampling(ftp_5_10_data[-1,],
+  expect_error(sampling_res <- infer_footprints_stan_sampling(ftp_5_10_data[-1,],
                                                                  footprint_prior_diralphas = c(10,rep(1,14)),
                                                                  nchains = 1,
                                                                  iter=1))
-  expect_error(sampling_res <- footprint_inference_stan_sampling(ftp_5_10_data[,1:3],
+  expect_error(sampling_res <- infer_footprints_stan_sampling(ftp_5_10_data[,1:3],
                                                                  footprint_prior_diralphas = c(10,rep(1,14)),
                                                                  nchains = 1,
                                                                  iter=1))
   
   ## run 1 iteration
-  expect_warning(sampling_res <- footprint_inference_stan_sampling(ftp_5_10_data,
+  expect_warning(sampling_res <- infer_footprints_stan_sampling(ftp_5_10_data,
                                                                    footprint_prior_diralphas = c(10,rep(1,14)),
                                                                    nchains = 1,
                                                                    iter=1))

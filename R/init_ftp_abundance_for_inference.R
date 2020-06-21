@@ -1,7 +1,3 @@
-
-
-
-
 #' Create initial values for HMC sampling
 #'
 #' @param dir_alpha vector containing parameters for dirichlet distribution which is used to model footprint abundances.
@@ -17,7 +13,15 @@
 #' @export
 #'
 #' @examples
-init_ftp_model_params_for_hmc <- function(dir_alpha = c(200,rep(1,199)),
+#' 
+#' ## parameters for dirichlet distribution
+#' footprint_prior_diralphas <- c(10,rep(1,14))
+#' 
+#' #' ## get initial values for sampling for vb
+#' stan_initvals <- init_ftp_abundance_for_inference(dir_alpha = footprint_prior_diralphas)
+#' 
+#' 
+init_ftp_abundance_for_inference <- function(dir_alpha = c(200,rep(1,199)),
                                           nchains = 4,
                                           ftp_protect_min = 0.6,
                                           ftp_protect_max = 0.9999,
