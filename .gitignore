@@ -12,3 +12,4 @@ PLOTS/*
 TABLES/*
 autom4te.cache/*
 TODO
+*.nfs*
