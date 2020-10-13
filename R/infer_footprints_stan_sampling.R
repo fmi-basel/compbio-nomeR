@@ -163,6 +163,7 @@ infer_footprints_stan_sampling <- function(joint_freq_table,
                                  chains = nchains,
                                  init = stan_initvals,
                                  cores = ncpu,
+                                 control = rstan_control,
                                  ...)
   
   return(stanfit_out)

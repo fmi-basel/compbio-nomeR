@@ -3,6 +3,7 @@
 export(add_joint_probs_and_MI)
 export(calculate_theor_joint_probs)
 export(count_joint_frequencies)
+export(fit_background_mixture_model)
 export(generate_synthetic_NOMe_data)
 export(infer_footprints_stan_sampling)
 export(infer_footprints_stan_vb)

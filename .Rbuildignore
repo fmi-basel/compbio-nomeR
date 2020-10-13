@@ -4,3 +4,4 @@ test_rnome.R
 ^LICENSE\.md$
 ^README\.Rmd$
 ^TEST_MODEL$
+^model_deriv_docs$

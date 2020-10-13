@@ -140,7 +140,7 @@ infer_footprints_stan_vb <- function(joint_freq_table,
                                                  ftp_protect_var = ftp_protect_var)
   
   
-  ## hmc sampling
+  ## Stan ADVI
   stanVB_out <- rstan::vb(stanmodels$footprint_inference_model_v1,
                                  data = stan_inputdata,
                                  init = stan_initvals[[1]],
