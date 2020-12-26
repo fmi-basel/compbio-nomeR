@@ -8,18 +8,23 @@ get_mixmodel_init_values <- function(nchains,
   if(model == "mixture"){
     init_val <- lapply(1:nchains,
                        function(chain){
-                         list(theta = 0.999,
-                              bg_protect_prob = rbeta(1,
-                                                      mixmodel_indata$alpha_distrbetaprior_bg_protect,
-                                                      mixmodel_indata$beta_distrbetaprior_bg_protect),
-                              alpha_betabinom = runif(1,0,5),
-                              beta_betabinom = runif(1,0,5))
+                         list(theta = 0.99,
+                              # bg_protect_prob = stats::rbeta(1,
+                              #                         mixmodel_indata$alpha_distrbetaprior_bg_protect,
+                              #                         mixmodel_indata$beta_distrbetaprior_bg_protect),
+                              bg_protect_prob = 0.01,
+                              # alpha_betabinom = stats::runif(1,0,5),
+                              # beta_betabinom = stats::runif(1,0,5)
+                              alpha_betabinom = 1,
+                              beta_betabinom = 1
+                              
+                              )
                        })
   } else if(model == "betabinom"){
     init_val <- lapply(1:nchains,
                        function(chain){
-                         list(alpha_betabinom = runif(1,0,5),
-                              beta_betabinom = runif(1,0,5))
+                         list(alpha_betabinom = stats::runif(1,0,5),
+                              beta_betabinom = stats::runif(1,0,5))
                        })
   }
 }
@@ -42,25 +47,31 @@ get_mixmodel_init_values <- function(nchains,
 #' \code{vb} return draws from ADVI approximation of posterior distribution (not tested yet).
 #' @param alpha_distrbetaprior_mixcoeff alpha (shape1 in \code{rbeta}) parameter for beta prior distribution for mixing coefficient.
 #' @param beta_distrbetaprior_mixcoeff beta (shape2 in \code{rbeta}) parameter for beta prior distribution for mixing coefficient.
-#' @param alpha_distrbetaprior_bg_protect 
-#' @param beta_distrbetaprior_bg_protect 
-#' @param nchains 
-#' @param ncpu 
-#' @param ... 
+#' @param alpha_distrbetaprior_bg_protect alpha (shape1 in \code{rbeta}) parameter for beta prior distribution for \code{bg_protect_prob}.
+#' @param beta_distrbetaprior_bg_protect beta (shape2 in \code{rbeta}) parameter for beta prior distribution for \code{bg_protect_prob}.
+#' @param nchains number of markov chains for \code{rstan::sampling}. Currently has no effect
+#' @param ncpu number of cpu to use for \code{rstan::sampling}. Currently has no effect
+#' @param ... parameters for \code{rstan::optimizing}
 
 #'
-#' @return
+#' @return a list containing following slots:
+#' \code{rstan_output_object} \code{rstan} objected returned by function \code{optimizing}.
+#' \code{background_model_params} list containing parameters for function which performs footprint inference, i.e. \code{nomeR::infer_footprints_stan_sampling}.
+#' The list \code{background_model_params} contains 3 values:
+#' \code{bg_protect_prob_fixed} inferred value for background probability to emit protected base, i.e. \code{bg_protect_prob}.
+#' bg_protect_prior_alpha alpha (shape1 in \code{rbeta}) parameter for beta distribution which will be used as a prior distribution for \code{bg_protect_prob} in function for footprint inference.
+#' bg_protect_prior_beta beta (shape2 in \code{rbeta}) parameter for beta distribution which will be used as a prior distribution for \code{bg_protect_prob} in function for footprint inference.
+#' 
+#' 
 #' @export
 #'
-#' @examples
-#' 
 fit_background_mixture_model <- function(lambda_DNA_nome_data,
                                          method = c("optimizing",
                                                     "sampling",
                                                     "vb"),
                                          ## prior distribution of mixture coefficient is beta. below are params for it
                                          alpha_distrbetaprior_mixcoeff = 1,
-                                         beta_distrbetaprior_mixcoeff = 0.1,
+                                         beta_distrbetaprior_mixcoeff = 0.001,
                                          
                                          ## prior distribution of bg_protect_prob is beta. below are params for it
                                          alpha_distrbetaprior_bg_protect = 0.1,
@@ -128,7 +139,7 @@ fit_background_mixture_model <- function(lambda_DNA_nome_data,
     
     mixturemodel_opt_params <- rstan::optimizing(object = stanmodels[["background_mixture_model"]],
                                                  data = mixture_model_input_data,
-                                                 init = mixmodel_init_vals[[2]],
+                                                 init = mixmodel_init_vals[[1]],
                                                  ...)
     
     ## extract fitted parameters
@@ -142,7 +153,8 @@ fit_background_mixture_model <- function(lambda_DNA_nome_data,
     if(theta <= 0.1 | bg_protect_prob >= 0.4){
       warning(paste0("WARNING: MAP estimates for theta and bg_protect_prob seem unrealistic!\n",
                      "theta=",theta,"; expect >= 0.5\n",
-                     "bg_protect_prob=",bg_protect_prob,"; expect <= 0.4"))
+                     "bg_protect_prob=",bg_protect_prob,"; expect <= 0.4\n",
+                     "Please check rstan_output_object$return_code in output object. If it is not 0 the algorithm failed!"))
     }
     
     
@@ -179,6 +191,9 @@ fit_background_mixture_model <- function(lambda_DNA_nome_data,
   bg_protect_prior_alpha <- sum(posterior_binom * mixture_model_input_data[["n_protect_pos"]] * mixture_model_input_data[["n_frequencies"]])
   bg_protect_prior_beta <- sum(posterior_binom * mixture_model_input_data[["n_total_pos"]] * mixture_model_input_data[["n_frequencies"]]) - 
     bg_protect_prior_alpha
+  
+  bg_protect_prior_alpha <- bg_protect_prior_alpha + alpha_distrbetaprior_bg_protect
+  bg_protect_prior_beta <- bg_protect_prior_beta + beta_distrbetaprior_bg_protect
   
   bg_protect_prob_fixed <- bg_protect_prior_alpha/(bg_protect_prior_alpha + bg_protect_prior_beta)
   

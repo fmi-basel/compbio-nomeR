@@ -6,11 +6,29 @@
 #' @param footprint_prior_diralphas vector containing parameters for dirichlet distribution which is used to model footprint abundances.
 #' Default vector assumes that around 50\% of data is free of any footprints and all other footprint up-to 200bp have uninformative prior.
 #' 
-#' @param bg_protect_prob expected probability to observe 1 at a free position. In other words it is emission probability of background for 1.
-#' @param ftp_protect_min minimum allowed value for footprint emission probability for 1.
-#' @param ftp_protect_max maximum allowed value for footprint emission probability for 1.
-#' @param ftp_protect_mean expected mean for footprint emission probability for 1.
-#' @param ftp_protect_var expected variance for footprint emission probability for 1.
+#' @param background_model type of background model.
+#' "fixed" background model assumes model parameter "bg_protect_prob" to be constant and equal to slot `bg_protect_prob_fixed` in `background_model_params`.
+#' 
+#' "informative_prior" background model runs inference for model parameter "bg_protect_prob" using strongly informative prior beta distribution with parameters `bg_protect_alpha` and `bg_protect_beta` in `background_model_params`.
+#' @param background_model_params list containing parameters for background model which must contain following elements:
+#' `bg_protect_prob_fixed` constant value for model parameter "bg_protect_prob" used in "fixed" background model.
+#' 
+#' `bg_protect_min` minimum allowed value for background emission probability for 1.
+#' `bg_protect_max` maximum allowed value for background emission probability for 1.
+#' `bg_protect_alpha` alpha parameter for prior beta distribution for model parameter "bg_protect_prob".
+#' `bg_protect_beta` beta parameter for prior beta distribution for model parameter "bg_protect_prob".
+#'
+#' 
+#' 
+#' @param ftp_model_params list containing parameters for footprint model which must contain following elements:
+#' 
+#' `ftp_protect_min` minimum allowed value for footprint emission probability for 1.
+#' `ftp_protect_max` maximum allowed value for footprint emission probability for 1.
+#' `ftp_protect_mean` expected mean for footprint emission probability for 1.
+#' `ftp_protect_var` expected variance for footprint emission probability for 1.
+#'
+#'
+#'
 #' @param ... parameters for `rstan::vb` function. Please check `?rstan::vb`.
 #'
 #' @return S4 class \code{rstan::stanfit} representing the fitted results. Pleae check \code{?rstan::stanfit}. 
@@ -21,7 +39,8 @@
 #' \dontrun{
 #'  
 #' ## simple data with two ftp of 5 and 10 bps. 
-#' ## The table below is a count table of observed occurences of 00, 01, 10 and 11 at spacings from 1 until 15.
+#' ## The table below is a count table of observed occurrences of
+#' ## 00, 01, 10 and 11 at spacings from 1 until 15.
 #'  
 #' ftp_5_10_data <- data.frame("S" = 1:15,
 #'                             "N00" = c(1626964,1508381,
@@ -72,16 +91,26 @@
 #' }
 #' 
 infer_footprints_stan_vb <- function(joint_freq_table,
-                                              footprint_prior_diralphas = c(200,rep(1,199)),
-                                              
-                                              bg_protect_prob = 0.01,
-                                              
-                                              ftp_protect_min = 0.6,
-                                              ftp_protect_max = 0.9999,
-                                              ftp_protect_mean = 0.95,
-                                              ftp_protect_var = 0.01,
-                                              ...
+                                     footprint_prior_diralphas = c(200,rep(1,199)),
+                                     background_model = c("informative_prior","fixed"),
+                                     background_model_params = list("bg_protect_prob_fixed" = 0.01,
+                                                                    
+                                                                    "bg_protect_min" = 0.0,
+                                                                    "bg_protect_max" = 0.4,
+                                                                    "bg_protect_alpha" = 675,
+                                                                    "bg_protect_beta" = 57126),
+                                     
+                                     ftp_model_params = list("ftp_protect_min" = 0.6,
+                                                             "ftp_protect_max" = 1,
+                                                             "ftp_protect_alpha" = 1,
+                                                             "ftp_protect_beta" = 0.01),
+                                     ...
 ){
+  
+  
+  background_model <- match.arg(background_model)
+  
+  
   
   ## check if required columns in the table
   if(!all(c("S","N00","N01","N10","N11") %in% colnames(joint_freq_table))){
@@ -116,35 +145,106 @@ infer_footprints_stan_vb <- function(joint_freq_table,
     stop("Incorrect footprint_prior_diralphas! non-positive values are prohibited in footprint_prior_diralphas.")
   }
   
+  ## check ftp_model_params
+  if(ftp_model_params[["ftp_protect_min"]] < 0 | ftp_model_params[["ftp_protect_min"]] > 1 |
+     ftp_model_params[["ftp_protect_max"]] < 0 | ftp_model_params[["ftp_protect_max"]] > 1 |
+     ftp_model_params[["ftp_protect_min"]] > ftp_model_params[["ftp_protect_max"]] | 
+     ftp_model_params[["ftp_protect_alpha"]] <= 0 | ftp_model_params[["ftp_protect_beta"]] <= 0){
+    
+    stop(paste0("Incorrect values in ftp_model_params for footprint parameters.\n",
+                "Expect ftp_model_params[[\"ftp_protect_min\"]] < ftp_model_params[[\"ftp_protect_max\"]]",
+                "ftp_model_params[[\"ftp_protect_min\"]] = ",ftp_model_params[["ftp_protect_min"]],". Expect to be in [0,1].\n",
+                "ftp_model_params[[\"ftp_protect_max\"]] = ",ftp_model_params[["ftp_protect_max"]],". Expect to be in [0,1].\n",
+                "ftp_model_params[[\"ftp_protect_alpha\"]] = ",ftp_model_params[["ftp_protect_alpha"]],". Expect to be > 0.\n",
+                "ftp_model_params[[\"ftp_protect_beta\"]] = ",ftp_model_params[["ftp_protect_beta"]],". Expect to be > 0.\n",
+    ))
+    
+  }
   
-  ## create data list
-  stan_inputdata <- list("n_ftp" = length(footprint_prior_diralphas),
-                         "ftp_prior_alphas" = footprint_prior_diralphas,
-                         "n_spac" = nrow(joint_freq_table),
-                         "spacings" = joint_freq_table[,"S"],
-                         "spacing_counts" = joint_freq_table[,c("N00","N01","N10","N11")],
-                         
-                         "bg_protect_prob" = bg_protect_prob,
-                         
-                         "ftp_protect_min" = ftp_protect_min,
-                         "ftp_protect_max" = ftp_protect_max,
-                         "ftp_protect_mean" = ftp_protect_mean,
-                         "ftp_protect_var" = ftp_protect_var)
+  
+  if(background_model == "fixed"){
+    stan_model_name <- "ftp_inference_background_fixed"
+    
+    if(background_model_params[["bg_protect_prob_fixed"]] < 0 | background_model_params[["bg_protect_prob_fixed"]] > 1){
+      stop(paste0("bg_protect_prob_fixed in list background_model_params must be in [0,1]!\n",
+                  "Current value background_model_params[[\"bg_protect_prob_fixed\"]] = ",background_model_params[["bg_protect_prob_fixed"]]))
+    }
+    
+    ## create input data list
+    stan_inputdata <- list("n_ftp" = length(footprint_prior_diralphas),
+                           "ftp_prior_alphas" = footprint_prior_diralphas,
+                           "n_spac" = nrow(joint_freq_table),
+                           "spacings" = joint_freq_table[,"S"],
+                           "spacing_counts" = joint_freq_table[,c("N00","N01","N10","N11")],
+                           
+                           "bg_protect_prob" = background_model_params[["bg_protect_prob_fixed"]],
+                           
+                           "ftp_protect_min" = ftp_model_params[["ftp_protect_min"]],
+                           "ftp_protect_max" = ftp_model_params[["ftp_protect_max"]],
+                           "ftp_protect_alpha" = ftp_model_params[["ftp_protect_alpha"]],
+                           "ftp_protect_beta" = ftp_model_params[["ftp_protect_beta"]])
+  } else if(background_model == "informative_prior"){
+    stan_model_name <- "ftp_inference_background_informative_prior"
+    
+    ## check bg model parameters 
+    if(background_model_params[["bg_protect_min"]] < 0 | background_model_params[["bg_protect_min"]] > 1 |
+       background_model_params[["bg_protect_max"]] < 0 | background_model_params[["bg_protect_max"]] > 1 |
+       background_model_params[["bg_protect_min"]] > background_model_params[["bg_protect_max"]] | 
+       background_model_params[["bg_protect_alpha"]] <= 0 | background_model_params[["bg_protect_beta"]] <= 0){
+      
+      stop(paste0("Incorrect values in background_model_params for background model parameters.\n",
+                  "Expect background_model_params[[\"bg_protect_min\"]] < background_model_params[[\"bg_protect_max\"]]",
+                  "background_model_params[[\"bg_protect_min\"]] = ",background_model_params[["bg_protect_min"]],". Expect to be in [0,1].\n",
+                  "background_model_params[[\"bg_protect_max\"]] = ",background_model_params[["bg_protect_max"]],". Expect to be in [0,1].\n",
+                  "background_model_params[[\"bg_protect_alpha\"]] = ",background_model_params[["bg_protect_alpha"]],". Expect to be > 0.\n",
+                  "background_model_params[[\"bg_protect_beta\"]] = ",background_model_params[["bg_protect_beta"]],". Expect to be > 0.\n",
+      ))
+      
+    }
+    
+    
+    ## create input data list
+    stan_inputdata <- list("n_ftp" = length(footprint_prior_diralphas),
+                           "ftp_prior_alphas" = footprint_prior_diralphas,
+                           "n_spac" = nrow(joint_freq_table),
+                           "spacings" = joint_freq_table[,"S"],
+                           "spacing_counts" = joint_freq_table[,c("N00","N01","N10","N11")],
+                           
+                           "bg_protect_min" = background_model_params[["bg_protect_min"]],
+                           "bg_protect_max" = background_model_params[["bg_protect_max"]],
+                           "bg_protect_alpha" = background_model_params[["bg_protect_alpha"]],
+                           "bg_protect_beta" = background_model_params[["bg_protect_beta"]],
+                           
+                           "ftp_protect_min" = ftp_model_params[["ftp_protect_min"]],
+                           "ftp_protect_max" = ftp_model_params[["ftp_protect_max"]],
+                           "ftp_protect_alpha" = ftp_model_params[["ftp_protect_alpha"]],
+                           "ftp_protect_beta" = ftp_model_params[["ftp_protect_beta"]])
+    
+    
+  } else {
+    stop("Unknown background_model!")
+  }
+  
+  
+  
   
   ## get initial values for sampling
+  
   stan_initvals <- init_ftp_abundance_for_inference(dir_alpha = footprint_prior_diralphas,
-                                                 nchains = 1,
-                                                 ftp_protect_min = ftp_protect_min,
-                                                 ftp_protect_max = ftp_protect_max,
-                                                 ftp_protect_mean = ftp_protect_mean,
-                                                 ftp_protect_var = ftp_protect_var)
+                                                    nchains = 1,
+                                                    background_model = background_model,
+                                                    background_model_params = background_model_params,
+                                                    ftp_model_params = ftp_model_params
+  )
+  
+  
   
   
   ## Stan ADVI
-  stanVB_out <- rstan::vb(stanmodels$footprint_inference_model_v1,
-                                 data = stan_inputdata,
-                                 init = stan_initvals[[1]],
-                                 ...)
+  stanVB_out <- rstan::vb(object = stanmodels[[stan_model_name]],
+                          data = stan_inputdata,
+                          init = stan_initvals[[1]],
+                          ...)
   
   return(stanVB_out)
 }

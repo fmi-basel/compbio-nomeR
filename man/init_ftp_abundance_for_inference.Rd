@@ -2,36 +2,52 @@
 % Please edit documentation in R/init_ftp_abundance_for_inference.R
 \name{init_ftp_abundance_for_inference}
 \alias{init_ftp_abundance_for_inference}
-\title{Create initial values for HMC sampling}
+\title{Create initial values for footprint inference}
 \usage{
 init_ftp_abundance_for_inference(
   dir_alpha = c(200, rep(1, 199)),
   nchains = 4,
-  ftp_protect_min = 0.6,
-  ftp_protect_max = 0.9999,
-  ftp_protect_mean = 0.95,
-  ftp_protect_var = 0.01
+  background_model = c("informative_prior", "fixed"),
+  background_model_params = list(bg_protect_prob_fixed = 0.01, bg_protect_min = 0,
+    bg_protect_max = 0.4, bg_protect_alpha = 675, bg_protect_beta = 57126),
+  ftp_model_params = list(ftp_protect_min = 0.6, ftp_protect_max = 1, ftp_protect_alpha
+    = 1, ftp_protect_beta = 0.01),
+  delta_from_max_min = 0.001
 )
 }
 \arguments{
 \item{dir_alpha}{vector containing parameters for dirichlet distribution which is used to model footprint abundances.
-Default vector assumes that around 50\% of data is free of any footprints and all other footprint up-to 200bp have uninformative prior.}
+Default vector assumes that around 50\% of data is free of any footprints and all other footprints up-to 200bp have uninformative prior.}
 
 \item{nchains}{number of markov chains which will be run.}
 
-\item{ftp_protect_min}{minimum allowed value for footprint emission probability for 1.}
+\item{background_model}{type of background model.
+"informative_prior" background model runs inference for model parameter "bg_protect_prob" using strongly informative prior beta distribution with parameters `bg_protect_alpha` and `bg_protect_beta` in `background_model_params`.
+"fixed" background model assumes model parameter "bg_protect_prob" to be constant and equal to slot `bg_protect_prob_fixed` in `background_model_params`.}
 
-\item{ftp_protect_max}{maximum allowed value for footprint emission probability for 1.}
+\item{background_model_params}{list containing parameters for background model which must contain following elements:
+`bg_protect_prob_fixed` constant value for model parameter "bg_protect_prob" used in "fixed" background model.
 
-\item{ftp_protect_mean}{expected mean for footprint emission probability for 1.}
+`bg_protect_min` minimum allowed value for background emission probability for 1.
+`bg_protect_max` maximum allowed value for background emission probability for 1.
+`bg_protect_alpha` alpha parameter for prior beta distribution for model parameter "bg_protect_prob".
+`bg_protect_beta` beta parameter for prior beta distribution for model parameter "bg_protect_prob".}
 
-\item{ftp_protect_var}{expected variance for footprint emission probability for 1.}
+\item{ftp_model_params}{list containing parameters for footprint model which must contain following elements:
+
+`ftp_protect_min` minimum allowed value for footprint emission probability for 1.
+`ftp_protect_max` maximum allowed value for footprint emission probability for 1.
+`ftp_protect_alpha` alpha parameter for prior beta distribution for model parameter "ftp_protect_prob".
+`ftp_protect_beta` beta parameter for prior beta distribution for model parameter "ftp_protect_prob".}
+
+\item{delta_from_max_min}{a small number to to add/subtract from `bg_protect_min/bg_protect_max` and `ftp_protect_min/ftp_protect_max`
+to avoid initialization at borders of intervals which `stan` does not accept.}
 }
 \value{
 list of length `nchains` containing initial values for `ftp_abundances` and `footprint_protect_prob`.
 }
 \description{
-Create initial values for HMC sampling
+This utility function randomly draws initial values for inference from prior distributions.
 }
 \examples{
 

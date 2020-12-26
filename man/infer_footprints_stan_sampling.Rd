@@ -7,13 +7,13 @@
 infer_footprints_stan_sampling(
   joint_freq_table,
   footprint_prior_diralphas = c(200, rep(1, 199)),
-  bg_protect_prob = 0.01,
-  ftp_protect_min = 0.6,
-  ftp_protect_max = 0.9999,
-  ftp_protect_mean = 0.95,
-  ftp_protect_var = 0.01,
+  background_model = c("informative_prior", "fixed"),
+  background_model_params = list(bg_protect_prob_fixed = 0.01, bg_protect_min = 0.001,
+    bg_protect_max = 0.4, bg_protect_alpha = 675, bg_protect_beta = 57126),
+  ftp_model_params = list(ftp_protect_min = 0.6, ftp_protect_max = 0.999,
+    ftp_protect_alpha = 1, ftp_protect_beta = 0.01),
   nchains = 4,
-  ncpu = 1L,
+  ncpu = nchains,
   rstan_control = list(max_treedepth = 15, adapt_delta = 0.9),
   ...
 )
@@ -26,15 +26,25 @@ This table can be obtained using function nomeR::count_joint_frequencies(...)}
 \item{footprint_prior_diralphas}{vector containing parameters for dirichlet distribution which is used to model footprint abundances.
 Default vector assumes that around 50\% of data is free of any footprints and all other footprint up-to 200bp have uninformative prior.}
 
-\item{bg_protect_prob}{expected probability to observe 1 at a free position. In other words it is emission probability of background for 1.}
+\item{background_model}{type of background model.
+"fixed" background model assumes model parameter "bg_protect_prob" to be constant and equal to slot `bg_protect_prob_fixed` in `background_model_params`.
 
-\item{ftp_protect_min}{minimum allowed value for footprint emission probability for 1.}
+"informative_prior" background model runs inference for model parameter "bg_protect_prob" using strongly informative prior beta distribution with parameters `bg_protect_alpha` and `bg_protect_beta` in `background_model_params`.}
 
-\item{ftp_protect_max}{maximum allowed value for footprint emission probability for 1.}
+\item{background_model_params}{list containing parameters for background model which must contain following elements:
+`bg_protect_prob_fixed` constant value for model parameter "bg_protect_prob" used in "fixed" background model.
 
-\item{ftp_protect_mean}{expected mean for footprint emission probability for 1.}
+`bg_protect_min` minimum allowed value for background emission probability for 1.
+`bg_protect_max` maximum allowed value for background emission probability for 1.
+`bg_protect_alpha` alpha parameter for prior beta distribution for model parameter "bg_protect_prob".
+`bg_protect_beta` beta parameter for prior beta distribution for model parameter "bg_protect_prob".}
 
-\item{ftp_protect_var}{expected variance for footprint emission probability for 1.}
+\item{ftp_model_params}{list containing parameters for footprint model which must contain following elements:
+
+`ftp_protect_min` minimum allowed value for footprint emission probability for 1.
+`ftp_protect_max` maximum allowed value for footprint emission probability for 1.
+`ftp_protect_mean` expected mean for footprint emission probability for 1.
+`ftp_protect_var` expected variance for footprint emission probability for 1.}
 
 \item{nchains}{number of markov chains to run.}
 
@@ -42,18 +52,13 @@ Default vector assumes that around 50\% of data is free of any footprints and al
 
 \item{rstan_control}{a list of tuning parameters for stan sampler algorithm.}
 
-\item{...}{parameters for `rstan::sampling` function. Please check \code{?rstan::sampling}.
-
-Emission probability for a footprint to observe 1 is one parameters 
-apart from footprint abundances which will be inferred from the data.
-It is modelled using truncated beta distribution which is parametrized by mean (ftp_protect_mean) and variance (ftp_protect_var).
-Inequality ftp_protect_var < ftp_protect_mean * (1 - ftp_protect_mean) must hold for correct parameterization of beta distribution.}
+\item{...}{parameters for `rstan::sampling` function. Please check \code{?rstan::sampling}.}
 }
 \value{
 S4 class \code{rstan::stanfit} representing the fitted results. Pleae check \code{?rstan::stanfit}.
 }
 \description{
-This function uses rstan functionality for bayesian inference, in particular it is default Hamiltonian Monte Carlo and NUTS algorithms, to infer footprint abundance in NOMe-Seq data using sampling from posterior distribution.
+This function uses \code{rstan} functionality for bayesian inference, in particular Hamiltonian Monte Carlo (HMC) and No-U_Turn Sampler (NUTS) algorithms, to infer footprint abundance in NOMe-Seq data using sampling from posterior distribution.
 }
 \examples{
 
@@ -61,7 +66,8 @@ This function uses rstan functionality for bayesian inference, in particular it 
 \dontrun{
  
 ## simple data with two ftp of 5 and 10 bps. 
-## The table below is a count table of observed occurences of 00, 01, 10 and 11 at spacings from 1 until 15.
+## The table below is a count table of observed occurrences of 
+## 00, 01, 10 and 11 at spacings from 1 until 15.
  
 ftp_5_10_data <- data.frame("S" = 1:15,
                             "N00" = c(1626964,1508381,

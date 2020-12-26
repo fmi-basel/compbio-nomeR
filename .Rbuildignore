@@ -5,3 +5,6 @@ test_rnome.R
 ^README\.Rmd$
 ^TEST_MODEL$
 ^model_deriv_docs$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

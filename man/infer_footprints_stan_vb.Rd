@@ -7,11 +7,11 @@
 infer_footprints_stan_vb(
   joint_freq_table,
   footprint_prior_diralphas = c(200, rep(1, 199)),
-  bg_protect_prob = 0.01,
-  ftp_protect_min = 0.6,
-  ftp_protect_max = 0.9999,
-  ftp_protect_mean = 0.95,
-  ftp_protect_var = 0.01,
+  background_model = c("informative_prior", "fixed"),
+  background_model_params = list(bg_protect_prob_fixed = 0.01, bg_protect_min = 0,
+    bg_protect_max = 0.4, bg_protect_alpha = 675, bg_protect_beta = 57126),
+  ftp_model_params = list(ftp_protect_min = 0.6, ftp_protect_max = 1, ftp_protect_alpha
+    = 1, ftp_protect_beta = 0.01),
   ...
 )
 }
@@ -23,15 +23,25 @@ This table can be obtained using function nomeR::count_joint_frequencies(...)}
 \item{footprint_prior_diralphas}{vector containing parameters for dirichlet distribution which is used to model footprint abundances.
 Default vector assumes that around 50\% of data is free of any footprints and all other footprint up-to 200bp have uninformative prior.}
 
-\item{bg_protect_prob}{expected probability to observe 1 at a free position. In other words it is emission probability of background for 1.}
+\item{background_model}{type of background model.
+"fixed" background model assumes model parameter "bg_protect_prob" to be constant and equal to slot `bg_protect_prob_fixed` in `background_model_params`.
 
-\item{ftp_protect_min}{minimum allowed value for footprint emission probability for 1.}
+"informative_prior" background model runs inference for model parameter "bg_protect_prob" using strongly informative prior beta distribution with parameters `bg_protect_alpha` and `bg_protect_beta` in `background_model_params`.}
 
-\item{ftp_protect_max}{maximum allowed value for footprint emission probability for 1.}
+\item{background_model_params}{list containing parameters for background model which must contain following elements:
+`bg_protect_prob_fixed` constant value for model parameter "bg_protect_prob" used in "fixed" background model.
 
-\item{ftp_protect_mean}{expected mean for footprint emission probability for 1.}
+`bg_protect_min` minimum allowed value for background emission probability for 1.
+`bg_protect_max` maximum allowed value for background emission probability for 1.
+`bg_protect_alpha` alpha parameter for prior beta distribution for model parameter "bg_protect_prob".
+`bg_protect_beta` beta parameter for prior beta distribution for model parameter "bg_protect_prob".}
 
-\item{ftp_protect_var}{expected variance for footprint emission probability for 1.}
+\item{ftp_model_params}{list containing parameters for footprint model which must contain following elements:
+
+`ftp_protect_min` minimum allowed value for footprint emission probability for 1.
+`ftp_protect_max` maximum allowed value for footprint emission probability for 1.
+`ftp_protect_mean` expected mean for footprint emission probability for 1.
+`ftp_protect_var` expected variance for footprint emission probability for 1.}
 
 \item{...}{parameters for `rstan::vb` function. Please check `?rstan::vb`.}
 }
@@ -46,7 +56,8 @@ Black-box Variational Bayes for inference of footprint abundance using STAN Auto
 \dontrun{
  
 ## simple data with two ftp of 5 and 10 bps. 
-## The table below is a count table of observed occurences of 00, 01, 10 and 11 at spacings from 1 until 15.
+## The table below is a count table of observed occurrences of
+## 00, 01, 10 and 11 at spacings from 1 until 15.
  
 ftp_5_10_data <- data.frame("S" = 1:15,
                             "N00" = c(1626964,1508381,

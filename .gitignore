@@ -14,3 +14,4 @@ autom4te.cache/*
 TODO
 *.nfs*
 model_deriv_docs/*
+docs

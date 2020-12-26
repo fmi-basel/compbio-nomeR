@@ -1,13 +1,35 @@
-#' Create initial values for HMC sampling
+#' Create initial values for footprint inference
+#'
+#' This utility function randomly draws initial values for inference from prior distributions.
+#'
 #'
 #' @param dir_alpha vector containing parameters for dirichlet distribution which is used to model footprint abundances.
-#' Default vector assumes that around 50\% of data is free of any footprints and all other footprint up-to 200bp have uninformative prior.
+#' Default vector assumes that around 50\% of data is free of any footprints and all other footprints up-to 200bp have uninformative prior.
+#' 
+#' @param background_model type of background model.
+#' "informative_prior" background model runs inference for model parameter "bg_protect_prob" using strongly informative prior beta distribution with parameters `bg_protect_alpha` and `bg_protect_beta` in `background_model_params`.
+#' "fixed" background model assumes model parameter "bg_protect_prob" to be constant and equal to slot `bg_protect_prob_fixed` in `background_model_params`.
+#' 
+#' @param background_model_params list containing parameters for background model which must contain following elements:
+#' `bg_protect_prob_fixed` constant value for model parameter "bg_protect_prob" used in "fixed" background model.
+#' 
+#' `bg_protect_min` minimum allowed value for background emission probability for 1.
+#' `bg_protect_max` maximum allowed value for background emission probability for 1.
+#' `bg_protect_alpha` alpha parameter for prior beta distribution for model parameter "bg_protect_prob".
+#' `bg_protect_beta` beta parameter for prior beta distribution for model parameter "bg_protect_prob".
+#'
+#' 
+#' 
+#' @param ftp_model_params list containing parameters for footprint model which must contain following elements:
+#' 
+#' `ftp_protect_min` minimum allowed value for footprint emission probability for 1.
+#' `ftp_protect_max` maximum allowed value for footprint emission probability for 1.
+#' `ftp_protect_alpha` alpha parameter for prior beta distribution for model parameter "ftp_protect_prob".
+#' `ftp_protect_beta` beta parameter for prior beta distribution for model parameter "ftp_protect_prob".
 #' 
 #' @param nchains number of markov chains which will be run.
-#' @param ftp_protect_min minimum allowed value for footprint emission probability for 1.
-#' @param ftp_protect_max maximum allowed value for footprint emission probability for 1.
-#' @param ftp_protect_mean expected mean for footprint emission probability for 1.
-#' @param ftp_protect_var expected variance for footprint emission probability for 1.
+#' @param delta_from_max_min a small number to to add/subtract from `bg_protect_min/bg_protect_max` and `ftp_protect_min/ftp_protect_max`
+#' to avoid initialization at borders of intervals which `stan` does not accept.
 #'
 #' @return list of length `nchains` containing initial values for `ftp_abundances` and `footprint_protect_prob`.
 #' @export
@@ -23,10 +45,19 @@
 #' 
 init_ftp_abundance_for_inference <- function(dir_alpha = c(200,rep(1,199)),
                                           nchains = 4,
-                                          ftp_protect_min = 0.6,
-                                          ftp_protect_max = 0.9999,
-                                          ftp_protect_mean = 0.95,
-                                          ftp_protect_var = 0.01){
+                                          background_model = c("informative_prior","fixed"),
+                                          background_model_params = list("bg_protect_prob_fixed" = 0.01,
+                                                                         
+                                                                         "bg_protect_min" = 0.0,
+                                                                         "bg_protect_max" = 0.4,
+                                                                         "bg_protect_alpha" = 675,
+                                                                         "bg_protect_beta" = 57126),
+                                          
+                                          ftp_model_params = list("ftp_protect_min" = 0.6,
+                                                                  "ftp_protect_max" = 1,
+                                                                  "ftp_protect_alpha" = 1,
+                                                                  "ftp_protect_beta" = 0.01),
+                                          delta_from_max_min = 0.001){
   
   ## check footprint_prior_diralphas
   if(length(dir_alpha) == 0){
@@ -36,23 +67,33 @@ init_ftp_abundance_for_inference <- function(dir_alpha = c(200,rep(1,199)),
     stop("Incorrect dir_alpha! non-positive values are prohibited in footprint_prior_diralphas.")
   }
   
+  background_model <- match.arg(background_model)
   
   init_vals <- lapply(1:nchains,function(x){
-    ftp_abundances <- as.vector(extraDistr::rdirichlet(1,dir_alpha))
+    ftp_cover_probs <- as.vector(extraDistr::rdirichlet(1,dir_alpha))
+    footprint_protect_prob <- truncdist::rtrunc(1,spec="beta",
+                                               a = ftp_model_params[["ftp_protect_min"]] + delta_from_max_min,
+                                               b = ftp_model_params[["ftp_protect_max"]] - delta_from_max_min,
+                                               shape1 = ftp_model_params[["ftp_protect_alpha"]],
+                                               shape2 = ftp_model_params[["ftp_protect_beta"]])
     
-    ## param for ftp beta
-    if(ftp_protect_var < ftp_protect_mean * (1 - ftp_protect_mean)){
-      ftp_nu <- ftp_protect_mean * (1 - ftp_protect_mean)/ftp_protect_var - 1
-      ftp_protect_alpha <- ftp_protect_mean * ftp_nu
-      ftp_protect_beta <- (1 - ftp_protect_mean) * ftp_nu
+    if(background_model != "fixed"){
+      bg_protect_prob <- truncdist::rtrunc(1,spec="beta",
+                                           a = background_model_params[["bg_protect_min"]] + delta_from_max_min,
+                                           b = background_model_params[["bg_protect_max"]] - delta_from_max_min,
+                                           shape1 = background_model_params[["bg_protect_alpha"]],
+                                           shape2 = background_model_params[["bg_protect_beta"]])
+      chain_init_out <- list("ftp_cover_probs" = ftp_cover_probs,
+                       "bg_protect_prob" = bg_protect_prob,
+                       "footprint_protect_prob" = footprint_protect_prob)
+      
     } else{
-      stop("Incorrect values for ftp_protect_mean and ftp_protect_var! Inequality ftp_protect_var < ftp_protect_mean * (1 - ftp_protect_mean) must hold.")
+      chain_init_out <- list("ftp_cover_probs" = ftp_cover_probs,
+                       "footprint_protect_prob" = footprint_protect_prob)
     }
     
-    footprint_protect_prob <- truncdist::rtrunc(1,spec="beta",a = ftp_protect_min, b=ftp_protect_max,
-                                                shape1 = ftp_protect_alpha, shape2 = ftp_protect_beta)
-    return(list("ftp_abundances" = ftp_abundances,
-                "footprint_protect_prob" = footprint_protect_prob))
+    
+    return(chain_init_out)
     
   })
   

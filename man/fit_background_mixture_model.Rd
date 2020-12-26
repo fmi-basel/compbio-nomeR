@@ -8,7 +8,7 @@ fit_background_mixture_model(
   lambda_DNA_nome_data,
   method = c("optimizing", "sampling", "vb"),
   alpha_distrbetaprior_mixcoeff = 1,
-  beta_distrbetaprior_mixcoeff = 0.1,
+  beta_distrbetaprior_mixcoeff = 0.001,
   alpha_distrbetaprior_bg_protect = 0.1,
   beta_distrbetaprior_bg_protect = 1,
   nchains = 4,
@@ -29,24 +29,27 @@ lambda_DNA_nome_data must be either \code{matrix} or \code{list}.}
 
 \item{beta_distrbetaprior_mixcoeff}{beta (shape2 in \code{rbeta}) parameter for beta prior distribution for mixing coefficient.}
 
-\item{alpha_distrbetaprior_bg_protect}{}
+\item{alpha_distrbetaprior_bg_protect}{alpha (shape1 in \code{rbeta}) parameter for beta prior distribution for \code{bg_protect_prob}.}
 
-\item{beta_distrbetaprior_bg_protect}{}
+\item{beta_distrbetaprior_bg_protect}{beta (shape2 in \code{rbeta}) parameter for beta prior distribution for \code{bg_protect_prob}.}
 
-\item{nchains}{}
+\item{nchains}{number of markov chains for \code{rstan::sampling}. Currently has no effect}
 
-\item{ncpu}{}
+\item{ncpu}{number of cpu to use for \code{rstan::sampling}. Currently has no effect}
 
-\item{...}{}
+\item{...}{parameters for \code{rstan::optimizing}}
 }
 \value{
-
+a list containing following slots:
+\code{rstan_output_object} \code{rstan} objected returned by function \code{optimizing}.
+\code{background_model_params} list containing parameters for function which performs footprint inference, i.e. \code{nomeR::infer_footprints_stan_sampling}.
+The list \code{background_model_params} contains 3 values:
+\code{bg_protect_prob_fixed} inferred value for background probability to emit protected base, i.e. \code{bg_protect_prob}.
+bg_protect_prior_alpha alpha (shape1 in \code{rbeta}) parameter for beta distribution which will be used as a prior distribution for \code{bg_protect_prob} in function for footprint inference.
+bg_protect_prior_beta beta (shape2 in \code{rbeta}) parameter for beta distribution which will be used as a prior distribution for \code{bg_protect_prob} in function for footprint inference.
 }
 \description{
 Using NOMe-seq data for lambda DNA this function fits mixture model which has binomial and beta-binomial components.
 After the model is fit parameters for background prior distribution is constructed snd returned,
 namely parameters \code{alpha} and \code{beta} for beta prior distribution for parameter \code{bg_protect_prob} for the footprint inference.
-}
-\examples{
-
 }

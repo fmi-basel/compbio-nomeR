@@ -17,6 +17,7 @@
 #' \item {Sampling from posterior distribution using Monte Carlo methods from `rstan` package (\code{infer_footprints_stan_sampling});
 #' }
 #' \item {Approximation of posterior distribution using variational Bayes from `rstan` package (\code{infer_footprints_stan_vb}).}
+#' \item {Finding maximum a posteriori point estimate using optimization algorithms provided by 'rstan' (infer_footprints_stan_optimizing).}
 #' }
 #' 
 
