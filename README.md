@@ -15,11 +15,10 @@ The model allows to perform two types of analysis.
 1.  Inference of footprint abundances in NOMe-seq data
     
     This analysis can be done when the main question is what footprints
-    are present in the data. By counting occurences of observing
+    are present in the data. By counting occurences of observed
     combinations of protected/unprotected positions at all possible
-    distances and using a bayesian model we make avalilable two
-    algorithms for footprint inference.
-    
+    distances and using a bayesian model we make avalilable following
+
       - Sampling from posterior distribution using Monte Carlo methods
         from ‘rstan’ package (infer\_footprints\_stan\_sampling);
     
@@ -33,10 +32,9 @@ The model allows to perform two types of analysis.
 2.  Prediction of footprint positions in NOMe-seq data
     
     When footprint abundances are known or inferred from the analysis in
-    previous section one can predict positions of footprints in the
-    NOMe-seq data (predict\_footprints). We calculate posterior
-    probabilities for each footprint to start or to cover each position
-    in each fragment.
+    previous section one can predict positions of footprints in NOMe-seq
+    data (predict\_footprints). We calculate posterior probabilities for
+    each footprint to start or to cover every position in each fragment.
 
 <!-- You can install the released version of nomeR from [CRAN](https://CRAN.R-project.org) with: -->
 
