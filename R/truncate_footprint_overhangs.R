@@ -22,7 +22,7 @@ truncate_footprint_overhangs <- function(data_matr,
   trunc_data <- do.call(rbind,lapply(1:nrow(data_matr),
                                      function(irow){
                                        row_dat <- data_matr[irow,]
-                                       cols_to_truncate <- cumsum(invert_data[irow,]) <= trunc_until_nbg | rev(cumsum(rev(invert_data[irow,]))) <= trunc_until_nbg
+                                       cols_to_truncate <- cumsum(invert_data[irow,]) < trunc_until_nbg | rev(cumsum(rev(invert_data[irow,]))) < trunc_until_nbg
                                        if(any(cols_to_truncate)){
                                          row_dat[cols_to_truncate] <- NA
                                        }
