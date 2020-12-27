@@ -4,12 +4,12 @@
 #' to detect peaks in spectrum and return lengths of potential footprints.
 #'
 #' @param infer_stanfit \code{\link[rstan]{stanfit}} object returned by \code{\link{infer_footprints_stan_sampling}}, 
-#' \code{\link{infer_footprints_stan_vb}} or a \code{list} returned by \code{\link{infer_footprints_stan_optiming}}
+#' \code{\link{infer_footprints_stan_vb}} or a \code{list} returned by \code{\link{infer_footprints_stan_optimizing}}
 #' @param ftp_abundance_name \code{character} which defines which footprint abundance value to return/display.
 #' Currently available \code{"ftp_cover_probs"} or \code{"ftp_start_probs"} which corresponds to footprint coverage probabilities of footprint start probabilities.
 #' @param plot \code{logical} plot footprint abundance spectrum
 #' @param plot_posterior_range \code{vector} of \code{character} of length 2 which specifies which posterior range to plot.
-#' \code{\link[rstan]{rstan::summary}} provides "2.5\%", "25\%" and "75\%", "97.5\%" credible intervals as well as SD and SE. Displaying SD and SE is not implemented at the moment.
+#' \code{\link[rstan]{summary,stanfit-method}} provides "2.5\%", "25\%" and "75\%", "97.5\%" credible intervals as well as SD and SE. Displaying SD and SE is not implemented at the moment.
 #' @param spline_spar parameter for function \code{\link{suggest_footprints}} controlling smoothness of spline ((0,1], the higher the smoother). Please see \code{\link{suggest_footprints}} \code{\link[stats]{smooth.spline}}.
 #' It is recommended to test different values for \code{spline_spar}, for example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look as expected.
 #' @param max_abund_log2drop parameter for function \code{\link{suggest_footprints}},namely maximum decrease in abundance relative to value at local maxima until which peaks are extended. Please see \code{\link{suggest_footprints}}

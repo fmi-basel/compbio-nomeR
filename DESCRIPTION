@@ -16,7 +16,8 @@ Imports:
     truncdist,
     extraDistr,
     stats,
-    ggplot2
+    ggplot2,
+    stringr
 Suggests: testthat
 LinkingTo: 
     BH (>= 1.66.0),

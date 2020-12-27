@@ -17,7 +17,7 @@ get_ftp_inference_summary(
 }
 \arguments{
 \item{infer_stanfit}{\code{\link[rstan]{stanfit}} object returned by \code{\link{infer_footprints_stan_sampling}}, 
-\code{\link{infer_footprints_stan_vb}} or a \code{list} returned by \code{\link{infer_footprints_stan_optiming}}}
+\code{\link{infer_footprints_stan_vb}} or a \code{list} returned by \code{\link{infer_footprints_stan_optimizing}}}
 
 \item{ftp_abundance_name}{\code{character} which defines which footprint abundance value to return/display.
 Currently available \code{"ftp_cover_probs"} or \code{"ftp_start_probs"} which corresponds to footprint coverage probabilities of footprint start probabilities.}
@@ -25,7 +25,7 @@ Currently available \code{"ftp_cover_probs"} or \code{"ftp_start_probs"} which c
 \item{plot}{\code{logical} plot footprint abundance spectrum}
 
 \item{plot_posterior_range}{\code{vector} of \code{character} of length 2 which specifies which posterior range to plot.
-\code{\link[rstan]{rstan::summary}} provides "2.5\%", "25\%" and "75\%", "97.5\%" credible intervals as well as SD and SE. Displaying SD and SE is not implemented at the moment.}
+\code{\link[rstan]{summary,stanfit-method}} provides "2.5\%", "25\%" and "75\%", "97.5\%" credible intervals as well as SD and SE. Displaying SD and SE is not implemented at the moment.}
 
 \item{max_peak_width}{parameter for function \code{\link{suggest_footprints}}, namely maximum width of detected peaks in spectrum. Please see \code{\link{suggest_footprints}}.}
 
