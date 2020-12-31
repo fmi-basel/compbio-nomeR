@@ -37,11 +37,8 @@ The model allows to perform two types of analysis.
 
 2. Prediction of footprint positions in NOMe-seq data
 
-<<<<<<< HEAD
-    When footprint abundances are known or inferred from the analysis in previous section one can predict positions of footprints in the NOMe-seq data (predict_footprints). We calculate posterior probabilities for each footprint to start or to cover each position in each fragment. 
-=======
+
     When footprint abundances are known or inferred from the analysis in previous section one can predict positions of footprints in NOMe-seq data (predict_footprints). We calculate posterior probabilities for each footprint to start or to cover every position in each fragment. 
->>>>>>> feat: add utility functions for summarizing and plotting footprint inference results as well as getting parameters for footprint prediction function.
 
 
 
