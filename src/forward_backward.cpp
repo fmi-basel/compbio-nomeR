@@ -210,6 +210,11 @@ void Forward_Backward_algorithm::Run(vector<double > priors,
   
 #pragma omp for schedule(dynamic)
 	for(seq=0;seq < SEQUENCES.Size();++seq){
+	  
+	  //check for interrupt every 10 sequences
+	  // if(seq % 1000 == 0)
+	  //   Rcpp::checkUserInterrupt();
+	  
 		int seqlength = SEQUENCES[seq].Size();
 	
 //#pragma omp parallel shared(seq)

@@ -15,3 +15,4 @@ TODO
 *.nfs*
 model_deriv_docs/*
 docs
+config.*
