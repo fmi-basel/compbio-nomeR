@@ -88,90 +88,6 @@ Forward_Backward_algorithm::~Forward_Backward_algorithm(){
 
 }
 
-// This function estimates initial value for partition sums if we assume that sequence is infinite of all NAs (encoded as 2 in the sequence). 
-// This function uses the Halley's numerical method for solving polynomial equation
-
-		
-// function which need to be solved at 0
-double f(double x) {
-	extern DNAbind_obj_vector BINDING_OBJECTS;
-	double summ = 0;
-	for(int wm=0; wm < BINDING_OBJECTS.numberofobjects; ++wm){
-		double objlen = BINDING_OBJECTS[wm]->len;
-		summ += BINDING_OBJECTS[wm]->prior * pow(x,BINDING_OBJECTS[wm]->len);
-	}
-	return(summ - 1);
-}
-// function for first derivative
-double df(double x) {
-	extern DNAbind_obj_vector BINDING_OBJECTS;
-	double summ = 0;
-	for(int wm=0; wm < BINDING_OBJECTS.numberofobjects; ++wm){
-		double objlen = BINDING_OBJECTS[wm]->len;
-		summ += BINDING_OBJECTS[wm]->prior * objlen * pow(x,objlen - 1);
-	}
-	return(summ);
-}
-
-//function for second derivative
-double ddf(double x) {
-	extern DNAbind_obj_vector BINDING_OBJECTS;
-	double summ=0;
-	for(int wm=0; wm<BINDING_OBJECTS.numberofobjects; ++wm){
-		double objlen = BINDING_OBJECTS[wm]->len;
-		if(objlen - 2 >= 0){
-			summ += BINDING_OBJECTS[wm]->prior * objlen * (objlen -1) * pow(x,objlen - 2);
-		}
-	}
-	return(summ);
-}
-
-
-double Forward_Backward_algorithm::Calc_PartSum_init(double x0){
-  extern parameters PARAMS;
-  extern DNAbind_obj_vector BINDING_OBJECTS;
-  
-  //Rcpp::Rcout<<"Approximation of initial value of partition sums using Halley's numerical method"<<endl;
-  // Halley's method
-  double curr_approx;
-  double denom = 2 * pow(df(x0),2) - f(x0) * ddf(x0);
-  if(denom >= PARAMS.BOUND_MIN_FDERIV_VAL){
-    curr_approx = x0 - 2 * f(x0) * df(x0)/denom;
-  } else {
-    Rcpp::stop("Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters.\n");
-    
-    // cerr<<"Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters."<<endl;
-    // exit(1);
-  }
-  int stepcnt=0;
-  
-  while(abs(curr_approx - x0) > PARAMS.BOUND_FIT_TOLERANCE && stepcnt <= PARAMS.BOUND_MAX_STEPS){
-    x0 = curr_approx;
-    double denom = 2 * pow(df(x0),2) - f(x0) * ddf(x0);
-    if(denom >= PARAMS.BOUND_MIN_FDERIV_VAL){
-      curr_approx = x0 - 2 * f(x0) * df(x0)/denom;
-    } else {
-      
-      Rcpp::stop("Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters.\n");
-      // cerr<<"Forward_Backward_algorithm::Calc_PartSum_init: Error, denominator is smaller them BOUND_MIN_FDERIV_VAL parameters"<<endl;
-      // exit(1);
-    }
-    stepcnt++;
-  }
-  
-  if(abs(curr_approx - x0) > PARAMS.BOUND_FIT_TOLERANCE){
-    Rcpp::Rcerr<<"Forward_Backward_algorithm::Calc_PartSum_init: WARNING: Exceeded maximum number of iterations! Approximation can be not precise"<<endl;
-  } else {
-    //Rcpp::Rcout<<"Halleys method finished in "<<stepcnt<<" iteration. Root is "<<curr_approx<<endl;
-  }
-  
-  return(curr_approx);
-  
-  
-  
-  
-}
-
 void Forward_Backward_algorithm::Run(vector<double > priors,
                                      int ncpu) 
 {
@@ -195,8 +111,10 @@ void Forward_Backward_algorithm::Run(vector<double > priors,
 	int numberofobjects = BINDING_OBJECTS.Size();
 	int seq = 0;
 	
-	// calculate initial value for forward and backward parition summs
-	double part_init = Calc_PartSum_init(1);
+	// initial value for partition sums.
+	// when footprint priors are normalized, i.e. sum of all priors is 1, then initial values for partition sums is always 1.
+	// we normalize the priors, therefore we set value to 1.
+	double part_init = 1;
 	
 #ifdef _OPENMP
 	omp_set_nested(true);

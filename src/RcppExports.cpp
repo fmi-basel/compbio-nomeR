@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // run_cpp_nomeR
-List run_cpp_nomeR(const List& data, const List& binding_models, const NumericVector& bgprotectprob, const NumericVector& bgprior, const NumericVector& bound_fit_tol, const NumericVector& bound_min_fderiv_val, const IntegerVector& bound_max_steps, const LogicalVector& run_priorEM, const NumericVector& priorEM_fit_tol, const IntegerVector& priorEM_max_steps, const NumericVector& Ncpu, const LogicalVector& verbose);
-RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP bound_fit_tolSEXP, SEXP bound_min_fderiv_valSEXP, SEXP bound_max_stepsSEXP, SEXP run_priorEMSEXP, SEXP priorEM_fit_tolSEXP, SEXP priorEM_max_stepsSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+List run_cpp_nomeR(const List& data, const List& binding_models, const NumericVector& bgprotectprob, const NumericVector& bgprior, const NumericVector& Ncpu, const LogicalVector& verbose);
+RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,15 +16,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const List& >::type binding_models(binding_modelsSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type bgprotectprob(bgprotectprobSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type bgprior(bgpriorSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type bound_fit_tol(bound_fit_tolSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type bound_min_fderiv_val(bound_min_fderiv_valSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type bound_max_steps(bound_max_stepsSEXP);
-    Rcpp::traits::input_parameter< const LogicalVector& >::type run_priorEM(run_priorEMSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type priorEM_fit_tol(priorEM_fit_tolSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type priorEM_max_steps(priorEM_max_stepsSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type Ncpu(NcpuSEXP);
     Rcpp::traits::input_parameter< const LogicalVector& >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps, Ncpu, verbose));
+    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, binding_models, bgprotectprob, bgprior, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -62,7 +56,7 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 12},
+    {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 6},
     {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 3},
     {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
     {"_rcpp_module_boot_stan_fit4background_mixture_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_mixture_model_mod, 0},

@@ -20,12 +20,6 @@ List run_cpp_nomeR(const List& data,
                       const List& binding_models,
                       const NumericVector& bgprotectprob,
                       const NumericVector& bgprior,
-                      const NumericVector& bound_fit_tol,
-                      const NumericVector& bound_min_fderiv_val,
-                      const IntegerVector& bound_max_steps,
-                      const LogicalVector& run_priorEM,
-                      const NumericVector& priorEM_fit_tol,
-                      const IntegerVector& priorEM_max_steps,
                       const NumericVector& Ncpu,
                       const LogicalVector& verbose
                       ) {
@@ -44,24 +38,19 @@ List run_cpp_nomeR(const List& data,
   extern parameters PARAMS;
   double bgcoverprob_ = as<double >(bgprotectprob);
   double bgprior_ = as<double >(bgprior);
-  double bound_fit_tol_ = as<double >(bound_fit_tol);
-  double bound_min_fderiv_val_ = as<double >(bound_min_fderiv_val);
-  int bound_max_steps_ = as<int >(bound_max_steps);
-  
-  bool run_priorEM_ = as<bool >(run_priorEM);
-  double priorEM_fit_tol_ = as<double >(priorEM_fit_tol);
-  int priorEM_max_steps_ = as<int >(priorEM_max_steps);
+  // double bound_fit_tol_ = as<double >(bound_fit_tol);
+  // double bound_min_fderiv_val_ = as<double >(bound_min_fderiv_val);
+  // int bound_max_steps_ = as<int >(bound_max_steps);
+  // 
+  // bool run_priorEM_ = as<bool >(run_priorEM);
+  // double priorEM_fit_tol_ = as<double >(priorEM_fit_tol);
+  // int priorEM_max_steps_ = as<int >(priorEM_max_steps);
   
   if(_VERBOSE_){
     Rcout<<"Creating PARAMS object..."<<endl;
   }
   PARAMS.setParams(bgcoverprob_,
-                   bgprior_,
-                   bound_fit_tol_,
-                   bound_min_fderiv_val_,
-                   bound_max_steps_,
-                   priorEM_fit_tol_,
-                   priorEM_max_steps_);
+                   bgprior_);
   
   //PARAMS.print();
   

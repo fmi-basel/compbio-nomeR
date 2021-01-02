@@ -4,6 +4,7 @@
 .RData
 .Ruserdata
 *.o
+*.so
 Makefile
 info.txt
 TEST_MODEL/*

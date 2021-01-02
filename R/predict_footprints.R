@@ -92,12 +92,6 @@ predict_footprints <- function(data,
                           bgprotectprob,
                           bgcoverprior,
                           ncpu = 1L,
-                          bound_fit_tol = 1e-5,
-                          bound_min_fderiv_val = 1e-5,
-                          bound_max_steps = 1000,
-                          run_priorEM = FALSE,
-                          priorEM_fit_tol = 1e-5,
-                          priorEM_max_steps = 1000,
                           verbose = F
                           
 ) {
@@ -205,18 +199,7 @@ predict_footprints <- function(data,
     )
   }
   
-  if(bound_fit_tol <=0){
-    ArgumentCheck::addError(
-      msg = "bound_fit_tol must be a positive number",
-      argcheck = arg.check
-    )
-  }
-  if(priorEM_fit_tol <=0){
-    ArgumentCheck::addError(
-      msg = "priorEM_fit_tol must be a positive number",
-      argcheck = arg.check
-    )
-  }
+  
   
   if(ncpu < 0   ){
     ArgumentCheck::addError(
@@ -268,16 +251,18 @@ predict_footprints <- function(data,
                             footprint_models,
                             bgprotectprob,
                             start_priors["BG"],
-                            bound_fit_tol, 
-                            bound_min_fderiv_val, 
-                            bound_max_steps, 
-                            run_priorEM, 
-                            priorEM_fit_tol, 
-                            priorEM_max_steps, 
+                            # bound_fit_tol, 
+                            # bound_min_fderiv_val, 
+                            # bound_max_steps, 
+                            # run_priorEM, 
+                            # priorEM_fit_tol, 
+                            # priorEM_max_steps, 
                             ncpu,
                             verbose)
   if(verbose)
     .message_timestamp("convert cpp_nomeR output to data.frame...")
-  lapply(out.list,as.data.frame,stringsAsFactors = FALSE)
+  lapply(out.list,as.data.frame,
+         stringsAsFactors = FALSE,
+         check.names = FALSE)
   
 }

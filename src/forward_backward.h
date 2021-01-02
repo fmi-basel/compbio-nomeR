@@ -32,7 +32,7 @@ class Forward_Backward_algorithm
   vector<vector<double> > R;
   vector<vector<vector<double> > > Prob;
   vector<vector<double > > genomesummary; //this vector contains expected prior, expected number of sites and expected coverage for the whole genome and for each TF
-  //Forward_Backward_algorithm(){};
+  
   vector<int > print_indexes;	// this array contains indexes in object vector that will be printed, i.e. map i - index in Prob array to j - index in object array
   vector<vector<int > > names2indexes; // this array contains map: i - index in print_names to subarray of indexes in object vector with this name (given that for the same tf we create two object with + and - orientation)
   vector<string > print_names; // this array contain names of the objects that will be printed
@@ -44,7 +44,6 @@ class Forward_Backward_algorithm
   Forward_Backward_algorithm();
   bool Create();
   ~Forward_Backward_algorithm();
-  double Calc_PartSum_init(double x0);
   
   void Run(vector<double > priors,
            int ncpu);
