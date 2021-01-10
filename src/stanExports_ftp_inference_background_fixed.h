@@ -306,10 +306,10 @@ public:
                 throw std::domain_error(errmsg_stream__.str());
             }
             current_statement_begin__ = 119;
-            if (as_bool(logical_negation((primitive_value((primitive_value((primitive_value(logical_gt(get_base1(get_base1(spacing_counts, 1, "spacing_counts", 1), 1, "spacing_counts", 2), 0)) && primitive_value(logical_eq(get_base1(get_base1(spacing_counts, 1, "spacing_counts", 1), 2, "spacing_counts", 2), 0)))) && primitive_value(logical_eq(get_base1(get_base1(spacing_counts, 1, "spacing_counts", 1), 3, "spacing_counts", 2), 0)))) && primitive_value(logical_gt(get_base1(get_base1(spacing_counts, 1, "spacing_counts", 1), 4, "spacing_counts", 2), 0)))))) {
+            if (as_bool(logical_negation((primitive_value((primitive_value(logical_gt((get_base1(get_base1(spacing_counts, 1, "spacing_counts", 1), 1, "spacing_counts", 2) + get_base1(get_base1(spacing_counts, 1, "spacing_counts", 1), 4, "spacing_counts", 2)), 0)) && primitive_value(logical_eq(get_base1(get_base1(spacing_counts, 1, "spacing_counts", 1), 2, "spacing_counts", 2), 0)))) && primitive_value(logical_eq(get_base1(get_base1(spacing_counts, 1, "spacing_counts", 1), 3, "spacing_counts", 2), 0)))))) {
                 current_statement_begin__ = 120;
                 std::stringstream errmsg_stream__;
-                errmsg_stream__ << "Incorrect first row in spacing_counts! It must contain N00, N01, N10, N11 at spacing S=1. Namely N00 and N11 must represent nubmer of 0 and 1 in the data and N01 and N10 must be 0.";
+                errmsg_stream__ << "Incorrect first row in spacing_counts! It must contain N00, N01, N10, N11 at spacing S=1. Namely N00 and N11 must represent number of 0 and 1 in the data and N01 and N10 must be 0.";
                 throw std::domain_error(errmsg_stream__.str());
             }
             // validate transformed data

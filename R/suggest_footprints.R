@@ -55,6 +55,11 @@ suggest_footprints <- function(S,
   ## find x where spline intercepts 0, i.e. roots
   roots_x_idx <- which(spline_deriv1[1:(length(spline_deriv1)-1)] * spline_deriv1[2:length(spline_deriv1)] <=0)+1
   
+  if(length(roots_x_idx) == 0){
+    return(list("ftp_ranges" = matrix(nrow=0,ncol=2,dimnames = list(NULL,c("min_ftp_length","max_ftp_length"))),
+                "smoothed_signal" = smoothed_signal))
+  }
+  
   x_extremums <- S[roots_x_idx]
   y_extremums <- y[roots_x_idx]
   # type_extremums: 1 fox max, -1 for min

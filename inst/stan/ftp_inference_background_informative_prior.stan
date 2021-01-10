@@ -122,8 +122,8 @@ transformed data {
   if(spacings[1] != 1){
     reject("Incorrect first element in spacings! First element in vector spacings (S) must be 1 which corresponds to total number of 0 and 1 in the data");
   }
-  if(!(spacing_counts[1,1] > 0 && spacing_counts[1,2]==0 && spacing_counts[1,3] == 0 && spacing_counts[1,4] > 0)){
-    reject("Incorrect first row in spacing_counts! It must contain N00, N01, N10, N11 at spacing S=1. Namely N00 and N11 must represent nubmer of 0 and 1 in the data and N01 and N10 must be 0.");
+  if(!(spacing_counts[1,1] + spacing_counts[1,4] > 0 && spacing_counts[1,2]==0 && spacing_counts[1,3] == 0)){
+    reject("Incorrect first row in spacing_counts! It must contain N00, N01, N10, N11 at spacing S=1. Namely N00 and N11 must represent number of 0 and 1 in the data and N01 and N10 must be 0.");
   }
 }
 
