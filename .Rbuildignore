@@ -8,3 +8,5 @@ test_rnome.R
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^\.travis\.yml$
+^\.github$

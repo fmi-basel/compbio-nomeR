@@ -5,6 +5,9 @@
 
 <!-- badges: start -->
 
+[![Travis build
+status](https://travis-ci.com/fmi-basel/compbio-nomeR.svg?branch=master)](https://travis-ci.com/fmi-basel/compbio-nomeR)
+[![R-CMD-check](https://github.com/fmi-basel/compbio-nomeR/workflows/R-CMD-check/badge.svg)](https://github.com/fmi-basel/compbio-nomeR/actions)
 <!-- badges: end -->
 
 This packages uses a probabilistic model for analysis of NOMe-Seq data,
