@@ -19,10 +19,14 @@
 #'
 # @examples
 get_ftp_models_for_prediction <- function(infer_summary){
+  
   if(is.null(infer_summary[["ESTIMATES"]]) | is.null(infer_summary[["FTP_SUGGEST"]])){
     stop("Incorrect input. infer_summary must be a list containing ESTIMATES and FTP_SUGGEST. See ?nomeR::get_inference_summary")
   }
   
+  if(is.null(row.names(infer_summary[["FTP_SUGGEST"]]))){
+    stop("Can't find 'row.names' of matrix 'FTP_SUGGEST'. Please use footprint names as 'row.names'.")
+  }
   infer_ftp_abund_probs <- infer_summary[["ESTIMATES"]][["ftp_abundance_estimates"]]
   if(inherits(infer_summary[["ESTIMATES"]][["footprint_protect_prob_estimate"]],"data.frame")){
     ftp_protect_prob <- infer_summary[["ESTIMATES"]][["footprint_protect_prob_estimate"]][1,"mean"]
@@ -41,10 +45,12 @@ get_ftp_models_for_prediction <- function(infer_summary){
   }
   ftp_suggest <- infer_summary[["FTP_SUGGEST"]]
   
-  ftp_lengths <- apply(ftp_suggest,1,function(ftp_rng){seq(from = ftp_rng[1],
-                                                           to = ftp_rng[2],
-                                                           by = 1)})
-  
+  ftp_lengths <- sapply(row.names(ftp_suggest),
+                        function(ridx){
+                          seq(from = ftp_suggest[ridx,1],
+                              to = ftp_suggest[ridx,2],
+                              by = 1)
+                        },simplify = F,USE.NAMES = )
   ## select required footprints
   req_infer_ftp_lengths <- infer_ftp_abund_probs[infer_ftp_abund_probs[,"ftp_length"] %in% c(1,unlist(ftp_lengths)),]
   req_infer_ftp_lengths[,"mean"] <- req_infer_ftp_lengths[,"mean"]/sum(req_infer_ftp_lengths[,"mean"])

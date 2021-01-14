@@ -18,7 +18,8 @@ Imports:
     rstantools (>= 2.1.1),
     stats,
     stringr,
-    truncdist
+    truncdist,
+    GenomicRanges
 Suggests: testthat
 LinkingTo: 
     BH (>= 1.66.0),
