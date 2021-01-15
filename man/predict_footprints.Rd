@@ -10,12 +10,6 @@ predict_footprints(
   bgprotectprob,
   bgcoverprior,
   ncpu = 1L,
-  bound_fit_tol = 1e-05,
-  bound_min_fderiv_val = 1e-05,
-  bound_max_steps = 1000,
-  run_priorEM = FALSE,
-  priorEM_fit_tol = 1e-05,
-  priorEM_max_steps = 1000,
   verbose = F
 )
 }
@@ -36,6 +30,8 @@ NAME - name (character) of a model, e.g. "Nucleosome".}
 
 \item{ncpu}{number of threads to use}
 
+\item{verbose}{verbose mode for bug fixing}
+
 \item{bound_fit_tol}{fitting tolerance for estimating initial values of partition sums}
 
 \item{bound_min_fderiv_val}{This value used in Haley's numerical method for solving equations and represent a 
@@ -49,8 +45,6 @@ Not recommended for regions with transcription factor binding as the EM overesti
 \item{priorEM_fit_tol}{Fitting tolerance for running prior EM}
 
 \item{priorEM_max_steps}{Maximum number of iterations in prior EM}
-
-\item{verbose}{verbose mode for bug fixing}
 }
 \value{
 A list which contains 3 data frames:
