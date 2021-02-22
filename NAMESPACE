@@ -3,6 +3,8 @@
 export(add_joint_probs_and_MI)
 export(calculate_theor_joint_probs)
 export(count_joint_frequencies)
+export(fetch_data_from_bismark_bam)
+export(fit_background_mixmodel_from_aggreg_table)
 export(fit_background_mixture_model)
 export(generate_synthetic_NOMe_data)
 export(get_ftp_inference_summary)

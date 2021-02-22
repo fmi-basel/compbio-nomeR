@@ -18,8 +18,16 @@ Imports:
     rstantools (>= 2.1.1),
     stats,
     stringr,
-    truncdist
-Suggests: testthat
+    truncdist,
+    IRanges,
+    GenomicRanges,
+    S4Vectors
+Suggests: 
+    testthat,
+    GenomicAlignments,
+    Biostrings,
+    Rsamtools,
+    BSgenome
 LinkingTo: 
     BH (>= 1.66.0),
     Rcpp (>= 0.12.0),

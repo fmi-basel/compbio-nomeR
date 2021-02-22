@@ -12,14 +12,6 @@
 #' @param bgprotectprob probability to find a protected 'C' in open (uprotected) regions
 #' @param bgcoverprior prior probability for percentage of all fragments to be in a free (unprotected, or background) state
 #' @param ncpu number of threads to use
-#' @param bound_fit_tol fitting tolerance for estimating initial values of partition sums
-#' @param bound_min_fderiv_val This value used in Haley's numerical method for solving equations and represent a 
-#' minimal value of denominator in first derivative of a function
-#' @param bound_max_steps Maximum number of iterations for algorithm which estimates boundary values for partition sums
-#' @param run_priorEM If TRUE the function runs Expectation Maximization algorithm for fitting prior probabilities of binding objects.
-#' Not recommended for regions with transcription factor binding as the EM overestimates shorter footprints.
-#' @param priorEM_fit_tol Fitting tolerance for running prior EM 
-#' @param priorEM_max_steps Maximum number of iterations in prior EM
 #' @param verbose verbose mode for bug fixing
 #'
 #' @return A list which contains 3 data frames:
