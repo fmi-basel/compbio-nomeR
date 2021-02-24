@@ -65,66 +65,71 @@ suggest_footprints <- function(S,
   # points(x=x_extremums,y=y_extremums,col = ifelse(type_extremums==1,"green","blue"),pch=20)
   spectr_max_idx <- roots_x_idx[which(type_extremums == 1)]
   
-  ftp_ranges <- do.call(rbind,lapply(spectr_max_idx,
-                       function(idx){
-                         
-                         if(smoothed_signal[idx] == 0 & !isLog){
-                           stop(paste0("Incorrect value of local maximum at x=",x[idx],"; y=",smoothed_signal[idx]))
-                         }
-                         ## find left range
-                         left_range <- max(idx-1,1):1
-                         ## remove indices with negative derivative
-                         neg_der <- which(spline_deriv1[left_range] < 0)
-                         if(length(neg_der) > 0){
-                           left_range <- left_range[1:max(neg_der[1] - 1,1)]
-                         }
-                         
-                         ## remove indices where ratio to extremum is lower than max_abund_drop
-                         if(isLog){
-                           ratio_to_extrem <- smoothed_signal[left_range] - smoothed_signal[idx]
-                         } else {
-                           ratio_to_extrem <- log2(smoothed_signal[left_range]/smoothed_signal[idx])
-                         }
-                         
-                         below_cutoff <- which(ratio_to_extrem < -max_abund_log2drop)
-                         if(length(below_cutoff) > 0){
-                           left_range <- left_range[1:max(below_cutoff[1] - 1,1)]
-                         }
-                         
-                         ## keep indices where length is less than max_peak_width
-                         left_range <- left_range[which(S[left_range[1]] - S[left_range] + 1 <= max_peak_width/2)]
-                         # get most left index
-                         left_S <- S[min(left_range)]
-                         
-                         ## find right range
-                         right_range <- min(idx+1,length(S)):length(S)
-                         ## remove indices with positive derivative
-                         pos_der <- which(spline_deriv1[right_range] > 0)
-                         if(length(pos_der) > 0){
-                           right_range <- right_range[1:max(pos_der[1] - 1,1)]
-                         }
-                         
-                         ## remove indices where ratio to extremum is lower than max_abund_drop
-                         if(isLog){
-                           ratio_to_extrem <- smoothed_signal[right_range] - smoothed_signal[idx]
-                         } else {
-                           ratio_to_extrem <- log2(smoothed_signal[right_range]/smoothed_signal[idx])
-                         }
-                         
-                         below_cutoff <- which(ratio_to_extrem < -max_abund_log2drop)
-                         if(length(below_cutoff) > 0){
-                           right_range <- right_range[1:max(below_cutoff[1] - 1,1)]
-                         }
-                         ## keep indices where length is less than max_peak_width
-                         right_range <- right_range[which(S[right_range] - S[right_range[1]]  + 1 <= max_peak_width/2)]
-                         
-                         # get most right index
-                         right_S <- S[max(right_range)]
-                         
-                         return(c("min_ftp_length" = left_S,
-                                  "max_ftp_length" = right_S))
-                       }))
-  row.names(ftp_ranges) <- paste0("ftp",1:nrow(ftp_ranges))
+  if(length(spectr_max_idx) > 0){
+    ftp_ranges <- do.call(rbind,lapply(spectr_max_idx,
+                                       function(idx){
+                                         
+                                         if(smoothed_signal[idx] == 0 & !isLog){
+                                           stop(paste0("Incorrect value of local maximum at x=",x[idx],"; y=",smoothed_signal[idx]))
+                                         }
+                                         ## find left range
+                                         left_range <- max(idx-1,1):1
+                                         ## remove indices with negative derivative
+                                         neg_der <- which(spline_deriv1[left_range] < 0)
+                                         if(length(neg_der) > 0){
+                                           left_range <- left_range[1:max(neg_der[1] - 1,1)]
+                                         }
+                                         
+                                         ## remove indices where ratio to extremum is lower than max_abund_drop
+                                         if(isLog){
+                                           ratio_to_extrem <- smoothed_signal[left_range] - smoothed_signal[idx]
+                                         } else {
+                                           ratio_to_extrem <- log2(smoothed_signal[left_range]/smoothed_signal[idx])
+                                         }
+                                         
+                                         below_cutoff <- which(ratio_to_extrem < -max_abund_log2drop)
+                                         if(length(below_cutoff) > 0){
+                                           left_range <- left_range[1:max(below_cutoff[1] - 1,1)]
+                                         }
+                                         
+                                         ## keep indices where length is less than max_peak_width
+                                         left_range <- left_range[which(S[left_range[1]] - S[left_range] + 1 <= max_peak_width/2)]
+                                         # get most left index
+                                         left_S <- S[min(left_range)]
+                                         
+                                         ## find right range
+                                         right_range <- min(idx+1,length(S)):length(S)
+                                         ## remove indices with positive derivative
+                                         pos_der <- which(spline_deriv1[right_range] > 0)
+                                         if(length(pos_der) > 0){
+                                           right_range <- right_range[1:max(pos_der[1] - 1,1)]
+                                         }
+                                         
+                                         ## remove indices where ratio to extremum is lower than max_abund_drop
+                                         if(isLog){
+                                           ratio_to_extrem <- smoothed_signal[right_range] - smoothed_signal[idx]
+                                         } else {
+                                           ratio_to_extrem <- log2(smoothed_signal[right_range]/smoothed_signal[idx])
+                                         }
+                                         
+                                         below_cutoff <- which(ratio_to_extrem < -max_abund_log2drop)
+                                         if(length(below_cutoff) > 0){
+                                           right_range <- right_range[1:max(below_cutoff[1] - 1,1)]
+                                         }
+                                         ## keep indices where length is less than max_peak_width
+                                         right_range <- right_range[which(S[right_range] - S[right_range[1]]  + 1 <= max_peak_width/2)]
+                                         
+                                         # get most right index
+                                         right_S <- S[max(right_range)]
+                                         
+                                         return(c("min_ftp_length" = left_S,
+                                                  "max_ftp_length" = right_S))
+                                       }))
+    row.names(ftp_ranges) <- paste0("ftp",1:nrow(ftp_ranges))
+  } else {
+    ftp_ranges <- matrix(nrow=0,ncol=2)
+    colnames(ftp_ranges) <- c("min_ftp_length","max_ftp_length")
+  }
   return(list("ftp_ranges" = ftp_ranges,
               "smoothed_signal" = smoothed_signal))
 }

@@ -71,6 +71,11 @@ init_ftp_abundance_for_inference <- function(dir_alpha = c(200,rep(1,199)),
   
   init_vals <- lapply(1:nchains,function(x){
     ftp_cover_probs <- as.vector(extraDistr::rdirichlet(1,dir_alpha))
+    ## substitute 0s if any by small number because rstan fails because of log(0)
+    ftp_cover_probs[ftp_cover_probs == 0] <- .Machine$double.eps/2
+    ftp_cover_probs <- ftp_cover_probs/sum(ftp_cover_probs)
+    
+    
     footprint_protect_prob <- truncdist::rtrunc(1,spec="beta",
                                                a = ftp_model_params[["ftp_protect_min"]] + delta_from_max_min,
                                                b = ftp_model_params[["ftp_protect_max"]] - delta_from_max_min,
