@@ -31,20 +31,6 @@ NAME - name (character) of a model, e.g. "Nucleosome".}
 \item{ncpu}{number of threads to use}
 
 \item{verbose}{verbose mode for bug fixing}
-
-\item{bound_fit_tol}{fitting tolerance for estimating initial values of partition sums}
-
-\item{bound_min_fderiv_val}{This value used in Haley's numerical method for solving equations and represent a 
-minimal value of denominator in first derivative of a function}
-
-\item{bound_max_steps}{Maximum number of iterations for algorithm which estimates boundary values for partition sums}
-
-\item{run_priorEM}{If TRUE the function runs Expectation Maximization algorithm for fitting prior probabilities of binding objects.
-Not recommended for regions with transcription factor binding as the EM overestimates shorter footprints.}
-
-\item{priorEM_fit_tol}{Fitting tolerance for running prior EM}
-
-\item{priorEM_max_steps}{Maximum number of iterations in prior EM}
 }
 \value{
 A list which contains 3 data frames:

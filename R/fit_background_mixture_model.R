@@ -23,8 +23,8 @@ get_mixmodel_init_values <- function(nchains,
   } else if(model == "betabinom"){
     init_val <- lapply(1:nchains,
                        function(chain){
-                         list(alpha_betabinom = stats::runif(1,0,5),
-                              beta_betabinom = stats::runif(1,0,5))
+                         list(alpha_betabinom = stats::runif(1,1e-20,1000),
+                              beta_betabinom = stats::runif(1,1e-20,1000))
                        })
   }
 }

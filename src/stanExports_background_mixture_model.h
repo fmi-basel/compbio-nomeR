@@ -330,8 +330,6 @@ public:
         names__.push_back("bg_protect_prob");
         names__.push_back("alpha_betabinom");
         names__.push_back("beta_betabinom");
-        names__.push_back("log_theta");
-        names__.push_back("log_lik");
     }
     void get_dims(std::vector<std::vector<size_t> >& dimss__) const {
         dimss__.resize(0);
@@ -343,12 +341,6 @@ public:
         dims__.resize(0);
         dimss__.push_back(dims__);
         dims__.resize(0);
-        dimss__.push_back(dims__);
-        dims__.resize(0);
-        dims__.push_back(2);
-        dimss__.push_back(dims__);
-        dims__.resize(0);
-        dims__.push_back(n_table_entries);
         dimss__.push_back(dims__);
     }
     template <typename RNG>
@@ -382,47 +374,6 @@ public:
         try {
             if (!include_gqs__ && !include_tparams__) return;
             if (!include_gqs__) return;
-            // declare and define generated quantities
-            current_statement_begin__ = 69;
-            validate_non_negative_index("log_theta", "2", 2);
-            Eigen::Matrix<double, Eigen::Dynamic, 1> log_theta(2);
-            stan::math::initialize(log_theta, DUMMY_VAR__);
-            stan::math::fill(log_theta, DUMMY_VAR__);
-            current_statement_begin__ = 71;
-            validate_non_negative_index("log_lik", "n_table_entries", n_table_entries);
-            Eigen::Matrix<double, Eigen::Dynamic, 1> log_lik(n_table_entries);
-            stan::math::initialize(log_lik, DUMMY_VAR__);
-            stan::math::fill(log_lik, DUMMY_VAR__);
-            // generated quantities statements
-            current_statement_begin__ = 74;
-            stan::model::assign(log_theta, 
-                        stan::model::cons_list(stan::model::index_uni(1), stan::model::nil_index_list()), 
-                        stan::math::log(theta), 
-                        "assigning variable log_theta");
-            current_statement_begin__ = 75;
-            stan::model::assign(log_theta, 
-                        stan::model::cons_list(stan::model::index_uni(2), stan::model::nil_index_list()), 
-                        stan::math::log((1 - theta)), 
-                        "assigning variable log_theta");
-            current_statement_begin__ = 77;
-            for (int n = 1; n <= n_table_entries; ++n) {
-                current_statement_begin__ = 78;
-                stan::model::assign(log_lik, 
-                            stan::model::cons_list(stan::model::index_uni(n), stan::model::nil_index_list()), 
-                            (get_base1(n_frequencies, n, "n_frequencies", 1) * log_sum_exp((get_base1(log_theta, 1, "log_theta", 1) + binomial_log(get_base1(n_protect_pos, n, "n_protect_pos", 1), get_base1(n_total_pos, n, "n_total_pos", 1), bg_protect_prob)), (get_base1(log_theta, 2, "log_theta", 1) + beta_binomial_log(get_base1(n_protect_pos, n, "n_protect_pos", 1), get_base1(n_total_pos, n, "n_total_pos", 1), alpha_betabinom, beta_betabinom)))), 
-                            "assigning variable log_lik");
-            }
-            // validate, write generated quantities
-            current_statement_begin__ = 69;
-            size_t log_theta_j_1_max__ = 2;
-            for (size_t j_1__ = 0; j_1__ < log_theta_j_1_max__; ++j_1__) {
-                vars__.push_back(log_theta(j_1__));
-            }
-            current_statement_begin__ = 71;
-            size_t log_lik_j_1_max__ = n_table_entries;
-            for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
-                vars__.push_back(log_lik(j_1__));
-            }
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
             // Next line prevents compiler griping about no return
@@ -469,18 +420,6 @@ public:
         if (include_tparams__) {
         }
         if (!include_gqs__) return;
-        size_t log_theta_j_1_max__ = 2;
-        for (size_t j_1__ = 0; j_1__ < log_theta_j_1_max__; ++j_1__) {
-            param_name_stream__.str(std::string());
-            param_name_stream__ << "log_theta" << '.' << j_1__ + 1;
-            param_names__.push_back(param_name_stream__.str());
-        }
-        size_t log_lik_j_1_max__ = n_table_entries;
-        for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
-            param_name_stream__.str(std::string());
-            param_name_stream__ << "log_lik" << '.' << j_1__ + 1;
-            param_names__.push_back(param_name_stream__.str());
-        }
     }
     void unconstrained_param_names(std::vector<std::string>& param_names__,
                                    bool include_tparams__ = true,
@@ -502,18 +441,6 @@ public:
         if (include_tparams__) {
         }
         if (!include_gqs__) return;
-        size_t log_theta_j_1_max__ = 2;
-        for (size_t j_1__ = 0; j_1__ < log_theta_j_1_max__; ++j_1__) {
-            param_name_stream__.str(std::string());
-            param_name_stream__ << "log_theta" << '.' << j_1__ + 1;
-            param_names__.push_back(param_name_stream__.str());
-        }
-        size_t log_lik_j_1_max__ = n_table_entries;
-        for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
-            param_name_stream__.str(std::string());
-            param_name_stream__ << "log_lik" << '.' << j_1__ + 1;
-            param_names__.push_back(param_name_stream__.str());
-        }
     }
 }; // model
 }  // namespace

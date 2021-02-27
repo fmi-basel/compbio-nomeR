@@ -86,7 +86,7 @@
 #' }
 #' 
 #' 
-#' @importFrom ggplot2 ggplot aes geom_ribbon geom_line scale_y_log10 theme_bw theme  labs guides annotate scale_x_continuous scale_color_manual scale_fill_manual
+#' @importFrom ggplot2 ggplot aes geom_ribbon geom_line scale_y_log10 theme_bw theme  labs guides guide_legend annotate scale_x_continuous scale_color_manual scale_fill_manual
 #' @importFrom graphics plot
 get_ftp_inference_summary <- function(infer_stanfit,
                                   ftp_abundance_name = c("ftp_cover_probs","ftp_start_probs"),
@@ -146,6 +146,8 @@ get_ftp_inference_summary <- function(infer_stanfit,
       infer_ftp_protect_prob <- NA
     }
     
+  } else{
+    stop("infer_stanfit must be stanfit object returned by rstan::sampling or rstan::vb, or list returned by rstan::optimizing")
   }
   
   ## create plot, do not show ftp_length = 1, i.e. background
