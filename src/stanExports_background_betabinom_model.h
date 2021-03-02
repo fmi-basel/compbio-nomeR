@@ -33,7 +33,7 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_background_betabinom_model");
-    reader.add_event(46, 44, "end", "model_background_betabinom_model");
+    reader.add_event(47, 45, "end", "model_background_betabinom_model");
     return reader;
 }
 #include <stan_meta_header.hpp>
@@ -231,7 +231,8 @@ public:
         names__.resize(0);
         names__.push_back("alpha_betabinom");
         names__.push_back("beta_betabinom");
-        names__.push_back("n_freq_tilde");
+        names__.push_back("mean_beta");
+        names__.push_back("var_beta");
     }
     void get_dims(std::vector<std::vector<size_t> >& dimss__) const {
         dimss__.resize(0);
@@ -241,7 +242,8 @@ public:
         dims__.resize(0);
         dimss__.push_back(dims__);
         dims__.resize(0);
-        dims__.push_back(n_table_entries);
+        dimss__.push_back(dims__);
+        dims__.resize(0);
         dimss__.push_back(dims__);
     }
     template <typename RNG>
@@ -273,25 +275,25 @@ public:
             if (!include_gqs__) return;
             // declare and define generated quantities
             current_statement_begin__ = 39;
-            validate_non_negative_index("n_freq_tilde", "n_table_entries", n_table_entries);
-            Eigen::Matrix<double, Eigen::Dynamic, 1> n_freq_tilde(n_table_entries);
-            stan::math::initialize(n_freq_tilde, DUMMY_VAR__);
-            stan::math::fill(n_freq_tilde, DUMMY_VAR__);
-            // generated quantities statements
+            double mean_beta;
+            (void) mean_beta;  // dummy to suppress unused var warning
+            stan::math::initialize(mean_beta, DUMMY_VAR__);
+            stan::math::fill(mean_beta, DUMMY_VAR__);
             current_statement_begin__ = 40;
-            for (int n = 1; n <= n_table_entries; ++n) {
-                current_statement_begin__ = 41;
-                stan::model::assign(n_freq_tilde, 
-                            stan::model::cons_list(stan::model::index_uni(n), stan::model::nil_index_list()), 
-                            beta_binomial_rng(get_base1(n_total_pos, n, "n_total_pos", 1), alpha_betabinom, beta_betabinom, base_rng__), 
-                            "assigning variable n_freq_tilde");
-            }
+            double var_beta;
+            (void) var_beta;  // dummy to suppress unused var warning
+            stan::math::initialize(var_beta, DUMMY_VAR__);
+            stan::math::fill(var_beta, DUMMY_VAR__);
+            // generated quantities statements
+            current_statement_begin__ = 41;
+            stan::math::assign(mean_beta, (alpha_betabinom / (alpha_betabinom + beta_betabinom)));
+            current_statement_begin__ = 42;
+            stan::math::assign(var_beta, ((alpha_betabinom * beta_betabinom) / (square((alpha_betabinom + beta_betabinom)) * ((alpha_betabinom + beta_betabinom) + 1))));
             // validate, write generated quantities
             current_statement_begin__ = 39;
-            size_t n_freq_tilde_j_1_max__ = n_table_entries;
-            for (size_t j_1__ = 0; j_1__ < n_freq_tilde_j_1_max__; ++j_1__) {
-                vars__.push_back(n_freq_tilde(j_1__));
-            }
+            vars__.push_back(mean_beta);
+            current_statement_begin__ = 40;
+            vars__.push_back(var_beta);
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
             // Next line prevents compiler griping about no return
@@ -332,12 +334,12 @@ public:
         if (include_tparams__) {
         }
         if (!include_gqs__) return;
-        size_t n_freq_tilde_j_1_max__ = n_table_entries;
-        for (size_t j_1__ = 0; j_1__ < n_freq_tilde_j_1_max__; ++j_1__) {
-            param_name_stream__.str(std::string());
-            param_name_stream__ << "n_freq_tilde" << '.' << j_1__ + 1;
-            param_names__.push_back(param_name_stream__.str());
-        }
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "mean_beta";
+        param_names__.push_back(param_name_stream__.str());
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "var_beta";
+        param_names__.push_back(param_name_stream__.str());
     }
     void unconstrained_param_names(std::vector<std::string>& param_names__,
                                    bool include_tparams__ = true,
@@ -353,12 +355,12 @@ public:
         if (include_tparams__) {
         }
         if (!include_gqs__) return;
-        size_t n_freq_tilde_j_1_max__ = n_table_entries;
-        for (size_t j_1__ = 0; j_1__ < n_freq_tilde_j_1_max__; ++j_1__) {
-            param_name_stream__.str(std::string());
-            param_name_stream__ << "n_freq_tilde" << '.' << j_1__ + 1;
-            param_names__.push_back(param_name_stream__.str());
-        }
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "mean_beta";
+        param_names__.push_back(param_name_stream__.str());
+        param_name_stream__.str(std::string());
+        param_name_stream__ << "var_beta";
+        param_names__.push_back(param_name_stream__.str());
     }
 }; // model
 }  // namespace

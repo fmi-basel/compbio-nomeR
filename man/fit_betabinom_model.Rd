@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_betabinom_model.R
 \name{fit_betabinom_model}
 \alias{fit_betabinom_model}
-\title{Title}
+\title{Estimate parameters for beta-binomial distribution}
 \usage{
 fit_betabinom_model(
   protect_stat_table,
@@ -16,26 +16,27 @@ fit_betabinom_model(
 \item{protect_stat_table}{\code{matrix} with columns TotalGCH - total number of GCHs in a fragment, ProtectedGCH - number of protected GCHs in a fragments, 
 Nfrags - number of fragments with combination of TotalGCH and ProtectedGCH.}
 
-\item{method}{method for parameter inference that calls corresponding \code{rstan} function. 
+\item{method}{method for parameter inference that calls corresponding \code{\link[rstan]{rstan}} function. 
 \code{optimizing} returns point estimate corresponding to maximum in posterior denstiy.
 \code{sampling} returns Hamiltonian Monte Carlo draws from posterior distribution.
 \code{vb} return draws from ADVI approximation of posterior distribution (not tested yet).}
 
-\item{nchains}{number of markov chains for \code{rstan::sampling}. Currently has no effect}
+\item{nchains}{number of markov chains for \code{\link[rstan]{sampling}}.}
 
-\item{ncpu}{number of cpu to use for \code{rstan::sampling}. Currently has no effect}
+\item{ncpu}{number of cpu to use for \code{\link[rstan]{sampling}}.}
 
-\item{...}{parameters for \code{rstan::optimizing}}
+\item{...}{parameters for \code{\link[rstan]{optimizing}}}
 }
 \value{
 a list containing following slots:
-\code{rstan_output_object} \code{rstan} objected returned by function \code{optimizing}.
-\code{background_model_params} list containing parameters for function which performs footprint inference, i.e. \code{nomeR::infer_footprints_stan_sampling}.
-The list \code{background_model_params} contains 3 values:
-\code{bg_protect_prob_fixed} inferred value for background probability to emit protected base, i.e. \code{bg_protect_prob}.
-bg_protect_prior_alpha alpha (shape1 in \code{rbeta}) parameter for beta distribution which will be used as a prior distribution for \code{bg_protect_prob} in function for footprint inference.
-bg_protect_prior_beta beta (shape2 in \code{rbeta}) parameter for beta distribution which will be used as a prior distribution for \code{bg_protect_prob} in function for footprint inference.
+\code{rstan_output_object} \code{\link[rstan]{stanfit}} object returned by function \code{\link[rstan]{sampling}} or \code{\link[rstan]{vb}}, or \code{list} returned by \code{\link[rstan]{optimizing}}.
+\code{betabinom_params} list containing infered parameters for beta-binomial distribution.
+The list \code{betabinom_params} contains 2 values:
+\describe{
+\item{alpha}{alpha (shape1 in \code{\link[stats]{rbeta}}) parameter for beta distribution which can be used as parameter \code{bg_protect_alpha} for prior distribution of background noise or parameter \code{ftp_protect_alpha} for prior distribution of footprint noise}
+\item{beta}{beta (shape2 in \code{\link[stats]{rbeta}}) parameter for beta distribution which can be used as parameter \code{bg_protect_beta} for prior distribution of background noise or parameter \code{ftp_protect_beta} for prior distribution of footprint noise}
+}
 }
 \description{
-Title
+This function takes protection statistics as an input (see description for \code{protect_stat_table}) and infers parameters for beta-binomial distribution which fits the data.
 }

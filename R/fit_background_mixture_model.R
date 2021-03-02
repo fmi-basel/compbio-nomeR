@@ -1,7 +1,6 @@
 
 get_mixmodel_init_values <- function(nchains,
-                                     model = c("mixture","betabinom"),
-                                     mixmodel_indata){
+                                     model = c("mixture","betabinom")){
   
   model <- match.arg(model)
   
@@ -9,22 +8,19 @@ get_mixmodel_init_values <- function(nchains,
     init_val <- lapply(1:nchains,
                        function(chain){
                          list(theta = 0.99,
-                              # bg_protect_prob = stats::rbeta(1,
-                              #                         mixmodel_indata$alpha_distrbetaprior_bg_protect,
-                              #                         mixmodel_indata$beta_distrbetaprior_bg_protect),
                               bg_protect_prob = 0.01,
-                              # alpha_betabinom = stats::runif(1,0,5),
-                              # beta_betabinom = stats::runif(1,0,5)
-                              alpha_betabinom = 1,
-                              beta_betabinom = 1
+                              alpha_betabinom = stats::runif(1,0.5,1.5),
+                              beta_betabinom = stats::runif(1,0.5,1.5)
+                              # alpha_betabinom = 1,
+                              # beta_betabinom = 1
                               
                               )
                        })
   } else if(model == "betabinom"){
     init_val <- lapply(1:nchains,
                        function(chain){
-                         list(alpha_betabinom = stats::runif(1,1e-20,1000),
-                              beta_betabinom = stats::runif(1,1e-20,1000))
+                         list(alpha_betabinom = stats::runif(1,0.5,1.5),
+                              beta_betabinom = stats::runif(1,0.5,1.5))
                        })
   }
 }
@@ -132,8 +128,7 @@ fit_background_mixture_model <- function(lambda_DNA_nome_data,
   
   ## get initial values for model
   mixmodel_init_vals <- get_mixmodel_init_values(nchains = nchains,
-                                                 model = "mixture",
-                                                 mixmodel_indata = mixture_model_input_data)
+                                                 model = "mixture")
   
   if(method == "optimizing"){
     

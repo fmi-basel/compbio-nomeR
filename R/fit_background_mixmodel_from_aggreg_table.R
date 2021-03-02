@@ -67,8 +67,7 @@ fit_background_mixmodel_from_aggreg_table <- function(protect_stat_table,
   
   ## get initial values for model
   mixmodel_init_vals <- get_mixmodel_init_values(nchains = nchains,
-                                                 model = "mixture",
-                                                 mixmodel_indata = mixture_model_input_data)
+                                                 model = "mixture")
   
   if(method == "optimizing"){
     

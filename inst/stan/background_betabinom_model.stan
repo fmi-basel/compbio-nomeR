@@ -35,11 +35,12 @@ generated quantities {
   //   log_lik[n] = n_frequencies[n] * beta_binomial_lpmf(n_protect_pos[n] | n_total_pos[n], alpha_betabinom, beta_betabinom);
   // }
   
-  // posterior predictive simulation beta_binomial_rng
-  vector[n_table_entries] n_freq_tilde;
-  for (n in 1:n_table_entries) {
-    n_freq_tilde[n] = beta_binomial_rng(n_total_pos[n], alpha_betabinom, beta_betabinom);
-  }
+  // mean and variance for the beta distribution
+  real mean_beta;
+  real var_beta;
+  mean_beta = alpha_betabinom/(alpha_betabinom + beta_betabinom);
+  var_beta = alpha_betabinom*beta_betabinom/(square(alpha_betabinom + beta_betabinom)*(alpha_betabinom + beta_betabinom + 1));
+
   
 }
 
