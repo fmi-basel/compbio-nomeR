@@ -85,9 +85,10 @@
 #' 
 #' }
 #' 
-#' 
-#' @importFrom ggplot2 ggplot aes geom_ribbon geom_line scale_y_log10 theme_bw theme  labs guides guide_legend annotate scale_x_continuous scale_color_manual scale_fill_manual element_text
-#' @importFrom graphics plot
+#' @import ggplot2
+#' @import graphics
+## @importFrom ggplot2 ggplot aes geom_ribbon geom_line scale_y_log10 theme_bw theme  labs guides guide_legend annotate scale_x_continuous scale_color_manual scale_fill_manual element_text
+## @importFrom graphics plot
 get_ftp_inference_summary <- function(infer_stanfit,
                                   ftp_abundance_name = c("ftp_cover_probs","ftp_start_probs"),
                                   plot = F,
@@ -204,7 +205,10 @@ get_ftp_inference_summary <- function(infer_stanfit,
                                                  ...),
            error = function(e){
              print(e)
-             browser()
+             ftp_ranges <- matrix(nrow=0,ncol=2)
+             colnames(ftp_ranges) <- c("min_ftp_length","max_ftp_length")
+             ftp_suggestions <- list("ftp_ranges" = ftp_ranges,
+                                     "smoothed_signal" = NULL)
            })
   
   if(nrow(ftp_suggestions[["ftp_ranges"]]) > 0){

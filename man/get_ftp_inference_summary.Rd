@@ -108,5 +108,4 @@ inference_summary_list <- get_inference_summary(hmc_output,plot=T)
 
 }
 
-
 }
