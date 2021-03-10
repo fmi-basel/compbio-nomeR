@@ -7,18 +7,19 @@
 using namespace Rcpp;
 
 // run_cpp_nomeR
-List run_cpp_nomeR(const List& data, const List& binding_models, const NumericVector& bgprotectprob, const NumericVector& bgprior, const NumericVector& Ncpu, const LogicalVector& verbose);
-RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+List run_cpp_nomeR(const List& data, const CharacterVector& fragnames, const List& binding_models, const NumericVector& bgprotectprob, const NumericVector& bgprior, const NumericVector& Ncpu, const LogicalVector& verbose);
+RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP fragnamesSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const CharacterVector& >::type fragnames(fragnamesSEXP);
     Rcpp::traits::input_parameter< const List& >::type binding_models(binding_modelsSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type bgprotectprob(bgprotectprobSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type bgprior(bgpriorSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type Ncpu(NcpuSEXP);
     Rcpp::traits::input_parameter< const LogicalVector& >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, binding_models, bgprotectprob, bgprior, Ncpu, verbose));
+    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, fragnames, binding_models, bgprotectprob, bgprior, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -56,7 +57,7 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 6},
+    {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 7},
     {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 3},
     {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
     {"_rcpp_module_boot_stan_fit4background_betabinom_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_betabinom_model_mod, 0},

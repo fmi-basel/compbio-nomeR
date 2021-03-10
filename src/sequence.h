@@ -27,6 +27,11 @@ class Sequence {
 	Sequence(string nm,
           string sequence,
           int maxWMlen);
+	
+	Sequence(string nm,
+          vector<unsigned short> sequence,
+          int maxWMlen);
+	
 	~Sequence();
 	string Name() const;
 	int Size() const;

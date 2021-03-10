@@ -14,8 +14,9 @@ predict_footprints(
 )
 }
 \arguments{
-\item{data}{A matrix containing NOMe-Seq data. Rows represent reads (or fragments), 
-columns represent positions in amplicon. NOTE that \code{data} must contain only positions of selected GpCs where '0' represent unprotected "C", 
+\item{data}{\code{matrix} or \code{list} containing NOMe-Seq data. If data is a \code{matrix} rows represent reads (or fragments), 
+columns represent positions in amplicon. If data is a \code{list} than each element must contain vector with NOMe-seq data. 
+NOTE that \code{data} must contain only positions of selected GpCs where '0' represent unprotected "C", 
 '1' represent protected "C" and all other positions must be filled with "NA".}
 
 \item{footprint_models}{A list containing footprint models for proteins. 

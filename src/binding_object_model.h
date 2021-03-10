@@ -28,7 +28,9 @@ class binding_object_model:public DNAbinding_object
   virtual void print() const;
   virtual void print_normalized() const;
   
-  virtual double get_score(int seq, int position)const;
+  virtual double get_score(NOMeSeqData& SEQUENCES,
+                           int seq,
+                           int position)const;
   void normalize();
 
 };

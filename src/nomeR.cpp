@@ -1,115 +1,74 @@
-#include "parameters.h"
-#include "nomeseqdata.h"
-#include "DNAbindobj_vector.h"
-#include "forward_backward.h"
+#include "predict.hpp"
 #include <Rcpp.h>
 
 using namespace Rcpp;
 
-
-// global objects
-parameters PARAMS;
-DNAbind_obj_vector BINDING_OBJECTS;
-NOMeSeqData SEQUENCES;
-Forward_Backward_algorithm FORWARD_BACKWARD;
-//int _NCPU_ = 1;
 bool _VERBOSE_ = 0;
 
 // [[Rcpp::export]]
 List run_cpp_nomeR(const List& data,
-                      const List& binding_models,
-                      const NumericVector& bgprotectprob,
-                      const NumericVector& bgprior,
-                      const NumericVector& Ncpu,
-                      const LogicalVector& verbose
-                      ) {
+                   const CharacterVector& fragnames,
+                   const List& binding_models,
+                   const NumericVector& bgprotectprob,
+                   const NumericVector& bgprior,
+                   const NumericVector& Ncpu,
+                   const LogicalVector& verbose
+) {
   
   //set verbose
   extern bool _VERBOSE_;
   _VERBOSE_ = as<bool >(verbose);
   
-  
   int Ncpu_ = as<int >(Ncpu);
 #ifndef _OPENMP
-  Rcout<<"nomeR was compiled without OpenMP. Ncpu does not have effect!\n";
+  Rcout<<"nomeR was compiled without OpenMP. ncpu does not have effect.\n";
 #endif
-
-  // create object with parameters
-  extern parameters PARAMS;
-  double bgcoverprob_ = as<double >(bgprotectprob);
-  double bgprior_ = as<double >(bgprior);
-  // double bound_fit_tol_ = as<double >(bound_fit_tol);
-  // double bound_min_fderiv_val_ = as<double >(bound_min_fderiv_val);
-  // int bound_max_steps_ = as<int >(bound_max_steps);
-  // 
-  // bool run_priorEM_ = as<bool >(run_priorEM);
-  // double priorEM_fit_tol_ = as<double >(priorEM_fit_tol);
-  // int priorEM_max_steps_ = as<int >(priorEM_max_steps);
   
-  if(_VERBOSE_){
-    Rcout<<"Creating PARAMS object..."<<endl;
-  }
-  PARAMS.setParams(bgcoverprob_,
-                   bgprior_);
-  
-  //PARAMS.print();
-  
-  // create object with binding models
   
   
   if(_VERBOSE_){
-    Rcout<<"Creating BINDING_OBJECTS object..."<<endl;
+    Rcout<<"Creating Predict object..."<<endl;
   }
-  extern DNAbind_obj_vector BINDING_OBJECTS;
-  BINDING_OBJECTS.create(binding_models,PARAMS);
-  //BINDING_OBJECTS.print();
-  //Rcout<<"MAX WM length "<<BINDING_OBJECTS.maxwmlen<<endl;
-  // create object with NOMeSeq data
-  extern NOMeSeqData SEQUENCES;
-  
-  if(_VERBOSE_){
-    Rcout<<"Creating SEQUENCES object..."<<endl;
-  }
-  SEQUENCES.create(data,
-                   BINDING_OBJECTS.maxwmlen);
-  //SEQUENCES.PrintNames();
-  
-  extern Forward_Backward_algorithm FORWARD_BACKWARD;
-  if(_VERBOSE_){
-    Rcout<<"Creating FORWARD_BACKWARD object..."<<endl;
-  }
-  FORWARD_BACKWARD.Create();
-  
+  Predict predict(data,
+                  fragnames,
+                  binding_models,
+                  bgprotectprob,
+                  bgprior);
   
   // run prediction
   if(_VERBOSE_){
-    Rcout<<"Running FORWARD_BACKWARD.Run()..."<<endl;
+    Rcout<<"Calculating posterior binding probabilities..."<<endl;
   }
-  FORWARD_BACKWARD.Run(Ncpu_);
   
+  List output_data;
+  if(predict.Run(Ncpu_)){
+    //predict.Run(Ncpu_);
+    
+    if(_VERBOSE_){
+      Rcout<<"Running predict.getStartProbDF()..."<<endl;
+    }
+    List startProbdf = predict.getStartProbDF();
+    if(_VERBOSE_){
+      Rcout<<"Running predict.getCoverProbDF()..."<<endl;
+    }
+    List coverProb = predict.getCoverProbDF();
+    if(_VERBOSE_){
+      Rcout<<"Running predict.getGenomeSummaryDF()..."<<endl;
+    }
+    List genSummary = predict.getGenomeSummaryDF();
+    output_data = List::create( Named("START_PROB") = startProbdf,
+                                Named("COVER_PROB") = coverProb,
+                                Named("SUMMARY") = genSummary);
+  } else {
+    output_data = List::create( Named("START_PROB") = R_NilValue,
+                                Named("COVER_PROB") = R_NilValue,
+                                Named("SUMMARY") = R_NilValue);
+    
+    }
   
-  if(_VERBOSE_){
-    Rcout<<"Running FORWARD_BACKWARD.getStartProbDF()..."<<endl;
-  }
-  List startProbdf = FORWARD_BACKWARD.getStartProbDF();
-  if(_VERBOSE_){
-    Rcout<<"Running FORWARD_BACKWARD.getCoverProbDF()..."<<endl;
-  }
-  List coverProb = FORWARD_BACKWARD.getCoverProbDF();
-  if(_VERBOSE_){
-    Rcout<<"Running FORWARD_BACKWARD.getGenomeSummaryDF()..."<<endl;
-  }
-  List genSummary = FORWARD_BACKWARD.getGenomeSummaryDF();
-  List output_data = List::create( Named("START_PROB") = startProbdf,
-                         Named("COVER_PROB") = coverProb,
-                         Named("SUMMARY") = genSummary);
-  
-  PARAMS.clear();
-  BINDING_OBJECTS.clear();
-  SEQUENCES.clear();
-  FORWARD_BACKWARD.clear();
   _VERBOSE_ = 0;
   return output_data;
+  
 }
 
 // [[Rcpp::export]]
@@ -169,9 +128,9 @@ List count_spacing_freq_cpp(const List& data,
 
 // [[Rcpp::export]]
 List calculate_theor_joint_prob_cpp(const NumericVector& ftp_cover_priors, // here vector of priors also represent lengths, namely ith element of the vector has length i+1, e.g. ftp_cover_priors[0] is a prior for bg with length 1. Make sure that R function passes correct vector with priors
-                                const NumericVector& bg_protect_prob,
-                                const NumericVector& footprint_protect_prob,
-                                const IntegerVector& max_spacing){
+                                    const NumericVector& bg_protect_prob,
+                                    const NumericVector& footprint_protect_prob,
+                                    const IntegerVector& max_spacing){
   
   vector<double > ftp_cover_priors_ = Rcpp::as<vector<double > >(ftp_cover_priors);
   double bg_protect_prob_ = as<double >(bg_protect_prob);

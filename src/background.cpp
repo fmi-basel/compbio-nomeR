@@ -31,9 +31,11 @@ void Background::print_normalized() const{
 }
 
 
-double Background::get_score(int seq, int position) const{
+double Background::get_score(NOMeSeqData& SEQUENCES,
+                             int seq,
+                             int position) const{
    
-  extern NOMeSeqData SEQUENCES;
+  //extern NOMeSeqData SEQUENCES;
   if(seq<0 || seq>=SEQUENCES.Size()){
     
   // Rcpp::Rcerr<<"Wm::get_score: Index of sequence is out of range: "<<seq<<endl;

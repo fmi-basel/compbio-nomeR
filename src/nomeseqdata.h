@@ -23,23 +23,18 @@ public:
   ~NOMeSeqData();
   int Size() const;
   int TotalLength() const;
-  
-  /*
-  NOMeSeqData(const vector<string > seq_strings,
-              const vector<string > seq_names);
-  */
-  
+
   bool create(Rcpp::List _seq_info,
               int maxWMlen);
+  bool create(Rcpp::List _seq_list,
+              Rcpp::CharacterVector _seqnames,
+              int maxWMlen);
+
   
-  
-  /*
-  void NOMeSeqData(const string flnm,int maxwmlen);
-  void ReadFasta(const string flnm,int maxwmlen);
-   */
   Sequence & operator[](int index);
   void Add(Sequence &);
   void Add(string name, string seq, int wmmaxlen);
+  void Add(string name, vector<unsigned short> seq, int wmmaxlen);
   void PrintNames() const;
 
   void clear();
@@ -47,8 +42,6 @@ public:
   
   // function for counting occurrences of 0,0; 0,1 etc at spacing S
   vector<vector<int> > count_freq_for_spacings(int maxSpacing) const;
-  // function to export spacing frequencies into R
-  //Rcpp::List R_export_spacing_freq(int maxSpacing) const;
 };
 
 #endif

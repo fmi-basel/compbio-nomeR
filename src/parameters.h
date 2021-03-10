@@ -18,12 +18,6 @@ class parameters
 {
     public:
       string printoutonly;// will be always "All" in R wrapper
-      // double BOUND_FIT_TOLERANCE;
-      // double BOUND_MIN_FDERIV_VAL;
-      // int BOUND_MAX_STEPS;
-      // 
-      // double PRIOREM_FIT_TOLERANCE;
-      // int PRIOREM_MAX_STEPS;
 
       double bgcoverprob;
       double bgprior;

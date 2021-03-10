@@ -62,9 +62,11 @@ void binding_object_model::print_normalized() const{
 }
 
 
-double binding_object_model::get_score(int seq, int position) const{
+double binding_object_model::get_score(NOMeSeqData& SEQUENCES,
+                                       int seq,
+                                       int position) const{
   
-  extern NOMeSeqData SEQUENCES;
+  //extern NOMeSeqData SEQUENCES;
   if(seq<0 || seq>=SEQUENCES.Size()){
     Rcpp::stop("binding_object_model::get_score: Index of sequence is out of range: ");
 	// cerr<<"Wm::get_score: Index of sequence is out of range: "<<seq<<endl;

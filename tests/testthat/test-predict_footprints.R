@@ -60,11 +60,11 @@ test_that("predict_footprints returns correct object",{
                           "COVER_PRIOR" = ft.pr,
                           "NAME" = "FOOTPRINT"))
   
-  expect_warning(nomeR.out <- predict_footprints(data=rmatr,
-                                                 footprint_models = ftp.models,
-                                                 bgprotectprob = 0.05,
-                                                 bgcoverprior = bg.pr,
-                                                 ncpu = 1L))
+  nomeR.out <- predict_footprints(data=rmatr,
+                                  footprint_models = ftp.models,
+                                  bgprotectprob = 0.05,
+                                  bgcoverprior = bg.pr,
+                                  ncpu = 1L)
   
   ## check whether slots exist
   expect_true(all(c("START_PROB", "COVER_PROB","SUMMARY") %in% names(nomeR.out)))

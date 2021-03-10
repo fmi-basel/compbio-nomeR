@@ -25,7 +25,9 @@ class Background:public DNAbinding_object
   virtual ~Background();
   virtual void print() const;
   
-  virtual double get_score(int seq, int position)const;
+  virtual double get_score(NOMeSeqData& SEQUENCES,
+                           int seq,
+                           int position)const;
   virtual void print_normalized() const;
 };
 

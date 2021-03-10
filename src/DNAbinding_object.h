@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
+#include "nomeseqdata.h"
 using namespace std;
 
 class DNAbinding_object{
@@ -22,7 +23,9 @@ class DNAbinding_object{
   DNAbinding_object();
   virtual ~DNAbinding_object() = 0;
   
-  virtual double get_score(int seq, int position) const = 0;
+  virtual double get_score(NOMeSeqData& SEQUENCES,
+                           int seq,
+                           int position) const = 0;
   virtual void print() const = 0;
   virtual void print_normalized() const=0;
 };
