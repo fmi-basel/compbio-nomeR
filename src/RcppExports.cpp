@@ -6,25 +6,94 @@
 
 using namespace Rcpp;
 
+// fetch_cooc_ctable_from_bams_cpp
+Rcpp::List fetch_cooc_ctable_from_bams_cpp(const Rcpp::CharacterVector& infiles, const Rcpp::CharacterVector& regionChr, const Rcpp::IntegerVector& regionStart, const Rcpp::IntegerVector& regionEnd, const Rcpp::IntegerVector& max_spac, const Rcpp::CharacterVector& seqstring, const Rcpp::IntegerVector& seqStart, const Rcpp::IntegerVector& seqEnd, const Rcpp::LogicalVector& remove_nonunique, const Rcpp::IntegerVector& clip_until_nbg, const Rcpp::NumericVector& max_protect_frac, const Rcpp::NumericVector& max_bisC_meth, const Rcpp::IntegerVector& min_bisC_size, const Rcpp::IntegerVector& mapqMin, const Rcpp::IntegerVector& mapqMax);
+RcppExport SEXP _nomeR_fetch_cooc_ctable_from_bams_cpp(SEXP infilesSEXP, SEXP regionChrSEXP, SEXP regionStartSEXP, SEXP regionEndSEXP, SEXP max_spacSEXP, SEXP seqstringSEXP, SEXP seqStartSEXP, SEXP seqEndSEXP, SEXP remove_nonuniqueSEXP, SEXP clip_until_nbgSEXP, SEXP max_protect_fracSEXP, SEXP max_bisC_methSEXP, SEXP min_bisC_sizeSEXP, SEXP mapqMinSEXP, SEXP mapqMaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type infiles(infilesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type regionChr(regionChrSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type regionStart(regionStartSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type regionEnd(regionEndSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type max_spac(max_spacSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type seqstring(seqstringSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type seqStart(seqStartSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type seqEnd(seqEndSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type remove_nonunique(remove_nonuniqueSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type clip_until_nbg(clip_until_nbgSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type max_protect_frac(max_protect_fracSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type max_bisC_meth(max_bisC_methSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type min_bisC_size(min_bisC_sizeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type mapqMin(mapqMinSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type mapqMax(mapqMaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(fetch_cooc_ctable_from_bams_cpp(infiles, regionChr, regionStart, regionEnd, max_spac, seqstring, seqStart, seqEnd, remove_nonunique, clip_until_nbg, max_protect_frac, max_bisC_meth, min_bisC_size, mapqMin, mapqMax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fetch_data_matrix_from_bams_cpp
+Rcpp::List fetch_data_matrix_from_bams_cpp(const Rcpp::CharacterVector& whichContext, const Rcpp::CharacterVector& infiles, const Rcpp::CharacterVector& regionChr, const Rcpp::IntegerVector& regionStart, const Rcpp::IntegerVector& regionEnd, const Rcpp::CharacterVector& seqstring, const Rcpp::IntegerVector& seqStart, const Rcpp::IntegerVector& seqEnd, const Rcpp::LogicalVector& remove_nonunique, const Rcpp::IntegerVector& clip_until_nbg, const Rcpp::NumericVector& max_protect_frac, const Rcpp::NumericVector& max_bisC_meth, const Rcpp::IntegerVector& min_bisC_size, const Rcpp::IntegerVector& mapqMin, const Rcpp::IntegerVector& mapqMax);
+RcppExport SEXP _nomeR_fetch_data_matrix_from_bams_cpp(SEXP whichContextSEXP, SEXP infilesSEXP, SEXP regionChrSEXP, SEXP regionStartSEXP, SEXP regionEndSEXP, SEXP seqstringSEXP, SEXP seqStartSEXP, SEXP seqEndSEXP, SEXP remove_nonuniqueSEXP, SEXP clip_until_nbgSEXP, SEXP max_protect_fracSEXP, SEXP max_bisC_methSEXP, SEXP min_bisC_sizeSEXP, SEXP mapqMinSEXP, SEXP mapqMaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type whichContext(whichContextSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type infiles(infilesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type regionChr(regionChrSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type regionStart(regionStartSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type regionEnd(regionEndSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type seqstring(seqstringSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type seqStart(seqStartSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type seqEnd(seqEndSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type remove_nonunique(remove_nonuniqueSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type clip_until_nbg(clip_until_nbgSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type max_protect_frac(max_protect_fracSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type max_bisC_meth(max_bisC_methSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type min_bisC_size(min_bisC_sizeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type mapqMin(mapqMinSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type mapqMax(mapqMaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(fetch_data_matrix_from_bams_cpp(whichContext, infiles, regionChr, regionStart, regionEnd, seqstring, seqStart, seqEnd, remove_nonunique, clip_until_nbg, max_protect_frac, max_bisC_meth, min_bisC_size, mapqMin, mapqMax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fetch_protect_stats_from_bams_cpp
+Rcpp::List fetch_protect_stats_from_bams_cpp(const Rcpp::CharacterVector& infiles, const Rcpp::CharacterVector& regionChr, const Rcpp::IntegerVector& regionStart, const Rcpp::IntegerVector& regionEnd, const Rcpp::CharacterVector& seqstring, const Rcpp::IntegerVector& seqStart, const Rcpp::IntegerVector& seqEnd, const Rcpp::LogicalVector& remove_nonunique, const Rcpp::IntegerVector& clip_until_nbg, const Rcpp::NumericVector& max_protect_frac, const Rcpp::NumericVector& max_bisC_meth, const Rcpp::IntegerVector& min_bisC_size, const Rcpp::IntegerVector& mapqMin, const Rcpp::IntegerVector& mapqMax);
+RcppExport SEXP _nomeR_fetch_protect_stats_from_bams_cpp(SEXP infilesSEXP, SEXP regionChrSEXP, SEXP regionStartSEXP, SEXP regionEndSEXP, SEXP seqstringSEXP, SEXP seqStartSEXP, SEXP seqEndSEXP, SEXP remove_nonuniqueSEXP, SEXP clip_until_nbgSEXP, SEXP max_protect_fracSEXP, SEXP max_bisC_methSEXP, SEXP min_bisC_sizeSEXP, SEXP mapqMinSEXP, SEXP mapqMaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type infiles(infilesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type regionChr(regionChrSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type regionStart(regionStartSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type regionEnd(regionEndSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type seqstring(seqstringSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type seqStart(seqStartSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type seqEnd(seqEndSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type remove_nonunique(remove_nonuniqueSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type clip_until_nbg(clip_until_nbgSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type max_protect_frac(max_protect_fracSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type max_bisC_meth(max_bisC_methSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type min_bisC_size(min_bisC_sizeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type mapqMin(mapqMinSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type mapqMax(mapqMaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(fetch_protect_stats_from_bams_cpp(infiles, regionChr, regionStart, regionEnd, seqstring, seqStart, seqEnd, remove_nonunique, clip_until_nbg, max_protect_frac, max_bisC_meth, min_bisC_size, mapqMin, mapqMax));
+    return rcpp_result_gen;
+END_RCPP
+}
 // run_cpp_nomeR
-List run_cpp_nomeR(const List& data, const List& binding_models, const NumericVector& bgprotectprob, const NumericVector& bgprior, const NumericVector& bound_fit_tol, const NumericVector& bound_min_fderiv_val, const IntegerVector& bound_max_steps, const LogicalVector& run_priorEM, const NumericVector& priorEM_fit_tol, const IntegerVector& priorEM_max_steps, const NumericVector& Ncpu, const LogicalVector& verbose);
-RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP bound_fit_tolSEXP, SEXP bound_min_fderiv_valSEXP, SEXP bound_max_stepsSEXP, SEXP run_priorEMSEXP, SEXP priorEM_fit_tolSEXP, SEXP priorEM_max_stepsSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+List run_cpp_nomeR(const List& data, const CharacterVector& fragnames, const List& binding_models, const NumericVector& bgprotectprob, const NumericVector& bgprior, const NumericVector& Ncpu, const LogicalVector& verbose);
+RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP fragnamesSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const CharacterVector& >::type fragnames(fragnamesSEXP);
     Rcpp::traits::input_parameter< const List& >::type binding_models(binding_modelsSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type bgprotectprob(bgprotectprobSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type bgprior(bgpriorSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type bound_fit_tol(bound_fit_tolSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type bound_min_fderiv_val(bound_min_fderiv_valSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type bound_max_steps(bound_max_stepsSEXP);
-    Rcpp::traits::input_parameter< const LogicalVector& >::type run_priorEM(run_priorEMSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type priorEM_fit_tol(priorEM_fit_tolSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type priorEM_max_steps(priorEM_max_stepsSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type Ncpu(NcpuSEXP);
     Rcpp::traits::input_parameter< const LogicalVector& >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, binding_models, bgprotectprob, bgprior, bound_fit_tol, bound_min_fderiv_val, bound_max_steps, run_priorEM, priorEM_fit_tol, priorEM_max_steps, Ncpu, verbose));
+    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, fragnames, binding_models, bgprotectprob, bgprior, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -56,17 +125,20 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP _rcpp_module_boot_stan_fit4background_betabinom_model_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4background_mixture_model_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4footprint_inference_model_v1_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 12},
+    {"_nomeR_fetch_cooc_ctable_from_bams_cpp", (DL_FUNC) &_nomeR_fetch_cooc_ctable_from_bams_cpp, 15},
+    {"_nomeR_fetch_data_matrix_from_bams_cpp", (DL_FUNC) &_nomeR_fetch_data_matrix_from_bams_cpp, 15},
+    {"_nomeR_fetch_protect_stats_from_bams_cpp", (DL_FUNC) &_nomeR_fetch_protect_stats_from_bams_cpp, 14},
+    {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 7},
     {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 3},
     {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
+    {"_rcpp_module_boot_stan_fit4background_betabinom_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_betabinom_model_mod, 0},
     {"_rcpp_module_boot_stan_fit4background_mixture_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_mixture_model_mod, 0},
-    {"_rcpp_module_boot_stan_fit4footprint_inference_model_v1_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4footprint_inference_model_v1_mod, 0},
     {"_rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod, 0},
     {"_rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod, 0},
     {NULL, NULL, 0}

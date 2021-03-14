@@ -2,12 +2,12 @@
 
 #include <Rcpp.h>
 using namespace Rcpp ;
-#include "stanExports_footprint_inference_model_v1.h"
+#include "stanExports_background_betabinom_model.h"
 
-RCPP_MODULE(stan_fit4footprint_inference_model_v1_mod) {
+RCPP_MODULE(stan_fit4background_betabinom_model_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_footprint_inference_model_v1")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_background_betabinom_model")
 
     .constructor<SEXP,SEXP,SEXP>()
 

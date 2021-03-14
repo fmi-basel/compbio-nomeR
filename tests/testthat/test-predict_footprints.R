@@ -60,11 +60,11 @@ test_that("predict_footprints returns correct object",{
                           "COVER_PRIOR" = ft.pr,
                           "NAME" = "FOOTPRINT"))
   
-  expect_warning(nomeR.out <- predict_footprints(data=rmatr,
-                                                 footprint_models = ftp.models,
-                                                 bgprotectprob = 0.05,
-                                                 bgcoverprior = bg.pr,
-                                                 ncpu = 1L))
+  nomeR.out <- predict_footprints(data=rmatr,
+                                  footprint_models = ftp.models,
+                                  bgprotectprob = 0.05,
+                                  bgcoverprior = bg.pr,
+                                  ncpu = 1L)
   
   ## check whether slots exist
   expect_true(all(c("START_PROB", "COVER_PROB","SUMMARY") %in% names(nomeR.out)))
@@ -94,10 +94,15 @@ test_that("predict_footprints returns correct object",{
   
   ## check if sum of cover probs sum up to 1
   cover.prob.rowsum <- rowSums(nomeR.out[["COVER_PROB"]][,c("FOOTPRINT","background")])
-  a <- sapply(cover.prob.rowsum,
-              function(x){
-                expect_equal(x,1,tolerance = 1.0e-8)
-              })
+  expect_true(all(abs(cover.prob.rowsum - 1) < 1.0e-8))
+  # a <- sapply(cover.prob.rowsum,
+  #             function(x){
+  #               
+  #               expect_equal(x,1,tolerance = 1.0e-8)
+  #             })
+  
+  
+  
 })
 
 

@@ -5,8 +5,7 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.com/fmi-basel/compbio-nomeR.svg?branch=master)](https://travis-ci.com/fmi-basel/compbio-nomeR)
+
 [![R-CMD-check](https://github.com/fmi-basel/compbio-nomeR/workflows/R-CMD-check/badge.svg)](https://github.com/fmi-basel/compbio-nomeR/actions)
 <!-- badges: end -->
 
@@ -16,76 +15,52 @@ or any other kind of data that gives single molecule occupancy read out.
 The model allows to perform two types of analysis.
 
 1.  Inference of footprint abundances in NOMe-seq data
-    
+
     This analysis can be done when the main question is what footprints
     are present in the data. By counting occurences of observed
     combinations of protected/unprotected positions at all possible
     distances and using a bayesian model we make avalilable following
     algorithms for footprint inference.
-    
-      - Sampling from posterior distribution using Monte Carlo methods
+
+    -   Sampling from posterior distribution using Monte Carlo methods
         from ‘rstan’ package (infer\_footprints\_stan\_sampling);
-    
-      - Approximation of posterior distribution using variational Bayes
+
+    -   Approximation of posterior distribution using variational Bayes
         from ‘rstan’ package (infer\_footprints\_stan\_vb).
-    
-      - Finding maximum a posteriori point estimate using optimization
+
+    -   Finding maximum a posteriori point estimate using optimization
         algorithms provided by ‘rstan’
         (infer\_footprints\_stan\_optimizing).
 
 2.  Prediction of footprint positions in NOMe-seq data
-    
+
     When footprint abundances are known or inferred from the analysis in
     previous section one can predict positions of footprints in NOMe-seq
     data (predict\_footprints). We calculate posterior probabilities for
     each footprint to start or to cover every position in each fragment.
 
 <!-- You can install the released version of nomeR from [CRAN](https://CRAN.R-project.org) with: -->
-
 <!-- ``` r -->
-
 <!-- install.packages("nomeR") -->
-
 <!-- ``` -->
-
 <!-- And the development version from [GitHub](https://github.com/) with: -->
-
 <!-- ``` r -->
-
 <!-- # install.packages("devtools") -->
-
 <!-- devtools::install_github("fmi-basel/compbio-nomeR") -->
-
 <!-- ``` -->
-
 <!-- ## Example -->
-
 <!-- This is a basic example which shows you how to solve a common problem: -->
-
 <!-- ```{r example} -->
-
 <!-- library(nomeR) -->
-
 <!-- ## basic example code -->
-
 <!-- ``` -->
-
 <!-- What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so: -->
-
 <!-- ```{r cars} -->
-
 <!-- summary(cars) -->
-
 <!-- ``` -->
-
 <!-- You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. -->
-
 <!-- You can also embed plots, for example: -->
-
 <!-- ```{r pressure, echo = FALSE} -->
-
 <!-- plot(pressure) -->
-
 <!-- ``` -->
-
 <!-- In that case, don't forget to commit and push the resulting figure files, so they display on GitHub! -->

@@ -85,9 +85,10 @@
 #' 
 #' }
 #' 
-#' 
-#' @importFrom ggplot2 ggplot aes geom_ribbon geom_line scale_y_log10 theme_bw theme  labs guides annotate scale_x_continuous scale_color_manual scale_fill_manual
-#' @importFrom graphics plot
+#' @import ggplot2
+#' @import graphics
+## @importFrom ggplot2 ggplot aes geom_ribbon geom_line scale_y_log10 theme_bw theme  labs guides guide_legend annotate scale_x_continuous scale_color_manual scale_fill_manual element_text
+## @importFrom graphics plot
 get_ftp_inference_summary <- function(infer_stanfit,
                                   ftp_abundance_name = c("ftp_cover_probs","ftp_start_probs"),
                                   plot = F,
@@ -146,6 +147,8 @@ get_ftp_inference_summary <- function(infer_stanfit,
       infer_ftp_protect_prob <- NA
     }
     
+  } else{
+    stop("infer_stanfit must be stanfit object returned by rstan::sampling or rstan::vb, or list returned by rstan::optimizing")
   }
   
   ## create plot, do not show ftp_length = 1, i.e. background
@@ -193,43 +196,51 @@ get_ftp_inference_summary <- function(infer_stanfit,
   
   ## get ftp suggestions
   
-  ftp_suggestions <- suggest_footprints(S = subset(infer_ftp_abund_probs,ftp_length != 1)$ftp_length,
-                                        y = log2(subset(infer_ftp_abund_probs,ftp_length != 1)$mean),
-                                        isLog = T,
-                                        max_peak_width = max_peak_width,
-                                        spline_spar = spline_spar,
-                                        max_abund_log2drop = max_abund_log2drop,
-                                        ...)
-  ftp_lengths_suggest <- unlist(apply(ftp_suggestions[["ftp_ranges"]],1,
-                               function(ftp_rng){
-                                 ftp_rng[1]:ftp_rng[2]
-                               }))
+  tryCatch(ftp_suggestions <- suggest_footprints(S = subset(infer_ftp_abund_probs,ftp_length != 1)$ftp_length,
+                                                 y = log2(subset(infer_ftp_abund_probs,ftp_length != 1)$mean),
+                                                 isLog = T,
+                                                 max_peak_width = max_peak_width,
+                                                 spline_spar = spline_spar,
+                                                 max_abund_log2drop = max_abund_log2drop,
+                                                 ...),
+           error = function(e){
+             print(e)
+             ftp_ranges <- matrix(nrow=0,ncol=2)
+             colnames(ftp_ranges) <- c("min_ftp_length","max_ftp_length")
+             ftp_suggestions <- list("ftp_ranges" = ftp_ranges,
+                                     "smoothed_signal" = NULL)
+           })
   
-  
-  infer_plot <- infer_plot + 
-    annotate(geom="rect",
-             xmin = ftp_suggestions$ftp_ranges[,1],
-             xmax = ftp_suggestions$ftp_ranges[,2],
-             ymin = 0, ymax=Inf,alpha=0.2,color="NA",fill="grey") + 
-    geom_point(data = subset(infer_ftp_abund_probs,ftp_length %in% ftp_lengths_suggest),
-               mapping = aes(x = .data$ftp_length,
-                             y = .data$mean,
-                             color = .data$param),
-               color="red")+
-    annotate(geom="text",
-             x = rowMeans(ftp_suggestions$ftp_ranges),
-             y = 0,
-             hjust=0.5,vjust=0,
-             label = row.names(ftp_suggestions$ftp_ranges))
-  
-  ## add x breaks for suggested footprints
-  x_breaks <- pretty(range(subset(infer_ftp_abund_probs,ftp_length != 1)[["ftp_length"]],na.rm=TRUE),
-                     n=5)
-  x_breaks <- sort(c(x_breaks,
-                as.vector(ftp_suggestions$ftp_ranges)))
-  infer_plot <- infer_plot + 
-    scale_x_continuous(breaks = x_breaks)
+  if(nrow(ftp_suggestions[["ftp_ranges"]]) > 0){
+    ftp_lengths_suggest <- unlist(apply(ftp_suggestions[["ftp_ranges"]],1,
+                                        function(ftp_rng){
+                                          ftp_rng[1]:ftp_rng[2]
+                                        }))
     
+    
+    infer_plot <- infer_plot + 
+      annotate(geom="rect",
+               xmin = ftp_suggestions$ftp_ranges[,1],
+               xmax = ftp_suggestions$ftp_ranges[,2],
+               ymin = 0, ymax=Inf,alpha=0.2,color="NA",fill="grey") + 
+      geom_point(data = subset(infer_ftp_abund_probs,ftp_length %in% ftp_lengths_suggest),
+                 mapping = aes(x = .data$ftp_length,
+                               y = .data$mean,
+                               color = .data$param),
+                 color="red")+
+      annotate(geom="text",
+               x = rowMeans(ftp_suggestions$ftp_ranges),
+               y = 0,
+               hjust=0.5,vjust=0,
+               label = row.names(ftp_suggestions$ftp_ranges))
+    ## add x breaks for suggested footprints
+    x_breaks <- pretty(range(subset(infer_ftp_abund_probs,ftp_length != 1)[["ftp_length"]],na.rm=TRUE),
+                       n=5)
+    x_breaks <- sort(c(x_breaks,
+                       as.vector(ftp_suggestions$ftp_ranges)))
+    infer_plot <- infer_plot + 
+      scale_x_continuous(breaks = x_breaks)
+  }
   
   if(plot){
     plot(infer_plot)

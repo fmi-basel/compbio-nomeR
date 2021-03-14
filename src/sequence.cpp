@@ -36,10 +36,31 @@ Sequence::Sequence(string nm,
 	for(int pos=0;pos<size;++pos){
 		_seq.push_back(letter2index_NOMe(ext_seq[pos]));
 	}
-	
-	
-	
 }
+
+Sequence::Sequence(string nm,
+                   vector<unsigned short> sequence,
+                   int maxWMlen){
+  name = nm;
+  
+  if(_seq.size()>0){
+    _seq.clear();
+  }
+  
+  // add flanking regions to line full off 2's (NA's) to take into account that proteins can start outside amplicon 
+  vector<unsigned short> tmp_vec(maxWMlen,2);
+  // add data
+  _seq.insert(_seq.end(),tmp_vec.begin(),tmp_vec.end());
+  _seq.insert(_seq.end(),sequence.begin(),sequence.end());
+  _seq.insert(_seq.end(),tmp_vec.begin(),tmp_vec.end());
+  
+  firstDatpos = maxWMlen;
+  lastDatpos = maxWMlen + sequence.size() - 1;
+  
+  size = _seq.size();
+}
+
+
 
 Sequence::~Sequence(){
 

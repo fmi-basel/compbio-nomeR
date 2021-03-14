@@ -240,19 +240,3 @@ vector<vector<double > > DNAbind_obj_vector::calc_theor_joint_prob(vector<double
   
 }
 
-
-
-
-// Rcpp::List DNAbind_obj_vector::R_export_calc_theor_joint_prob(vector<double > ftp_cover_priors, // here vector of priors also represent lengths, namely ith element of the vector
-//                                           // has length i+1, e.g. ftp_cover_priors[0] is a prior for bg with length 1
-//                                           double bg_protect_prob,
-//                                           double footprint_protect_prob,
-//                                           int max_spacing){
-//   
-//   vector<vector<double > > calc_theor_joint_prob(ftp_cover_priors,
-//                                                  bg_protect_prob,
-//                                                  footprint_protect_prob,
-//                                                  max_spacing);
-//   // TODO: Add conversion to Rcpp objects
-//   
-// }

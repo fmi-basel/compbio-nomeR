@@ -33,56 +33,29 @@ bool NOMeSeqData::create(Rcpp::List _seq_info,
   return 1;
 }
 
-
-/*
-FastaFile::FastaFile(const string flnm, int maxwmlen)
-{
-  ReadFasta(flnm,maxwmlen);
-}
-
-
-
-
-void FastaFile::ReadFasta(const string flnm,int maxwmlen)
-{
-  _filename = flnm;
-  ifstream inFile(flnm.c_str());
-  if ( !inFile ) {
-    cerr << "Can't read file " << flnm <<"\n";
-    exit(1);
-  }
-  string line;
+bool NOMeSeqData::create(Rcpp::List _seq_list,
+                         Rcpp::CharacterVector _seqnames,
+                         int maxWMlen){
+  _numofseq = 0;
   _totallength = 0;
-  while(getline( inFile, line, '\n' )){
-	if(line[0] == '#'){ // skip the comments
-		continue;
-	}
-	if(line[0] == '>'){ //the name of the sequence;
-		
-		string name = line.substr(1,line.size()-1);
-		//start searching the nearest sequence
-		line.clear();
-		while(line.size()==0){ //find first nonempty string
-			if(!getline( inFile, line, '\n' )){ // if we reach the end of file
-				cerr<<"Couldn't find a sequence for "<<name<<endl;
-				exit(1);
-			}
-		}
+  
+  if(_seq_list.size() != _seqnames.size())
+    Rcpp::stop("NOMeSeqData::create: length of sequences list is not equal to length of vector with sequences names.\n");
+  
+  for(int seq=0; seq < _seq_list.size(); ++seq){
+    // get IntegerVector for current sequence
+    Rcpp::IntegerVector seq_vec = Rcpp::as<Rcpp::IntegerVector >(_seq_list[seq]);
+    // convert IntegerVector to std::vector<unsigned short>
+    vector<unsigned short> sq = Rcpp::as<vector<unsigned short> >(seq_vec);
+    // get sequence name
+    string nm = Rcpp::as<string >(_seqnames[seq]);
+    //add sequence into object
+    Add(nm,sq,maxWMlen);
+    
+    }
 
-    // add flanking regions to line full off 2's (NA's) to take into account that proteins can start outside amplicon 
-    string tmp_str(maxwmlen,'2');
-
-		Sequence newseq(name,tmp_str + line + tmp_str);
-		_totallength += newseq.Size();
-		_sequences.push_back(newseq);
-	}
-  }
-  _numofseq = _sequences.size();
-  firstDatPos = maxwmlen;
+  return 1;
 }
-*/
-
-
 
 NOMeSeqData::~NOMeSeqData()
 {
@@ -122,6 +95,14 @@ void NOMeSeqData::Add(Sequence &seq)
 }
 
 void NOMeSeqData::Add(string name, string seq, int wmmaxlen)
+{
+  Sequence newseq(name,seq,wmmaxlen);
+  _totallength += newseq.Size();
+  _sequences.push_back(newseq);
+  _numofseq++;
+}
+
+void NOMeSeqData::Add(string name, vector<unsigned short> seq, int wmmaxlen)
 {
   Sequence newseq(name,seq,wmmaxlen);
   _totallength += newseq.Size();
