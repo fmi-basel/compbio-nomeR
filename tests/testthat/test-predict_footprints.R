@@ -94,10 +94,15 @@ test_that("predict_footprints returns correct object",{
   
   ## check if sum of cover probs sum up to 1
   cover.prob.rowsum <- rowSums(nomeR.out[["COVER_PROB"]][,c("FOOTPRINT","background")])
-  a <- sapply(cover.prob.rowsum,
-              function(x){
-                expect_equal(x,1,tolerance = 1.0e-8)
-              })
+  expect_true(all(abs(cover.prob.rowsum - 1) < 1.0e-8))
+  # a <- sapply(cover.prob.rowsum,
+  #             function(x){
+  #               
+  #               expect_equal(x,1,tolerance = 1.0e-8)
+  #             })
+  
+  
+  
 })
 
 
