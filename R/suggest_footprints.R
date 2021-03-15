@@ -43,14 +43,17 @@ suggest_footprints <- function(S,
   smspl <- stats::smooth.spline(x=S,y=y,
                                 spar = spline_spar,
                                 ...)
+  ## smoothed signal
   smoothed_signal <- stats::predict(object = smspl,
-                             x = S)$y
+                                    x = S)$y
+  ## first derivative
   spline_deriv1 <- stats::predict(object = smspl,
-                           x = S,
-                           deriv=1)$y
+                                  x = S,
+                                  deriv=1)$y
+  ## second derivative
   spline_deriv2 <- stats::predict(object = smspl,
-                           x = S,
-                           deriv=2)$y
+                                  x = S,
+                                  deriv=2)$y
   
   ## find x where spline intercepts 0, i.e. roots
   roots_x_idx <- which(spline_deriv1[1:(length(spline_deriv1)-1)] * spline_deriv1[2:length(spline_deriv1)] <=0)+1
@@ -73,7 +76,7 @@ suggest_footprints <- function(S,
                                        function(idx){
                                          
                                          if(smoothed_signal[idx] == 0 & !isLog){
-                                           stop(paste0("Incorrect value of local maximum at x=",x[idx],"; y=",smoothed_signal[idx]))
+                                           stop(paste0("Incorrect value of local maximum at S=",S[idx],"; y=",smoothed_signal[idx]))
                                          }
                                          ## find left range
                                          left_range <- max(idx-1,1):1

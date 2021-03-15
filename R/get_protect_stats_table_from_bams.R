@@ -36,10 +36,9 @@
 #'   \item{nFragsClipped}{number of fragments clipped from both ends to get rid of paetial footprints.}
 #'   \item{ProtectStats}{\code{matrix} with columns reflecting combinations of total number and number of protected GCHs:
 #'   \describe{
-#'   \item{TotalGCH} total number of GCHs.
-#'   \item{ProtectedGCH} number of of protected GCHs.
-#'   \item{Nfrags} number of fragments met with combination of \code{TotalGCH} and \code{ProtectedGCH}.
-#'   
+#'   \item{TotalGCH}{total number of GCHs.}
+#'   \item{ProtectedGCH}{number of of protected GCHs.}
+#'   \item{Nfrags}{number of fragments met with combination of \code{TotalGCH} and \code{ProtectedGCH}.}
 #'   }
 #'   }
 #' }

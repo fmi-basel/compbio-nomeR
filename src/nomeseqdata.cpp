@@ -8,6 +8,16 @@ NOMeSeqData::NOMeSeqData()
 
 }
 
+NOMeSeqData::NOMeSeqData(Rcpp::List _seq_list,
+                         Rcpp::CharacterVector _seqnames,
+                         int maxWMlen)
+{
+  create(_seq_list,
+         _seqnames,
+         maxWMlen);
+
+}
+
 
 bool NOMeSeqData::create(Rcpp::List _seq_info,
                          int maxWMlen){

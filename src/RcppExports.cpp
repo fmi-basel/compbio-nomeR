@@ -98,15 +98,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // count_spacing_freq_cpp
-List count_spacing_freq_cpp(const List& data, const IntegerVector& maxspacing, const IntegerVector& maxwmlen);
-RcppExport SEXP _nomeR_count_spacing_freq_cpp(SEXP dataSEXP, SEXP maxspacingSEXP, SEXP maxwmlenSEXP) {
+List count_spacing_freq_cpp(const List& data, const CharacterVector& fragnames, const IntegerVector& maxspacing, const IntegerVector& maxwmlen);
+RcppExport SEXP _nomeR_count_spacing_freq_cpp(SEXP dataSEXP, SEXP fragnamesSEXP, SEXP maxspacingSEXP, SEXP maxwmlenSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const CharacterVector& >::type fragnames(fragnamesSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type maxspacing(maxspacingSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type maxwmlen(maxwmlenSEXP);
-    rcpp_result_gen = Rcpp::wrap(count_spacing_freq_cpp(data, maxspacing, maxwmlen));
+    rcpp_result_gen = Rcpp::wrap(count_spacing_freq_cpp(data, fragnames, maxspacing, maxwmlen));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -135,7 +136,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nomeR_fetch_data_matrix_from_bams_cpp", (DL_FUNC) &_nomeR_fetch_data_matrix_from_bams_cpp, 15},
     {"_nomeR_fetch_protect_stats_from_bams_cpp", (DL_FUNC) &_nomeR_fetch_protect_stats_from_bams_cpp, 14},
     {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 7},
-    {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 3},
+    {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 4},
     {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
     {"_rcpp_module_boot_stan_fit4background_betabinom_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_betabinom_model_mod, 0},
     {"_rcpp_module_boot_stan_fit4background_mixture_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_mixture_model_mod, 0},
