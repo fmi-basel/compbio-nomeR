@@ -1,4 +1,5 @@
 #include "predict.hpp"
+#include "nomeseqdata.h"
 #include <Rcpp.h>
 
 using namespace Rcpp;
@@ -73,14 +74,17 @@ List run_cpp_nomeR(const List& data,
 
 // [[Rcpp::export]]
 List count_spacing_freq_cpp(const List& data,
+                            const CharacterVector& fragnames,
                             const IntegerVector& maxspacing,
                             const IntegerVector& maxwmlen){
   
   int maxwmlen_ = as<int >(maxwmlen);
   int maxspacing_ = as<int >(maxspacing);
   
-  NOMeSeqData nome_data;
-  nome_data.create(data,maxwmlen_);
+  NOMeSeqData nome_data(data,
+                        fragnames,
+                        maxwmlen_);
+  //nome_data.create(data,maxwmlen_);
   vector<vector<int> > freq_mat = nome_data.count_freq_for_spacings(maxspacing_);
   vector<int > spacings;
   vector<int > freq00;

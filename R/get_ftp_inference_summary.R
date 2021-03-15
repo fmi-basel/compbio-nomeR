@@ -152,7 +152,7 @@ get_ftp_inference_summary <- function(infer_stanfit,
   }
   
   ## create plot, do not show ftp_length = 1, i.e. background
-  infer_plot <- ggplot(subset(infer_ftp_abund_probs,ftp_length != 1))
+  infer_plot <- ggplot(infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1,])
   
   if(inherits(infer_stanfit,"stanfit")){
     infer_plot <- infer_plot + 
@@ -195,9 +195,9 @@ get_ftp_inference_summary <- function(infer_stanfit,
   
   
   ## get ftp suggestions
-  
-  tryCatch(ftp_suggestions <- suggest_footprints(S = subset(infer_ftp_abund_probs,ftp_length != 1)$ftp_length,
-                                                 y = log2(subset(infer_ftp_abund_probs,ftp_length != 1)$mean),
+  infer_ftp_abund_probs_subset <- infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1,]
+  tryCatch(ftp_suggestions <- suggest_footprints(S = infer_ftp_abund_probs_subset$ftp_length,
+                                                 y = log2(infer_ftp_abund_probs_subset$mean),
                                                  isLog = T,
                                                  max_peak_width = max_peak_width,
                                                  spline_spar = spline_spar,
@@ -223,7 +223,7 @@ get_ftp_inference_summary <- function(infer_stanfit,
                xmin = ftp_suggestions$ftp_ranges[,1],
                xmax = ftp_suggestions$ftp_ranges[,2],
                ymin = 0, ymax=Inf,alpha=0.2,color="NA",fill="grey") + 
-      geom_point(data = subset(infer_ftp_abund_probs,ftp_length %in% ftp_lengths_suggest),
+      geom_point(data = infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length %in% ftp_lengths_suggest,],
                  mapping = aes(x = .data$ftp_length,
                                y = .data$mean,
                                color = .data$param),
@@ -234,7 +234,7 @@ get_ftp_inference_summary <- function(infer_stanfit,
                hjust=0.5,vjust=0,
                label = row.names(ftp_suggestions$ftp_ranges))
     ## add x breaks for suggested footprints
-    x_breaks <- pretty(range(subset(infer_ftp_abund_probs,ftp_length != 1)[["ftp_length"]],na.rm=TRUE),
+    x_breaks <- pretty(range(infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1,"ftp_length"],na.rm=TRUE),
                        n=5)
     x_breaks <- sort(c(x_breaks,
                        as.vector(ftp_suggestions$ftp_ranges)))

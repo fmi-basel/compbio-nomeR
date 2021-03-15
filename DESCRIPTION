@@ -24,6 +24,7 @@ Imports:
     truncdist,
     IRanges,
     GenomicRanges,
+    GenomeInfoDb,
     S4Vectors
 Suggests: 
     testthat,

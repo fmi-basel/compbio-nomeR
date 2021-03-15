@@ -16,10 +16,13 @@ count_joint_frequencies <- function(data, max_spacing, max_ftplen = 0L,ncpu=1L){
   
   #message(paste0("R function for counting spacing frequencies"))
   
-  data <- .create_data_list(matr = data,
-                            ncpu = ncpu)
+  ### validate data
+  data <- validate_data_for_predict(data)
   #browser()
-  out_data <- count_spacing_freq_cpp(data, max_spacing, max_ftplen)
+  out_data <- count_spacing_freq_cpp(data[["data_list"]],
+                                     data[["fragnames"]],
+                                     max_spacing,
+                                     max_ftplen)
   return(as.data.frame(out_data))
 }
 

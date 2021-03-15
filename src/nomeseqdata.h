@@ -19,7 +19,9 @@ class NOMeSeqData {
   int _totallength;
 public:
   NOMeSeqData();
-  
+  NOMeSeqData(Rcpp::List _seq_list,
+              Rcpp::CharacterVector _seqnames,
+              int maxWMlen);
   ~NOMeSeqData();
   int Size() const;
   int TotalLength() const;

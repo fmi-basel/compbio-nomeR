@@ -17,8 +17,8 @@ run_cpp_nomeR <- function(data, fragnames, binding_models, bgprotectprob, bgprio
     .Call(`_nomeR_run_cpp_nomeR`, data, fragnames, binding_models, bgprotectprob, bgprior, Ncpu, verbose)
 }
 
-count_spacing_freq_cpp <- function(data, maxspacing, maxwmlen) {
-    .Call(`_nomeR_count_spacing_freq_cpp`, data, maxspacing, maxwmlen)
+count_spacing_freq_cpp <- function(data, fragnames, maxspacing, maxwmlen) {
+    .Call(`_nomeR_count_spacing_freq_cpp`, data, fragnames, maxspacing, maxwmlen)
 }
 
 calculate_theor_joint_prob_cpp <- function(ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing) {

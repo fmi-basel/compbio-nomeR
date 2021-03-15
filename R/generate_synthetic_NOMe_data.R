@@ -56,111 +56,33 @@ generate_synthetic_NOMe_data <- function(amplicon_len, # length of the apmlicon
                                          # if vector of integers treated as predefined positions of GpC
                                          extend_ampl = FALSE){
   #### CHECK ARGUMENTS ####
-  arg.check <- ArgumentCheck::newArgCheck()
-  if(!(inherits(amplicon_len,"numeric") | inherits(amplicon_len,"integer")) | amplicon_len <= 0){
-    ArgumentCheck::addError(
-      msg = "amplicon_len must be a positive number!",
-      argcheck = arg.check
-    )
-    
-  }
+  coll = checkmate::makeAssertCollection()
   
-  if(!(inherits(n_reads,"numeric") | inherits(n_reads,"integer")) | n_reads <= 0){
-    ArgumentCheck::addError(
-      msg = "n_reads must be a positive number!",
-      argcheck = arg.check
-    )
-    
-  }
-  
-  ##### CHECK WHETHER GpC_param is correct #####
-  if(length(GpC_param) == 0){
-    ArgumentCheck::addError(
-      msg = "GpC_param must not be empty!",
-      argcheck = arg.check
-    )
-  } else if(length(GpC_param) == 1){
-    if(GpC_param <= 0 | GpC_param > 1){
-      ArgumentCheck::addError(
-        msg = "GpC_param must be a scalar between 0 and 1 or a vector of integers or numerics.",
-        argcheck = arg.check
-      )
-    }
-  } else if(!(is.vector(GpC_param,"integer")  | is.vector(GpC_param,"numeric"))){
-    ArgumentCheck::addError(
-      msg = "GpC_param must be a scalar between 0 and 1 or a vector of integers or numerics.",
-      argcheck = arg.check
-    )
-  }
-  
-  
-  ##### CHECK THAT binding_models is correct #######
-  if(!inherits(footprint_models,"list")){
-    # stop("Error! data must be a list!")
-    ArgumentCheck::addError(
-      msg = "footprint_models must be a list!",
-      argcheck = arg.check
-    )
-  }
-  if(length(footprint_models) == 0){
-    # stop("Error! data has length 0")
-    ArgumentCheck::addError(
-      msg = "footprint_models has length 0",
-      argcheck = arg.check
-    )
-  }
-  if(any(sapply(footprint_models,function(x){
-    !inherits(x,"list")
-  },simplify = T))){
-    ArgumentCheck::addError(
-      msg = "footprint_models must be a list of lists",
-      argcheck = arg.check
-    )
-    # stop("Error! data must be a list of lists")
-  }
-  ## check whether binding_models has all required slots
-  check.res <- sapply(footprint_models,function(x){
-    if(any(!(c("PROTECT_PROB","COVER_PRIOR","NAME") %in% names(x)))){
-      ArgumentCheck::addError(
-        msg = "Each item in footprint_models must contain entries PROTECT_PROB, COVER_PRIOR and NAME",
-        argcheck = arg.check
-      )
+  checkmate::assert_int(x = amplicon_len, lower = 1,add = coll)
+  checkmate::assert_int(x = amplicon_len, lower = 1,add = coll)
+  ### validate binding_models
+  if(checkmate::check_list(footprint_models,types = "list",any.missing = FALSE, min.len = 1)){
+    ftpnames <- sapply(footprint_models,function(x){
       
-    }
-    
-    ## whether PROTECT_PROB has length > 0
-    if(length(x[["PROTECT_PROB"]]) == 0){
-      ArgumentCheck::addError(
-        msg = "PROTECT_PROB of NAME=",x[["NAME"]]," has length 0",
-        argcheck = arg.check
-      )
-    }
-    ## whether NAME is string
-    if(!inherits(x[["NAME"]],"character")){
-      ArgumentCheck::addError(
-        msg = paste0("NAME must be a string"),
-        argcheck = arg.check
-      )
-    }
-    if(!inherits(x[["PROTECT_PROB"]],"numeric")){
-      ArgumentCheck::addError(
-        msg = paste0(x[["NAME"]],": PROTECT_PROB must contain vector of numeric values"),
-        argcheck = arg.check
-      )
-    }
-    
-    ## whether COVER_PRIOR is between 0 and 1
-    if(!inherits(x[["COVER_PRIOR"]],"numeric") | x[["COVER_PRIOR"]] < 0 | x[["COVER_PRIOR"]] > 1){
-      ArgumentCheck::addError(
-        msg = paste0(x[["NAME"]],": COVER_PRIOR must be a value between 0 and 1."),
-        argcheck = arg.check
-      )
-    }
-    
-  })
+      checkmate::assert_names(names(x),must.include = c("PROTECT_PROB","COVER_PRIOR","NAME"),add = coll)
+      checkmate::assert_numeric(x = x[["PROTECT_PROB"]], lower = 0, upper = 1, any.missing = FALSE, add = coll)
+      checkmate::assert_number(x = x[["COVER_PRIOR"]], lower = 0, upper = 1, na.ok = FALSE, add = coll)
+      return(x[["NAME"]])
+    })
+    checkmate::assert_character(x=ftpnames,any.missing = FALSE,unique = TRUE,add = coll)
+  }
   
-  ArgumentCheck::finishArgCheck(arg.check)
-  
+  ### validate bgprotectprob
+  checkmate::assert_number(x = bgprotectprob,na.ok = FALSE, lower = 0, upper = 1, add = coll)
+  if(checkmate::check_number(x = GpC_param,lower=0,upper = 1,finite = TRUE)){
+    checkmate::assert_number(x = GpC_param,lower=0,upper = 1,finite = TRUE,add = col)
+  } else if(checkmate::check_integerish(x = GpC_param,lower = 1,upper = amplicon_len,any.missing = F,all.missing = F,min.len = 1,unique = T)){
+    checkmate::assert_integerish(x = GpC_param,lower = 1,upper = amplicon_len,any.missing = F,all.missing = F,min.len = 1,unique = T,add = coll)
+  }
+  checkmate::assert_flag(x = extend_ampl)
+  ## finish argument check
+  checkmate::reportAssertions(coll)
+
   #### GET GPC POSITIONS ####
   
   if(length(GpC_param) == 1 & GpC_param > 0 & GpC_param <= 1){
