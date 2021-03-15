@@ -15,7 +15,6 @@ name: R-CMD-check
 jobs:
   R-CMD-check:
     runs-on: ubuntu-latest
-
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -27,11 +26,7 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
       - name: Check
-<<<<<<< HEAD
-        run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
-=======
         run: |
           options(crayon.enabled = TRUE)
           rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
->>>>>>> predict_refactor
         shell: Rscript {0}
