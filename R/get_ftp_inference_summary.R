@@ -196,6 +196,7 @@ get_ftp_inference_summary <- function(infer_stanfit,
   
   ## get ftp suggestions
   infer_ftp_abund_probs_subset <- infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1,]
+  
   tryCatch(ftp_suggestions <- suggest_footprints(S = infer_ftp_abund_probs_subset$ftp_length,
                                                  y = log2(infer_ftp_abund_probs_subset$mean),
                                                  isLog = T,

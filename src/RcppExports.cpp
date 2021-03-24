@@ -129,6 +129,7 @@ END_RCPP
 RcppExport SEXP _rcpp_module_boot_stan_fit4background_betabinom_model_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4background_mixture_model_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_footprint_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod();
 
 static const R_CallMethodDef CallEntries[] = {
@@ -141,6 +142,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4background_betabinom_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_betabinom_model_mod, 0},
     {"_rcpp_module_boot_stan_fit4background_mixture_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_mixture_model_mod, 0},
     {"_rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod, 0},
+    {"_rcpp_module_boot_stan_fit4ftp_inference_background_footprint_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_background_footprint_fixed_mod, 0},
     {"_rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod, 0},
     {NULL, NULL, 0}
 };

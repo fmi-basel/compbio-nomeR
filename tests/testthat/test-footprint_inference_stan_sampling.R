@@ -51,9 +51,9 @@ test_that("infer_footprints_stan_sampling works", {
   
   ## run 1 iteration
   expect_warning(sampling_res <- infer_footprints_stan_sampling(ftp_5_10_data,
-                                                                   footprint_prior_diralphas = c(10,rep(1,14)),
-                                                                   nchains = 1,
-                                                                   iter=1))
+                                                                footprint_prior_diralphas = c(10,rep(1,14)),
+                                                                nchains = 1,
+                                                                iter=1))
   ## check if return is stanfit object
   expect_s4_class(sampling_res,class = "stanfit")
   

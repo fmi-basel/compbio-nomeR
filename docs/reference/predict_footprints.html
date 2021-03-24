@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nomeR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -118,12 +118,6 @@
   <span class='va'>bgprotectprob</span>,
   <span class='va'>bgcoverprior</span>,
   ncpu <span class='op'>=</span> <span class='fl'>1L</span>,
-  bound_fit_tol <span class='op'>=</span> <span class='fl'>1e-05</span>,
-  bound_min_fderiv_val <span class='op'>=</span> <span class='fl'>1e-05</span>,
-  bound_max_steps <span class='op'>=</span> <span class='fl'>1000</span>,
-  run_priorEM <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  priorEM_fit_tol <span class='op'>=</span> <span class='fl'>1e-05</span>,
-  priorEM_max_steps <span class='op'>=</span> <span class='fl'>1000</span>,
   verbose <span class='op'>=</span> <span class='cn'>F</span>
 <span class='op'>)</span></pre>
 
@@ -132,8 +126,9 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>A matrix containing NOMe-Seq data. Rows represent reads (or fragments), 
-columns represent positions in amplicon. NOTE that <code>data</code> must contain only positions of selected GpCs where '0' represent unprotected "C", 
+      <td><p><code>matrix</code> or <code>list</code> containing NOMe-Seq data. If data is a <code>matrix</code> rows represent reads (or fragments), 
+columns represent positions in amplicon. If data is a <code>list</code> than each element must contain vector with NOMe-seq data. 
+NOTE that <code>data</code> must contain only positions of selected GpCs where '0' represent unprotected "C", 
 '1' represent protected "C" and all other positions must be filled with "NA".</p></td>
     </tr>
     <tr>
@@ -155,32 +150,6 @@ NAME - name (character) of a model, e.g. "Nucleosome".</p></td>
     <tr>
       <th>ncpu</th>
       <td><p>number of threads to use</p></td>
-    </tr>
-    <tr>
-      <th>bound_fit_tol</th>
-      <td><p>fitting tolerance for estimating initial values of partition sums</p></td>
-    </tr>
-    <tr>
-      <th>bound_min_fderiv_val</th>
-      <td><p>This value used in Haley's numerical method for solving equations and represent a 
-minimal value of denominator in first derivative of a function</p></td>
-    </tr>
-    <tr>
-      <th>bound_max_steps</th>
-      <td><p>Maximum number of iterations for algorithm which estimates boundary values for partition sums</p></td>
-    </tr>
-    <tr>
-      <th>run_priorEM</th>
-      <td><p>If TRUE the function runs Expectation Maximization algorithm for fitting prior probabilities of binding objects.
-Not recommended for regions with transcription factor binding as the EM overestimates shorter footprints.</p></td>
-    </tr>
-    <tr>
-      <th>priorEM_fit_tol</th>
-      <td><p>Fitting tolerance for running prior EM</p></td>
-    </tr>
-    <tr>
-      <th>priorEM_max_steps</th>
-      <td><p>Maximum number of iterations in prior EM</p></td>
     </tr>
     <tr>
       <th>verbose</th>
@@ -235,7 +204,7 @@ Not recommended for regions with transcription factor binding as the EM overesti
                                 footprint_models <span class='op'>=</span> <span class='va'>ftp.models</span>,
                                 bgprotectprob <span class='op'>=</span> <span class='fl'>0.05</span>,
                                 bgcoverprior <span class='op'>=</span> <span class='va'>bg.pr</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: matr does not have row names. Fill the row names with indexes.</span></div><div class='input'>
+
 
 </div></pre>
   </div>

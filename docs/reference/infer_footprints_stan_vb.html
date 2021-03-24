@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nomeR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -115,7 +115,7 @@
     <pre class="usage"><span class='fu'>infer_footprints_stan_vb</span><span class='op'>(</span>
   <span class='va'>joint_freq_table</span>,
   footprint_prior_diralphas <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>200</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>199</span><span class='op'>)</span><span class='op'>)</span>,
-  background_model <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"informative_prior"</span>, <span class='st'>"fixed"</span><span class='op'>)</span>,
+  ftp_background_model <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"informative_prior"</span>, <span class='st'>"bg_fixed"</span>, <span class='st'>"ftp_bg_fixed"</span><span class='op'>)</span>,
   background_model_params <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>bg_protect_prob_fixed <span class='op'>=</span> <span class='fl'>0.01</span>, bg_protect_min <span class='op'>=</span> <span class='fl'>0</span>,
     bg_protect_max <span class='op'>=</span> <span class='fl'>0.4</span>, bg_protect_alpha <span class='op'>=</span> <span class='fl'>675</span>, bg_protect_beta <span class='op'>=</span> <span class='fl'>57126</span><span class='op'>)</span>,
   ftp_model_params <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>ftp_protect_min <span class='op'>=</span> <span class='fl'>0.6</span>, ftp_protect_max <span class='op'>=</span> <span class='fl'>1</span>, ftp_protect_alpha
@@ -138,27 +138,35 @@ This table can be obtained using function nomeR::count_joint_frequencies(...)</p
 Default vector assumes that around 50% of data is free of any footprints and all other footprint up-to 200bp have uninformative prior.</p></td>
     </tr>
     <tr>
-      <th>background_model</th>
-      <td><p>type of background model.
-"fixed" background model assumes model parameter "bg_protect_prob" to be constant and equal to slot `bg_protect_prob_fixed` in `background_model_params`.</p>
-<p>"informative_prior" background model runs inference for model parameter "bg_protect_prob" using strongly informative prior beta distribution with parameters `bg_protect_alpha` and `bg_protect_beta` in `background_model_params`.</p></td>
+      <th>ftp_background_model</th>
+      <td><p>type of model used for inference.</p><dl>
+<dt>"informative_prior"</dt><dd><p>both parameters <code>bg_protect_prob</code> and <code>footprint_protect_prob</code> as well as footprint abundances are subject for inference;</p></dd>
+<dt>"bg_fixed"</dt><dd><p><code>bg_protect_prob</code> is fixed value defined by <code>background_model_params[["bg_protect_prob_fixed"]]</code> and <code>footprint_protect_prob</code> as well as footprint abundances are subject for inference;</p></dd>
+<dt>"ftp_bg_fixed"</dt><dd><p><code>bg_protect_prob</code> and <code>footprint_protect_prob</code> are fixed values defined by corresponding values in <code>background_model_params</code> and <code>ftp_model_params</code> and inference runs only for footprint abundances.</p></dd>
+
+</dl></td>
     </tr>
     <tr>
       <th>background_model_params</th>
-      <td><p>list containing parameters for background model which must contain following elements:
-`bg_protect_prob_fixed` constant value for model parameter "bg_protect_prob" used in "fixed" background model.</p>
-<p>`bg_protect_min` minimum allowed value for background emission probability for 1.
-`bg_protect_max` maximum allowed value for background emission probability for 1.
-`bg_protect_alpha` alpha parameter for prior beta distribution for model parameter "bg_protect_prob".
-`bg_protect_beta` beta parameter for prior beta distribution for model parameter "bg_protect_prob".</p></td>
+      <td><p>list containing parameters for background model which must contain following elements:</p><dl>
+<dt>`bg_protect_prob_fixed`</dt><dd><p>constant value for model parameter "bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models.</p></dd>
+<dt>`bg_protect_min`</dt><dd><p>minimum allowed value for background emission probability for 1.</p></dd>
+<dt>`bg_protect_max`</dt><dd><p>maximum allowed value for background emission probability for 1.</p></dd>
+<dt>`bg_protect_alpha`</dt><dd><p>alpha parameter for prior beta distribution for model parameter "bg_protect_prob".</p></dd>
+<dt>`bg_protect_beta`</dt><dd><p>beta parameter for prior beta distribution for model parameter "bg_protect_prob".</p></dd>
+
+</dl></td>
     </tr>
     <tr>
       <th>ftp_model_params</th>
-      <td><p>list containing parameters for footprint model which must contain following elements:</p>
-<p>`ftp_protect_min` minimum allowed value for footprint emission probability for 1.
-`ftp_protect_max` maximum allowed value for footprint emission probability for 1.
-`ftp_protect_mean` expected mean for footprint emission probability for 1.
-`ftp_protect_var` expected variance for footprint emission probability for 1.</p></td>
+      <td><p>list containing parameters for footprint model which must contain following elements:</p><dl>
+<dt>`ftp_protect_prob_fixed`</dt><dd><p>constant value for model parameter "footprint_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models.</p></dd>
+<dt>`ftp_protect_min`</dt><dd><p>minimum allowed value for footprint emission probability for 1.</p></dd>
+<dt>`ftp_protect_max`</dt><dd><p>maximum allowed value for footprint emission probability for 1.</p></dd>
+<dt>`ftp_protect_alpha`</dt><dd><p>alpha parameter for prior beta distribution for model parameter "footprint_protect_prob".</p></dd>
+<dt>`ftp_protect_beta`</dt><dd><p>beta parameter for prior beta distribution for model parameter "footprint_protect_prob".</p></dd>
+
+</dl></td>
     </tr>
     <tr>
       <th>...</th>
