@@ -85,6 +85,8 @@ get_data_matrix_from_bams <- function(bamfiles,
 	
 	whichContext <- match.arg(whichContext)
 	
+	## remove metadata from regions
+	GenomicRanges::mcols(regions) <- NULL
 	
 	## load refsequences for regions
 	## extend regions by max_read_size from left and right
@@ -106,6 +108,7 @@ get_data_matrix_from_bams <- function(bamfiles,
 	
 	bamfiles <- split(bamfiles, f=samplenames)
 	# 3. for each set of bam files call C++ function
+	# 
 	dataMatr_list <- do.call(rbind,lapply(names(bamfiles),
 																			function(bamgroupname){
 																				ctbl <- do.call(rbind,parallel::mclapply(seq_along(regions),
@@ -133,9 +136,8 @@ get_data_matrix_from_bams <- function(bamfiles,
 																																			 	
 																																			 	data_mat <- outlist[["DataMatrix"]]
 																																			 	# invert rows if strand is -
-																																			 	if(regdf[1,"strand"] == "-"){
-																																			 		data_mat <- apply(data_mat,1,rev)
-																																			 		colnames(data_mat) <- rev(colnames(data_mat))
+																																			 	if(regdf[1,"strand"] == "-" && ncol(data_mat) > 1){
+																																			 	  data_mat <- data_mat[,ncol(data_mat):1]
 																																			 	}
 																																			 	
 																																			 	outtbl <- tibble::tibble_row("SampleName" = bamgroupname,
