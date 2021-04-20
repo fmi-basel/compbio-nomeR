@@ -1,7 +1,7 @@
 #ifndef _background_h_
 #define _background_h_
 
-#include "DNAbinding_object.h"
+#include "DNAbinding_object-class.hpp"
 //#include "nucleosomemodel.h"
 #include <iostream>
 #include <fstream>
@@ -10,8 +10,8 @@
 #include <math.h>
 #include <vector>
 #include <string>
-#include "usefullfunctions.h"
-#include "parameters.h"
+#include "utils_globvars.hpp"
+#include "parameters-class.hpp"
 #include "nomeseqdata.h"
 using namespace std;
 

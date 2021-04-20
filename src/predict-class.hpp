@@ -1,9 +1,9 @@
 #ifndef _predict_hpp_
 #define _predict_hpp_
 
-#include "parameters.h"
-#include "usefullfunctions.h"
-#include "DNAbindobj_vector.h"
+#include "parameters-class.hpp"
+#include "utils_globvars.hpp"
+#include "DNAbindobj_vector-class.hpp"
 #include "nomeseqdata.h"
 #include "sequence.h"
 #include <iostream>

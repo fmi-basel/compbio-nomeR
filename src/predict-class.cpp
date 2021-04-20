@@ -1,4 +1,4 @@
-#include "predict.hpp"
+#include "predict-class.hpp"
 
 Predict::Predict(){}
 Predict::~Predict(){

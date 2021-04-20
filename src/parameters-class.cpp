@@ -1,4 +1,4 @@
-#include "parameters.h"
+#include "parameters-class.hpp"
 
 parameters::parameters(){
 

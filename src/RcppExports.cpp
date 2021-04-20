@@ -81,46 +81,46 @@ BEGIN_RCPP
 END_RCPP
 }
 // run_cpp_nomeR
-List run_cpp_nomeR(const List& data, const CharacterVector& fragnames, const List& binding_models, const NumericVector& bgprotectprob, const NumericVector& bgprior, const NumericVector& Ncpu, const LogicalVector& verbose);
+Rcpp::List run_cpp_nomeR(const Rcpp::List& data, const Rcpp::CharacterVector& fragnames, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
 RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP fragnamesSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const CharacterVector& >::type fragnames(fragnamesSEXP);
-    Rcpp::traits::input_parameter< const List& >::type binding_models(binding_modelsSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type bgprotectprob(bgprotectprobSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type bgprior(bgpriorSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type Ncpu(NcpuSEXP);
-    Rcpp::traits::input_parameter< const LogicalVector& >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type fragnames(fragnamesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type binding_models(binding_modelsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprotectprob(bgprotectprobSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprior(bgpriorSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type Ncpu(NcpuSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type verbose(verboseSEXP);
     rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, fragnames, binding_models, bgprotectprob, bgprior, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 // count_spacing_freq_cpp
-List count_spacing_freq_cpp(const List& data, const CharacterVector& fragnames, const IntegerVector& maxspacing, const IntegerVector& maxwmlen);
+Rcpp::List count_spacing_freq_cpp(const Rcpp::List& data, const Rcpp::CharacterVector& fragnames, const Rcpp::IntegerVector& maxspacing, const Rcpp::IntegerVector& maxwmlen);
 RcppExport SEXP _nomeR_count_spacing_freq_cpp(SEXP dataSEXP, SEXP fragnamesSEXP, SEXP maxspacingSEXP, SEXP maxwmlenSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const CharacterVector& >::type fragnames(fragnamesSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type maxspacing(maxspacingSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type maxwmlen(maxwmlenSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type fragnames(fragnamesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type maxspacing(maxspacingSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type maxwmlen(maxwmlenSEXP);
     rcpp_result_gen = Rcpp::wrap(count_spacing_freq_cpp(data, fragnames, maxspacing, maxwmlen));
     return rcpp_result_gen;
 END_RCPP
 }
 // calculate_theor_joint_prob_cpp
-List calculate_theor_joint_prob_cpp(const NumericVector& ftp_cover_priors, const NumericVector& bg_protect_prob, const NumericVector& footprint_protect_prob, const IntegerVector& max_spacing);
+Rcpp::List calculate_theor_joint_prob_cpp(const Rcpp::NumericVector& ftp_cover_priors, const Rcpp::NumericVector& bg_protect_prob, const Rcpp::NumericVector& footprint_protect_prob, const Rcpp::IntegerVector& max_spacing);
 RcppExport SEXP _nomeR_calculate_theor_joint_prob_cpp(SEXP ftp_cover_priorsSEXP, SEXP bg_protect_probSEXP, SEXP footprint_protect_probSEXP, SEXP max_spacingSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericVector& >::type ftp_cover_priors(ftp_cover_priorsSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type bg_protect_prob(bg_protect_probSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type footprint_protect_prob(footprint_protect_probSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type max_spacing(max_spacingSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type ftp_cover_priors(ftp_cover_priorsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bg_protect_prob(bg_protect_probSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type footprint_protect_prob(footprint_protect_probSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type max_spacing(max_spacingSEXP);
     rcpp_result_gen = Rcpp::wrap(calculate_theor_joint_prob_cpp(ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing));
     return rcpp_result_gen;
 END_RCPP

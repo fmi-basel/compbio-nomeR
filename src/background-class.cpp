@@ -1,4 +1,4 @@
-#include "background.h"
+#include "background-class.hpp"
 
 Background::Background(parameters &params){
   classname = "background";

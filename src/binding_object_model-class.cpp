@@ -1,4 +1,4 @@
-#include "binding_object_model.h"
+#include "binding_object_model-class.hpp"
 
 binding_object_model::binding_object_model(const vector<double > &_protect_prob,
                      const double _prior,

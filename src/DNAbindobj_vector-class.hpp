@@ -1,6 +1,6 @@
 #ifndef _dnabindobjvec_h_
 #define _dnabindobjvec_h_
-#include "DNAbinding_object.h"
+#include "DNAbinding_object-class.hpp"
 #include <Rcpp.h>
 #include <iostream>
 #include <stdio.h>
@@ -8,11 +8,11 @@
 #include <math.h>
 #include <vector>
 #include <map>
-#include "parameters.h"
+#include "parameters-class.hpp"
 #include <fstream>
-#include "binding_object_model.h"
-#include "background.h"
-#include "usefullfunctions.h"
+#include "binding_object_model-class.hpp"
+#include "background-class.hpp"
+#include "utils_globvars.hpp"
 
 using namespace std;
 

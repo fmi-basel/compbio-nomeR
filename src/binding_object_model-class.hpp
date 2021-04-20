@@ -1,7 +1,7 @@
 #ifndef _bindobjmodel_h_
 #define _bindobjmodel_h_
 
-#include "DNAbinding_object.h"
+#include "DNAbinding_object-class.hpp"
 //#include "nucleosomemodel.h"
 #include <iostream>
 #include <stdio.h>
@@ -9,8 +9,8 @@
 #include <math.h>
 #include <vector>
 #include <string>
-#include "parameters.h"
-#include "usefullfunctions.h"
+#include "parameters-class.hpp"
+#include "utils_globvars.hpp"
 #include "nomeseqdata.h"
 using namespace std;
 

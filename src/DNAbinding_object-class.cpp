@@ -1,4 +1,4 @@
-#include "DNAbinding_object.h"
+#include "DNAbinding_object-class.hpp"
 
 
 DNAbinding_object::DNAbinding_object(){

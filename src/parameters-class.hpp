@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include <Rcpp.h>
-#include "usefullfunctions.h"
+#include "utils_globvars.hpp"
 //#include "yaml-cpp/yaml.h"
 using namespace std;
 

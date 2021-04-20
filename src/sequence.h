@@ -7,7 +7,7 @@
 #include <string>
 #include <math.h>
 #include <Rcpp.h>
-#include "usefullfunctions.h"
+#include "utils_globvars.hpp"
 
 using namespace std;
 
