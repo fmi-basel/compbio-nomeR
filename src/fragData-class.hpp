@@ -13,7 +13,7 @@
 #include "refSeqInfo-class.hpp"
 #include "utils_globvars.hpp"
 #include "protectStats-class.hpp"
-#include "coocCntTable-class.hpp""
+#include "coocCntTable-class.hpp"
 
 
 using namespace std;

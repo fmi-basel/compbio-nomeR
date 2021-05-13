@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nomeR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
       </span>
     </div>
 
@@ -117,6 +117,7 @@
   <span class='va'>footprint_models</span>,
   <span class='va'>bgprotectprob</span>,
   <span class='va'>bgcoverprior</span>,
+  report_prediction_in_flanks <span class='op'>=</span> <span class='cn'>FALSE</span>,
   ncpu <span class='op'>=</span> <span class='fl'>1L</span>,
   verbose <span class='op'>=</span> <span class='cn'>F</span>
 <span class='op'>)</span></pre>
@@ -146,6 +147,12 @@ NAME - name (character) of a model, e.g. "Nucleosome".</p></td>
     <tr>
       <th>bgcoverprior</th>
       <td><p>prior probability for percentage of all fragments to be in a free (unprotected, or background) state</p></td>
+    </tr>
+    <tr>
+      <th>report_prediction_in_flanks</th>
+      <td><p><code>logical</code> whether to return calculated coverage and start probabilities in flanking regions.
+In order to take into account partial footprints at edges of fragments the algorithms extends each fragment by maximum footprint lengths from both sides.
+<code>report_prediction_in_flanks</code> controls whether calculated probabilities in flanking regions will be returned or not.</p></td>
     </tr>
     <tr>
       <th>ncpu</th>

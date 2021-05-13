@@ -12,6 +12,9 @@
 #' NAME - name (character) of a model, e.g. "Nucleosome".
 #' @param bgprotectprob probability to find a protected 'C' in open (uprotected) regions
 #' @param bgcoverprior prior probability for percentage of all fragments to be in a free (unprotected, or background) state
+#' @param report_prediction_in_flanks \code{logical} whether to return calculated coverage and start probabilities in flanking regions.
+#' In order to take into account partial footprints at edges of fragments the algorithms extends each fragment by maximum footprint lengths from both sides.
+#' \code{report_prediction_in_flanks} controls whether calculated probabilities in flanking regions will be returned or not.
 #' @param ncpu number of threads to use
 #' @param verbose verbose mode for bug fixing
 
@@ -85,6 +88,7 @@ predict_footprints <- function(data,
                           footprint_models,
                           bgprotectprob,
                           bgcoverprior,
+                          report_prediction_in_flanks = FALSE,
                           ncpu = 1L,
                           verbose = F
                           
@@ -112,6 +116,9 @@ predict_footprints <- function(data,
   checkmate::assert_number(x = bgprotectprob,na.ok = FALSE, lower = 0, upper = 1, add = coll)
   ### validate bgcoverprior
   checkmate::assert_number(x = bgcoverprior,na.ok = FALSE, lower = 0, upper = 1, add = coll)
+  ### validate report_prediction_in_flanks
+  checkmate::assert_logical(report_prediction_in_flanks,any.missing = FALSE,all.missing = FALSE,len=1,add = coll)
+  
   ### validate ncpu
   checkmate::assert_int(x=ncpu,lower = 0,na.ok = TRUE, add = coll)
   avail_ncpu <- parallel::detectCores()
@@ -152,6 +159,7 @@ predict_footprints <- function(data,
                             footprint_models,
                             bgprotectprob,
                             start_priors["BG"],
+                            report_prediction_in_flanks,
                             ncpu,
                             verbose)
   

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nomeR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
       </span>
     </div>
 
@@ -132,6 +132,10 @@
 Default vector assumes that around 50% of data is free of any footprints and all other footprints up-to 200bp have uninformative prior.</p></td>
     </tr>
     <tr>
+      <th>nchains</th>
+      <td><p>number of chains</p></td>
+    </tr>
+    <tr>
       <th>ftp_background_model</th>
       <td><p>type of model used for inference.</p><dl>
 <dt>"informative_prior"</dt><dd><p>both parameters <code>bg_protect_prob</code> and <code>footprint_protect_prob</code> as well as footprint abundances are subject for inference;</p></dd>
@@ -161,6 +165,10 @@ Default vector assumes that around 50% of data is free of any footprints and all
 <dt>`ftp_protect_beta`</dt><dd><p>beta parameter for prior beta distribution for model parameter "footprint_protect_prob".</p></dd>
 
 </dl></td>
+    </tr>
+    <tr>
+      <th>delta_from_max_min</th>
+      <td><p>small number to avoid setting parameter values to ranges of the allowed interval which leads to error in stan.</p></td>
     </tr>
     </table>
 

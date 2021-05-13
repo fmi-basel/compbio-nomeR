@@ -353,6 +353,7 @@ Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
                          const Rcpp::List& binding_models,
                          const Rcpp::NumericVector& bgprotectprob,
                          const Rcpp::NumericVector& bgprior,
+                         const Rcpp::LogicalVector& report_prediction_in_flanks,
                          const Rcpp::NumericVector& Ncpu,
                          const Rcpp::LogicalVector& verbose
 ) {
@@ -360,6 +361,9 @@ Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
   //set verbose
   extern bool _VERBOSE_;
   _VERBOSE_ = Rcpp::as<bool >(verbose);
+  
+  // set report_prediction_in_flanks
+  bool report_prediction_in_flanks_ = Rcpp::as<bool >(report_prediction_in_flanks);
   
   int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
@@ -389,11 +393,11 @@ Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
     if(_VERBOSE_){
       Rcpp::Rcout<<"Running predict.getStartProbDF()..."<<endl;
     }
-    Rcpp::List startProbdf = predict.getStartProbDF();
+    Rcpp::List startProbdf = predict.getStartProbDF(report_prediction_in_flanks_);
     if(_VERBOSE_){
       Rcpp::Rcout<<"Running predict.getCoverProbDF()..."<<endl;
     }
-    Rcpp::List coverProb = predict.getCoverProbDF();
+    Rcpp::List coverProb = predict.getCoverProbDF(report_prediction_in_flanks_);
     if(_VERBOSE_){
       Rcpp::Rcout<<"Running predict.getGenomeSummaryDF()..."<<endl;
     }

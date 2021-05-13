@@ -405,9 +405,9 @@ double Predict::get_coverage_prob_at_pos(int seq, int pos, int wm){ //wm is the 
 
 
 
-Rcpp::List Predict::getStartProbDF(){
+Rcpp::List Predict::getStartProbDF(bool report_prediction_in_flanks){
   extern bool _VERBOSE_;
-  
+  // TODO: add chossing starting position depending on report_prediction_in_flanks
   Rcpp::List out_list;
   vector<string > seqnames;
   vector<int > positions;
@@ -415,8 +415,11 @@ Rcpp::List Predict::getStartProbDF(){
   for(int seq=0;seq < SEQUENCES.Size();seq++){
     int firstDatPos = SEQUENCES[seq].firstDatpos;
     int lastDatPos = SEQUENCES[seq].lastDatpos;
-
-    for(int position = firstDatPos;position <= lastDatPos;++position){
+    
+    // set start pos for reporting
+    int spos = report_prediction_in_flanks ? 1 : firstDatPos;
+    int lpos = report_prediction_in_flanks ? SEQUENCES[seq].Size() : lastDatPos;
+    for(int position = spos; position <= lpos; ++position){
       seqnames.push_back(SEQUENCES[seq].Name());
       positions.push_back(position - firstDatPos + 1);
     }
@@ -434,7 +437,10 @@ Rcpp::List Predict::getStartProbDF(){
       int firstDatPos = SEQUENCES[seq].firstDatpos;
       int lastDatPos = SEQUENCES[seq].lastDatpos;
       
-      for(int position = firstDatPos;position <= lastDatPos;++position){
+      int spos = report_prediction_in_flanks ? 1 : firstDatPos;
+      int lpos = report_prediction_in_flanks ? SEQUENCES[seq].Size() : lastDatPos;
+      
+      for(int position = spos; position <= lpos; ++position){
         double totalprob=0;
         for(int j=0;j<names2indicesinprobarray[i].size();++j){
           totalprob += Prob[seq][names2indicesinprobarray[i][j]][position];
@@ -451,7 +457,7 @@ Rcpp::List Predict::getStartProbDF(){
 
 
 
-Rcpp::List Predict::getCoverProbDF(){
+Rcpp::List Predict::getCoverProbDF(bool report_prediction_in_flanks){
 
   Rcpp::List out_list;
   vector<string > seqnames;
@@ -460,8 +466,10 @@ Rcpp::List Predict::getCoverProbDF(){
   for(int seq=0;seq < SEQUENCES.Size();seq++){
     int firstDatPos = SEQUENCES[seq].firstDatpos;
     int lastDatPos = SEQUENCES[seq].lastDatpos;
+    int spos = report_prediction_in_flanks ? 1 : firstDatPos;
+    int lpos = report_prediction_in_flanks ? SEQUENCES[seq].Size() : lastDatPos;
     
-    for(int position = firstDatPos;position <= lastDatPos;++position){
+    for(int position = spos; position <= lpos; ++position){
       seqnames.push_back(SEQUENCES[seq].Name());
       positions.push_back(position - firstDatPos + 1);
     }
@@ -477,8 +485,10 @@ Rcpp::List Predict::getCoverProbDF(){
     for(int seq=0;seq < SEQUENCES.Size();seq++){
       int firstDatPos = SEQUENCES[seq].firstDatpos;
       int lastDatPos = SEQUENCES[seq].lastDatpos;
+      int spos = report_prediction_in_flanks ? 1 : firstDatPos;
+      int lpos = report_prediction_in_flanks ? SEQUENCES[seq].Size() : lastDatPos;
       
-      for(int position = firstDatPos;position <= lastDatPos;++position){
+      for(int position = spos; position <= lpos; ++position){
         double coverprob=get_coverage_prob_at_pos_name_index(seq,position,i);
         covprob.push_back(coverprob);
       }

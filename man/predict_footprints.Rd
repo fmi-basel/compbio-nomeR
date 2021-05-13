@@ -9,6 +9,7 @@ predict_footprints(
   footprint_models,
   bgprotectprob,
   bgcoverprior,
+  report_prediction_in_flanks = FALSE,
   ncpu = 1L,
   verbose = F
 )
@@ -28,6 +29,10 @@ NAME - name (character) of a model, e.g. "Nucleosome".}
 \item{bgprotectprob}{probability to find a protected 'C' in open (uprotected) regions}
 
 \item{bgcoverprior}{prior probability for percentage of all fragments to be in a free (unprotected, or background) state}
+
+\item{report_prediction_in_flanks}{\code{logical} whether to return calculated coverage and start probabilities in flanking regions.
+In order to take into account partial footprints at edges of fragments the algorithms extends each fragment by maximum footprint lengths from both sides.
+\code{report_prediction_in_flanks} controls whether calculated probabilities in flanking regions will be returned or not.}
 
 \item{ncpu}{number of threads to use}
 

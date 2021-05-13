@@ -13,8 +13,8 @@ fetch_protect_stats_from_bams_cpp <- function(infiles, regionChr, regionStart, r
     .Call(`_nomeR_fetch_protect_stats_from_bams_cpp`, infiles, regionChr, regionStart, regionEnd, seqstring, seqStart, seqEnd, remove_nonunique, clip_until_nbg, max_protect_frac, max_bisC_meth, min_bisC_size, mapqMin, mapqMax)
 }
 
-run_cpp_nomeR <- function(data, fragnames, binding_models, bgprotectprob, bgprior, Ncpu, verbose) {
-    .Call(`_nomeR_run_cpp_nomeR`, data, fragnames, binding_models, bgprotectprob, bgprior, Ncpu, verbose)
+run_cpp_nomeR <- function(data, fragnames, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose) {
+    .Call(`_nomeR_run_cpp_nomeR`, data, fragnames, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose)
 }
 
 count_spacing_freq_cpp <- function(data, fragnames, maxspacing, maxwmlen) {

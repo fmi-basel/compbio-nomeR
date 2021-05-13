@@ -86,6 +86,7 @@ Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
                          const Rcpp::List& binding_models,
                          const Rcpp::NumericVector& bgprotectprob,
                          const Rcpp::NumericVector& bgprior,
+                         const Rcpp::LogicalVector& report_prediction_in_flanks,
                          const Rcpp::NumericVector& Ncpu,
                          const Rcpp::LogicalVector& verbose);
 

@@ -81,8 +81,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // run_cpp_nomeR
-Rcpp::List run_cpp_nomeR(const Rcpp::List& data, const Rcpp::CharacterVector& fragnames, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
-RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP fragnamesSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+Rcpp::List run_cpp_nomeR(const Rcpp::List& data, const Rcpp::CharacterVector& fragnames, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::LogicalVector& report_prediction_in_flanks, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
+RcppExport SEXP _nomeR_run_cpp_nomeR(SEXP dataSEXP, SEXP fragnamesSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP report_prediction_in_flanksSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -91,9 +91,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::List& >::type binding_models(binding_modelsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprotectprob(bgprotectprobSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprior(bgpriorSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type report_prediction_in_flanks(report_prediction_in_flanksSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type Ncpu(NcpuSEXP);
     Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, fragnames, binding_models, bgprotectprob, bgprior, Ncpu, verbose));
+    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(data, fragnames, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -136,7 +137,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nomeR_fetch_cooc_ctable_from_bams_cpp", (DL_FUNC) &_nomeR_fetch_cooc_ctable_from_bams_cpp, 15},
     {"_nomeR_fetch_data_matrix_from_bams_cpp", (DL_FUNC) &_nomeR_fetch_data_matrix_from_bams_cpp, 15},
     {"_nomeR_fetch_protect_stats_from_bams_cpp", (DL_FUNC) &_nomeR_fetch_protect_stats_from_bams_cpp, 14},
-    {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 7},
+    {"_nomeR_run_cpp_nomeR", (DL_FUNC) &_nomeR_run_cpp_nomeR, 8},
     {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 4},
     {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
     {"_rcpp_module_boot_stan_fit4background_betabinom_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_betabinom_model_mod, 0},
