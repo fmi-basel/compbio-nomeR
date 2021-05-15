@@ -2,7 +2,7 @@ Package: nomeR
 Type: Package
 Title: Probabilistic model for interpreting NOME-Seq data
 Date: 2018-07-16
-Version: 0.6.0
+Version: 0.7.0
 Authors@R: person(given = "Evgeniy A.", family="Ozonov", email = "evgeniy.ozonov@fmi.ch", role = c("aut", "cre"))
 Description: \code{nomeR} uses probabilistic model for analysis of data from assays like NOMe-Seq which allow to acquire positional information about footprints of DNA binding proteins.
 License: MIT + file LICENSE

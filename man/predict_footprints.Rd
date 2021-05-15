@@ -30,9 +30,9 @@ NAME - name (character) of a model, e.g. "Nucleosome".}
 
 \item{bgcoverprior}{prior probability for percentage of all fragments to be in a free (unprotected, or background) state}
 
-\item{report_prediction_in_flanks}{\code{logical} whether to return calculated coverage and start probabilities in flanking regions.
-In order to take into account partial footprints at edges of fragments the algorithms extends each fragment by maximum footprint lengths from both sides.
-\code{report_prediction_in_flanks} controls whether calculated probabilities in flanking regions will be returned or not.}
+\item{report_prediction_in_flanks}{\code{logical} whether to return calculated start probabilities in left flanking region.
+In order to take into account partial footprints at left edge of fragments the algorithm extends each fragment by maximum footprint length on the left side.
+\code{report_prediction_in_flanks} controls whether calculated start probabilities in the left flanking region will be reported in the \code{START_PROB} .}
 
 \item{ncpu}{number of threads to use}
 
@@ -41,14 +41,14 @@ In order to take into account partial footprints at edges of fragments the algor
 \value{
 A list which contains 3 data frames:
         \code{START_PROB} - data frame with calculated start probabilities for each NOME-Seq fragment (column \code{seq}),
-                            each position in the amplicon (column \code{pos}) and each binding model, e.g. Nucleosome, background etc.
-                            These probabilities reflect how likely it is to find a start in each fragment and at each position of a certain bidning model.
+                            each position in the amplicon (column \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
+                            These probabilities reflect how likely it is to find a start in each fragment and at each position of a certain footprint model.
          
         \code{COVER_PROB} - data frame with calculated coverage probabilities for each NOME-Seq fragment (column \code{seq}),
-                            each position in the amplicon (column \code{pos}) and each binding model, e.g. Nucleosome, background etc.
-                            These probabilities reflect how likely it is that a certain position in an amplicon and certain fragment is covered by a certain bidning model.
+                            each position in the amplicon (column \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
+                            These probabilities reflect how likely it is that a certain position in an amplicon and certain fragment is covered by a certain footprint model.
 
-        \code{SUMMARY} - data frame with summary information for each binding model and for the whole amplicon.
+        \code{SUMMARY} - data frame with summary information for each footprint model and for the whole amplicon.
                          
                          
                          Column \code{Statistics} contains the following information:

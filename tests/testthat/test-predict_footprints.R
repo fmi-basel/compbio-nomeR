@@ -64,6 +64,7 @@ test_that("predict_footprints returns correct object",{
                                   footprint_models = ftp.models,
                                   bgprotectprob = 0.05,
                                   bgcoverprior = bg.pr,
+                                  report_prediction_in_flanks = T,
                                   ncpu = 1L)
   
   ## check whether slots exist

@@ -397,7 +397,7 @@ Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
     if(_VERBOSE_){
       Rcpp::Rcout<<"Running predict.getCoverProbDF()..."<<endl;
     }
-    Rcpp::List coverProb = predict.getCoverProbDF(report_prediction_in_flanks_);
+    Rcpp::List coverProb = predict.getCoverProbDF();
     if(_VERBOSE_){
       Rcpp::Rcout<<"Running predict.getGenomeSummaryDF()..."<<endl;
     }

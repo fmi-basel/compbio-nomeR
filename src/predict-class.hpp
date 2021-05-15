@@ -71,7 +71,7 @@ public:
   
   // output results
   Rcpp::List getStartProbDF(bool report_prediction_in_flanks);
-  Rcpp::List getCoverProbDF(bool report_prediction_in_flanks);
+  Rcpp::List getCoverProbDF();
   Rcpp::List getGenomeSummaryDF();
   
 };
