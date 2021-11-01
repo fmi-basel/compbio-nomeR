@@ -50,7 +50,7 @@ get_ftp_models_for_prediction <- function(infer_summary){
                           seq(from = ftp_suggest[ridx,1],
                               to = ftp_suggest[ridx,2],
                               by = 1)
-                        },simplify = F,USE.NAMES = )
+                        },simplify = F,USE.NAMES = T)
   ## select required footprints
   req_infer_ftp_lengths <- infer_ftp_abund_probs[infer_ftp_abund_probs[,"ftp_length"] %in% c(1,unlist(ftp_lengths)),]
   req_infer_ftp_lengths[,"mean"] <- req_infer_ftp_lengths[,"mean"]/sum(req_infer_ftp_lengths[,"mean"])
