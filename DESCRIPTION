@@ -42,7 +42,7 @@ LinkingTo:
     StanHeaders (>= 2.18.0),
     zlibbioc
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Biarch: true
 Depends: 
     R (>= 3.4.0)

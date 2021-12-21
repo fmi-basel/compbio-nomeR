@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // fetch_cooc_ctable_from_bams_cpp
 Rcpp::List fetch_cooc_ctable_from_bams_cpp(const Rcpp::CharacterVector& infiles, const Rcpp::CharacterVector& regionChr, const Rcpp::IntegerVector& regionStart, const Rcpp::IntegerVector& regionEnd, const Rcpp::IntegerVector& max_spac, const Rcpp::CharacterVector& seqstring, const Rcpp::IntegerVector& seqStart, const Rcpp::IntegerVector& seqEnd, const Rcpp::LogicalVector& remove_nonunique, const Rcpp::IntegerVector& clip_until_nbg, const Rcpp::NumericVector& max_protect_frac, const Rcpp::NumericVector& max_bisC_meth, const Rcpp::IntegerVector& min_bisC_size, const Rcpp::IntegerVector& mapqMin, const Rcpp::IntegerVector& mapqMax);
 RcppExport SEXP _nomeR_fetch_cooc_ctable_from_bams_cpp(SEXP infilesSEXP, SEXP regionChrSEXP, SEXP regionStartSEXP, SEXP regionEndSEXP, SEXP max_spacSEXP, SEXP seqstringSEXP, SEXP seqStartSEXP, SEXP seqEndSEXP, SEXP remove_nonuniqueSEXP, SEXP clip_until_nbgSEXP, SEXP max_protect_fracSEXP, SEXP max_bisC_methSEXP, SEXP min_bisC_sizeSEXP, SEXP mapqMinSEXP, SEXP mapqMaxSEXP) {
