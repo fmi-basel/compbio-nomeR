@@ -112,6 +112,34 @@ set<string > regionData::getNonUniqueQnames(){
   
 };
 
+
+// get qnames by duplication encodings. for each dupl code -> qnames with same code
+unordered_map<string, vector<string > > regionData::getDuplQnames(){
+  unordered_map<string, vector<string > > duplQnames;
+  
+  // go across each fragment
+  for(unordered_map<string, fragData >::iterator it = fDataMap.begin(); it != fDataMap.end();++it){
+    
+    string enc = (it->second).getStringEncodingForUniqueness();
+    // for testing
+    // (it->second).print();
+    // Rcpp::Rcout<<enc<<endl;
+    
+    if(duplQnames.find(enc) != duplQnames.end()){ // encoding exists
+      // add qname into the vector for the current encoding (enc)
+      duplQnames[enc].push_back(it->first);
+      
+    } else{ // new encoding
+      // insert a new encoding
+      vector<string > qname_vec = {it->first};
+      duplQnames.insert(make_pair(enc, qname_vec));
+    }
+  }
+  return(duplQnames);
+};
+
+
+
 // get set of qnames with failed bisulfite conversion
 set<string > regionData::getFailedBisConvQnames(double max_bisC_meth,int min_bisC_size){
   set<string > failed_qnames;

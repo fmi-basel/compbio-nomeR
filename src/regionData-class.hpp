@@ -58,6 +58,9 @@ public:
 	// get set of qnames whose meth profile is not unique for removal
 	set<string > getNonUniqueQnames();
 	
+	// get qnames by duplication encodings. for each dupl code -> qnames with same code
+	unordered_map<string, vector<string > > getDuplQnames();
+	
 	// get set of qnames with failed bisulfite conversion
 	set<string > getFailedBisConvQnames(double max_bisC_meth,int min_bisC_size);
 	

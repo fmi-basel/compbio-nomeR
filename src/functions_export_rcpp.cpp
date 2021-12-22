@@ -231,6 +231,111 @@ Rcpp::List fetch_data_matrix_from_bams_cpp(const Rcpp::CharacterVector& whichCon
 }
 
 
+
+Rcpp::List fetch_dupl_stats_from_bams_cpp(const Rcpp::CharacterVector& infiles,
+                                          const Rcpp::CharacterVector& regionChr,
+                                          const Rcpp::IntegerVector& regionStart,
+                                          const Rcpp::IntegerVector& regionEnd,
+                                          const Rcpp::CharacterVector& seqstring,
+                                          const Rcpp::IntegerVector& seqStart,
+                                          const Rcpp::IntegerVector& seqEnd,
+                                          const Rcpp::IntegerVector& mapqMin,
+                                          const Rcpp::IntegerVector& mapqMax){
+  // convert input parameters
+  
+  vector<string > infiles_ = Rcpp::as<vector<string > >(infiles);
+  string regionChr_ = Rcpp::as<string >(regionChr);
+  int regionStart_ = Rcpp::as<int >(regionStart);
+  int regionEnd_ = Rcpp::as<int >(regionEnd);
+  string seqstring_ = Rcpp::as<string >(seqstring);
+  int seqStart_ = Rcpp::as<int >(seqStart);
+  int seqEnd_ = Rcpp::as<int >(seqEnd);
+  
+  int mapqMin_ = Rcpp::as<int >(mapqMin);
+  int mapqMax_ = Rcpp::as<int >(mapqMax);
+  
+  // initialize container for reference sequence
+  refSeqInfo refseqInfo(seqstring_, seqStart_,seqEnd_);
+  
+  // initialize data structure for keeping object pointers
+  obj_pnts pnts;
+  // store pointer to reference sequence container
+  pnts.refseq_info = &refseqInfo;
+  // store min and amp MAPQ
+  pnts.mapqMin = mapqMin_;
+  pnts.mapqMax = mapqMax_;
+  
+  // create container for fragments and counters
+  regionData regData(regionChr_,regionStart_,regionEnd_);
+  pnts.reg_data = &regData;
+  int n_fetched = 0, n_nonUnique = 0;
+  
+  // fetch data from all bam files
+  for(int i = 0; i < infiles_.size(); ++i){
+    pnts.prefix = "f" + to_string(i + 1)+":";
+    // fetch data from bam file
+    fetch_data_from_bam(infiles_[i],
+                        regionChr_,
+                        regionStart_,
+                        regionEnd_,
+                        &pnts);
+  }
+  
+  n_fetched = regData.size();
+  
+  // get qnames on non-unique fragments. this is not essential in this function, but for testing is useful
+  set<string > nonUnfrags;
+  nonUnfrags = regData.getNonUniqueQnames();
+  n_nonUnique = nonUnfrags.size();
+  
+  // get map duplication encoding -> vector of qnames
+  unordered_map<string, vector<string > > duplEncToQnamesMap = regData.getDuplQnames();
+  
+  // get stats of how many each duplication encoding occurs
+  map<int, int> dupl_stats; // map dupl_times -> number of fragments duplicated this number of times
+  for(unordered_map<string, vector<string > >::iterator it = duplEncToQnamesMap.begin(); it != duplEncToQnamesMap.end(); ++it){
+    // get number of frags for current encoding
+    int nfrgs = (it->second).size();
+    
+    // check if nfrgs exists in dupl_stats and add if not
+    if(dupl_stats.find(nfrgs) == dupl_stats.end()){ // this number of duplications is not found
+      // insert a new pair nfrgs -> 1
+      dupl_stats.insert(make_pair(nfrgs,1));
+    } else{ // this number of duplications is already in the map
+      dupl_stats[nfrgs]++;
+    }
+  }
+  
+  // create a matrix for duplication stats: 
+  // columns
+  // number_of_frags -> n_of_times duplicated
+  Rcpp::IntegerMatrix duplStats4R(dupl_stats.size(),2);
+  fill(duplStats4R.begin(),duplStats4R.end(),NA_INTEGER);
+  Rcpp::CharacterVector colnms = {"n_frags","n_times_duplicated"};
+  Rcpp::colnames(duplStats4R) = colnms;
+  int rowi=0; // row index in the matrix
+  for(map<int, int>::iterator it = dupl_stats.begin(); it != dupl_stats.end(); ++it){
+    duplStats4R(rowi,0) = it->first;
+    duplStats4R(rowi,1) = it->second;
+    ++rowi;
+  }
+  
+  // create Rcpp List for returning unique encodinds and fragnames
+  Rcpp::List EncToQnames4R;
+  for(unordered_map<string, vector<string > >::iterator it = duplEncToQnamesMap.begin(); it != duplEncToQnamesMap.end(); ++it){
+    EncToQnames4R.push_back(Rcpp::wrap(it->second),it->first);
+  }
+  // create List for R
+  Rcpp::List data_out = Rcpp::List::create(Rcpp::Named("nFragsFetched") = Rcpp::wrap(n_fetched),
+                                           Rcpp::Named("nFragsNonUnique") = Rcpp::wrap(n_nonUnique),
+                                           Rcpp::Named("duplStats") = Rcpp::wrap(duplStats4R),
+                                           Rcpp::Named("duplFragNames") = EncToQnames4R);
+  return(data_out);
+}
+
+
+
+
 Rcpp::List fetch_protect_stats_from_bams_cpp(const Rcpp::CharacterVector& infiles,
                                              const Rcpp::CharacterVector& regionChr,
                                              const Rcpp::IntegerVector& regionStart,

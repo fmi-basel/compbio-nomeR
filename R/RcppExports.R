@@ -9,6 +9,10 @@ fetch_data_matrix_from_bams_cpp <- function(whichContext, infiles, regionChr, re
     .Call(`_nomeR_fetch_data_matrix_from_bams_cpp`, whichContext, infiles, regionChr, regionStart, regionEnd, seqstring, seqStart, seqEnd, remove_nonunique, clip_until_nbg, max_protect_frac, max_bisC_meth, min_bisC_size, mapqMin, mapqMax)
 }
 
+fetch_dupl_stats_from_bams_cpp <- function(infiles, regionChr, regionStart, regionEnd, seqstring, seqStart, seqEnd, mapqMin, mapqMax) {
+    .Call(`_nomeR_fetch_dupl_stats_from_bams_cpp`, infiles, regionChr, regionStart, regionEnd, seqstring, seqStart, seqEnd, mapqMin, mapqMax)
+}
+
 fetch_protect_stats_from_bams_cpp <- function(infiles, regionChr, regionStart, regionEnd, seqstring, seqStart, seqEnd, remove_nonunique, clip_until_nbg, max_protect_frac, max_bisC_meth, min_bisC_size, mapqMin, mapqMax) {
     .Call(`_nomeR_fetch_protect_stats_from_bams_cpp`, infiles, regionChr, regionStart, regionEnd, seqstring, seqStart, seqEnd, remove_nonunique, clip_until_nbg, max_protect_frac, max_bisC_meth, min_bisC_size, mapqMin, mapqMax)
 }

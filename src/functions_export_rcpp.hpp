@@ -64,6 +64,18 @@ Rcpp::List fetch_data_matrix_from_bams_cpp(const Rcpp::CharacterVector& whichCon
                                            const Rcpp::IntegerVector& mapqMax);
 
 // [[Rcpp::export]]
+Rcpp::List fetch_dupl_stats_from_bams_cpp(const Rcpp::CharacterVector& infiles,
+                                          const Rcpp::CharacterVector& regionChr,
+                                          const Rcpp::IntegerVector& regionStart,
+                                          const Rcpp::IntegerVector& regionEnd,
+                                          const Rcpp::CharacterVector& seqstring,
+                                          const Rcpp::IntegerVector& seqStart,
+                                          const Rcpp::IntegerVector& seqEnd,
+                                          const Rcpp::IntegerVector& mapqMin,
+                                          const Rcpp::IntegerVector& mapqMax);
+
+
+// [[Rcpp::export]]
 Rcpp::List fetch_protect_stats_from_bams_cpp(const Rcpp::CharacterVector& infiles,
                                              const Rcpp::CharacterVector& regionChr,
                                              const Rcpp::IntegerVector& regionStart,
