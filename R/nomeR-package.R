@@ -49,6 +49,8 @@ NULL
 ## usethis namespace: end
 NULL
 
+#' @importFrom methods new 
+
 
 
 

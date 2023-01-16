@@ -10,8 +10,8 @@ infer_footprints_stan_vb(
   ftp_background_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),
   background_model_params = list(bg_protect_prob_fixed = 0.01, bg_protect_min = 0,
     bg_protect_max = 0.4, bg_protect_alpha = 675, bg_protect_beta = 57126),
-  ftp_model_params = list(ftp_protect_min = 0.6, ftp_protect_max = 1, ftp_protect_alpha
-    = 1, ftp_protect_beta = 0.01),
+  ftp_model_params = list(ftp_protect_min = 0.6, ftp_protect_max = 1, ftp_protect_alpha =
+    1, ftp_protect_beta = 0.01),
   ...
 )
 }

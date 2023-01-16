@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <Rinternals.h>
-#include "sam.h"
+#include <samtools-1.7-compat.h>
 #include <stdbool.h>
 
 /*! @function

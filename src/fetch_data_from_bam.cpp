@@ -203,7 +203,8 @@ void print_bs_alignment(const bam1_t *hit,const obj_pnts* pdata){
 	uint32_t *cigar = bam_get_cigar(hit);
 	
 	// get qseq, rseq and xm tag and print out
-	int qlen = bam_cigar2qlen(&(hit -> core), cigar);
+  // old: int qlen = bam_cigar2qlen(&(hit -> core), cigar);
+  int qlen = bam_cigar2qlen(hit->core.n_cigar, cigar);
 	uint8_t *hitseq = bam1_seq(hit);
 	
 	

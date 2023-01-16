@@ -7,7 +7,7 @@ using namespace Rcpp ;
 RCPP_MODULE(stan_fit4ftp_inference_background_footprint_fixed_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_ftp_inference_background_footprint_fixed")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("rstantools_model_ftp_inference_background_footprint_fixed")
 
     .constructor<SEXP,SEXP,SEXP>()
 

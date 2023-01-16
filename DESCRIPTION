@@ -2,7 +2,7 @@ Package: nomeR
 Type: Package
 Title: Probabilistic model for interpreting NOME-Seq data
 Date: 2018-07-16
-Version: 0.7.0
+Version: 0.7.1
 Authors@R: person(given = "Evgeniy A.", family="Ozonov", email = "evgeniy.ozonov@fmi.ch", role = c("aut", "cre"))
 Description: \code{nomeR} uses probabilistic model for analysis of data from assays like NOMe-Seq which allow to acquire single-molecule positional information about footprints of DNA binding proteins.
 License: MIT + file LICENSE
@@ -10,39 +10,35 @@ Imports:
     checkmate,
     extraDistr,
     ggplot2,
-    methods,
     parallel,
     Rcpp (>= 0.12.17),
-    RcppParallel (>= 5.0.1),
-    RcppProgress (>= 0.1),
-    Rsamtools,
+    Rsamtools (>= 2.13.1),
     rstan (>= 2.18.1),
-    rstantools (>= 2.1.1),
     stats,
     stringr,
     tibble,
     truncdist,
-    IRanges,
     GenomicRanges,
     GenomeInfoDb,
-    S4Vectors
+    methods
 Suggests: 
     testthat,
     GenomicAlignments,
     Biostrings,
-    BSgenome
+    BSgenome,
+    IRanges
 LinkingTo: 
     BH (>= 1.66.0),
     Rcpp (>= 0.12.0),
     RcppEigen (>= 0.3.3.3.0),
     RcppParallel (>= 5.0.1),
     RcppProgress,
-    Rhtslib,
+    Rhtslib (>= 1.99.1),
     rstan (>= 2.18.1),
     StanHeaders (>= 2.18.0),
     zlibbioc
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Biarch: true
 Depends: 
     R (>= 3.4.0)
