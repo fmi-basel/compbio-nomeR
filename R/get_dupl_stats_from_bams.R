@@ -22,11 +22,13 @@
 #'   \item{nFragsFetched}{number of fetched fragments before filtering.}
 #'   \item{nFragsNonUnique}{number of non-unique fragments as defined by coordinates and methylation profiles.}
 
-#'   \item{duplStatsMatrix}{\code{matrix} with 2 columns. First column represents number of fragments and second column represents number of times it is duplicated. 
-#'   For example, row with numbers 1 at the first column and 100 at the second column should be interpreted as following: 100 fragments in the data has exactly 1 unique match. In other words, 100 fragments are unique.
-#'   Another example, row with numbers 5 at the first column and 200 at the second column means that 5 unique fragments are duplicated 200 times in the data.
+#'   \item{duplStatsMatrix}{\code{matrix} with 2 columns. First column represents (\code{n_uniq_aln}) number of unique alignments after deduplication and second 
+#'   column (\code{n_times_duplicated}) represents number of times each of the alignments was duplicated.
+#'   For example, row with numbers 100 at the first column and 1 at the second column should be interpreted as following: 100 alignments in the data has exactly 1 unique fragment.
+#'   In other words, 100 fragments are unique.
+#'   Another example, row with numbers 200 at the first column and 5 at the second column means that before deduplication 5 alignments were supported by 200 duplicated fragments each.
 #'   }
-#'   \item{duplFragNamesList}{\code{list} containing names of duplicated fragments. Names of elements of this list are data encoded as ...
+#'   \item{duplFragNamesList}{\code{list} of vectors containing names of duplicated fragments. Names of list elements are encodings of unique alignments and can be ignored.
 #'   }
 #' }
 #' @export

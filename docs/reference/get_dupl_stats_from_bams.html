@@ -174,10 +174,12 @@ Columns of the returned <code>tibble</code> represent:</p><dl>
   <dt>names</dt><dd><p>the same as <code><a href='https://rdrr.io/r/base/names.html'>names(regions)</a></code> if it is not <code>NULL</code> or index of a corresponding region in <code>regions</code>.</p></dd>
   <dt>nFragsFetched</dt><dd><p>number of fetched fragments before filtering.</p></dd>
   <dt>nFragsNonUnique</dt><dd><p>number of non-unique fragments as defined by coordinates and methylation profiles.</p></dd>
-  <dt>duplStatsMatrix</dt><dd><p><code>matrix</code> with 2 columns. First column represents number of fragments and second column represents number of times it is duplicated. 
-  For example, row with numbers 1 at the first column and 100 at the second column should be interpreted as following: 100 fragments in the data has exactly 1 unique match. In other words, 100 fragments are unique.
-  Another example, row with numbers 5 at the first column and 200 at the second column means that 5 unique fragments are duplicated 200 times in the data.</p></dd>
-  <dt>duplFragNamesList</dt><dd><p><code>list</code> containing names of duplicated fragments. Names of elements of this list are data encoded as ...</p></dd>
+  <dt>duplStatsMatrix</dt><dd><p><code>matrix</code> with 2 columns. First column represents (<code>n_uniq_aln</code>) number of unique alignments after deduplication and second 
+  column (<code>n_times_duplicated</code>) represents number of times each of the alignments was duplicated.
+  For example, row with numbers 100 at the first column and 1 at the second column should be interpreted as following: 100 alignments in the data has exactly 1 unique fragment.
+  In other words, 100 fragments are unique.
+  Another example, row with numbers 200 at the first column and 5 at the second column means that before deduplication 5 alignments were supported by 200 duplicated fragments each.</p></dd>
+  <dt>duplFragNamesList</dt><dd><p><code>list</code> of vectors containing names of duplicated fragments. Names of list elements are encodings of unique alignments and can be ignored.</p></dd>
 
 </dl>
 

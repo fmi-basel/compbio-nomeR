@@ -311,12 +311,12 @@ Rcpp::List fetch_dupl_stats_from_bams_cpp(const Rcpp::CharacterVector& infiles,
   // number_of_frags -> n_of_times duplicated
   Rcpp::IntegerMatrix duplStats4R(dupl_stats.size(),2);
   fill(duplStats4R.begin(),duplStats4R.end(),NA_INTEGER);
-  Rcpp::CharacterVector colnms = {"n_frags","n_times_duplicated"};
+  Rcpp::CharacterVector colnms = {"n_uniq_aln","n_times_duplicated"};
   Rcpp::colnames(duplStats4R) = colnms;
   int rowi=0; // row index in the matrix
   for(map<int, int>::iterator it = dupl_stats.begin(); it != dupl_stats.end(); ++it){
-    duplStats4R(rowi,0) = it->first;
-    duplStats4R(rowi,1) = it->second;
+    duplStats4R(rowi,0) = it->second;
+    duplStats4R(rowi,1) = it->first;
     ++rowi;
   }
   
