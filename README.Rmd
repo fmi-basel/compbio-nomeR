@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/fmi-basel/compbio-nomeR/workflows/R-CMD-check/badge.svg)](https://github.com/fmi-basel/compbio-nomeR/actions)
+[![R-CMD-check](https://github.com/fmi-basel/compbio-nomeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/fmi-basel/compbio-nomeR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This packages uses a probabilistic model for analysis of NOMe-Seq data, or any other kind of data that gives single molecule occupancy read out. 

@@ -6,6 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/fmi-basel/compbio-nomeR/workflows/R-CMD-check/badge.svg)](https://github.com/fmi-basel/compbio-nomeR/actions)
+[![R-CMD-check](https://github.com/fmi-basel/compbio-nomeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/fmi-basel/compbio-nomeR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This packages uses a probabilistic model for analysis of NOMe-Seq data,
@@ -22,18 +23,18 @@ The model allows to perform two types of analysis.
     algorithms for footprint inference.
 
     -   Sampling from posterior distribution using Monte Carlo methods
-        from ‘rstan’ package (infer\_footprints\_stan\_sampling);
+        from ‘rstan’ package (infer_footprints_stan_sampling);
 
     -   Approximation of posterior distribution using variational Bayes
-        from ‘rstan’ package (infer\_footprints\_stan\_vb).
+        from ‘rstan’ package (infer_footprints_stan_vb).
 
     -   Finding maximum a posteriori point estimate using optimization
         algorithms provided by ‘rstan’
-        (infer\_footprints\_stan\_optimizing).
+        (infer_footprints_stan_optimizing).
 
 2.  Prediction of footprint positions in NOMe-seq data
 
     When footprint abundances are known or inferred from the analysis in
     previous section one can predict positions of footprints in NOMe-seq
-    data (predict\_footprints). We calculate posterior probabilities for
+    data (predict_footprints). We calculate posterior probabilities for
     each footprint to start or to cover every position in each fragment.
