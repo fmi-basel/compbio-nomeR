@@ -112,8 +112,12 @@ jobs:
         sessioninfo::session_info(pkgs, include_base = TRUE)
       shell: Rscript {0}
 
-    - name: Build, Install, Check
-      uses: grimbough/bioc-actions/build-install-check@v1
+    # - name: Build, Install, Check
+    #   uses: grimbough/bioc-actions/build-install-check@v1
+    - name: Check
+      uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
 
     - name: Run BiocCheck
       uses: grimbough/bioc-actions/run-BiocCheck@v1
