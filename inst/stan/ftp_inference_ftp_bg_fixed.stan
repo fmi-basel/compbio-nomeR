@@ -1,13 +1,11 @@
 /**
-This model for footprint inference solves non-identifiablility problem 
-for bg_protect_prob, ftp_protect_prob and ftp_cover_prob[1] by 
-introducing strongly informative prior for bg_protect_prob which we acquire
-from NOMe-seq data for lambda DNA.
+This model for footprint inference using fixed values for bg_protect_prob and ftp_protect_prob
 
 Original source of this file:
-/work2/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/TEST_MODEL/01_CPP_CODE_FOR_STAN/13_ftp_inference_background_informative_prior.stan
+/work2/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/TEST_MODEL/01_CPP_CODE_FOR_STAN/13_ftp_inference_background_fixed.stan
 
 **/
+
 
 functions{
   /**
@@ -81,39 +79,33 @@ functions{
 data {
   int n_ftp;
   vector<lower=0>[n_ftp] ftp_prior_alphas;
+  array[n_ftp] int ftp_lengths;
+  //vector<lower=1>[n_ftp] ftp_lengths;
+  
   int n_spac;
   int<lower=1> spacings[n_spac];
   int<lower=0> spacing_counts[n_spac,4];
   
-  // parameters for bg_protect prior
-  // here bg_protect_prob is modelled using truncated beta distribution
-  real bg_protect_min;
-  real bg_protect_max;
-  real<lower=0> bg_protect_alpha;
-  real<lower=0> bg_protect_beta;
   
+  // emission prob for BG for inference
+  // in this version of the model this parameter is constant
+  real<lower=0,upper=1> bg_protect_prob;
   
-
-  //real bg_protect_prob;
-
-// parameters for ftp_protect prior. modelled using truncated beta distribution
-  real ftp_protect_min;
-  real ftp_protect_max;
-  real<lower=0> ftp_protect_alpha;
-  real<lower=0> ftp_protect_beta;
+  // emission prob for footprints
+  // in this version of the model this parameter is constant
+  real<lower=0,upper=1> footprint_protect_prob;
+  
+  // parameters for ftp_protect prior. modelled using truncated beta distribution
+  // real ftp_protect_min;
+  // real ftp_protect_max;
+  // real<lower=0> ftp_protect_alpha;
+  // real<lower=0> ftp_protect_beta;
 
   
 }
 
 transformed data {
-  int<lower=1> ftp_lengths[n_ftp];
-  
   int<lower=1> max_spacing;
-  
-  // fill ftp_lengths
-  for (ftpl in 1:n_ftp){
-    ftp_lengths[ftpl] = ftpl;
-  }
   
   // initialize max_spacing
   max_spacing = max(spacings);
@@ -131,34 +123,18 @@ transformed data {
 parameters {
   // footprint cover probs for inference
   simplex[n_ftp] ftp_cover_probs;
-  
-  // emission prob for BG for inference
-  real<lower=bg_protect_min,upper=bg_protect_max> bg_protect_prob;
-  
-  // emission prob for ftp for inference
-  real<lower=ftp_protect_min,upper=ftp_protect_max> footprint_protect_prob;
-  
-  
 }
-
-
 
 model {
   real total_prob_of_protected_pos;
   // prior for abundances
   ftp_cover_probs ~ dirichlet(ftp_prior_alphas);
 
-  //prior for bg_protect_prob
-  bg_protect_prob ~ beta(bg_protect_alpha, bg_protect_beta);
-  
-  //prior for footprint_protect_prob
-  footprint_protect_prob ~ beta(ftp_protect_alpha, ftp_protect_beta);
-  
-  
   // add to loglik the term which realtes occurences of 1, bg_cover_prob, bg_protect_prob, ftp_protect_prob
   total_prob_of_protected_pos = bg_protect_prob * ftp_cover_probs[1] + footprint_protect_prob * (1 - ftp_cover_probs[1]);
   target += binomial_lpmf(spacing_counts[1,4] | spacing_counts[1,1] + spacing_counts[1,4], total_prob_of_protected_pos);
-   
+  
+  
   // add log likelihood the window crosscorel
   target += ftp_model_loglik(ftp_cover_probs,
                               n_ftp,

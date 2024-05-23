@@ -81,6 +81,9 @@ functions{
 data {
   int n_ftp;
   vector<lower=0>[n_ftp] ftp_prior_alphas;
+  array[n_ftp] int ftp_lengths;
+  //vector<lower=1>[n_ftp] ftp_lengths;
+  
   int n_spac;
   int<lower=1> spacings[n_spac];
   int<lower=0> spacing_counts[n_spac,4];
@@ -100,14 +103,7 @@ data {
 }
 
 transformed data {
-  int<lower=1> ftp_lengths[n_ftp];
-  
   int<lower=1> max_spacing;
-  
-  // fill ftp_lengths
-  for (ftpl in 1:n_ftp){
-    ftp_lengths[ftpl] = ftpl;
-  }
   
   // initialize max_spacing
   max_spacing = max(spacings);

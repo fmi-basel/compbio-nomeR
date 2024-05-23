@@ -2,12 +2,12 @@
 
 #include <Rcpp.h>
 using namespace Rcpp ;
-#include "stanExports_ftp_inference_background_footprint_fixed.h"
+#include "stanExports_ftp_inference_ftp_bg_fixed.h"
 
-RCPP_MODULE(stan_fit4ftp_inference_background_footprint_fixed_mod) {
+RCPP_MODULE(stan_fit4ftp_inference_ftp_bg_fixed_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("rstantools_model_ftp_inference_background_footprint_fixed")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("rstantools_model_ftp_inference_ftp_bg_fixed")
 
     .constructor<SEXP,SEXP,SEXP>()
 

@@ -134,9 +134,9 @@ END_RCPP
 
 RcppExport SEXP _rcpp_module_boot_stan_fit4background_betabinom_model_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4background_mixture_model_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_footprint_fixed_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_nomeR_fetch_cooc_ctable_from_bams_cpp", (DL_FUNC) &_nomeR_fetch_cooc_ctable_from_bams_cpp, 15},
@@ -147,9 +147,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
     {"_rcpp_module_boot_stan_fit4background_betabinom_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_betabinom_model_mod, 0},
     {"_rcpp_module_boot_stan_fit4background_mixture_model_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4background_mixture_model_mod, 0},
-    {"_rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_background_fixed_mod, 0},
-    {"_rcpp_module_boot_stan_fit4ftp_inference_background_footprint_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_background_footprint_fixed_mod, 0},
-    {"_rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_background_informative_prior_mod, 0},
+    {"_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod, 0},
+    {"_rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod, 0},
+    {"_rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod, 0},
     {NULL, NULL, 0}
 };
 
