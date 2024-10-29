@@ -1,0 +1,48 @@
+Package: nomeR
+Type: Package
+Title: Probabilistic framework for analysis of single-molecule footprinting data
+Date: 2018-07-16
+Version: 0.9.1
+Authors@R: person(given = "Evgeniy A.", family="Ozonov", email = "evgeniy.ozonov@fmi.ch", role = c("aut", "cre"))
+Description: \code{nomeR} uses probabilistic model for analysis of data from single-molecule footprinting (SMF) assays like NOMe-Seq that allow to acquire single-molecule positional information about footprints of DNA binding proteins.
+License: MIT + file LICENSE
+Imports: 
+    checkmate,
+    extraDistr,
+    GenomeInfoDb,
+    GenomicRanges,
+    ggplot2,
+    methods,
+    parallel,
+    Rcpp (>= 0.12.17),
+    RcppParallel (>= 5.0.1),
+    Rsamtools (>= 2.13.1),
+    rstan (>= 2.18.1),
+    rstantools (>= 2.4.0),
+    stats,
+    stringr,
+    tibble,
+    truncdist
+Suggests: 
+    testthat (>= 3.0.0),
+    GenomicAlignments,
+    Biostrings,
+    BSgenome,
+    IRanges
+LinkingTo: 
+    BH (>= 1.66.0),
+    Rcpp (>= 0.12.0),
+    RcppEigen (>= 0.3.3.3.0),
+    RcppParallel (>= 5.0.1),
+    RcppProgress,
+    Rhtslib (>= 1.99.1),
+    rstan (>= 2.18.1),
+    StanHeaders (>= 2.18.0),
+    zlibbioc
+Encoding: UTF-8
+RoxygenNote: 7.3.2
+Biarch: true
+Depends: 
+    R (>= 3.4.0)
+SystemRequirements: GNU make
+Config/testthat/edition: 3
