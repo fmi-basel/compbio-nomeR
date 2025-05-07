@@ -47,31 +47,6 @@ A list which contains 3 data frames:
         \code{COVER_PROB} - data frame with calculated coverage probabilities for each SMF molecule (column \code{seq}),
                             each position in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
                             These probabilities reflect how likely it is that a certain position in an amplicon and certain fragment is covered by a certain footprint model.
-
-        \code{SUMMARY} - data frame with summary information for each footprint model and for the whole amplicon.
-
-
-                         Column \code{Statistics} contains the following information:
-
-                         \code{Prior} - empirical prior probabilities for each model.
-
-
-                         \code{Expected number of sites} - expected number of sites for each model, i.e. sum of all start probabilities.
-
-
-                         \code{Coverage} - average coverage of the amiplicon.
-
-
-                         \code{Sites<0.5} - expected number of sites with start probabilities lower than 0.5.
-
-
-                         \code{Sites>=0.5} - expected number of sites with start probabilities higher than 0.5.
-
-
-                         \code{Positions<0.5} - number of positions with start probabilities lower than 0.5.
-
-
-                         \code{Positionds>=} - number of positions with start probabilities higher than 0.5.
 }
 \description{
 Function for calculating coverage probabilities for footprints in single-molecule-footprinting (SMF) data

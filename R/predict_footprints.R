@@ -75,12 +75,13 @@ predict_footprints <- function(data,
   data <- validate_data_for_predict(data)
 
   ### validate footprint models
-  footprint_models <- validate_footprint_models(footprint_models,
+  ftpvalout <- validate_footprint_models(footprint_models,
   																							bgprotectprob,
   																							bgcoverprior,
   																							verbose,
   																							add=coll)
-
+  footprint_models <- ftpvalout[["footprint_models"]]
+  start_priors <- ftpvalout[["start_priors"]]
   ### validate report_prediction_in_flanks
   checkmate::assert_logical(report_prediction_in_flanks,any.missing = FALSE,all.missing = FALSE,len=1,add = coll)
 
@@ -110,8 +111,7 @@ predict_footprints <- function(data,
                             verbose)
 
   if(all(c(!is.null(out.list[["START_PROB"]]),
-           !is.null(out.list[["COVER_PROB"]]),
-           !is.null(out.list[["SUMMARY"]])))){
+           !is.null(out.list[["COVER_PROB"]])))){
     if(verbose)
       .message_timestamp("convert cpp_nomeR output to data.frame...")
     return(lapply(out.list,as.data.frame,

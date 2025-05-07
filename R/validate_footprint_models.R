@@ -40,5 +40,6 @@ validate_footprint_models <- function(footprint_models,
 														 },
 														 simplify = F,USE.NAMES = T)
 
-	return(footprint_models)
+	return(list("footprint_models"=footprint_models,
+							"start_priors"=start_priors))
 }

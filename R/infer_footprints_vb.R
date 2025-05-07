@@ -137,6 +137,8 @@ infer_footprints_vb <- function(cooc_ctable,
 	best_stanfit <- NULL
 
 	while(!vb_success & iter <= max_nruns){
+		stanfit_out <- NULL
+
 		tryCatch(
 			{
 				## get initial values for fitting
