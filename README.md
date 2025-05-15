@@ -69,7 +69,7 @@ library(reshape2)
 library(patchwork)
 
 # Load matrix with accessibilie information. Columns are positions within ROI and rows are molecules. 0 - accessible, 1 - protected
-access_mat <- system.file("extdata", "insilico_data_mat.rds", package = "fetchNOMe")
+rdatmat <- readRDS(file = system.file("extdata", "insilico_data_mat.rds", package = "nomeR"))
 
 # plot data
 melt(rdatmat,varnames  = c("readid","pos"), value.name = "data",na.rm=T) %>%
