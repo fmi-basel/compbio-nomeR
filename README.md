@@ -12,17 +12,20 @@ the analysis of single-molecule footprinting (SMF) datasets. The
 statistical approach addresses two major analytical challenges in SMF
 data:
 
-1.  Footprint Spectral Analysis This component identifies and quantifies
-    different classes of footprints and estimates background noise in
-    both accessible and protected regions. It provides insight into the
-    abundance and heterogeneity of footprints in the dataset.
+1.  Footprint Spectral Analysis
 
-2.  Footprint Prediction Given the user-defined lengths, abundances, and
-    noise levels of footprints, the second part of the model assigns
-    probabilities to each footprint for covering (or starting from)
-    every position within a molecule, effectively disentangling
-    footprints of different lengths and accurately mapping their spatial
-    organization.
+This component identifies and quantifies different classes of footprints
+and estimates background noise in both accessible and protected regions.
+It provides insight into the abundance and heterogeneity of footprints
+in the dataset.
+
+2.  Footprint Prediction
+
+Given the user-defined lengths, abundances, and noise levels of
+footprints, the second part of the model assigns probabilities to each
+footprint for covering (or starting from) every position within a
+molecule, effectively disentangling footprints of different lengths and
+accurately mapping their spatial organization.
 
 <p align="center">
 <img src="man/figures/nomeR_overview.png" width="500" alt="Overview">

@@ -1,8 +1,6 @@
 #include "utils_globvars.hpp"
 
 
-
-
 string stringToUpper(string strToConvert)
 {
 	std::transform(strToConvert.begin(), strToConvert.end(), strToConvert.begin(), ::toupper);
@@ -17,7 +15,7 @@ bool compare_vectors_by_column ( const vector<double> v1,const vector<double> v2
   extern int  _COLUMN_IND_;
   //Rcpp::Rcout<<"Index for sorting "<<_COLUMN_IND_<<endl;
   if(v1.size() != v2.size()){
-    
+
     Rcpp::stop("compare_vectors_acc_correlation: Vectors must have the same size\n");
     // cerr<<"compare_vectors_acc_correlation: Vectors must have the same size\n";
     // exit(1);
@@ -46,7 +44,7 @@ bool compare_vectors_by_column ( const vector<double> v1,const vector<double> v2
       }
     }
   }
-  
+
   return (v1[_COLUMN_IND_] < v2[_COLUMN_IND_]);
 }
 
@@ -66,7 +64,7 @@ void mychomp(char *s) {
     s[strlen(s)-1]='\0';
   if (s[strlen(s)-1]=='\r')
     s[strlen(s)-1]='\0';
-  
+
   return;
 };
 
@@ -78,7 +76,7 @@ void Tokenize(const string& str,
   string::size_type lastPos = str.find_first_not_of(delimiters, 0);
   // Find first "non-delimiter".
   string::size_type pos = str.find_first_of(delimiters, lastPos);
-  
+
   while (string::npos != pos || string::npos != lastPos)
   {
     // Found a token, add it to the vector.
@@ -95,8 +93,8 @@ bool IsNumber(string text)
   if(text.empty()) return false;
   string::const_iterator pos = text.begin();
   while(pos < text.end())
-    
-    
+
+
   {
     if(!isdigit(*pos)) return false;
     ++pos;
@@ -184,7 +182,7 @@ int theta(int pos){
 bool compare_vectors ( vector<double> v1,vector<double> v2) {
   //return (v1[motevo_param.INDEX_OF_WM]<v2[motevo_param.INDEX_OF_WM]);
   return (v1[0]<v2[0]);
-  
+
 };
 
 int letter2index(char letter){
@@ -228,8 +226,8 @@ int letter2index_NOMe(char letter){
     position = 2;
   }
   else{
-    
-    
+
+
     Rcpp::Rcerr<<"letter2index_NOMe:Error! Unknown letter in the sequence "<< letter <<". Only 0,1,2 allowed!\n";
     Rcpp::stop("");
     // exit(1);
