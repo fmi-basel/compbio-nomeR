@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2020 Evgeniy A. Ozonov
+Copyright (c) 2025 Friedrich Miescher Institute for Biomedical Research
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
