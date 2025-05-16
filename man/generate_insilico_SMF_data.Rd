@@ -46,28 +46,32 @@ chr_len <- 1000
 
 ftp_cover_c2 <- c(0.05,0.5)
 ftp_len_c2 <- c(50,150)
-case2_pos_mat <- rbind(matrix(c(rep(0,5150),1,rep(0,4849)),nrow=1,ncol=chr_len),
-											 matrix(1/chr_len,nrow=1,ncol=chr_len))
+case2_pos_mat <- rbind(matrix(c(rep(0,5150),1,rep(0,4849)),
+                              nrow=1,
+                              ncol=chr_len),
+                       matrix(1/chr_len,
+                              nrow=1,
+                              ncol=chr_len))
 
 ## sequencing depths
 max_nreads <- 30
 ## footprint model
-case2_ftp_models <- list("ftp50" = list("PROTECT_PROB" = rep(1,ftp_len_c2[1]),
-																				"COVER_PRIOR" = ftp_cover_c2[1],
-																				"NAME" = "ftp50"),
-												 "ftp150"=list("PROTECT_PROB" = rep(1,ftp_len_c2[2]),
-												 							"COVER_PRIOR" = ftp_cover_c2[2],
-												 							"NAME" = "ftp150"))
+case2_ftp_models <- list(
+"ftp50" = list("PROTECT_PROB" = rep(1,ftp_len_c2[1]),
+               "COVER_PRIOR" = ftp_cover_c2[1],
+               "NAME" = "ftp50"),
+"ftp150" = list("PROTECT_PROB" = rep(1,ftp_len_c2[2]),
+                "COVER_PRIOR" = ftp_cover_c2[2],
+                "NAME" = "ftp150"))
 
-smf_data <- generate_insilico_SMF_data(region_len = chr_len, # length of the region
-																			n_reads = max_nreads, # number of reads
-																			footprint_models = case2_ftp_models,
-																			ftp_emission_posprob=case2_pos_mat, ## matrix with nrow=number ftps ncol=ampllen for each footprint to describe
-																			## probabilities of emission for each amplicon position
-																			bgprotectprob = 0,
-																			infposdens = 1 # if scalar between 0 and 1 treated as percentage of informative positions
-																			# if vector of integers treated as predefined informative positions
-																			)
+smf_data <-
+  generate_insilico_SMF_data(region_len = chr_len,
+                             n_reads = max_nreads,
+                             footprint_models = case2_ftp_models,
+                             ftp_emission_posprob=case2_pos_mat,
+                             bgprotectprob = 0,
+                             infposdens = 1
+                             )
 
 }
 

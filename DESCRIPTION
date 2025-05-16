@@ -9,8 +9,6 @@ License: MIT + file LICENSE
 Imports: 
     checkmate,
     extraDistr,
-    GenomeInfoDb,
-    GenomicRanges,
     ggplot2,
     methods,
     parallel,
@@ -20,14 +18,9 @@ Imports:
     rstantools (>= 2.4.0),
     stats,
     stringr,
-    tibble,
     truncdist
 Suggests: 
-    testthat (>= 3.0.0),
-    GenomicAlignments,
-    Biostrings,
-    BSgenome,
-    IRanges
+    testthat (>= 3.0.0)
 LinkingTo: 
     BH (>= 1.66.0),
     Rcpp (>= 0.12.0),

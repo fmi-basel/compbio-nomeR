@@ -5,10 +5,10 @@ AC_INIT(nomeR, m4_esyscmd_s([awk -e '/^Version:/ {print $2}' DESCRIPTION]))
 AC_COPYRIGHT(Copyright (C) 2020 Evgeniy A. Ozonov)
 
 
-# Set R_HOME, respecting an environment variable if one is set 
+# Set R_HOME, respecting an environment variable if one is set
 : ${R_HOME=$(R RHOME)}
 if test -z "${R_HOME}"; then
-    AC_MSG_ERROR([Could not determine R_HOME.])   
+    AC_MSG_ERROR([Could not determine R_HOME.])
 fi
 # Use R to set CXX and CXXFLAGS
 CXX=$(${R_HOME}/bin/R CMD config CXX)
@@ -53,4 +53,3 @@ dnl this the meat of R's m4/openmp.m4
 AC_SUBST(OPENMP_CXXFLAGS)
 AC_CONFIG_FILES([src/Makevars])
 AC_OUTPUT
-
