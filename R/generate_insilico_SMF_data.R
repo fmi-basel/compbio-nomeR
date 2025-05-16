@@ -235,7 +235,7 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
 			model_prot_prob <- footprint_models[[emit_model]][["PROTECT_PROB"]]
 			## draw random data using binomial distribution
 
-			model_synth_data <- rbinom(n = model_len, size = 1, prob = model_prot_prob)
+			model_synth_data <- stats::rbinom(n = model_len, size = 1, prob = model_prot_prob)
 			fill.idx <- pos:(min(pos + model_len - 1,reglen_ext))
 			dat[1,fill.idx] <- model_synth_data[1:length(fill.idx)]
 			pos <- pos + model_len
@@ -246,7 +246,9 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
 
 
 		dat.out <- list("DATA" = dat,
-										"TRUE_CONF" = subset(true_conf_data,!is.na(model)))
+										#"TRUE_CONF" = subset(true_conf_data,!is.na(model))
+										"TRUE_CONF" = true_conf_data[!is.na(true_conf_data$model),]
+										)
 		return(dat.out)
 	})
 

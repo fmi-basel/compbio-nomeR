@@ -18,9 +18,9 @@ validate_footprint_models <- function(footprint_models,
 	}
 
 	### validate bgprotectprob
-	checkmate::assert_number(x = bgprotectprob,na.ok = FALSE, lower = 0, upper = 1, add = coll)
+	checkmate::assert_number(x = bgprotectprob,na.ok = FALSE, lower = 0, upper = 1, add = add)
 	### validate bgcoverprior
-	checkmate::assert_number(x = bgcoverprior,na.ok = FALSE, lower = 0, upper = 1, add = coll)
+	checkmate::assert_number(x = bgcoverprior,na.ok = FALSE, lower = 0, upper = 1, add = add)
 
 	## convert cover priors to start priors and add them into binding_models
 	if(verbose)
