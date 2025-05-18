@@ -34,8 +34,8 @@ validate_footprint_models <- function(footprint_models,
     
     ## convert cover priors to start priors and add them into binding_models
     if (verbose) {
-        .message_timestamp("convert cover priors to start priors and add ", 
-                           "them into binding_models...")
+        .message_timestamp(c("convert cover priors to start priors and add ", 
+                             "them into binding_models..."))
     }
     cover_priors <- c("BG" = bgcoverprior,
                       vapply(footprint_models, function(x) { 

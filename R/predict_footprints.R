@@ -108,9 +108,9 @@ predict_footprints <- function(data,
             "Could not detect number of available cpu. Setting ncpu to 1L.")
         ncpu <- 1L
     } else if (ncpu > avail_ncpu || ncpu == 0) {
-        .warning_timestamp("Number of ncpu is 0 or exceeds number of ", 
-                           "available cpu. Setting ncpu to number of ", 
-                           "available cpus.")
+        .warning_timestamp(c("Number of ncpu is 0 or exceeds number of ", 
+                             "available cpu. Setting ncpu to number of ", 
+                             "available cpus."))
         ncpu <- avail_ncpu
     }
     
