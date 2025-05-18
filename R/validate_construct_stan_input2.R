@@ -1,7 +1,7 @@
 ## validate and construct input for inference
 #' @importFrom checkmate makeAssertCollection check_data_frame assert_names 
 #'     assert_integerish assert_number assert_double check_list check_names 
-#'     assert check_number reportAssertions
+#'     assert check_number reportAssertions assert_data_frame
 .validate_construct_stan_input <- function(cooc_ctable,
                                            ftp_lengths,
                                            bg_prior_cover,
