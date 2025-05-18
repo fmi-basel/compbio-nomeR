@@ -9,37 +9,45 @@ suggest_footprints(
   y,
   max_abund_log2drop = 1,
   max_peak_width = Inf,
-  isLog = T,
+  isLog = TRUE,
   spline_spar = 0.6,
   ...
 )
 }
 \arguments{
 \item{S}{footprint lengths as returned by \code{\link{infer_footprints_vb}}.
-Note that S=1 is reserved for background, therefore it is recommended to remove prior to running this function.}
+Note that S=1 is reserved for background, therefore it is recommended to 
+remove prior to running this function.}
 
-\item{y}{mean or another measure of footprint abundance as returned \code{\link{infer_footprints_vb}}.}
+\item{y}{mean or another measure of footprint abundance as returned by 
+\code{\link{infer_footprints_vb}}.}
 
-\item{max_abund_log2drop}{maximum decrease in abundance relative to value at local maxima until which peaks are extended.}
+\item{max_abund_log2drop}{maximum decrease in abundance relative to value at 
+local maxima until which peaks are extended.}
 
 \item{max_peak_width}{maximum width of peaks in spectrum.}
 
 \item{isLog}{\code{logical} indicating whether \code{y} is log-scaled.}
 
-\item{spline_spar}{parameter controlling smoothness of spline ((0,1], the higher the smoother). Please see \code{\link[stats]{smooth.spline}}.
-It is recommended to test different values for \code{spline_spar}, for example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look as expected.}
+\item{spline_spar}{parameter controlling smoothness of spline ((0,1], 
+the higher the smoother). Please see \code{\link[stats]{smooth.spline}}.
+It is recommended to test different values for \code{spline_spar}, for 
+example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look 
+as expected.}
 
 \item{...}{parameters for function \code{\link[stats]{smooth.spline}}.}
 }
 \value{
 \code{list} containing following slots:
-
 \code{"ftp_ranges"} - \code{matrix} with suggested footprints.
-\code{"smoothed_signal"} - smoothed spectrum as returned by  \code{\link[stats]{smooth.spline}} for each value in \code{S}.
+\code{"smoothed_signal"} - smoothed spectrum as returned by 
+\code{\link[stats]{smooth.spline}} for each value in \code{S}.
 }
 \description{
 Function for getting potential footprints based on inferred abundances.
-This function uses \code{stats::smooth.spline} to smooth spectrum and detect local extremums.
-After local extremums has been detected it takes coordinates of local maxima and extends peaks
-until signal drops by \code{max_abund_log2drop} or it reaches local minima or width of a peak becomes larger than \code{max_peak_width}.
+This function uses \code{stats::smooth.spline} to smooth spectrum and detect 
+local extrema. After local extrema has been detected it takes coordinates of 
+local maxima and extends peaks until signal drops by 
+\code{max_abund_log2drop} or it reaches local minima or width of a peak 
+becomes larger than \code{max_peak_width}.
 }
