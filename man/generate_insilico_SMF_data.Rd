@@ -14,27 +14,39 @@ generate_insilico_SMF_data(
 )
 }
 \arguments{
-\item{region_len}{length of the region}
+\item{region_len}{length of the region.}
 
-\item{n_reads}{number of molecule to generate}
+\item{n_reads}{number of molecule to generate.}
 
-\item{footprint_models}{\code{list} describing footprints which should be generated. Each footprint within footprint_models is also a \code{list} that must contain
-\code{PROTECT_PROB} - vector of emission probabilities with same length and footprint length;
-\code{COVER_PROB} - \code{numeric} that describes footprint coverage
-\code{NAME} - \code{character} with the name of the footprint}
+\item{footprint_models}{\code{list} describing footprints which should be 
+generated. Each footprint within footprint_models is also a \code{list} 
+that must contain:
+\describe{
+\item{\code{PROTECT_PROB}}{vector of emission probabilities 
+with same length and footprint length}
+\item{\code{COVER_PROB}}{\code{numeric} scalar
+that describes footprint coverage}
+\item{\code{NAME}}{\code{character} scalar with 
+the name of the footprint}
+}}
 
-\item{ftp_emission_posprob}{\code{matrix} describing positional probabilities for each footprint. Number of rows must be equal to number of footprints and number of columns must be equal to \code{region_len}}
+\item{ftp_emission_posprob}{\code{matrix} describing positional probabilities 
+for each footprint. Number of rows must be equal to number of footprints 
+and number of columns must be equal to \code{region_len}.}
 
-\item{bgprotectprob}{\code{numeric} emission probability for background}
+\item{bgprotectprob}{\code{numeric} emission probability for background.}
 
-\item{infposdens}{if scalar between 0 and 1 treated as percentage of informative positions.
-If a vector of integers treated as predefined informative positions.}
+\item{infposdens}{if scalar between 0 and 1 treated as percentage of 
+informative positions. If a vector of integers treated as predefined 
+informative positions.}
 }
 \value{
 \code{list} that contains
-"DATA" - \code{matrix} with in-silico data;
-"TRUE_CONF" - true positions for each footprint;
-"ftp_pos_prob" -normalized probabilities of placing each footprint.
+\describe{
+\item{"DATA"}{\code{matrix} with in-silico data}
+\item{"TRUE_CONF"}{true positions for each footprint}
+\item{"ftp_pos_prob"}{normalized probabilities of placing each footprint}
+}
 }
 \description{
 Generate in-silico single-molecule footprinting dataset
@@ -44,14 +56,14 @@ Generate in-silico single-molecule footprinting dataset
 ## length of a chromosome
 chr_len <- 1000
 
-ftp_cover_c2 <- c(0.05,0.5)
-ftp_len_c2 <- c(50,150)
-case2_pos_mat <- rbind(matrix(c(rep(0,5150),1,rep(0,4849)),
-                              nrow=1,
-                              ncol=chr_len),
-                       matrix(1/chr_len,
-                              nrow=1,
-                              ncol=chr_len))
+ftp_cover_c2 <- c(0.05, 0.5)
+ftp_len_c2 <- c(50, 150)
+case2_pos_mat <- rbind(matrix(c(rep(0, 5150), 1, rep(0, 4849)),
+                              nrow = 1,
+                              ncol = chr_len),
+                       matrix(1 / chr_len,
+                              nrow = 1,
+                              ncol = chr_len))
 
 ## sequencing depths
 max_nreads <- 30
@@ -68,13 +80,10 @@ smf_data <-
   generate_insilico_SMF_data(region_len = chr_len,
                              n_reads = max_nreads,
                              footprint_models = case2_ftp_models,
-                             ftp_emission_posprob=case2_pos_mat,
+                             ftp_emission_posprob = case2_pos_mat,
                              bgprotectprob = 0,
                              infposdens = 1
                              )
-
 }
-
-
 
 }
