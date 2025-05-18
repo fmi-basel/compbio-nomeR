@@ -10,3 +10,4 @@ test_rnome.R
 ^pkgdown$
 ^\.travis\.yml$
 ^\.github$
+CITATION.cff
