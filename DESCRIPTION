@@ -34,8 +34,7 @@ LinkingTo:
     RcppParallel (>= 5.0.1),
     RcppProgress,
     rstan (>= 2.18.1),
-    StanHeaders (>= 2.18.0),
-    zlibbioc
+    StanHeaders (>= 2.18.0)
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Biarch: true
