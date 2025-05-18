@@ -166,7 +166,8 @@
 #' get_ftp_inference_summary(inf_output,plot=T)
 #'
 #' }
-#'
+#' 
+#' @importFrom rstan sampling
 infer_footprints_sampling <- function(
         cooc_ctable,
         ftp_lengths,

@@ -71,7 +71,9 @@
 #'                                 bgprotectprob = 0.05,
 #'                                 bgcoverprior = bg.pr)
 #'
-#'
+#' @importFrom checkmate makeAssertCollection assert_logical assert_int
+#'     reportAssertions
+#' @importFrom parallel detectCores
 predict_footprints <- function(data,
                                footprint_models,
                                bgprotectprob,
@@ -81,7 +83,7 @@ predict_footprints <- function(data,
                                verbose = FALSE) {
     
     ## check arguments
-    coll <- checkmate::makeAssertCollection()
+    coll <- makeAssertCollection()
     ### validate data
     data <- validate_data_for_predict(data)
     
@@ -94,24 +96,26 @@ predict_footprints <- function(data,
     footprint_models <- ftpvalout[["footprint_models"]]
     start_priors <- ftpvalout[["start_priors"]]
     ### validate report_prediction_in_flanks
-    checkmate::assert_logical(report_prediction_in_flanks,
-                              any.missing = FALSE, all.missing = FALSE,
-                              len = 1, add = coll)
+    assert_logical(report_prediction_in_flanks,
+                   any.missing = FALSE, all.missing = FALSE,
+                   len = 1, add = coll)
     
     ### validate ncpu
-    checkmate::assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
+    assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
     avail_ncpu <- parallel::detectCores()
     if (is.na(avail_ncpu)) {
         .warning_timestamp(
             "Could not detect number of available cpu. Setting ncpu to 1L.")
         ncpu <- 1L
     } else if (ncpu > avail_ncpu || ncpu == 0) {
-        .warning_timestamp("Number of ncpu is 0 or exceeds number of available cpu. Setting ncpu to number of available cpus.")
+        .warning_timestamp("Number of ncpu is 0 or exceeds number of ", 
+                           "available cpu. Setting ncpu to number of ", 
+                           "available cpus.")
         ncpu <- avail_ncpu
     }
     
     ## finish argument check
-    checkmate::reportAssertions(coll)
+    reportAssertions(coll)
     
     if (verbose) {
         .message_timestamp("Calling run_cpp_nomeR...")

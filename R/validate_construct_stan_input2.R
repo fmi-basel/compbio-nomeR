@@ -1,4 +1,7 @@
 ## validate and construct input for inference
+#' @importFrom checkmate makeAssertCollection check_data_frame assert_names 
+#'     assert_integerish assert_number assert_double check_list check_names 
+#'     assert check_number reportAssertions
 .validate_construct_stan_input <- function(cooc_ctable,
                                            ftp_lengths,
                                            bg_prior_cover,
@@ -8,35 +11,35 @@
                                            bg_model_params,
                                            ftp_model_params) {
     #### CHECK ARGUMENTS ####
-    coll <- checkmate::makeAssertCollection()
+    coll <- makeAssertCollection()
     
     ## validate count table
-    if (checkmate::check_data_frame(x = cooc_ctable,
-                                    types = "integerish", min.rows = 1)) {
+    if (check_data_frame(x = cooc_ctable,
+                         types = "integerish", min.rows = 1)) {
         ## check colnames
-        checkmate::assert_names(x = colnames(cooc_ctable),
-                                must.include = c("S", "N00", "N01", "N10",
-                                                 "N11"),
-                                add = coll)
+        assert_names(x = colnames(cooc_ctable),
+                     must.include = c("S", "N00", "N01", "N10",
+                                      "N11"),
+                     add = coll)
         
         ## remove rows without data
         cooc_ctable <- cooc_ctable[rowSums(
             cooc_ctable[, c("N00", "N01", "N10", "N11")]) > 0, , drop = FALSE]
         
         ## check if anything left
-        checkmate::assert_data_frame(x = cooc_ctable,
-                                     types = "integerish",
-                                     min.rows = 1,
-                                     any.missing = FALSE,
-                                     add = coll)
+        assert_data_frame(x = cooc_ctable,
+                          types = "integerish",
+                          min.rows = 1,
+                          any.missing = FALSE,
+                          add = coll)
         
         ## check vector S
-        checkmate::assert_integerish(x = cooc_ctable[,"S"],
-                                     lower = 1L,
-                                     any.missing = FALSE,
-                                     min.len = 1,
-                                     unique = TRUE, 
-                                     add = coll)
+        assert_integerish(x = cooc_ctable[,"S"],
+                          lower = 1L,
+                          any.missing = FALSE,
+                          min.len = 1,
+                          unique = TRUE, 
+                          add = coll)
         
         ## check if S=1 is in the table
         if (all(cooc_ctable[, "S"] != 1)) {
@@ -50,17 +53,17 @@
     }
     
     ## validate ftp_lengths
-    checkmate::assert_integerish(x = ftp_lengths,
-                                 lower = 2,
-                                 any.missing = FALSE,
-                                 min.len = 1,
-                                 unique = TRUE,
-                                 add = coll)
+    assert_integerish(x = ftp_lengths,
+                      lower = 2,
+                      any.missing = FALSE,
+                      min.len = 1,
+                      unique = TRUE,
+                      add = coll)
     
     ## validate bg_prior_cover
-    checkmate::assert_number(x = bg_prior_cover,
-                             lower = 0, upper = 1,
-                             add = coll)
+    assert_number(x = bg_prior_cover,
+                  lower = 0, upper = 1,
+                  add = coll)
     
     ## validate ftp_prior_cover
     if (is.null(ftp_prior_cover)) {
@@ -68,46 +71,46 @@
         ftp_prior_cover <- rep((1 - bg_prior_cover) / length(ftp_lengths),
                                length(ftp_lengths))
     }
-    checkmate::assert_double(x = ftp_prior_cover, lower = 0, upper = 1,
-                             finite = TRUE, any.missing = FALSE,
-                             len = length(ftp_lengths), add = coll)
+    assert_double(x = ftp_prior_cover, lower = 0, upper = 1,
+                  finite = TRUE, any.missing = FALSE,
+                  len = length(ftp_lengths), add = coll)
     ## validate total_cnt_prior_dirich
     if (is.null(total_cnt_prior_dirich)) {
         ## if total_cnt_prior_dirich is not provided choose such that footprint 
         ## dirichlet alpha are all 1, i.e. non-informative dirichlet prior
         total_cnt_prior_dirich <- length(ftp_lengths) / (1 - bg_prior_cover)
     }
-    checkmate::assert_number(x = total_cnt_prior_dirich, lower = 1, add = coll)
+    assert_number(x = total_cnt_prior_dirich, lower = 1, add = coll)
     
     # validate bg_model_params
-    if (checkmate::check_list(bg_model_params, 
-                              types = c("double", "integerish"),
-                              any.missing = TRUE, all.missing = FALSE)) {
+    if (check_list(bg_model_params, 
+                   types = c("double", "integerish"),
+                   any.missing = TRUE, all.missing = FALSE)) {
         if (ftp_bg_model == "informative_prior") {
-            if (checkmate::check_names(
+            if (check_names(
                 x = names(bg_model_params),
                 must.include = c("bg_protect_min", "bg_protect_max",
                                  "bg_protect_mean", "bg_protect_totcount"))) {
-                checkmate::assert(
-                    checkmate::check_number(
+                assert(
+                    check_number(
                         x = bg_model_params[["bg_protect_min"]],
                         lower = 0, upper = 1),
-                    checkmate::check_number(
+                    check_number(
                         x = bg_model_params[["bg_protect_max"]],
                         lower = 0, upper = 1),
-                    checkmate::check_number(
+                    check_number(
                         x = bg_model_params[["bg_protect_mean"]],
                         lower = 0, upper = 1),
-                    checkmate::check_number(
+                    check_number(
                         x = bg_model_params[["bg_protect_totcount"]],
                         lower = 0),
                     add = coll, combine = "and")
             }
         } else {
-            if (checkmate::check_names(
+            if (check_names(
                 x = names(bg_model_params),
                 must.include = c("bg_protect_prob_fixed"))) {
-                checkmate::assert_number(
+                assert_number(
                     x = bg_model_params[["bg_protect_prob_fixed"]],
                     lower = 0, upper = 1, add = coll)
             }
@@ -115,34 +118,34 @@
     }
     
     ## validate ftp_model_params
-    if (checkmate::check_list(ftp_model_params, 
-                              types = c("double", "integerish"),
-                              any.missing = TRUE, all.missing = FALSE)) {
+    if (check_list(ftp_model_params, 
+                   types = c("double", "integerish"),
+                   any.missing = TRUE, all.missing = FALSE)) {
         if (ftp_bg_model %in% c("informative_prior", "bg_fixed")) {
-            if (checkmate::check_names(
+            if (check_names(
                 x = names(ftp_model_params), 
                 must.include = c("ftp_protect_min", "ftp_protect_max",
                                  "ftp_protect_mean", "ftp_protect_totcount"))) {
-                checkmate::assert(
-                    checkmate::check_number(
+                assert(
+                    check_number(
                         x = ftp_model_params[["ftp_protect_min"]],
                         lower = 0, upper = 1),
-                    checkmate::check_number(
+                    check_number(
                         x = ftp_model_params[["ftp_protect_max"]],
                         lower = 0, upper = 1),
-                    checkmate::check_number(
+                    check_number(
                         x = ftp_model_params[["ftp_protect_mean"]],
                         lower = 0, upper = 1),
-                    checkmate::check_number(
+                    check_number(
                         x = ftp_model_params[["ftp_protect_totcount"]],
                         lower = 0),
                     add = coll, combine = "and")
             }
         } else {
-            if (checkmate::check_names(
+            if (check_names(
                 x = names(ftp_model_params),
                 must.include = c("ftp_protect_prob_fixed"))) {
-                checkmate::assert_number(
+                assert_number(
                     x = ftp_model_params[["ftp_protect_prob_fixed"]],
                     lower = 0, upper = 1, add = coll)
             }
@@ -230,7 +233,7 @@
         stop("Incorrect ftp_bg_model.")
     }
     
-    checkmate::reportAssertions(coll)
+    reportAssertions(coll)
     return(list("stan_model_name" = stan_model_name,
                 "stan_inputdata" = stan_inputdata))
 }

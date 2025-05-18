@@ -95,5 +95,4 @@ nomeR.out <- predict_footprints(data=rmatr,
                                 bgprotectprob = 0.05,
                                 bgcoverprior = bg.pr)
 
-
 }

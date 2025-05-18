@@ -14,7 +14,7 @@
     stopifnot(all(footprint_len > 0))
     
     start_prior <- cover_prior / footprint_len
-    start_prior/sum(start_prior)
+    start_prior / sum(start_prior)
 }
 
 .message_timestamp <- function(msg) {

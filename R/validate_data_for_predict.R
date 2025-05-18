@@ -6,10 +6,11 @@
 #'
 #' @keywords internal
 #' @noRd
+#' @importFrom checkmate test_matrix test_list
 validate_data_for_predict <- function(data) {
-    if (checkmate::test_matrix(data, mode = "integerish",
-                               any.missing = TRUE, all.missing = FALSE,
-                               min.rows = 1, min.cols = 1)) {
+    if (test_matrix(data, mode = "integerish",
+                    any.missing = TRUE, all.missing = FALSE,
+                    min.rows = 1, min.cols = 1)) {
         
         ## check if any values are not in c(0,1,NA)
         if (any(!(data %in% c(0, 1, NA)))) {
@@ -24,9 +25,9 @@ validate_data_for_predict <- function(data) {
         ## creating list of rows and fragnames
         data_list <- lapply(seq_len(nrow(data)), function(i) data[i, ])
         fragnames <- row.names(data)
-    } else if (checkmate::test_list(data,types = "integerish",
-                                    any.missing = TRUE, all.missing = TRUE,
-                                    min.len = 1)) {
+    } else if (test_list(data,types = "integerish",
+                         any.missing = TRUE, all.missing = TRUE,
+                         min.len = 1)) {
         
         ## check if any values are not in c(0,1,NA)
         if (any(!(unlist(data, recursive = TRUE, use.names = FALSE) %in% 

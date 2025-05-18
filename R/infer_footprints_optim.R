@@ -158,7 +158,8 @@
 #' get_ftp_inference_summary(inf_output,plot=T)
 #'
 #' }
-#'
+#' 
+#' @importFrom rstan optimizing
 infer_footprints_optim <- function(
         cooc_ctable,
         ftp_lengths,

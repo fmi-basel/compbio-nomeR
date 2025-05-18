@@ -17,9 +17,16 @@ satisfied with footprints suggested by
 }
 \value{
 \code{list} containing
-\code{"FTP_MODELS"} - footprint models corresponding to parameter \code{footprint_models} in \code{\link{predict_footprints}}.
-\code{"bgprotectprob"} - \code{numeric} background protection probability corresponding to parameter \code{bgprotectprob} in \code{\link{predict_footprints}}.
-\code{"bgcoverprior"} - \code{numeric} background protection probability corresponding to parameter \code{bgcoverprior} in \code{\link{predict_footprints}}.
+\describe{
+\item{\code{"FTP_MODELS"}}{footprint models corresponding to parameter 
+\code{footprint_models} in \code{\link{predict_footprints}}.}
+\item{\code{"bgprotectprob"}}{\code{numeric} background protection 
+probability corresponding to parameter \code{bgprotectprob} in 
+\code{\link{predict_footprints}}.}
+\item{\code{"bgcoverprior"}}{\code{numeric} background protection 
+probability corresponding to parameter \code{bgcoverprior} in 
+\code{\link{predict_footprints}}.}
+}
 }
 \description{
 This utility function creates a list of parameters required by 

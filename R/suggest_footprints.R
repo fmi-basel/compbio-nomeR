@@ -31,6 +31,7 @@
 #' @export
 #'
 ## @examples
+#' @importFrom stats smooth.spline predict
 suggest_footprints <- function(S,
                                y,
                                max_abund_log2drop = 1,
@@ -43,24 +44,18 @@ suggest_footprints <- function(S,
     ## find local extremums using spline.smooth ##
     ## smooth signal
     
-    smspl <- stats::smooth.spline(x = S, y = y,
-                                  spar = spline_spar,
-                                  ...)
+    smspl <- smooth.spline(x = S, y = y, spar = spline_spar, ...)
     ## smoothed signal
-    smoothed_signal <- stats::predict(object = smspl,
-                                      x = S)$y
+    smoothed_signal <- predict(object = smspl, x = S)$y
     ## first derivative
-    spline_deriv1 <- stats::predict(object = smspl,
-                                    x = S,
-                                    deriv=1)$y
+    spline_deriv1 <- predict(object = smspl, x = S, deriv = 1)$y
     ## second derivative
-    spline_deriv2 <- stats::predict(object = smspl,
-                                    x = S,
-                                    deriv=2)$y
+    spline_deriv2 <- predict(object = smspl, x = S, deriv = 2)$y
     
     ## find x where spline intercepts 0, i.e. roots
-    roots_x_idx <- which(spline_deriv1[seq(1, length(spline_deriv1) - 1)] * 
-                             spline_deriv1[seq(2, length(spline_deriv1))] <= 0) + 1
+    roots_x_idx <- 
+        which(spline_deriv1[seq(1, length(spline_deriv1) - 1)] * 
+                  spline_deriv1[seq(2, length(spline_deriv1))] <= 0) + 1
     
     x_extremums <- S[roots_x_idx]
     y_extremums <- y[roots_x_idx]
@@ -87,7 +82,8 @@ suggest_footprints <- function(S,
                             left_range[seq_len(max(neg_der[1] - 1, 1))]
                     }
                     
-                    ## remove indices where ratio to extremum is lower than max_abund_drop
+                    ## remove indices where ratio to extremum is lower than 
+                    ## max_abund_drop
                     if (isLog) {
                         ratio_to_extrem <- smoothed_signal[left_range] - 
                             smoothed_signal[idx]

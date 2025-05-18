@@ -65,6 +65,9 @@
 #'                              )
 #'}
 #'
+#' @importFrom checkmate assert_integerish testNumber assert_number assert_list
+#'     assert_numeric assert_character assert_matrix
+#' @importFrom stats rbinom
 generate_insilico_SMF_data <- function(region_len, # length of the amplicon
                                        n_reads, # number of reads
                                        footprint_models,
@@ -74,41 +77,41 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
     
     extend_ampl <- FALSE
     #### CHECK ARGUMENTS ####
-    checkmate::assert_integerish(region_len, len = 1, any.missing = FALSE)
-    checkmate::assert_integerish(n_reads, len = 1, any.missing = FALSE)
-    if (checkmate::testNumber(infposdens, lower = 0.0, upper = 1.0, 
-                              null.ok = FALSE)) {
-        checkmate::assert_number(infposdens, lower = 0.0, upper = 1.0, 
-                                 null.ok = FALSE)
+    assert_integerish(region_len, len = 1, any.missing = FALSE)
+    assert_integerish(n_reads, len = 1, any.missing = FALSE)
+    if (testNumber(infposdens, lower = 0.0, upper = 1.0, 
+                   null.ok = FALSE)) {
+        assert_number(infposdens, lower = 0.0, upper = 1.0, 
+                      null.ok = FALSE)
     } else {
-        checkmate::assert_integerish(infposdens, lower = 1, upper = region_len,
-                                     any.missing = FALSE, min.len = 1,
-                                     unique = TRUE, null.ok = FALSE)
+        assert_integerish(infposdens, lower = 1, upper = region_len,
+                          any.missing = FALSE, min.len = 1,
+                          unique = TRUE, null.ok = FALSE)
     }
-    checkmate::assert_list(footprint_models,types = "list",
-                           any.missing = FALSE, min.len = 1)
+    assert_list(footprint_models,types = "list",
+                any.missing = FALSE, min.len = 1)
     lapply(footprint_models,
            function(x) {
-               checkmate::assert_numeric(x$PROTECT_PROB, lower = 0.0,
-                                         upper = 1.0, finite = TRUE, 
-                                         null.ok = FALSE, any.missing = FALSE,
-                                         min.len = 2)
-               checkmate::assert_number(x$COVER_PRIOR, lower = 0.0,
-                                        upper = 1.0, finite = TRUE, 
-                                        null.ok = FALSE)
-               checkmate::assert_character(x$NAME, min.chars = 1,
-                                           any.missing = FALSE, len = 1)
+               assert_numeric(x$PROTECT_PROB, lower = 0.0,
+                              upper = 1.0, finite = TRUE, 
+                              null.ok = FALSE, any.missing = FALSE,
+                              min.len = 2)
+               assert_number(x$COVER_PRIOR, lower = 0.0,
+                             upper = 1.0, finite = TRUE, 
+                             null.ok = FALSE)
+               assert_character(x$NAME, min.chars = 1,
+                                any.missing = FALSE, len = 1)
            })
     
-    checkmate::assert_matrix(ftp_emission_posprob,
-                             mode = "numeric",
-                             any.missing = FALSE,
-                             nrows = length(footprint_models),
-                             ncol = region_len,
-                             null.ok = TRUE)
+    assert_matrix(ftp_emission_posprob,
+                  mode = "numeric",
+                  any.missing = FALSE,
+                  nrows = length(footprint_models),
+                  ncol = region_len,
+                  null.ok = TRUE)
     
-    checkmate::assert_number(bgprotectprob, lower = 0.0, upper = 1.0,
-                             null.ok = FALSE, finite = TRUE)
+    assert_number(bgprotectprob, lower = 0.0, upper = 1.0,
+                  null.ok = FALSE, finite = TRUE)
     
     #### GET INFORMATIVE POSITIONS ####
     
@@ -141,7 +144,6 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
         stop("Footprint with name BG or length 1 are reserved for background. ", 
              "Remove them from footprint models.")
     }
-    
     
     ## adding BG
     bgcoverprior <- 1 - sum(vapply(footprint_models, function(x) {
@@ -213,7 +215,8 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
                         prvec <- ftp_emission_posprob[ftp, ]
                         zero_start_pos <- reglen_ext - mod_len + 2
                         if (zero_start_pos <= reglen_ext) {
-                            prvec[seq(reglen_ext - mod_len + 1, reglen_ext)] <- 0
+                            prvec[seq(reglen_ext - mod_len + 1, 
+                                      reglen_ext)] <- 0
                         }
                         return(prvec)
                     }))
@@ -237,7 +240,6 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
         pos <- 1
         while (pos <= reglen_ext) {
             ## choose which model to emit
-            browser()
             emit_model <- sample(x = model_names,
                                  size = 1,
                                  prob = ftp_emission_posprob[, pos])
@@ -248,8 +250,8 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
             model_prot_prob <- footprint_models[[emit_model]][["PROTECT_PROB"]]
             
             ## draw random data using binomial distribution
-            model_synth_data <- stats::rbinom(n = model_len, size = 1, 
-                                              prob = model_prot_prob)
+            model_synth_data <- rbinom(n = model_len, size = 1, 
+                                       prob = model_prot_prob)
             fill.idx <- seq(pos, min(pos + model_len - 1, reglen_ext))
             dat[1, fill.idx] <- model_synth_data[seq_len(length(fill.idx))]
             pos <- pos + model_len

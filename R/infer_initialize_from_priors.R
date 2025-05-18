@@ -1,6 +1,8 @@
 ## initialization of parameter values by drawing from prior distribution
 #' @keywords internal
 #' @noRd
+#' @importFrom extraDistr rdirichlet
+#' @importFrom truncdist rtrunc
 .init_param_from_prior_distr <- function(stan_input,
                                          nchains,
                                          delta_from_max_min =  0.001) {
@@ -15,7 +17,7 @@
         ftp_cover_probs <- as.vector(extraDistr::rdirichlet(1,dirich_alpha))
         ## substitute 0s if any by small number because rstan fails because of log(0)
         ftp_cover_probs[ftp_cover_probs == 0] <- .Machine$double.eps / 2
-        ftp_cover_probs <- ftp_cover_probs/sum(ftp_cover_probs)
+        ftp_cover_probs <- ftp_cover_probs / sum(ftp_cover_probs)
         
         if (stan_model_name == "ftp_inference_informative_prior") {
             bg_protect_alpha <- stan_inputdata[["bg_protect_mean"]] *

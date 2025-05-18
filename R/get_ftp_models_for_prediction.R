@@ -12,9 +12,16 @@
 #'     \code{"FTP_SUGGEST"} with your own n x 2 matrix.
 #'
 #' @return \code{list} containing
-#' \code{"FTP_MODELS"} - footprint models corresponding to parameter \code{footprint_models} in \code{\link{predict_footprints}}.
-#' \code{"bgprotectprob"} - \code{numeric} background protection probability corresponding to parameter \code{bgprotectprob} in \code{\link{predict_footprints}}.
-#' \code{"bgcoverprior"} - \code{numeric} background protection probability corresponding to parameter \code{bgcoverprior} in \code{\link{predict_footprints}}.
+#' \describe{
+#' \item{\code{"FTP_MODELS"}}{footprint models corresponding to parameter 
+#' \code{footprint_models} in \code{\link{predict_footprints}}.}
+#' \item{\code{"bgprotectprob"}}{\code{numeric} background protection 
+#' probability corresponding to parameter \code{bgprotectprob} in 
+#' \code{\link{predict_footprints}}.}
+#' \item{\code{"bgcoverprior"}}{\code{numeric} background protection 
+#' probability corresponding to parameter \code{bgcoverprior} in 
+#' \code{\link{predict_footprints}}.}
+#' }
 #'
 #' @export
 #'
@@ -81,8 +88,9 @@ get_ftp_models_for_prediction <- function(infer_summary) {
                 lapply(ftp_lengths[[nm]],
                        function(flen) {
                            list("PROTECT_PROB" = rep(ftp_protect_prob,flen),
-                                "COVER_PRIOR" = req_infer_ftp_lengths[req_infer_ftp_lengths[,"ftp_length"] == flen,
-                                                                      "mean"],
+                                "COVER_PRIOR" = 
+                                    req_infer_ftp_lengths[req_infer_ftp_lengths[, "ftp_length"] == flen,
+                                                          "mean"],
                                 "NAME" = paste0(nm, "--", flen))
                        })
             }))
@@ -90,6 +98,7 @@ get_ftp_models_for_prediction <- function(infer_summary) {
     return(list(
         "FTP_MODELS" = ftp_models,
         "bgprotectprob" = bg_protect_prob,
-        "bgcoverprior" = req_infer_ftp_lengths[req_infer_ftp_lengths[, "ftp_length"] == 1,
-                                               "mean"]))
+        "bgcoverprior" = 
+            req_infer_ftp_lengths[req_infer_ftp_lengths[, "ftp_length"] == 1,
+                                  "mean"]))
 }

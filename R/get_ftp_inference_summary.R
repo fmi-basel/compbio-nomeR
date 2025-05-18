@@ -94,10 +94,13 @@
 #' inference_summary_list <- get_ftp_inference_summary(inf,plot=T)
 #' }
 #'
-#' @import ggplot2
-#' @import graphics
-## @importFrom ggplot2 ggplot aes geom_ribbon geom_line scale_y_log10 theme_bw theme  labs guides guide_legend annotate scale_x_continuous scale_color_manual scale_fill_manual element_text
-## @importFrom graphics plot
+#' @importFrom ggplot2 ggplot geom_ribbon aes labs geom_line scale_y_log10 
+#'     scale_color_manual scale_fill_manual guides guide_legend theme_bw theme 
+#'     element_text annotate geom_point scale_x_continuous
+#' @importFrom graphics plot
+#' @importFrom stringr str_extract
+#' @importFrom rlang .data
+#' @importFrom rstan summary
 get_ftp_inference_summary <- function(infer_stanfit,
                                       plot = FALSE,
                                       show_plot = plot,
@@ -110,19 +113,19 @@ get_ftp_inference_summary <- function(infer_stanfit,
                                       ...) {
     
     ftp_abundance_name <- match.arg(ftp_abundance_name)
-    ftp_abund_pattern <- paste0(ftp_abundance_name,"\\[\\d+\\]")
+    ftp_abund_pattern <- paste0(ftp_abundance_name, "\\[\\d+\\]")
     
     ## get ftp_lengths
     if (!is.null(attr(infer_stanfit, "ftp_lengths"))) {
         ftp_lengths <- attr(infer_stanfit, "ftp_lengths")
         ## add background length
-        ftp_lengths <- c(1,ftp_lengths)
+        ftp_lengths <- c(1, ftp_lengths)
     } else {
         stop("infer_stanfit must have attribute ftp_lengths")
     }
     
     ## get summary from stanfit
-    if (inherits(infer_stanfit,"stanfit")) {
+    if (inherits(infer_stanfit, "stanfit")) {
         ftp_infer_summary <- as.data.frame(
             rstan::summary(infer_stanfit)$summary)
         ftp_infer_summary$param <- gsub("\\[\\d+\\]$", "",
@@ -136,7 +139,7 @@ get_ftp_inference_summary <- function(infer_stanfit,
         
         infer_ftp_abund_probs$ftp_length <- 
             ftp_lengths[as.numeric(gsub("[\\[\\]]", "", 
-                                        stringr::str_extract(
+                                        str_extract(
                                             row.names(infer_ftp_abund_probs),
                                             pattern = "\\[(\\d+)\\]"),
                                         perl = TRUE))]
@@ -168,8 +171,8 @@ get_ftp_inference_summary <- function(infer_stanfit,
         
         infer_ftp_abund_probs$ftp_length <- as.numeric(
             gsub("[\\[\\]]", "", 
-                 stringr::str_extract(names(opt_ftp_cover),
-                                      pattern = "\\[(\\d+)\\]"), perl = TRUE))
+                 str_extract(names(opt_ftp_cover),
+                             pattern = "\\[(\\d+)\\]"), perl = TRUE))
         
         tmp_na_mat <- matrix(NA, ncol = 7, nrow = nrow(infer_ftp_abund_probs))
         colnames(tmp_na_mat) <- c("se_mean", "sd", "2.5%", "25%", "50%",
@@ -272,8 +275,9 @@ get_ftp_inference_summary <- function(infer_stanfit,
                              ymin = 0, ymax = Inf, alpha = 0.2,
                              color = "NA", fill = "grey") +
                     geom_point(
-                        data = infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length %in%
-                                                         ftp_lengths_suggest, ],
+                        data = infer_ftp_abund_probs[
+                            infer_ftp_abund_probs$ftp_length %in%
+                                ftp_lengths_suggest, ],
                         mapping = aes(x = .data$ftp_length,
                                       y = .data$mean,
                                       color = .data$param),
@@ -298,7 +302,7 @@ get_ftp_inference_summary <- function(infer_stanfit,
         ftp_suggestions <- NULL
     }
     
-    if (plot & show_plot) {
+    if (plot && show_plot) {
         plot(infer_plot)
     }
     

@@ -1,38 +1,41 @@
+#' @importFrom checkmate check_list assert_names assert_numeric assert_number
+#'     assert_character
 validate_footprint_models <- function(footprint_models,
                                       bgprotectprob,
                                       bgcoverprior,
                                       verbose,
                                       add = NULL) {
     ### validate binding_models
-    if (checkmate::check_list(footprint_models, types = "list",
-                              any.missing = FALSE, min.len = 1)) {
+    if (check_list(footprint_models, types = "list",
+                   any.missing = FALSE, min.len = 1)) {
         ftpnames <- vapply(footprint_models, function(x) {
-            checkmate::assert_names(
+            assert_names(
                 names(x), 
                 must.include = c("PROTECT_PROB", "COVER_PRIOR", "NAME"),
                 add = add)
-            checkmate::assert_numeric(
+            assert_numeric(
                 x = x[["PROTECT_PROB"]], lower = 0, upper = 1, 
                 any.missing = FALSE, add = add)
-            checkmate::assert_number(
+            assert_number(
                 x = x[["COVER_PRIOR"]], lower = 0, upper = 1, na.ok = FALSE, 
                 add = add)
             return(x[["NAME"]])
         }, NA_character_)
-        checkmate::assert_character(x = ftpnames, any.missing = FALSE,
-                                    unique = TRUE, add = add)
+        assert_character(x = ftpnames, any.missing = FALSE,
+                         unique = TRUE, add = add)
     }
     
     ### validate bgprotectprob
-    checkmate::assert_number(x = bgprotectprob, na.ok = FALSE, lower = 0, 
-                             upper = 1, add = add)
+    assert_number(x = bgprotectprob, na.ok = FALSE, lower = 0, 
+                  upper = 1, add = add)
     ### validate bgcoverprior
-    checkmate::assert_number(x = bgcoverprior, na.ok = FALSE, lower = 0, 
-                             upper = 1, add = add)
+    assert_number(x = bgcoverprior, na.ok = FALSE, lower = 0, 
+                  upper = 1, add = add)
     
     ## convert cover priors to start priors and add them into binding_models
     if (verbose) {
-        .message_timestamp("convert cover priors to start priors and add them into binding_models...")
+        .message_timestamp("convert cover priors to start priors and add ", 
+                           "them into binding_models...")
     }
     cover_priors <- c("BG" = bgcoverprior,
                       vapply(footprint_models, function(x) { 

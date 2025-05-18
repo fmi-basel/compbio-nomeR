@@ -115,7 +115,7 @@
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #'
 #' ## Simple data with two footprints of lengths 5 and 10 bps.
 #' ## The table below is a count table of observed occurrences of
@@ -164,7 +164,8 @@
 #' get_ftp_inference_summary(inf_output,plot=T)
 #'
 #' }
-#'
+#' 
+#' @importFrom rstan vb
 infer_footprints_vb <- function(
         cooc_ctable,
         ftp_lengths,
@@ -203,7 +204,7 @@ infer_footprints_vb <- function(
     best_pareto_k <- Inf
     best_stanfit <- NULL
     
-    while (!vb_success & iter <= max_nruns) {
+    while (!vb_success && iter <= max_nruns) {
         stanfit_out <- NULL
         
         tryCatch({
