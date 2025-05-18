@@ -82,8 +82,8 @@ bg_prior_cover and ftp_prior_cover.}
     abundances.}
 }}
 
-\item{bg_model_params}{A list containing parameters for the background model, 
-    which must contain the following elements:
+\item{bg_model_params}{A list containing parameters for the background 
+    model, which must contain the following elements:
     \describe{
     \item{bg_protect_prob_fixed}{Constant value for the model parameter 
     "bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models and 
@@ -105,8 +105,8 @@ bg_prior_cover and ftp_prior_cover.}
     This value is ignored if ftp_bg_model is "bg_fixed" or "bg_fixed".}
 }}
 
-\item{ftp_model_params}{A list containing parameters for the footprint model, 
-    which must contain the following elements:
+\item{ftp_model_params}{A list containing parameters for the footprint 
+    model, which must contain the following elements:
     \describe{
     \item{ftp_protect_prob_fixed}{Constant value for the model parameter 
     "ftp_protect_prob" used in "ftp_bg_fixed" models and ignored if

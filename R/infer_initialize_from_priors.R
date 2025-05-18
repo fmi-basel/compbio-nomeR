@@ -15,7 +15,8 @@
     
     init_vals <- lapply(seq_len(nchains), function(x) {
         ftp_cover_probs <- as.vector(extraDistr::rdirichlet(1,dirich_alpha))
-        ## substitute 0s if any by small number because rstan fails because of log(0)
+        ## substitute 0s if any by small number because rstan fails because of 
+        ## log(0)
         ftp_cover_probs[ftp_cover_probs == 0] <- .Machine$double.eps / 2
         ftp_cover_probs <- ftp_cover_probs / sum(ftp_cover_probs)
         

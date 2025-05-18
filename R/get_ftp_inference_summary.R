@@ -21,8 +21,9 @@
 #'     and "75\%", "97.5\%" credible intervals as well as SD and SE. Displaying 
 #'     SD and SE is not implemented at the moment.
 #' @param spline_spar parameter for function \code{\link{suggest_footprints}} 
-#'     controlling smoothness of spline ((0,1], the higher the smoother). Please 
-#'     see \code{\link{suggest_footprints}} \code{\link[stats]{smooth.spline}}.
+#'     controlling smoothness of spline ((0,1], the higher the smoother). 
+#'     Please see \code{\link{suggest_footprints}} 
+#'     \code{\link[stats]{smooth.spline}}.
 #'     It is recommended to test different values for \code{spline_spar}, for 
 #'     example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look 
 #'     as expected.
@@ -37,11 +38,19 @@
 #'     transmitted to function \code{\link[stats]{smooth.spline}}.
 #'
 #' @return \code{list} containing elements:
-#' \code{"ESTIMATES"} - \code{list} which contains a \code{ftp_abundance_estimates}  - \code{data.frame} for footprint abundances estimates,
-#' \code{"ftp_protect_prob_estimate"} and \code{bg_protect_prob_estimate} which are estimates for \code{ftp_protect_prob} and \code{bg_protect_prob}.
-#' \code{"bg_protect_prob_estimate"} and/or \code{"ftp_protect_prob_estimate"} are \code{NA} if inference for these parameters are not available.
-#' \code{"FTP_SUGGEST"} - \code{matrix} with coordinates for suggested footprints as returned by \code{\link{suggest_footprints}}.
-#' \code{"PLOT"} - a \code{ggplot} object with plot for footprint spectrum.
+#' \describe{
+#' \item{\code{"ESTIMATES"}}{\code{list} which contains a 
+#' \code{ftp_abundance_estimates} - \code{data.frame} for footprint abundances 
+#' estimates, \code{"ftp_protect_prob_estimate"} and 
+#' \code{bg_protect_prob_estimate} which are estimates for 
+#' \code{ftp_protect_prob} and \code{bg_protect_prob}.
+#' \code{"bg_protect_prob_estimate"} and/or \code{"ftp_protect_prob_estimate"} 
+#' are \code{NA} if inference for these parameters are not available.}
+#' \item{\code{"FTP_SUGGEST"}}{\code{matrix} with coordinates for suggested 
+#' footprints as returned by \code{\link{suggest_footprints}}.}
+#' \item{\code{"PLOT"}}{a \code{ggplot} object with plot for footprint 
+#' spectrum.}
+#' }
 #'
 #' @export
 #'
@@ -88,7 +97,7 @@
 #'
 #' ## variational inference for footprints in the data
 #' inf <- infer_footprints_vb(joint_freq_table = ftp_5_10_data,
-#'                                       footprint_prior_diralphas = c(10,rep(1,14)))
+#'                            footprint_prior_diralphas = c(10,rep(1,14)))
 #'
 #' ## get estimates and plot footprint spectrum
 #' inference_summary_list <- get_ftp_inference_summary(inf,plot=T)
@@ -101,16 +110,17 @@
 #' @importFrom stringr str_extract
 #' @importFrom rlang .data
 #' @importFrom rstan summary
-get_ftp_inference_summary <- function(infer_stanfit,
-                                      plot = FALSE,
-                                      show_plot = plot,
-                                      suggest_ftps = FALSE,
-                                      plot_posterior_range = c("2.5%", "97.5%"),
-                                      max_peak_width = 30,
-                                      spline_spar = 0.6,
-                                      max_abund_log2drop = 1.5,
-                                      ftp_abundance_name = c("ftp_abundances"),
-                                      ...) {
+get_ftp_inference_summary <- function(
+        infer_stanfit,
+        plot = FALSE,
+        show_plot = plot,
+        suggest_ftps = FALSE,
+        plot_posterior_range = c("2.5%", "97.5%"),
+        max_peak_width = 30,
+        spline_spar = 0.6,
+        max_abund_log2drop = 1.5,
+        ftp_abundance_name = c("ftp_abundances"),
+        ...) {
     
     ftp_abundance_name <- match.arg(ftp_abundance_name)
     ftp_abund_pattern <- paste0(ftp_abundance_name, "\\[\\d+\\]")

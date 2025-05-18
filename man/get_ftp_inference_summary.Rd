@@ -41,8 +41,9 @@ SD and SE is not implemented at the moment.}
 in spectrum. Please see \code{\link{suggest_footprints}}.}
 
 \item{spline_spar}{parameter for function \code{\link{suggest_footprints}} 
-controlling smoothness of spline ((0,1], the higher the smoother). Please 
-see \code{\link{suggest_footprints}} \code{\link[stats]{smooth.spline}}.
+controlling smoothness of spline ((0,1], the higher the smoother). 
+Please see \code{\link{suggest_footprints}} 
+\code{\link[stats]{smooth.spline}}.
 It is recommended to test different values for \code{spline_spar}, for 
 example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look 
 as expected.}
@@ -61,11 +62,19 @@ transmitted to function \code{\link[stats]{smooth.spline}}.}
 }
 \value{
 \code{list} containing elements:
-\code{"ESTIMATES"} - \code{list} which contains a \code{ftp_abundance_estimates}  - \code{data.frame} for footprint abundances estimates,
-\code{"ftp_protect_prob_estimate"} and \code{bg_protect_prob_estimate} which are estimates for \code{ftp_protect_prob} and \code{bg_protect_prob}.
-\code{"bg_protect_prob_estimate"} and/or \code{"ftp_protect_prob_estimate"} are \code{NA} if inference for these parameters are not available.
-\code{"FTP_SUGGEST"} - \code{matrix} with coordinates for suggested footprints as returned by \code{\link{suggest_footprints}}.
-\code{"PLOT"} - a \code{ggplot} object with plot for footprint spectrum.
+\describe{
+\item{\code{"ESTIMATES"}}{\code{list} which contains a 
+\code{ftp_abundance_estimates} - \code{data.frame} for footprint abundances 
+estimates, \code{"ftp_protect_prob_estimate"} and 
+\code{bg_protect_prob_estimate} which are estimates for 
+\code{ftp_protect_prob} and \code{bg_protect_prob}.
+\code{"bg_protect_prob_estimate"} and/or \code{"ftp_protect_prob_estimate"} 
+are \code{NA} if inference for these parameters are not available.}
+\item{\code{"FTP_SUGGEST"}}{\code{matrix} with coordinates for suggested 
+footprints as returned by \code{\link{suggest_footprints}}.}
+\item{\code{"PLOT"}}{a \code{ggplot} object with plot for footprint 
+spectrum.}
+}
 }
 \description{
 This utility function extract estimates from \code{infer_stanfit} and uses 
@@ -115,7 +124,7 @@ ftp_5_10_data <- data.frame("S" = 1:15,
 
 ## variational inference for footprints in the data
 inf <- infer_footprints_vb(joint_freq_table = ftp_5_10_data,
-                                      footprint_prior_diralphas = c(10,rep(1,14)))
+                           footprint_prior_diralphas = c(10,rep(1,14)))
 
 ## get estimates and plot footprint spectrum
 inference_summary_list <- get_ftp_inference_summary(inf,plot=T)

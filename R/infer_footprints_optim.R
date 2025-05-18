@@ -1,7 +1,8 @@
-#' Find point estimate for footprint abundance using STAN optimization algorithm
+#' Find point estimate for footprint abundance using STAN optimization 
+#' algorithm
 #'
-#' This function uses `rstan::optimizing` to obtain point estimate for footprint 
-#' abundances by maximizing the joint posterior from the model.
+#' This function uses `rstan::optimizing` to obtain point estimate for 
+#' footprint abundances by maximizing the joint posterior from the model.
 #'
 #' @param cooc_ctable A data frame containing columns "S", "N00", "N01", "N10",
 #'     "N11", where "S" represents spacings and "N00", "N01", "N10", "N11" 
@@ -56,8 +57,8 @@
 #'     ftp_model_params, respectively. Inference is solely focused on footprint 
 #'     abundances.}
 #' }
-#' @param bg_model_params A list containing parameters for the background model, 
-#'     which must contain the following elements:
+#' @param bg_model_params A list containing parameters for the background 
+#'     model, which must contain the following elements:
 #'     \describe{
 #'     \item{bg_protect_prob_fixed}{Constant value for the model parameter 
 #'     "bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models and 

@@ -114,7 +114,8 @@ suggest_footprints <- function(S,
                             right_range[seq_len(max(pos_der[1] - 1, 1))]
                     }
                     
-                    ## remove indices where ratio to extremum is lower than max_abund_drop
+                    ## remove indices where ratio to extremum is lower than 
+                    ## max_abund_drop
                     if (isLog) {
                         ratio_to_extrem <- smoothed_signal[right_range] - 
                             smoothed_signal[idx]

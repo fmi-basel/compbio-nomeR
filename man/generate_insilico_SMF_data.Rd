@@ -30,9 +30,10 @@ that describes footprint coverage}
 the name of the footprint}
 }}
 
-\item{ftp_emission_posprob}{\code{matrix} describing positional probabilities 
-for each footprint. Number of rows must be equal to number of footprints 
-and number of columns must be equal to \code{region_len}.}
+\item{ftp_emission_posprob}{\code{matrix} describing positional 
+probabilities for each footprint. Number of rows must be equal to 
+number of footprints and number of columns must be equal to 
+\code{region_len}.}
 
 \item{bgprotectprob}{\code{numeric} emission probability for background.}
 

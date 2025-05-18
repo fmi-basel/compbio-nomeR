@@ -2,7 +2,8 @@
 % Please edit documentation in R/infer_footprints_optim.R
 \name{infer_footprints_optim}
 \alias{infer_footprints_optim}
-\title{Find point estimate for footprint abundance using STAN optimization algorithm}
+\title{Find point estimate for footprint abundance using STAN optimization 
+algorithm}
 \usage{
 infer_footprints_optim(
   cooc_ctable,
@@ -78,8 +79,8 @@ bg_prior_cover and ftp_prior_cover.}
     abundances.}
 }}
 
-\item{bg_model_params}{A list containing parameters for the background model, 
-    which must contain the following elements:
+\item{bg_model_params}{A list containing parameters for the background 
+    model, which must contain the following elements:
     \describe{
     \item{bg_protect_prob_fixed}{Constant value for the model parameter 
     "bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models and 
@@ -132,8 +133,8 @@ An S4 class stanfit-class representing the inference results.
 Please check \code{\link[rstan]{vb}}.
 }
 \description{
-This function uses `rstan::optimizing` to obtain point estimate for footprint 
-abundances by maximizing the joint posterior from the model.
+This function uses `rstan::optimizing` to obtain point estimate for 
+footprint abundances by maximizing the joint posterior from the model.
 }
 \examples{
 \dontrun{

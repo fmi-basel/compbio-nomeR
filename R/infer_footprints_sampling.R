@@ -60,8 +60,8 @@
 #'     ftp_model_params, respectively. Inference is solely focused on footprint 
 #'     abundances.}
 #' }
-#' @param bg_model_params A list containing parameters for the background model, 
-#'     which must contain the following elements:
+#' @param bg_model_params A list containing parameters for the background 
+#'     model, which must contain the following elements:
 #'     \describe{
 #'     \item{bg_protect_prob_fixed}{Constant value for the model parameter 
 #'     "bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models and 
@@ -82,8 +82,8 @@
 #'     tot_count=alpha+beta and influences the spread of the distribution. 
 #'     This value is ignored if ftp_bg_model is "bg_fixed" or "bg_fixed".}
 #' }
-#' @param ftp_model_params A list containing parameters for the footprint model, 
-#'     which must contain the following elements:
+#' @param ftp_model_params A list containing parameters for the footprint 
+#'     model, which must contain the following elements:
 #'     \describe{
 #'     \item{ftp_protect_prob_fixed}{Constant value for the model parameter 
 #'     "ftp_protect_prob" used in "ftp_bg_fixed" models and ignored if

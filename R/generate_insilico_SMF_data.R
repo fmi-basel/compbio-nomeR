@@ -13,9 +13,10 @@
 #'     \item{\code{NAME}}{\code{character} scalar with 
 #'     the name of the footprint}
 #'     }
-#' @param ftp_emission_posprob \code{matrix} describing positional probabilities 
-#'     for each footprint. Number of rows must be equal to number of footprints 
-#'     and number of columns must be equal to \code{region_len}.
+#' @param ftp_emission_posprob \code{matrix} describing positional 
+#'     probabilities for each footprint. Number of rows must be equal to 
+#'     number of footprints and number of columns must be equal to 
+#'     \code{region_len}.
 #' @param bgprotectprob \code{numeric} emission probability for background.
 #' @param infposdens if scalar between 0 and 1 treated as percentage of 
 #'     informative positions. If a vector of integers treated as predefined 
@@ -141,8 +142,8 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
     }, NA_character_) == "BG") || any(vapply(footprint_models, function(x) {
         length(x$PROTECT_PROB)
     }, NA_integer_) == 1)) {
-        stop("Footprint with name BG or length 1 are reserved for background. ", 
-             "Remove them from footprint models.")
+        stop("Footprint with name BG or length 1 are reserved for ", 
+             "background. Remove them from footprint models.")
     }
     
     ## adding BG

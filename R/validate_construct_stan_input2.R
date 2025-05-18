@@ -169,7 +169,8 @@
     ftp_lengths <- c(1, ftp_lengths)
     
     ## calculate Beta distribution shape parameters
-    ## update v0.9. the data does not require shape parameters. they are calculated in the stan code
+    ## update v0.9. the data does not require shape parameters. 
+    ## they are calculated in the stan code
     if (ftp_bg_model == "informative_prior") {
         stan_model_name <- "ftp_inference_informative_prior"
         stan_inputdata <- list(

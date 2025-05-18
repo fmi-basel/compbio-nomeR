@@ -43,7 +43,8 @@ get_ftp_models_for_prediction <- function(infer_summary) {
     if (inherits(infer_summary[["ESTIMATES"]][["ftp_protect_prob_estimate"]],
                  "data.frame")) {
         ftp_protect_prob <- 
-            infer_summary[["ESTIMATES"]][["ftp_protect_prob_estimate"]][1, "mean"]
+            infer_summary[["ESTIMATES"]][["ftp_protect_prob_estimate"]][1, 
+                                                                        "mean"]
     } else {
         ftp_protect_prob <- 
             infer_summary[["ESTIMATES"]][["ftp_protect_prob_estimate"]]
@@ -52,7 +53,8 @@ get_ftp_models_for_prediction <- function(infer_summary) {
     if (inherits(infer_summary[["ESTIMATES"]][["bg_protect_prob_estimate"]],
                  "data.frame")) {
         bg_protect_prob <- 
-            infer_summary[["ESTIMATES"]][["bg_protect_prob_estimate"]][1, "mean"]
+            infer_summary[["ESTIMATES"]][["bg_protect_prob_estimate"]][1, 
+                                                                       "mean"]
     } else {
         bg_protect_prob <- 
             infer_summary[["ESTIMATES"]][["bg_protect_prob_estimate"]]
@@ -85,14 +87,17 @@ get_ftp_models_for_prediction <- function(infer_summary) {
         lapply(
             names(ftp_lengths),
             function(nm) {
-                lapply(ftp_lengths[[nm]],
-                       function(flen) {
-                           list("PROTECT_PROB" = rep(ftp_protect_prob,flen),
-                                "COVER_PRIOR" = 
-                                    req_infer_ftp_lengths[req_infer_ftp_lengths[, "ftp_length"] == flen,
-                                                          "mean"],
-                                "NAME" = paste0(nm, "--", flen))
-                       })
+                lapply(
+                    ftp_lengths[[nm]],
+                    function(flen) {
+                        list("PROTECT_PROB" = rep(ftp_protect_prob,flen),
+                             "COVER_PRIOR" = 
+                                 req_infer_ftp_lengths[
+                                     req_infer_ftp_lengths[, "ftp_length"] == 
+                                         flen,
+                                     "mean"],
+                             "NAME" = paste0(nm, "--", flen))
+                    })
             }))
     
     return(list(
