@@ -3,8 +3,12 @@ Type: Package
 Title: Probabilistic framework for analysis of single-molecule footprinting data
 Date: 2025-05-16
 Version: 0.9.1
-Authors@R: person(given = "Evgeniy A.", family="Ozonov", email = "evgeniy.ozonov@fmi.ch", role = c("aut", "cre"))
-Description: \code{nomeR} uses probabilistic model for analysis of data from single-molecule footprinting (SMF) assays like NOMe-Seq that allow to acquire single-molecule positional information about footprints of DNA binding proteins.
+Authors@R: person(given = "Evgeniy A.", family = "Ozonov", 
+                  email = "evgeniy.ozonov@fmi.ch", role = c("aut", "cre"))
+Description: \code{nomeR} uses probabilistic model for analysis of data from 
+    single-molecule footprinting (SMF) assays like NOMe-Seq that allow to 
+    acquire single-molecule positional information about footprints of DNA 
+    binding proteins.
 License: MIT + file LICENSE
 Imports: 
     checkmate,
