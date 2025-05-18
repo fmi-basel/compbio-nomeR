@@ -2,7 +2,8 @@
 % Please edit documentation in R/predict_footprints.R
 \name{predict_footprints}
 \alias{predict_footprints}
-\title{Function for calculating coverage probabilities for footprints in single-molecule-footprinting (SMF) data}
+\title{Calculate coverage probabilities for footprints in single-molecule
+footprinting (SMF) data}
 \usage{
 predict_footprints(
   data,
@@ -11,45 +12,66 @@ predict_footprints(
   bgcoverprior,
   report_prediction_in_flanks = FALSE,
   ncpu = 1L,
-  verbose = F
+  verbose = FALSE
 )
 }
 \arguments{
-\item{data}{\code{matrix} or \code{list} containing SMF data. If data is a \code{matrix} rows represent reads (or fragments),
-columns represent positions in region of interest (ROI). If data is a \code{list} than each element must contain vector with SMF data.
-NOTE that \code{data} must contain data for informative positions '0' represents accessible (methylated) position,
-and '1' represents protected (unmethylated) position "C" and all other positions must be filled with "NA".}
+\item{data}{\code{matrix} or \code{list} containing SMF data. If data is a 
+\code{matrix} rows represent reads (or fragments), columns represent 
+positions in region of interest (ROI). If data is a \code{list}, each 
+element must contain vector with SMF data. NOTE that \code{data} must 
+contain data for informative positions '0' represents accessible 
+(methylated) position, and '1' represents protected (unmethylated) 
+position "C" and all other positions must be filled with "NA".}
 
 \item{footprint_models}{A list containing footprint models for proteins.
 Each element must have 3 slots:
-PROTECT_PROB - a numeric vector with footprint emission probabilities to find protected position within a footprint;
-COVER_PRIOR - prior coverage probability (abundance) (\code{numeric}) reflecting what fraction of reads you expect to be covered by a footprint;
-NAME - name (\code{character}) of a model, e.g. "Nucleosome".}
+\describe{
+\item{PROTECT_PROB}{a numeric vector with footprint emission 
+probabilities to find protected position within a footprint}
+\item{COVER_PRIOR}{prior coverage probability (abundance) 
+(\code{numeric}) reflecting what fraction of reads you expect to be 
+covered by a footprint}
+\item{NAME}{name (\code{character}) of a model, e.g. "Nucleosome"}
+}}
 
-\item{bgprotectprob}{background emission probability to find a protected position within open (accessible) regions}
+\item{bgprotectprob}{background emission probability to find a protected 
+position within open (accessible) regions.}
 
-\item{bgcoverprior}{prior probability for percentage of all fragments to be in a free (accessible, or background) state}
+\item{bgcoverprior}{prior probability for percentage of all fragments to be 
+in a free (accessible, or background) state.}
 
-\item{report_prediction_in_flanks}{\code{logical} whether to return calculated start probabilities in left flanking region.
-In order to take into account partial footprints at left edge of fragments the algorithm extends each fragment by maximum footprint length on the left side.
-\code{report_prediction_in_flanks} controls whether calculated start probabilities in the left flanking region will be reported in the \code{START_PROB} .}
+\item{report_prediction_in_flanks}{\code{logical} whether to return 
+calculated start probabilities in left flanking region.
+In order to take into account partial footprints at left edge of 
+fragments the algorithm extends each fragment by maximum footprint 
+length on the left side. \code{report_prediction_in_flanks} controls 
+whether calculated start probabilities in the left flanking region will 
+be reported in the \code{START_PROB}.}
 
-\item{ncpu}{number of threads to use}
+\item{ncpu}{number of threads to use.}
 
-\item{verbose}{verbose mode for bug fixing}
+\item{verbose}{verbose mode for bug fixing.}
 }
 \value{
-A list which contains 3 data frames:
-        \code{START_PROB} - data frame with calculated start probabilities for each SMF molecule (column \code{seq}),
-                            each position in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
-                            These probabilities reflect how likely it is to find a start in each fragment and at each position of a certain footprint model.
-
-        \code{COVER_PROB} - data frame with calculated coverage probabilities for each SMF molecule (column \code{seq}),
-                            each position in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
-                            These probabilities reflect how likely it is that a certain position in an amplicon and certain fragment is covered by a certain footprint model.
+A list which contains 2 data frames:
+    \describe{
+    \item{\code{START_PROB}}{data frame with calculated start probabilities 
+    for each SMF molecule (column \code{seq}), each position in ROI (column 
+    \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
+    These probabilities reflect how likely it is to find a start in each 
+    fragment and at each position of a certain footprint model.}
+    \item{\code{COVER_PROB}}{data frame with calculated coverage 
+    probabilities for each SMF molecule (column \code{seq}), each position 
+    in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome, 
+    background etc. These probabilities reflect how likely it is that a 
+    certain position in an amplicon and certain fragment is covered by a 
+    certain footprint model.}
+    }
 }
 \description{
-Function for calculating coverage probabilities for footprints in single-molecule-footprinting (SMF) data
+Calculate coverage probabilities for footprints in single-molecule
+footprinting (SMF) data
 }
 \examples{
 set.seed(3346)
