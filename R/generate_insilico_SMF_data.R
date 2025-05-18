@@ -108,7 +108,7 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
                   mode = "numeric",
                   any.missing = FALSE,
                   nrows = length(footprint_models),
-                  ncol = region_len,
+                  ncols = region_len,
                   null.ok = TRUE)
     
     assert_number(bgprotectprob, lower = 0.0, upper = 1.0,
