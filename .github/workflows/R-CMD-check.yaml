@@ -59,35 +59,41 @@ jobs:
         shell: Rscript {0}
 
       - name: Build, Install, Check
-        id: build-install-check
-        uses: grimbough/bioc-actions/build-install-check@v1
-
-      - name: Upload install log if the build/install/check step fails
-        if: always() && (steps.build-install-check.outcome == 'failure')
-        uses: actions/upload-artifact@v4
+        uses: r-lib/actions/check-r-package@v2
         with:
-          name: install-log
-          path: |
-            ${{ steps.build-install-check.outputs.install-log }}
-
-      - name: Show testthat output (windows)
-        if: always() && runner.os == 'Windows'
-        run: |
-            type ${{ steps.build-install-check.outputs.check-dir }}\tests\testthat.Rout
-        shell: cmd
-
-      - name: Show testthat output (non-windows)
-        if: always() && runner.os != 'Windows'
-        run: |
-            cat ${{ steps.build-install-check.outputs.check-dir }}/tests/testthat.Rout
-        shell: bash
-
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@master
-        with:
-          name: ${{ runner.os }}-results
-          path: ${{ steps.build-install-check.outputs.check-dir }}
+          upload-snapshots: false
+          error-on: '"error"'
+          
+      # - name: Build, Install, Check
+      #   id: build-install-check
+      #   uses: grimbough/bioc-actions/build-install-check@v1
+      # 
+      # - name: Upload install log if the build/install/check step fails
+      #   if: always() && (steps.build-install-check.outcome == 'failure')
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: install-log
+      #     path: |
+      #       ${{ steps.build-install-check.outputs.install-log }}
+      # 
+      # - name: Show testthat output (windows)
+      #   if: always() && runner.os == 'Windows'
+      #   run: |
+      #       type ${{ steps.build-install-check.outputs.check-dir }}\tests\testthat.Rout
+      #   shell: cmd
+      # 
+      # - name: Show testthat output (non-windows)
+      #   if: always() && runner.os != 'Windows'
+      #   run: |
+      #       cat ${{ steps.build-install-check.outputs.check-dir }}/tests/testthat.Rout
+      #   shell: bash
+      # 
+      # - name: Upload check results
+      #   if: failure()
+      #   uses: actions/upload-artifact@master
+      #   with:
+      #     name: ${{ runner.os }}-results
+      #     path: ${{ steps.build-install-check.outputs.check-dir }}
 
       - name: Run BiocCheck
         uses: grimbough/bioc-actions/run-BiocCheck@v1
