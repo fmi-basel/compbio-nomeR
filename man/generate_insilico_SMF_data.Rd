@@ -16,7 +16,7 @@ generate_insilico_SMF_data(
 \arguments{
 \item{region_len}{length of the region.}
 
-\item{n_reads}{number of molecule to generate.}
+\item{n_reads}{number of molecules to generate.}
 
 \item{footprint_models}{\code{list} describing footprints which should be 
 generated. Each footprint within footprint_models is also a \code{list} 
@@ -37,9 +37,9 @@ number of footprints and number of columns must be equal to
 
 \item{bgprotectprob}{\code{numeric} emission probability for background.}
 
-\item{infposdens}{if scalar between 0 and 1 treated as percentage of 
-informative positions. If a vector of integers treated as predefined 
-informative positions.}
+\item{infposdens}{if a scalar between 0 and 1 it is treated as percentage of 
+informative positions. If a vector of integers it is treated as 
+predefined informative positions.}
 }
 \value{
 \code{list} that contains
