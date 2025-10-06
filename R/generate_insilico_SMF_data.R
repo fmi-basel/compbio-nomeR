@@ -1,7 +1,7 @@
 #' Generate in-silico single-molecule footprinting dataset
 #'
 #' @param region_len length of the region.
-#' @param n_reads number of molecule to generate.
+#' @param n_reads number of molecules to generate.
 #' @param footprint_models \code{list} describing footprints which should be 
 #'     generated. Each footprint within footprint_models is also a \code{list} 
 #'     that must contain:
@@ -18,9 +18,9 @@
 #'     number of footprints and number of columns must be equal to 
 #'     \code{region_len}.
 #' @param bgprotectprob \code{numeric} emission probability for background.
-#' @param infposdens if scalar between 0 and 1 treated as percentage of 
-#'     informative positions. If a vector of integers treated as predefined 
-#'     informative positions.
+#' @param infposdens if a scalar between 0 and 1 it is treated as percentage of 
+#'     informative positions. If a vector of integers it is treated as 
+#'     predefined informative positions.
 #'
 #' @return \code{list} that contains
 #' \describe{
@@ -122,8 +122,8 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
         inf_pos <- sort(sample(seq_len(region_len), 
                                size = floor(infposdens * region_len),
                                replace = FALSE))
-    } else if (is.vector(infposdens,"integer") || 
-               is.vector(infposdens,"numeric")) {
+    } else if (is.vector(infposdens, "integer") || 
+               is.vector(infposdens, "numeric")) {
         infposdens <- as.integer(infposdens)
         if (any(!infposdens %in% seq_len(region_len))) {
             warnings("infposdens contains positions outsite amplicon ", 
@@ -188,7 +188,7 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
     
     ### assign footprint start probabilities for each position of the amplicon
     if (is.null(ftp_emission_posprob)) {
-        ftp_emission_posprob <- matrix(data = 1/reglen_ext,
+        ftp_emission_posprob <- matrix(data = 1 / reglen_ext,
                                        nrow = length(model_names),
                                        ncol = reglen_ext)
     } else {

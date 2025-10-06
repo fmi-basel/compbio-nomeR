@@ -72,12 +72,12 @@
 #'     \item{bg_protect_mean}{Mean of the prior Beta distribution for the model 
 #'     parameter "bg_protect_prob". This parameter corresponds to shape 
 #'     parameters of the Beta distribution as mean=alpha/(alpha+beta). This 
-#'     value is ignored if ftp_bg_model is "bg_fixed" or "bg_fixed".}
+#'     value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
 #'     \item{bg_protect_totcount}{Total count parameter for the prior beta 
 #'     distribution for the model parameter "bg_protect_prob". This parameter 
 #'     corresponds to shape parameters of the Beta distribution as 
 #'     tot_count=alpha+beta and influences the spread of the distribution. 
-#'     This value is ignored if ftp_bg_model is "bg_fixed" or "bg_fixed".}
+#'     This value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
 #' }
 #' @param ftp_model_params A list containing parameters for the footprint 
 #'     model, which must contain the following elements:

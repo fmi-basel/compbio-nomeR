@@ -14,7 +14,7 @@
         stan_inputdata[["total_cnt_prior_dirich"]]
     
     init_vals <- lapply(seq_len(nchains), function(x) {
-        ftp_cover_probs <- as.vector(extraDistr::rdirichlet(1,dirich_alpha))
+        ftp_cover_probs <- as.vector(rdirichlet(1, dirich_alpha))
         ## substitute 0s if any by small number because rstan fails because of 
         ## log(0)
         ftp_cover_probs[ftp_cover_probs == 0] <- .Machine$double.eps / 2
@@ -30,13 +30,13 @@
             ftp_protect_beta <- stan_inputdata[["ftp_protect_totcount"]] * 
                 (1 - stan_inputdata[["ftp_protect_mean"]])
             
-            bg_protect_prob <- truncdist::rtrunc(
+            bg_protect_prob <- rtrunc(
                 1, spec = "beta",
                 a = stan_inputdata[["bg_protect_min"]] + delta_from_max_min,
                 b = stan_inputdata[["bg_protect_max"]] - delta_from_max_min,
                 shape1 = bg_protect_alpha,
                 shape2 = bg_protect_beta)
-            footprint_protect_prob <- truncdist::rtrunc(
+            footprint_protect_prob <- rtrunc(
                 1, spec = "beta",
                 a = stan_inputdata[["ftp_protect_min"]] + delta_from_max_min,
                 b = stan_inputdata[["ftp_protect_max"]] - delta_from_max_min,
