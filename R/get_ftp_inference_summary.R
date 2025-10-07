@@ -55,7 +55,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'
 #' ## simple data with two ftp of 5 and 10 bps.
 #' ## The table below is a count table of observed occurrences of
@@ -96,12 +95,11 @@
 #'                                       297930))
 #'
 #' ## variational inference for footprints in the data
-#' inf <- infer_footprints_vb(joint_freq_table = ftp_5_10_data,
-#'                            footprint_prior_diralphas = c(10, rep(1, 14)))
+#' inf <- infer_footprints_vb(cooc_ctable = ftp_5_10_data,
+#'                            ftp_lengths = 2:15)
 #'
 #' ## get estimates and plot footprint spectrum
 #' inference_summary_list <- get_ftp_inference_summary(inf, plot = TRUE)
-#' }
 #'
 #' @importFrom ggplot2 ggplot geom_ribbon aes labs geom_line scale_y_log10 
 #'     scale_color_manual scale_fill_manual guides guide_legend theme_bw theme 

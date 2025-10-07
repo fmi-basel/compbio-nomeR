@@ -32,13 +32,12 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' ## length of a chromosome
 #' chr_len <- 1000
 #'
 #' ftp_cover_c2 <- c(0.05, 0.5)
 #' ftp_len_c2 <- c(50, 150)
-#' case2_pos_mat <- rbind(matrix(c(rep(0, 5150), 1, rep(0, 4849)),
+#' case2_pos_mat <- rbind(matrix(c(rep(0, 515), 1, rep(0, 484)),
 #'                               nrow = 1,
 #'                               ncol = chr_len),
 #'                        matrix(1 / chr_len,
@@ -64,7 +63,6 @@
 #'                              bgprotectprob = 0,
 #'                              infposdens = 1
 #'                              )
-#'}
 #'
 #' @importFrom checkmate assert_integerish testNumber assert_number assert_list
 #'     assert_numeric assert_character assert_matrix

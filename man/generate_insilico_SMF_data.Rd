@@ -53,13 +53,12 @@ predefined informative positions.}
 Generate in-silico single-molecule footprinting dataset
 }
 \examples{
-\dontrun{
 ## length of a chromosome
 chr_len <- 1000
 
 ftp_cover_c2 <- c(0.05, 0.5)
 ftp_len_c2 <- c(50, 150)
-case2_pos_mat <- rbind(matrix(c(rep(0, 5150), 1, rep(0, 4849)),
+case2_pos_mat <- rbind(matrix(c(rep(0, 515), 1, rep(0, 484)),
                               nrow = 1,
                               ncol = chr_len),
                        matrix(1 / chr_len,
@@ -85,6 +84,5 @@ smf_data <-
                              bgprotectprob = 0,
                              infposdens = 1
                              )
-}
 
 }
