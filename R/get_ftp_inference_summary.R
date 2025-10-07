@@ -230,7 +230,7 @@ get_ftp_inference_summary <- function(
             geom_line(mapping = aes(x = .data$ftp_length,
                                     y = .data$mean,
                                     color = .data$param),
-                      size = 1.5
+                      linewidth = 1.5
             ) +
             scale_y_log10() +
             scale_color_manual(values = c("ftp_abundances" = "darkgreen")) +
