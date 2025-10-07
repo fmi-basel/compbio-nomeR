@@ -152,10 +152,10 @@
         }
     }
     
-    ## check if sum of bg prior and ftp is 1 and rescale if neccessary
+    ## check if sum of bg prior and ftp is 1 and rescale if necessary
     prior_cover <- c(bg_prior_cover, ftp_prior_cover)
     totcover <- sum(prior_cover)
-    if (totcover != 1) {
+    if (!isTRUE(all.equal(totcover, 1))) {
         warning("Sum of prior coverages bg_prior_cover and ftp_prior_cover is ",
                 totcover,
                 " but should equal to 1. Rescale prior coverages accordingly.")
