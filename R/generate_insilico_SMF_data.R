@@ -149,7 +149,7 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
     ## adding BG
     bgcoverprior <- 1 - sum(vapply(footprint_models, function(x) {
         x$COVER_PRIOR
-    }, FUN.VALUE = NA_real_, USE.NAMES = FALSE))
+    }, NA_real_))
     
     footprint_models <- c(list(list("NAME" = "BG",
                                     "COVER_PRIOR" = bgcoverprior,
@@ -168,11 +168,11 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
     
     model_cover_priors <- vapply(footprint_models, function(x) {
         x$COVER_PRIOR
-    }, FUN.VALUE = NA_real_, USE.NAMES = FALSE)
+    }, NA_real_)
     
     model_lengths <- vapply(footprint_models, function(x) {
         length(x$PROTECT_PROB)
-    }, FUN.VALUE = NA_integer_, USE.NAMES = FALSE)
+    }, NA_integer_)
     
     model_start_priors <- .cover_prior2start_prior(model_cover_priors,
                                                    model_lengths)
