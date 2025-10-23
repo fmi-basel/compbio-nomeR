@@ -11,7 +11,7 @@
 #include <string>
 #include "parameters-class.hpp"
 #include "utils_globvars.hpp"
-#include "nomeseqdata.h"
+#include "SMFdataset-class.hpp"
 using namespace std;
 
 
@@ -23,12 +23,12 @@ class binding_object_model:public DNAbinding_object
   binding_object_model(const vector<double > &_protect_prob,
                        const double _prior,
                        const string _name);
-  
+
   virtual ~binding_object_model();
   virtual void print() const;
   virtual void print_normalized() const;
-  
-  virtual double get_score(NOMeSeqData& SEQUENCES,
+
+  virtual double get_score(SMFdataset& SEQUENCES,
                            int seq,
                            int position)const;
   void normalize();

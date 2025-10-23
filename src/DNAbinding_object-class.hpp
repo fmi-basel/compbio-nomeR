@@ -1,15 +1,15 @@
-/* This abstract class defines any objects wich can bind to DNA 
+/* This abstract class defines any objects wich can bind to DNA
    Weight matrix and nucleosome will be descendants of this class */
 
-#ifndef _DNAbinding_object_h_
-#define _DNAbinding_object_h_
+#ifndef _DNAbinding_object_hpp_
+#define _DNAbinding_object_hpp_
 
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
-#include "nomeseqdata.h"
+#include "SMFdataset-class.hpp"
 using namespace std;
 
 class DNAbinding_object{
@@ -22,8 +22,8 @@ class DNAbinding_object{
 
   DNAbinding_object();
   virtual ~DNAbinding_object() = 0;
-  
-  virtual double get_score(NOMeSeqData& SEQUENCES,
+
+  virtual double get_score(SMFdataset& SEQUENCES,
                            int seq,
                            int position) const = 0;
   virtual void print() const = 0;

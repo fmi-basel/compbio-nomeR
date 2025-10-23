@@ -2,7 +2,7 @@ Package: nomeR
 Type: Package
 Title: Probabilistic framework for analysis of single-molecule footprinting data
 Date: 2025-05-16
-Version: 0.9.1
+Version: 0.9.2
 Authors@R: person(given = "Evgeniy A.", family = "Ozonov", 
                   email = "evgeniy.ozonov@fmi.ch", role = c("aut", "cre"))
 Description: \code{nomeR} uses a probabilistic model for analysis of data from 
@@ -13,8 +13,10 @@ License: MIT + file LICENSE
 Imports: 
     checkmate,
     extraDistr,
+    GenomicRanges,
     ggplot2,
     graphics,
+    IRanges,
     methods,
     parallel,
     Rcpp (>= 0.12.17),
@@ -22,8 +24,11 @@ Imports:
     rlang,
     rstan (>= 2.18.1),
     rstantools (>= 2.4.0),
+    S4Vectors,
+    SparseArray,
     stats,
     stringr,
+    SummarizedExperiment,
     truncdist
 Suggests: 
     testthat (>= 3.0.0)

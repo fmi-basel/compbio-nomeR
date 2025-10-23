@@ -2,8 +2,9 @@
 
 
 
-Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
-                         const Rcpp::CharacterVector& fragnames,
+Rcpp::List run_cpp_nomeR(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
+                         const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
+                         const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
                          const Rcpp::List& binding_models,
                          const Rcpp::NumericVector& bgprotectprob,
                          const Rcpp::NumericVector& bgprior,
@@ -29,11 +30,20 @@ Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
 	if(_VERBOSE_){
 		Rcpp::Rcout<<"Creating Predict object..."<<endl;
 	}
-	Predict predict(data,
-                 fragnames,
+
+
+	Predict predict(fragIDs,
+                 fragPos,
+                 protectVec,
                  binding_models,
                  bgprotectprob,
                  bgprior);
+
+// 	Predict predict(data,
+//                  fragnames,
+//                  binding_models,
+//                  bgprotectprob,
+//                  bgprior);
 
 	// run prediction
 	if(_VERBOSE_){
@@ -76,43 +86,32 @@ Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
 }
 
 
-Rcpp::List count_spacing_freq_cpp(const Rcpp::List& data,
-                                  const Rcpp::CharacterVector& fragnames,
-                                  const Rcpp::IntegerVector& maxspacing,
-                                  const Rcpp::IntegerVector& maxwmlen){
+Rcpp::List count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
+                                  const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
+                                  const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
+                                  const Rcpp::IntegerVector& maxspacing){
 
-	int maxwmlen_ = Rcpp::as<int >(maxwmlen);
 	int maxspacing_ = Rcpp::as<int >(maxspacing);
 
-	NOMeSeqData nome_data(data,
-                       fragnames,
-                       maxwmlen_);
-	//nome_data.create(data,maxwmlen_);
-	vector<vector<int> > freq_mat = nome_data.count_freq_for_spacings(maxspacing_);
+	SMFdataset SMFdata(fragIDs,
+                    fragPos,
+                    protectVec,
+                    0);
+
+	vector<vector<int> > freq_mat = SMFdata.count_freq_for_spacings(maxspacing_);
 	vector<int > spacings;
 	vector<int > freq00;
 	vector<int > freq01;
-	vector<int > freq02;
 	vector<int > freq10;
 	vector<int > freq11;
-	vector<int > freq12;
 
-	vector<int > freq20;
-	vector<int > freq21;
-	vector<int > freq22;
 	for(int i=0; i<freq_mat.size(); ++i){
 		spacings.push_back(freq_mat[i][0]);
 		freq00.push_back(freq_mat[i][1]);
 		freq01.push_back(freq_mat[i][2]);
-		freq02.push_back(freq_mat[i][3]);
 		freq10.push_back(freq_mat[i][4]);
 		freq11.push_back(freq_mat[i][5]);
-		freq12.push_back(freq_mat[i][6]);
-		freq20.push_back(freq_mat[i][7]);
-		freq21.push_back(freq_mat[i][8]);
-		freq22.push_back(freq_mat[i][9]);
-
-	}
+		}
 
 	Rcpp::List export_list;
 
@@ -121,14 +120,8 @@ Rcpp::List count_spacing_freq_cpp(const Rcpp::List& data,
 	export_list.push_back(Rcpp::wrap(freq01),"N01");
 	export_list.push_back(Rcpp::wrap(freq10),"N10");
 	export_list.push_back(Rcpp::wrap(freq11),"N11");
-	export_list.push_back(Rcpp::wrap(freq02),"N0na");
-	export_list.push_back(Rcpp::wrap(freq12),"N1na");
-	export_list.push_back(Rcpp::wrap(freq20),"Nna0");
-	export_list.push_back(Rcpp::wrap(freq21),"Nna1");
-	export_list.push_back(Rcpp::wrap(freq22),"Nnana");
 
-
-	nome_data.clear();
+	SMFdata.clear();
 	return export_list;
 
 }

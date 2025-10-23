@@ -12,7 +12,7 @@
 #include <string>
 #include "utils_globvars.hpp"
 #include "parameters-class.hpp"
-#include "nomeseqdata.h"
+#include "SMFdataset-class.hpp"
 using namespace std;
 
 class Background:public DNAbinding_object
@@ -24,8 +24,8 @@ class Background:public DNAbinding_object
   Background(parameters &params);
   virtual ~Background();
   virtual void print() const;
-  
-  virtual double get_score(NOMeSeqData& SEQUENCES,
+
+  virtual double get_score(SMFdataset& SEQUENCES,
                            int seq,
                            int position)const;
   virtual void print_normalized() const;
