@@ -1,0 +1,29 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  nomeR: Probabilistic framework for analysis of
+  single-molecule footprinting data
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Evgeniy A.
+    family-names: Ozonov
+    email: evgeniy.ozonov@fmi.ch
+    affiliation: Friedrich Miescher Institute for Biomedical Research
+    orcid: 'https://orcid.org/0000-0003-4584-4939'
+repository-code: 'https://github.com/fmi-basel/compbio-nomeR'
+abstract: >-
+  nomeR uses probabilistic model for analysis of data from
+  single-molecule footprinting (SMF) assays like NOMe-seq
+  that allow to acquire single-molecule positional
+  information about footprints of DNA binding proteins.
+keywords:
+  - single-molecule footprinting
+  - statistical model
+  - NOMe-seq
+  - Fiber-seq
+license: MIT
