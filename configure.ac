@@ -1,7 +1,7 @@
 ## configure.ac is borrowed from https://www.r-bloggers.com/2017/08/setting-up-optional-openmp-support-with-rcpparmadillo/
 AC_PREREQ(2.69)
 
-AC_INIT(nomeR, m4_esyscmd_s([awk -e '/^Version:/ {print $2}' DESCRIPTION]))
+AC_INIT(nomeRpredict, m4_esyscmd_s([awk -e '/^Version:/ {print $2}' DESCRIPTION]))
 AC_COPYRIGHT(Copyright (C) 2020 Evgeniy A. Ozonov)
 
 

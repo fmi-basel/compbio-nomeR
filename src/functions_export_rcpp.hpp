@@ -14,7 +14,7 @@
 #include <cstdint>
 #include <stdbool.h>
 
-#include "nomeseqdata.h"
+#include "SMFdataset-class.hpp"
 #include "DNAbindobj_vector-class.hpp"
 #include "predict-class.hpp"
 using namespace std;
@@ -25,8 +25,9 @@ bool _VERBOSE_ = 0;
 
 
 // [[Rcpp::export]]
-Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
-                         const Rcpp::CharacterVector& fragnames,
+Rcpp::List run_cpp_nomeR(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
+                         const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
+                         const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
                          const Rcpp::List& binding_models,
                          const Rcpp::NumericVector& bgprotectprob,
                          const Rcpp::NumericVector& bgprior,
@@ -34,11 +35,12 @@ Rcpp::List run_cpp_nomeR(const Rcpp::List& data,
                          const Rcpp::NumericVector& Ncpu,
                          const Rcpp::LogicalVector& verbose);
 
+
 // [[Rcpp::export]]
-Rcpp::List count_spacing_freq_cpp(const Rcpp::List& data,
-                                  const Rcpp::CharacterVector& fragnames,
-                                  const Rcpp::IntegerVector& maxspacing,
-                                  const Rcpp::IntegerVector& maxwmlen);
+Rcpp::List count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
+                                  const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
+                                  const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
+                                  const Rcpp::IntegerVector& maxspacing);
 
 
 // [[Rcpp::export]]
