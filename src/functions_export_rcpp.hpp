@@ -25,7 +25,6 @@ bool _VERBOSE_ = 0;
 
 
 // [[Rcpp::export]]
-
 Rcpp::List run_cpp_nomeR(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
                          const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
                          const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
