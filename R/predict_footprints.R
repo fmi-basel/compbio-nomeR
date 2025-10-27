@@ -85,7 +85,7 @@ predict_footprints <- function(data,
     ## check arguments
     coll <- makeAssertCollection()
     ### validate data. The output is a list("nonNA_data" = nonNA_data,"fragnames" = fragnames)
-    data <- validate_data_for_predict2(data)
+    data <- validate_prepare_listOrMat(data)
 
     ### validate footprint models
     ftpvalout <- validate_footprint_models(footprint_models,

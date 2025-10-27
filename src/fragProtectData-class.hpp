@@ -26,14 +26,8 @@ public:
 	          // we have to keep this because memory allocation in Predict class takes this into account.
 	uint32_t _firstDatpos; // previously in Sequence class, this was a position within the extended (by NAs) sequence with first actuall data point
 	uint32_t _lastDatpos;  // similarly this was the last position within extended (by NAs) sequence with data points
-
-	// int fragLength; // this will be the length of a fragment, in other words genomic distance from the first data position
-	//                 // to the last data position
-	vector<uint32_t> _fragPosVec; // vector with positions within fragment, the positions will be adjusted by firstDatpos, lastDatpos
-	                              // IMPORTANT: also, this positions will be 0-based !!!
-
-	vector<uint8_t> _protectVec;  // vector with protection data, i.e. 0 - accessible; 1 - protected
-
+	
+	vector<uint8_t> _protectVec; // expanded vector with protection data, i.e. including NAs (2s)
 
 	// public functions
 	// constructors/copying/destructors

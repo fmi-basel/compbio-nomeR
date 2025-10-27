@@ -16,8 +16,6 @@ fragProtectData::fragProtectData(const fragProtectData & s){
 	_fragID = s._fragID;
 	_firstDatpos = s._firstDatpos;
 	_lastDatpos = s._lastDatpos;
-
-	_fragPosVec = s._fragPosVec;
 	_protectVec = s._protectVec;
 }
 
@@ -36,17 +34,10 @@ fragProtectData::fragProtectData(const uint32_t fragID,
 	// define the _size taking into account extensions
 	_size = _lastDatpos + maxWMlen + 1;
 
-	// add positions and values, readjust positions taking into account extensions
-	if(_fragPosVec.size() > 0){
-		_fragPosVec.clear();
-	}
-	if(_protectVec.size() > 0){
-		_protectVec.clear();
-	}
-
-	for(int i = 0;i < fragPosVec.size();++i){
-		_fragPosVec.push_back(fragPosVec[i] + _firstDatpos);
-		_protectVec.push_back(protectVec[i]);
+	// add protection data to _protectVec
+	_protectVec = std::vector<uint8_t>(_size, 2);
+	for(int i = 0; i < fragPosVec.size(); ++i){
+		_protectVec[fragPosVec[i] + _firstDatpos] = protectVec[i];
 	}
 }
 
@@ -60,29 +51,18 @@ uint32_t fragProtectData::Name() const{
 
 
 uint8_t fragProtectData::operator [](uint32_t i){
-	auto it = lower_bound(_fragPosVec.begin(), _fragPosVec.end(), i);
-	if (it != _fragPosVec.end() && *it == i) {
-		return _protectVec[distance(_fragPosVec.begin(), it)];
-	} else{
-		return(2);
-	}
+	return _protectVec[i];
 }
 
 fragProtectData & fragProtectData::operator = (const fragProtectData & other){
 	if (this != &other){
 		_fragID = other._fragID;
 		_size = other.Size();
-		if(_fragPosVec.size() > 0){
-			_fragPosVec.clear();
-		}
-		if(_protectVec.size() > 0){
-			_protectVec.clear();
-		}
-		_fragPosVec = other._fragPosVec;
-		_protectVec = other._protectVec;
 
 		_firstDatpos = other._firstDatpos;
 		_lastDatpos = other._lastDatpos;
+		
+		_protectVec = other._protectVec;
 	}
 	return *this;
 }
