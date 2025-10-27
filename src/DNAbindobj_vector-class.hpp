@@ -34,8 +34,10 @@ class DNAbind_obj_vector{
   ~DNAbind_obj_vector();
   //int create(parameters &params,NOMeSeqData &sequences);
   
-  int create(Rcpp::List _bind_objs,
-             parameters &params);
+  DNAbind_obj_vector(const Rcpp::List _bind_objs,
+                         const parameters &params);
+  int create(const Rcpp::List _bind_objs,
+             const parameters &params);
   
   DNAbinding_object* operator [](int i);
   

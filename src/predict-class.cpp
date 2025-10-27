@@ -3,61 +3,24 @@
 Predict::Predict(){}
 Predict::~Predict(){
   // object contains vector of pointers. need to call explicitly clear to delete
-  BINDING_OBJECTS.clear();
+  //BINDING_OBJECTS.clear();
   }
 
-Predict::Predict(const Rcpp::IntegerVector& fragIDs,
-                 const Rcpp::IntegerVector& fragPos,
-                 const Rcpp::IntegerVector& protectVec,
-                 const Rcpp::List& binding_models,
-                 const Rcpp::NumericVector& bgprotectprob,
-                 const Rcpp::NumericVector& bgprior)
+Predict::Predict(const SMFdataset& refSmfData,
+                 const DNAbind_obj_vector& refFtp_models,
+                 const parameters& refParams)
+	: SEQUENCES(refSmfData),
+   BINDING_OBJECTS(refFtp_models),
+   PARAMS(refParams)
 {
-  Create(fragIDs,
-         fragPos,
-         protectVec,
-         binding_models,
-         bgprotectprob,
-         bgprior);
+	Create();
 }
 
-bool Predict::Create(const Rcpp::IntegerVector& fragIDs,
-                     const Rcpp::IntegerVector& fragPos,
-                     const Rcpp::IntegerVector& protectVec,
-                     const Rcpp::List& binding_models,
-                     const Rcpp::NumericVector& bgprotectprob,
-                     const Rcpp::NumericVector& bgprior)
+
+bool Predict::Create()
 {
   // verbosity
   extern bool _VERBOSE_;
-
-  // create object with parameters
-  double bgcoverprob_ = Rcpp::as<double >(bgprotectprob);
-  double bgprior_ = Rcpp::as<double >(bgprior);
-  if(_VERBOSE_){
-    Rcpp::Rcout<<"Creating PARAMS object..."<<endl;
-  }
-  PARAMS.setParams(bgcoverprob_,
-                   bgprior_);
-
-
-  // create object with background/footprint models
-  if(_VERBOSE_){
-    Rcpp::Rcout<<"Creating BINDING_OBJECTS object..."<<endl;
-  }
-  BINDING_OBJECTS.create(binding_models,PARAMS);
-
-
-
-  // create object with SMF data
-  if(_VERBOSE_){
-    Rcpp::Rcout<<"Creating SEQUENCES object..."<<endl;
-  }
-  SEQUENCES.create(fragIDs,
-                   fragPos,
-                   protectVec,
-                   BINDING_OBJECTS.maxwmlen);
-
 
   // Initialize print_indexes
   if(PARAMS.printoutonly != "All"){

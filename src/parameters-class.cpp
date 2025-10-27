@@ -10,6 +10,11 @@ parameters::parameters(double _bgcoverprob,
   setParams(_bgcoverprob,
             _bgprior);
 }
+parameters::parameters(const Rcpp::NumericVector& _bgprotectprob,
+                       const Rcpp::NumericVector& _bgprior){
+	setParams(Rcpp::as<double >(_bgprotectprob),
+           Rcpp::as<double >(_bgprior));
+}
 
 parameters::~parameters()
 {

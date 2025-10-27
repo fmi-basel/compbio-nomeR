@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <stdbool.h>
 
+#include "parameters-class.hpp"
 #include "SMFdataset-class.hpp"
 #include "DNAbindobj_vector-class.hpp"
 #include "predict-class.hpp"
