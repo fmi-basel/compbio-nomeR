@@ -76,7 +76,7 @@ bool Predict::Create(const Rcpp::IntegerVector& fragIDs,
     }
   }
   else{
-    for(int wm=0;wm< BINDING_OBJECTS.Size();++wm){
+    for(int wm = 0;wm < BINDING_OBJECTS.Size(); ++wm){
       print_indexes.push_back(wm);
       vector<string >::iterator it;
       it = find(print_names.begin(),print_names.end(),BINDING_OBJECTS[wm]->name);
@@ -407,8 +407,8 @@ Rcpp::List Predict::getStartProbDF(bool report_prediction_in_flanks){
   extern bool _VERBOSE_;
 
   Rcpp::List out_list;
-  vector<uint32_t > seqnames;
-  vector<uint32_t > positions;
+  vector<int32_t > seqnames;
+  vector<int32_t > positions;
   // fill seq and pos
   for(int seq=0;seq < SEQUENCES.Size();seq++){
     int firstDatPos = SEQUENCES[seq]._firstDatpos;
