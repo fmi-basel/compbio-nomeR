@@ -21,11 +21,11 @@ class Background:public DNAbinding_object
   double bgcoverprob;
 
   vector<double>  bgmodel;
-  Background(parameters &params);
+  Background(const parameters& params);
   virtual ~Background();
   virtual void print() const;
 
-  virtual double get_score(SMFdataset& SEQUENCES,
+  virtual double get_score(const SMFdataset& SEQUENCES,
                            int seq,
                            int position)const;
   virtual void print_normalized() const;

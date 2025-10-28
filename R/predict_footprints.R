@@ -75,71 +75,71 @@
 #'     reportAssertions
 #' @importFrom parallel detectCores
 predict_footprints <- function(data,
-                               footprint_models,
-                               bgprotectprob,
-                               bgcoverprior,
-                               report_prediction_in_flanks = FALSE,
-                               ncpu = 1L,
-                               verbose = FALSE) {
-
-    ## check arguments
-    coll <- makeAssertCollection()
-    ### validate data. The output is a list("nonNA_data" = nonNA_data,"fragnames" = fragnames)
-    data <- validate_prepare_listOrMat(data)
-
-    ### validate footprint models
-    ftpvalout <- validate_footprint_models(footprint_models,
-                                           bgprotectprob,
-                                           bgcoverprior,
-                                           verbose,
-                                           add = coll)
-    footprint_models <- ftpvalout[["footprint_models"]]
-    start_priors <- ftpvalout[["start_priors"]]
-    ### validate report_prediction_in_flanks
-    assert_logical(report_prediction_in_flanks,
-                   any.missing = FALSE, all.missing = FALSE,
-                   len = 1, add = coll)
-
-    ### validate ncpu
-    assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
-    avail_ncpu <- parallel::detectCores()
-    if (is.na(avail_ncpu)) {
-        .warning_timestamp(
-            "Could not detect number of available cpu. Setting ncpu to 1L.")
-        ncpu <- 1L
-    } else if (ncpu > avail_ncpu || ncpu == 0) {
-        .warning_timestamp(c("Number of ncpu is 0 or exceeds number of ",
-                             "available cpu. Setting ncpu to number of ",
-                             "available cpus."))
-        ncpu <- avail_ncpu
-    }
-
-    ## finish argument check
-    reportAssertions(coll)
-
-    if (verbose) {
-        .message_timestamp("Calling run_cpp_nomeR...")
-    }
-    ## the C++ needs only fidx_glob, fragpos, protect
-    out.list <- run_cpp_nomeR(data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
-    													data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 0 - based
-    													data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
-    													footprint_models,
-    													bgprotectprob,
-    													start_priors["BG"],
-    													report_prediction_in_flanks,
-    													ncpu,
-    													verbose)
-
-    if (all(c(!is.null(out.list[["START_PROB"]]),
-              !is.null(out.list[["COVER_PROB"]])))) {
-        if (verbose) {
-            .message_timestamp("convert cpp_nomeR output to data.frame...")
-        }
-        return(lapply(out.list,as.data.frame,
-                      stringsAsFactors = FALSE,
-                      check.names = FALSE))
-    } else {
-        stop("retrieved NULL results from C++ function.")
-    }
+															 footprint_models,
+															 bgprotectprob,
+															 bgcoverprior,
+															 report_prediction_in_flanks = FALSE,
+															 ncpu = 1L,
+															 verbose = FALSE) {
+	
+	## check arguments
+	coll <- makeAssertCollection()
+	### validate data. The output is a list("nonNA_data" = nonNA_data,"fragnames" = fragnames)
+	data <- validate_prepare_listOrMat(data)
+	
+	### validate footprint models
+	ftpvalout <- validate_footprint_models(footprint_models,
+																				 bgprotectprob,
+																				 bgcoverprior,
+																				 verbose,
+																				 add = coll)
+	footprint_models <- ftpvalout[["footprint_models"]]
+	start_priors <- ftpvalout[["start_priors"]]
+	### validate report_prediction_in_flanks
+	assert_logical(report_prediction_in_flanks,
+								 any.missing = FALSE, all.missing = FALSE,
+								 len = 1, add = coll)
+	
+	### validate ncpu
+	assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
+	avail_ncpu <- parallel::detectCores()
+	if (is.na(avail_ncpu)) {
+		.warning_timestamp(
+			"Could not detect number of available cpu. Setting ncpu to 1L.")
+		ncpu <- 1L
+	} else if (ncpu > avail_ncpu || ncpu == 0) {
+		.warning_timestamp(c("Number of ncpu is 0 or exceeds number of ",
+												 "available cpu. Setting ncpu to number of ",
+												 "available cpus."))
+		ncpu <- avail_ncpu
+	}
+	
+	## finish argument check
+	reportAssertions(coll)
+	
+	if (verbose) {
+		.message_timestamp("Calling run_cpp_nomeR...")
+	}
+	## the C++ needs only fidx_glob, fragpos, protect
+	out.list <- calcStartCoverProbs_cpp(data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
+																			data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 0 - based
+																			data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
+																			footprint_models,
+																			bgprotectprob,
+																			start_priors["BG"],
+																			report_prediction_in_flanks,
+																			ncpu,
+																			verbose)
+	
+	if (all(c(!is.null(out.list[["START_PROB"]]),
+						!is.null(out.list[["COVER_PROB"]])))) {
+		if (verbose) {
+			.message_timestamp("convert cpp_nomeR output to data.frame...")
+		}
+		return(lapply(out.list,as.data.frame,
+									stringsAsFactors = FALSE,
+									check.names = FALSE))
+	} else {
+		stop("retrieved NULL results from C++ function.")
+	}
 }

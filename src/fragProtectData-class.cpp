@@ -50,7 +50,7 @@ uint32_t fragProtectData::Name() const{
 }
 
 
-uint8_t fragProtectData::operator [](uint32_t i){
+const uint8_t fragProtectData::operator [](uint32_t i) const{
 	return _protectVec[i];
 }
 

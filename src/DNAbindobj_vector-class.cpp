@@ -13,7 +13,7 @@ DNAbind_obj_vector::~DNAbind_obj_vector(){
 	}
 }
 
-DNAbinding_object * DNAbind_obj_vector::operator [](int i){
+const DNAbinding_object * DNAbind_obj_vector::operator [](int i) const{
 	if(i>objvector.size()-1 || i<0){
 		Rcpp::stop("DNAbind_obj_vector::operator[](int i):  The index is out of range");
 		// Rcpp::Rcerr<<"DNAbind_obj_vector::operator[](int i):  The index is out of range: "<<i<<"\n";
@@ -22,7 +22,7 @@ DNAbinding_object * DNAbind_obj_vector::operator [](int i){
 	return objvector[i];
 }
 
-int DNAbind_obj_vector::Size(){
+size_t DNAbind_obj_vector::Size() const{
 	return size;
 }
 DNAbind_obj_vector::DNAbind_obj_vector(const Rcpp::List _bind_objs,

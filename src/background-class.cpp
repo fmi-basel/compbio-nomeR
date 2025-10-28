@@ -1,6 +1,6 @@
 #include "background-class.hpp"
 
-Background::Background(parameters &params){
+Background::Background(const parameters& params){
   classname = "background";
   name = "background";
   len = 1;
@@ -31,7 +31,7 @@ void Background::print_normalized() const{
 }
 
 
-double Background::get_score(SMFdataset& SEQUENCES,
+double Background::get_score(const SMFdataset& SEQUENCES,
                              int seq,
                              int position) const{
 

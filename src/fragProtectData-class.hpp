@@ -44,7 +44,7 @@ public:
 	uint32_t Name() const; // return fragment ID.
 	// int fragLength const;// return actual genomic size of the data, i.e. maximum position with protection value
 
-	uint8_t operator [](uint32_t i);
+	const uint8_t operator [](uint32_t i) const;
 
 	//vector<uint8_t > subseq(int start,int end);
 	fragProtectData & operator = (const fragProtectData & other);

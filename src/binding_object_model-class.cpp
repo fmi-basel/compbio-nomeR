@@ -62,7 +62,7 @@ void binding_object_model::print_normalized() const{
 }
 
 
-double binding_object_model::get_score(SMFdataset& SEQUENCES,
+double binding_object_model::get_score(const SMFdataset& SEQUENCES,
                                        int seq,
                                        int position) const{
 

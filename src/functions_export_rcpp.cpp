@@ -2,15 +2,15 @@
 
 
 
-Rcpp::List run_cpp_nomeR(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
-                         const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
-                         const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
-                         const Rcpp::List& binding_models,
-                         const Rcpp::NumericVector& bgprotectprob,
-                         const Rcpp::NumericVector& bgprior,
-                         const Rcpp::LogicalVector& report_prediction_in_flanks,
-                         const Rcpp::NumericVector& Ncpu,
-                         const Rcpp::LogicalVector& verbose
+Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
+                                   const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
+                                   const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
+                                   const Rcpp::List& binding_models,
+                                   const Rcpp::NumericVector& bgprotectprob,
+                                   const Rcpp::NumericVector& bgprior,
+                                   const Rcpp::LogicalVector& report_prediction_in_flanks,
+                                   const Rcpp::NumericVector& Ncpu,
+                                   const Rcpp::LogicalVector& verbose
 ) {
 	
 	//set verbose
@@ -62,41 +62,38 @@ Rcpp::List run_cpp_nomeR(const Rcpp::IntegerVector& fragIDs,     // vector with 
 	
 	// run prediction
 	if(_VERBOSE_){
-		Rcpp::Rcout<<"Calculating posterior binding probabilities..."<<endl;
+		Rcpp::Rcout<<"Calculating posterior probabilities..."<<endl;
 	}
-	
-	Rcpp::List output_data;
-	if(predict.Run(Ncpu_)){
-		//predict.Run(Ncpu_);
-		
-		if(_VERBOSE_){
-			Rcpp::Rcout<<"Running predict.getStartProbDF()..."<<endl;
-		}
-		Rcpp::List startProbdf = predict.getStartProbDF(report_prediction_in_flanks_);
-		if(_VERBOSE_){
-			Rcpp::Rcout<<"Running predict.getCoverProbDF()..."<<endl;
-		}
-		Rcpp::List coverProb = predict.getCoverProbDF();
-		
-		output_data = Rcpp::List::create( Rcpp::Named("START_PROB") = startProbdf,
-                                    Rcpp::Named("COVER_PROB") = coverProb);
-		
-		
-		// 		if(_VERBOSE_){
-		// 			Rcpp::Rcout<<"Running predict.getGenomeSummaryDF()..."<<endl;
-		// 		}
-		// 		Rcpp::List genSummary = predict.getGenomeSummaryDF();
-		// 		output_data = Rcpp::List::create( Rcpp::Named("START_PROB") = startProbdf,
-		//                                     Rcpp::Named("COVER_PROB") = coverProb,
-		//                                     Rcpp::Named("SUMMARY") = genSummary);
-	} else {
-		output_data = Rcpp::List::create( Rcpp::Named("START_PROB") = R_NilValue,
-                                    Rcpp::Named("COVER_PROB") = R_NilValue);
-		
-	}
-	
-	_VERBOSE_ = 0;
-	return output_data;
+	return predict.calcStartCoverProbs(report_prediction_in_flanks_,
+                                    Ncpu_);
+// 	Rcpp::List output_data;
+// 	if(predict.Run(Ncpu_)){
+// 		//predict.Run(Ncpu_);
+// 		
+// 		if(_VERBOSE_){
+// 			Rcpp::Rcout<<"Running predict.getStartProbDF()..."<<endl;
+// 		}
+// 		Rcpp::List startProbdf = predict.getStartProbDF(report_prediction_in_flanks_);
+// 		if(_VERBOSE_){
+// 			Rcpp::Rcout<<"Running predict.getCoverProbDF()..."<<endl;
+// 		}
+// 		Rcpp::List coverProb = predict.getCoverProbDF();
+// 		
+// 		output_data = Rcpp::List::create( Rcpp::Named("START_PROB") = startProbdf,
+//                                     Rcpp::Named("COVER_PROB") = coverProb);
+// 		
+// 		
+// 
+// 	} else {
+// 		output_data = Rcpp::List::create( Rcpp::Named("START_PROB") = R_NilValue,
+//                                     Rcpp::Named("COVER_PROB") = R_NilValue);
+// 		
+// 	}
+// 	
+// 	_VERBOSE_ = 0;
+//	return output_data;
+
+
 	
 }
 

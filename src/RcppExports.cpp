@@ -11,9 +11,9 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// run_cpp_nomeR
-Rcpp::List run_cpp_nomeR(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::LogicalVector& report_prediction_in_flanks, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
-RcppExport SEXP _nomeRpredict_run_cpp_nomeR(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP report_prediction_in_flanksSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+// calcStartCoverProbs_cpp
+Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::LogicalVector& report_prediction_in_flanks, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
+RcppExport SEXP _nomeRpredict_calcStartCoverProbs_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP report_prediction_in_flanksSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -26,7 +26,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type report_prediction_in_flanks(report_prediction_in_flanksSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type Ncpu(NcpuSEXP);
     Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_cpp_nomeR(fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose));
+    rcpp_result_gen = Rcpp::wrap(calcStartCoverProbs_cpp(fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -60,7 +60,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nomeRpredict_run_cpp_nomeR", (DL_FUNC) &_nomeRpredict_run_cpp_nomeR, 9},
+    {"_nomeRpredict_calcStartCoverProbs_cpp", (DL_FUNC) &_nomeRpredict_calcStartCoverProbs_cpp, 9},
     {"_nomeRpredict_count_spacing_freq_cpp", (DL_FUNC) &_nomeRpredict_count_spacing_freq_cpp, 4},
     {"_nomeRpredict_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeRpredict_calculate_theor_joint_prob_cpp, 4},
     {NULL, NULL, 0}

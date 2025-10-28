@@ -23,7 +23,7 @@ class DNAbinding_object{
   DNAbinding_object();
   virtual ~DNAbinding_object() = 0;
 
-  virtual double get_score(SMFdataset& SEQUENCES,
+  virtual double get_score(const SMFdataset& SEQUENCES,
                            int seq,
                            int position) const = 0;
   virtual void print() const = 0;

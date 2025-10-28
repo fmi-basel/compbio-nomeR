@@ -88,7 +88,7 @@ void SMFdataset::clear(){
 	_totallength = 0;
 }
 
-fragProtectData & SMFdataset::operator[] (int index)
+const fragProtectData & SMFdataset::operator[] (int index) const
 {
 	return _data[index];
 }

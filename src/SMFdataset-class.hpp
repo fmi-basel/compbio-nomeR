@@ -38,7 +38,7 @@ public:
 	void Add(fragProtectData & frag);
 
 
-	fragProtectData & operator[](int index);
+	const fragProtectData & operator[](int index) const;
 	int Size() const;
 	int TotalLength() const;
 	void clear();
