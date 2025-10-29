@@ -40,8 +40,7 @@ class Predict
 
 public:
   // constructors/destructor
-  //Predict();
-	Predict(const SMFdataset& refSmfData,
+  Predict(const SMFdataset& refSmfData,
          const DNAbind_obj_vector& refFtp_models,
          const parameters& refParams);
 

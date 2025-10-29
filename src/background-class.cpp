@@ -37,18 +37,25 @@ double Background::get_score(const SMFdataset& SEQUENCES,
 
 
   if(seq<0 || seq>=SEQUENCES.Size()){
-
-  // Rcpp::Rcerr<<"Wm::get_score: Index of sequence is out of range: "<<seq<<endl;
     Rcpp::stop("Background::get_score: Index of sequence is out of range:");
-  // exit(1);
+  
   }
 
   double score = 1;
-  for(int i = position;i < position + len;++i){
+  for(int i = position; i < position + len;++i){
     if(i >= 0 && i < SEQUENCES[seq].Size())
       score *= bgmodel[SEQUENCES[seq][i]];
   }
-
   return prior * score;
-
 }
+
+vector<double > Background::get_seq_scores_vec(const fragProtectData& fragData) const{
+	vector<double > scoresVec(fragData.Size(), prior);
+	// as length of background is 1 we just fill the vector with prior * bgmodel[fragData[pos]]
+	for(int pos = 0; pos < fragData.Size(); ++pos){
+		scoresVec[pos] = prior * bgmodel[fragData[pos]];
+	}
+	return scoresVec;
+}
+
+

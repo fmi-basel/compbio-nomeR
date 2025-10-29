@@ -16,8 +16,6 @@ DNAbind_obj_vector::~DNAbind_obj_vector(){
 const DNAbinding_object * DNAbind_obj_vector::operator [](int i) const{
 	if(i>objvector.size()-1 || i<0){
 		Rcpp::stop("DNAbind_obj_vector::operator[](int i):  The index is out of range");
-		// Rcpp::Rcerr<<"DNAbind_obj_vector::operator[](int i):  The index is out of range: "<<i<<"\n";
-		// exit(1);
 	}
 	return objvector[i];
 }
@@ -35,11 +33,10 @@ int DNAbind_obj_vector::create(const Rcpp::List _bind_objs,
                                const parameters &params){
 	numberofobjects=0;
 	maxwmlen = 1;
-	//cout<<"#### In DNAbind_obj_vector create ####"<<endl;
-	//cout<<"List size is "<<_bind_objs.size()<<endl;
+
 	for(int wm=0; wm < _bind_objs.size(); ++wm){
 		Rcpp::List pinf = Rcpp::as<Rcpp::List >(_bind_objs[wm]);
-		//cout<<"Index="<<wm<<" Data list size "<<pinf.size()<<endl;
+
 		if(!pinf.containsElementNamed("PROTECT_PROB")){
 			Rcpp::Rcerr<<"DNAbind_obj_vector::create: Error! At least one element in list of sequences does not contain element PROTECT_PROB\n";
 			return(0);
@@ -106,6 +103,18 @@ int DNAbind_obj_vector::create(const Rcpp::List _bind_objs,
 	
 	
 }
+
+
+// method to calculate scores for all footprints, including background given a sequence;
+vector<vector<double >> DNAbind_obj_vector::getFtpModelScores(const fragProtectData& fragData) const{
+	vector<vector<double >> ftpScoresMatrix;
+	for(int wm = 0; wm < numberofobjects; ++wm){
+		ftpScoresMatrix.push_back(objvector[wm]->get_seq_scores_vec(fragData));
+	}
+	return ftpScoresMatrix;
+}
+
+
 
 void DNAbind_obj_vector::clear(){
 	numberofobjects=0;

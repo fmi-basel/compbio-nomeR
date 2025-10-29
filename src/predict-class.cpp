@@ -1,6 +1,6 @@
 #include "predict-class.hpp"
 
-//Predict::Predict(){}
+
 Predict::~Predict(){
 	
 }
@@ -74,7 +74,9 @@ bool Predict::Create()
 
 
 // method that calculates start and cover probabilities and returns a Rcpp::List with calculated data.
-
+// 
+// /* // [[Rcpp::depends(RcppProgress)]]
+//  * */
 Rcpp::List Predict::calcStartCoverProbs(bool report_prediction_in_flanks,
                                         int ncpu){
 	extern bool _VERBOSE_;
@@ -110,12 +112,9 @@ Rcpp::List Predict::calcStartCoverProbs(bool report_prediction_in_flanks,
 		startOutProbs.push_back(tmpst);
 		coverOutProbs.push_back(tmpcv);
 	}
-	// all vectors above, i.e. 
-	// startOutFragIDs, startOutFragPos, startOutProbs[ftp]
-	// and coverOutFragIDs, coverOutFragPos, coverOutProbs[ftp]
-	// will be appended during calculation of probabilities for each molecule.
-	// update: appending is not thread-safe!!! work with local vectors 
 	
+	
+
 #ifdef _OPENMP
 	omp_set_nested(true);
 	omp_set_num_threads(ncpu);
@@ -130,49 +129,43 @@ Rcpp::List Predict::calcStartCoverProbs(bool report_prediction_in_flanks,
 	for(seq = 0; seq < SEQUENCES.Size(); ++seq){
 		int seqlength = SEQUENCES[seq].Size();
 		
+		// calculate footprint model scores for the current fragment
+		vector<vector<double >> ftpModelsScores = BINDING_OBJECTS.getFtpModelScores(SEQUENCES[seq]);
+		
+		
 		// allocate memory for:
 		// F -  forward parition sum
 		// R - backward partition sum
 		// Prob - probability of footprint ends at position pos
 		
-		// this is how it was allocated previously
-		// Allocate memory for F, R and Prob
-		// int maxwmlen = BINDING_OBJECTS.maxwmlen;
-		// for(int seq=0; seq < SEQUENCES.Size();++seq){
-		//   vector<double > tmp(SEQUENCES[seq].Size() + maxwmlen + 1,1);
-		//   F.push_back(tmp);
-		//   tmp.resize(SEQUENCES[seq].Size() + 2,1);
-		//   R.push_back(tmp);
-		//   vector<double > tmp2(SEQUENCES[seq].Size() + 1, 0);
-		//   vector<vector<double > > tmp1(print_indexes.size(),tmp2);
-		//   Prob.push_back(tmp1);
-		// 
-		// }
-		vector<double > F(SEQUENCES[seq].Size() + maxwmlen + 1,1); // allocate memory for forward parition sum
-		vector<double > R(SEQUENCES[seq].Size() + 2,1); // allocate memory for backward partition sum. it is shorter than F
-		vector<double > probPerFtp(SEQUENCES[seq].Size() + 1, 0);
+
+		vector<double > F(seqlength + maxwmlen + 1,1); // allocate memory for forward parition sum
+		vector<double > R(seqlength + 2,1); // allocate memory for backward partition sum. it is shorter than F
+		vector<double > probPerFtp(seqlength + 1, 0);
 		vector<vector<double > > Prob(print_indexes.size(),probPerFtp);
 		
 		// calculate forward partition summ
 		F[0] = part_init;
 		vector<double > pf(numberofobjects,1);
-		for(int pos=1;pos <= seqlength + BINDING_OBJECTS.maxwmlen; ++pos){
+		for(int pos = 1; pos <= seqlength + BINDING_OBJECTS.maxwmlen; ++pos){
 			double summ=0;
 			for(int wm = 0; wm < numberofobjects; ++wm){
 				pf[wm] = 1;
 				int objlen = BINDING_OBJECTS[wm]->len;
 				
 				if(BINDING_OBJECTS[wm]->prior > 0){
-					pf[wm] = BINDING_OBJECTS[wm]->get_score(SEQUENCES,seq, pos - objlen);
+					//pf[wm] = BINDING_OBJECTS[wm]->get_score(SEQUENCES,seq, pos - objlen);
+					if(pos - objlen >= 0 && pos - objlen < seqlength)
+						pf[wm] = ftpModelsScores[wm][pos - objlen];
+					else
+						pf[wm] = BINDING_OBJECTS[wm]->prior;
 					for(int i = pos - objlen + 1; i <= pos - 1; ++i){
-						
 						if(i>=0){
 							pf[wm] *= F[i];
 						} else {
 							pf[wm] *= part_init;
 						}
 					}
-					
 				}
 				else{
 					pf[wm] = 0;
@@ -191,13 +184,17 @@ Rcpp::List Predict::calcStartCoverProbs(bool report_prediction_in_flanks,
 		// calculate backward partition summ
 		vector<double > pb(numberofobjects, 1);
 		R[seqlength + 1] = part_init;
-		for(int pos = seqlength; pos>=1; --pos){
+		for(int pos = seqlength; pos >= 1; --pos){
 			double summ = 0;
 			for(int wm = 0; wm < numberofobjects; ++wm){
 				pb[wm] = 1;
 				int objlen = BINDING_OBJECTS[wm]->len;
 				if(BINDING_OBJECTS[wm]->prior > 0){
-					pb[wm] = BINDING_OBJECTS[wm]->get_score(SEQUENCES,seq,pos - 1);
+					// pb[wm] = BINDING_OBJECTS[wm]->get_score(SEQUENCES,seq,pos - 1);
+					if(pos - 1 >= 0 && pos + objlen - 1 < seqlength)
+						pb[wm] = ftpModelsScores[wm][pos - 1];
+					else
+						pb[wm] = BINDING_OBJECTS[wm]->prior;
 					for(int i = pos+1; i <= pos+objlen-1; ++i){
 						if(i<=seqlength + 1){
 							pb[wm] *= R[i];
@@ -407,321 +404,7 @@ output_data = Rcpp::List::create( Rcpp::Named("START_PROB") = RcppListStartOut,
 return(output_data);
 }
 
-// 
-// /* // [[Rcpp::depends(RcppProgress)]]
-//  * */
-// bool Predict::Run(int ncpu)
-// {
-// 	extern bool _VERBOSE_;
-// 	
-// 	int numberofobjects = BINDING_OBJECTS.Size();
-// 	int seq = 0;
-// 	
-// 	// initial value for partition sums.
-// 	// when footprint priors are normalized, i.e. sum of all priors is 1, then initial values for partition sums is always 1.
-// 	// we normalize the priors, therefore we set value to 1.
-// 	double part_init = 1;
-// 	
-// #ifdef _OPENMP
-// 	omp_set_nested(true);
-// 	omp_set_num_threads(ncpu);
-// 	if(_VERBOSE_)
-// 		Rcpp::Rcout<<"Running prediction with "<<omp_get_max_threads()<<" cpu."<<endl;
-// #endif
-// 	
-// #pragma omp parallel private(seq)
-// {
-// 	
-// #pragma omp for schedule(dynamic)
-// 	for(seq=0;seq < SEQUENCES.Size();++seq){
-// 		
-// 		
-// 		int seqlength = SEQUENCES[seq].Size();
-// 		// calculate forward partition summ
-// 		F[seq][0] = part_init;
-// 		vector<double > pf(numberofobjects,1);
-// 		for(int pos=1;pos <= seqlength + BINDING_OBJECTS.maxwmlen; ++pos){
-// 			double summ=0;
-// 			for(int wm=0;wm < numberofobjects; ++wm){
-// 				pf[wm] = 1;
-// 				int objlen = BINDING_OBJECTS[wm]->len;
-// 				
-// 				if(BINDING_OBJECTS[wm]->prior > 0){
-// 					pf[wm] = BINDING_OBJECTS[wm]->get_score(SEQUENCES,seq, pos - objlen);
-// 					for(int i = pos - objlen + 1; i <= pos - 1; ++i){
-// 						
-// 						if(i>=0){
-// 							pf[wm] *= F[seq][i];
-// 						} else {
-// 							pf[wm] *= part_init;
-// 						}
-// 					}
-// 					
-// 				}
-// 				else{
-// 					pf[wm] = 0;
-// 				}
-// 				summ += pf[wm];
-// 			}
-// 			
-// 			F[seq][pos] = 1/summ;
-// 			if(pos<=seqlength){
-// 				for(int wm=0;wm<print_indexes.size();++wm){
-// 					Prob[seq][wm][pos] = pf[print_indexes[wm]];
-// 				}
-// 			}
-// 		}
-// 		
-// 		// calculate backward partition summ
-// 		vector<double > pb(numberofobjects, 1);
-// 		R[seq][seqlength + 1] = part_init;
-// 		for(int pos = seqlength; pos>=1;--pos){
-// 			double summ = 0;
-// 			for(int wm = 0;wm < numberofobjects; ++wm){
-// 				pb[wm] = 1;
-// 				int objlen = BINDING_OBJECTS[wm]->len;
-// 				if(BINDING_OBJECTS[wm]->prior > 0){
-// 					pb[wm] = BINDING_OBJECTS[wm]->get_score(SEQUENCES,seq,pos - 1);
-// 					for(int i = pos+1; i <= pos+objlen-1; ++i){
-// 						if(i<=seqlength + 1){
-// 							pb[wm] *= R[seq][i];
-// 						} else{
-// 							pb[wm] *= part_init;
-// 						}
-// 					}
-// 					
-// 				}
-// 				else{
-// 					pb[wm] = 0;
-// 				}
-// 				summ += pb[wm];
-// 			}
-// 			
-// 			R[seq][pos] = 1/summ;
-// 		}
-// 		// сalculate Z = Fn/Rn
-// 		
-// 		// calculate initial value for Z based on requirement that total coverage at L must be 1
-// 		double zsumm =0;
-// 		for(int wm = 0;wm < numberofobjects; ++wm){
-// 			int objlen = BINDING_OBJECTS[wm]->len;
-// 			double wmsumm = 0;
-// 			for(int pos=seqlength; pos<= seqlength + objlen - 1; ++pos){
-// 				double prod = 1;
-// 				for(int j=pos - objlen + 1; j<=seqlength;++j){
-// 					prod *= F[seq][j];
-// 				}
-// 				wmsumm += pow(part_init,pos - seqlength) * prod;
-// 			}
-// 			zsumm += BINDING_OBJECTS[wm]->prior * wmsumm;
-// 		}
-// 		
-// 		double z_init = 1/zsumm;
-// 		
-// 		R[seq][seqlength + 1] = z_init;
-// 		for(int pos = seqlength;pos >= 1;--pos){
-// 			R[seq][pos] = F[seq][pos] * R[seq][pos + 1]/R[seq][pos];
-// 		}
-// 		// calculate posteriors
-// 		for(int pos = 1;pos <= seqlength;++pos){
-// 			
-// 			for(int wm=0;wm < print_indexes.size(); ++wm){
-// 				int objlen = BINDING_OBJECTS[print_indexes[wm]]->len;
-// 				if(pos + objlen - 1 <= seqlength)
-// 					Prob[seq][wm][pos] = Prob[seq][wm][pos + objlen - 1] * F[seq][pos + objlen -1] * R[seq][pos+objlen];
-// 				else
-// 					Prob[seq][wm][pos] = 0;
-// 			}
-// 		}
-// 	}
-// 	
-// }
-// 
-// return(1);
-// }
-// 
-// 
 
-// 
-// double Predict::get_coverage_prob_at_pos_name_index(int seq, int pos, int name_index){ //wm is the index in print_names
-// 	
-// 	if(Prob.empty()){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos_name_index: ERROR! Unable to calculate coverage probability. The vector Prob is empty\n");
-// 	}
-// 	
-// 	if(seq < 0 || seq>SEQUENCES.Size() - 1){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos_name_index: ERROR! The sequence index is out of range.\n");
-// 	}
-// 	
-// 	if(pos<1 || pos>SEQUENCES[seq].Size()){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos_name_index: ERROR! The position is out of range.\n");
-// 	}
-// 	
-// 	if(name_index<0 || name_index > print_names.size() -1){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos_name_index: ERROR! The name_index is out of range.\n");
-// 	}
-// 	
-// 	string name = print_names[name_index];
-// 	double coverage=0;
-// 	int objlen = BINDING_OBJECTS[names2indexes[name_index][0]]->len;
-// 	for(int i=0;i<names2indicesinprobarray[name_index].size();++i){
-// 		for(int p = max(pos - objlen + 1,1); p <= pos; ++p){
-// 			coverage += Prob[seq][names2indicesinprobarray[name_index][i]][p];
-// 		}
-// 	}
-// 	
-// 	if(coverage<0 || coverage>1+1e-5){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos_name_index: ERROR! Incorrect value of coverage probability.\n");
-// 	}
-// 	
-// 	return coverage;
-// }
-// 
-// 
-// 
-// double Predict::get_coverage_prob_at_pos(int seq, int pos, int wm){ //wm is the index in Prob
-// 	
-// 	if(Prob.empty()){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos: ERROR! Unable to calculate coverage probability. The vector Prob is empty\n");
-// 	}
-// 	
-// 	if(seq < 0 || seq>SEQUENCES.Size() - 1){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos: ERROR! The sequence index is out of range.\n");
-// 	}
-// 	
-// 	if(pos<1 || pos>SEQUENCES[seq].Size()){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos: ERROR! The position is out of range.\n");
-// 	}
-// 	if(wm<0 || wm > Prob[seq].size() -1){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos: ERROR! The wm index is out of range.\n");
-// 	}
-// 	
-// 	double coverage=0;
-// 	int objlen = BINDING_OBJECTS[print_indexes[wm]]->len;
-// 	for(int p = max(pos - objlen + 1,1);p <= pos; ++p)
-// 		coverage += Prob[seq][wm][p];
-// 	
-// 	if(coverage < 0 || coverage > 1+1e-5){
-// 		Rcpp::stop("Predict::get_coverage_prob_at_pos: ERROR! Incorrect value of coverage probability.\n");
-// 	}
-// 	return coverage;
-// 	
-// }
-// 
-// 
-// 
-// Rcpp::List Predict::getStartProbDF(bool report_prediction_in_flanks){
-// 	extern bool _VERBOSE_;
-// 	
-// 	Rcpp::List out_list;
-// 	vector<int32_t > seqnames;
-// 	vector<int32_t > positions;
-// 	// fill seq and pos
-// 	for(int seq=0;seq < SEQUENCES.Size();seq++){
-// 		int firstDatPos = SEQUENCES[seq]._firstDatpos;
-// 		int lastDatPos = SEQUENCES[seq]._lastDatpos;
-// 		
-// 		// set start pos for reporting
-// 		int spos = report_prediction_in_flanks ? 1 : firstDatPos;
-// 		int lpos = lastDatPos;
-// 		for(int position = spos; position <= lpos; ++position){
-// 			seqnames.push_back(SEQUENCES[seq].Name());
-// 			positions.push_back(position - firstDatPos + 1);
-// 		}
-// 	}
-// 	
-// 	out_list.push_back(Rcpp::wrap(seqnames),"seq");
-// 	out_list.push_back(Rcpp::wrap(positions),"pos");
-// 	
-// 	// fill start probabilities
-// 	for(int i=0;i<print_names.size();++i){
-// 		vector<double > stprob;
-// 		int seq=0;
-// 		
-// 		for(seq=0;seq < SEQUENCES.Size();seq++){
-// 			int firstDatPos = SEQUENCES[seq]._firstDatpos;
-// 			int lastDatPos = SEQUENCES[seq]._lastDatpos;
-// 			
-// 			int spos = report_prediction_in_flanks ? 1 : firstDatPos;
-// 			int lpos = lastDatPos;
-// 			
-// 			for(int position = spos; position <= lpos; ++position){
-// 				double totalprob=0;
-// 				for(int j=0;j<names2indicesinprobarray[i].size();++j){
-// 					totalprob += Prob[seq][names2indicesinprobarray[i][j]][position];
-// 				}
-// 				stprob.push_back(totalprob);
-// 			}
-// 		}
-// 		
-// 		out_list.push_back(Rcpp::wrap(stprob),print_names[i]);
-// 	}
-// 	
-// 	return out_list;
-// }
-// 
-// 
-// 
-// Rcpp::List Predict::getCoverProbDF(){
-// 	
-// 	Rcpp::List out_list;
-// 	vector<uint32_t > seqnames;
-// 	vector<uint32_t > positions;
-// 	// fill seq and pos
-// 	for(int seq=0;seq < SEQUENCES.Size();seq++){
-// 		int firstDatPos = SEQUENCES[seq]._firstDatpos;
-// 		int lastDatPos = SEQUENCES[seq]._lastDatpos;
-// 		
-// 		for(int position = firstDatPos; position <= lastDatPos; ++position){
-// 			seqnames.push_back(SEQUENCES[seq].Name());
-// 			positions.push_back(position - firstDatPos + 1);
-// 		}
-// 	}
-// 	
-// 	out_list.push_back(Rcpp::wrap(seqnames),"seq");
-// 	out_list.push_back(Rcpp::wrap(positions),"pos");
-// 	
-// 	// fill coverage probabilities
-// 	for(int i=0;i<print_names.size();++i){
-// 		
-// 		vector<double > covprob;
-// 		for(int seq=0;seq < SEQUENCES.Size();seq++){
-// 			int firstDatPos = SEQUENCES[seq]._firstDatpos;
-// 			int lastDatPos = SEQUENCES[seq]._lastDatpos;
-// 			
-// 			for(int position = firstDatPos; position <= lastDatPos; ++position){
-// 				double coverprob=get_coverage_prob_at_pos_name_index(seq,position,i);
-// 				covprob.push_back(coverprob);
-// 			}
-// 		}
-// 		out_list.push_back(Rcpp::wrap(covprob),print_names[i]);
-// 	}
-// 	
-// 	return out_list;
-// }
-// 
-
-// 
-// Rcpp::List Predict::getGenomeSummaryDF(){
-// 	
-// 	// calculate statistics across the whole amplicon (all fragments)
-// 	SetGenomeSummary();
-// 	Rcpp::List out_list;
-// 	const char *fnms[] = {"Prior",
-//                        "Expected number of sites",
-//                        "Coverage",
-//                        "Sites<0.5",
-//                        "Sites>=0.5",
-//                        "Positions<0.5",
-//                        "Positions>=0.5"};
-// 	vector<string > field_names(fnms,fnms + 7) ;
-// 	out_list.push_back(Rcpp::wrap(field_names),"Statistics");
-// 	for(int wm=0;wm<print_names.size();++wm){
-// 		out_list.push_back(Rcpp::wrap(genomesummary[wm]),print_names[wm]);
-// 	}
-// 	
-// 	return out_list;
-// }
 
 
 void Predict::clear(){

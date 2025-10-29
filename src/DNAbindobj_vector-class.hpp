@@ -32,8 +32,7 @@ class DNAbind_obj_vector{
   size_t Size() const;
   DNAbind_obj_vector();
   ~DNAbind_obj_vector();
-  //int create(parameters &params,NOMeSeqData &sequences);
-  
+
   DNAbind_obj_vector(const Rcpp::List _bind_objs,
                          const parameters &params);
   int create(const Rcpp::List _bind_objs,
@@ -50,11 +49,10 @@ class DNAbind_obj_vector{
                                                  double bg_protect_prob,
                                                  double footprint_protect_prob,
                                                  int max_spacing);
-  // Rcpp::List R_export_calc_theor_joint_prob(vector<double > ftp_cover_priors, // here vector of priors also represent lengths, namely ith element of the vector
-  //                                           // has length i+1, e.g. ftp_cover_priors[0] is a prior for bg with length 1
-  //                                           double bg_protect_prob,
-  //                                           double footprint_protect_prob,
-  //                                           int max_spacing);
+  
+  // method to calculate scores for all footprints, including background given a sequence
+  vector<vector<double >> getFtpModelScores(const fragProtectData& fragData) const;
+
   
 };
 

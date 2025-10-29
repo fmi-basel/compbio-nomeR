@@ -37,7 +37,7 @@ fragProtectData::fragProtectData(const uint32_t fragID,
 	// add protection data to _protectVec
 	_protectVec = std::vector<uint8_t>(_size, 2);
 	for(int i = 0; i < fragPosVec.size(); ++i){
-		_protectVec[fragPosVec[i] + _firstDatpos] = protectVec[i];
+		_protectVec[_firstDatpos + fragPosVec[i]] = protectVec[i];
 	}
 }
 
