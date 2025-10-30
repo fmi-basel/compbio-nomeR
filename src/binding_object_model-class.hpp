@@ -29,7 +29,8 @@ class binding_object_model:public DNAbinding_object
                                            //                             2 |...|...|...|
   binding_object_model(const vector<double > &_protect_prob,
                        const double _prior,
-                       const string _name);
+                       const string _name,
+                       const string _group);
 
   virtual ~binding_object_model();
   virtual void print() const;

@@ -2,7 +2,8 @@
 
 binding_object_model::binding_object_model(const vector<double > &_protect_prob,
                      const double _prior,
-                     const string _name){
+                     const string _name,
+                     const string _group){
 
   classname = "wm";
 
@@ -10,6 +11,7 @@ binding_object_model::binding_object_model(const vector<double > &_protect_prob,
   prior = _prior;
   initialprior = _prior;
   name = _name;
+  group = _group;
 
 
   for(int pos=0;pos < _protect_prob.size();++pos){
@@ -40,6 +42,7 @@ binding_object_model::~binding_object_model() {
 void binding_object_model::print() const{
   Rcpp::Rcout <<"//\n";
   Rcpp::Rcout <<"NA\t"<< name <<"\n";
+  Rcpp::Rcout <<"GROUP\t"<< group <<"\n";
 
   Rcpp::Rcout <<"PRIOR\t"<< prior <<"\n";
   Rcpp::Rcout <<"POS\tPROT\tUNPROT\tNAs\n";
@@ -56,6 +59,7 @@ void binding_object_model::print() const{
 void binding_object_model::print_normalized() const{
   Rcpp::Rcout <<"//\n";
   Rcpp::Rcout <<"NA\t"<< name <<"\n";
+  Rcpp::Rcout <<"GROUP\t"<< group <<"\n";
   //Rcpp::Rcout <<"Orientation\t"<<orientation<<endl;
   Rcpp::Rcout <<"PRIOR\t"<< prior <<"\n";
   Rcpp::Rcout <<"POS\tPROT\tUNPROT\tNAs\n";

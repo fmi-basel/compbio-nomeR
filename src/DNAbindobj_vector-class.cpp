@@ -31,7 +31,7 @@ DNAbind_obj_vector::DNAbind_obj_vector(const Rcpp::List _bind_objs,
 
 int DNAbind_obj_vector::create(const Rcpp::List _bind_objs,
                                const parameters &params){
-	numberofobjects=0;
+	
 	maxwmlen = 1;
 
 	for(int wm=0; wm < _bind_objs.size(); ++wm){
@@ -49,45 +49,50 @@ int DNAbind_obj_vector::create(const Rcpp::List _bind_objs,
 			Rcpp::Rcerr<<"DNAbind_obj_vector::create: Error! At least one element in list of sequences does not contain element NAME\n";
 			return(0);
 		}
+		if(!pinf.containsElementNamed("GROUP")){
+			Rcpp::Rcerr<<"DNAbind_obj_vector::create: Error! At least one element in list of sequences does not contain element GROUP\n";
+			return(0);
+		}
 		
 		vector<double > prot_prob = Rcpp::as<vector<double > >(pinf["PROTECT_PROB"]);
 		double prior = Rcpp::as<double >(pinf["PRIOR"]);
 		string name = Rcpp::as<string >(pinf["NAME"]);
+		string group = Rcpp::as<string >(pinf["GROUP"]);
 		
 		DNAbinding_object *newobj=new binding_object_model(prot_prob,
                                                      prior,
-                                                     name);
+                                                     name,
+                                                     group);
 		objvector.push_back(newobj);
-		names.push_back(newobj->name);
-		priors.push_back(newobj->prior);
 		
-		if(newobj->len>maxwmlen)
+		// check if group exists in groups and add if not
+		if(find(groups.begin(), groups.end(), newobj->group) == groups.end()){
+			groups.push_back(newobj->group); // add group into the vector of unique groups
+			vector<int > tmp(1,objvector.size() - 1);
+			group2indices[newobj->group] = tmp;
+		} else{
+			group2indices[newobj->group].push_back(objvector.size() - 1);
+		}
+			
+		if(newobj->len > maxwmlen)
 			maxwmlen = newobj->len;
-		
-		vector<int > tmp(1,0);
-		
-		tmp[0] = objvector.size() - 1;
-		names2index.push_back(tmp);
 		
 	}
 	
 	
-	//initialise backgound model
-	
+	//initialise backgound model. always at the end of the vector
 	Background *bg = new Background(params);
 	objvector.push_back(bg);
-	names.push_back(bg->name);
-	priors.push_back(bg->prior);
 	
+	groups.push_back(bg->group);
 	vector<int > tmp(1,objvector.size() - 1);
-	names2index.push_back(tmp);
+	group2indices[bg->group] = tmp;
 	
-	numberofobjects = names.size();
+	
 	size = objvector.size();
 	
 	
 	// normalize priors so that they sum up to 1
-	
 	double priorsum=0;
 	for(int i=0;i<objvector.size();++i){
 		priorsum += objvector[i]->prior;// * objvector[i]->len;
@@ -95,20 +100,15 @@ int DNAbind_obj_vector::create(const Rcpp::List _bind_objs,
 	
 	for(int i=0;i<objvector.size();++i){
 		objvector[i]->prior = (objvector[i]->prior)/priorsum;
-		priors[i] = objvector[i]->prior;
-		//objvector[i]->print_normalized();
 	}
-	
 	return objvector.size();
-	
-	
 }
 
 
 // method to calculate scores for all footprints, including background given a sequence;
 vector<vector<double >> DNAbind_obj_vector::getFtpModelScores(const fragProtectData& fragData) const{
 	vector<vector<double >> ftpScoresMatrix;
-	for(int wm = 0; wm < numberofobjects; ++wm){
+	for(int wm = 0; wm < size; ++wm){
 		ftpScoresMatrix.push_back(objvector[wm]->get_seq_scores_vec(fragData));
 	}
 	return ftpScoresMatrix;
@@ -117,11 +117,8 @@ vector<vector<double >> DNAbind_obj_vector::getFtpModelScores(const fragProtectD
 
 
 void DNAbind_obj_vector::clear(){
-	numberofobjects=0;
+	
 	maxwmlen=0;
-	names.clear();
-	names2index.clear();
-	priors.clear();
 	
 	for(int wm=0;wm<objvector.size();wm++){
 		if(objvector[wm] != NULL){
@@ -130,9 +127,6 @@ void DNAbind_obj_vector::clear(){
 	}
 	objvector.clear();
 	size=0;
-	
-	
-	
 }
 
 

@@ -16,12 +16,19 @@
 #'     \item{COVER_PRIOR}{prior coverage probability (abundance)
 #'     (\code{numeric}) reflecting what fraction of reads you expect to be
 #'     covered by a footprint}
-#'     \item{NAME}{name (\code{character}) of a model, e.g. "Nucleosome"}
+#'     \item{NAME}{unique name (\code{character}) of a model, e.g. "Nucleosome--149", "Nucleosome--150" etc.}
+#'     \item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated 
+#'     if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149", "Nucleosome--150" etc. footprint models
+#'     have identical GROUP (e.g. "Nucleosome") and \code{aggrByGroup = TRUE}, probabilities will be aggregated
+#'     across all footprints with identical GROUP.}
 #'     }
 #' @param bgprotectprob background emission probability to find a protected
 #'     position within open (accessible) regions.
 #' @param bgcoverprior prior probability for percentage of all fragments to be
 #'     in a free (accessible, or background) state.
+#' @param aggrByGroup if \code{TRUE} probabilities are aggregated by GROUP ID defined
+#'     in \code{footprint_models}. If \code{FALSE} or GROUP IDs are missing in the \code{footprint_models}
+#'     probabilities are reported for each individual footprints NAME defined in the \code{footprint_models}.
 #' @param report_prediction_in_flanks \code{logical} whether to return
 #'     calculated start probabilities in left flanking region.
 #'     In order to take into account partial footprints at left edge of
@@ -78,6 +85,7 @@ predict_footprints <- function(data,
 															 footprint_models,
 															 bgprotectprob,
 															 bgcoverprior,
+															 aggrByGroup = FALSE,
 															 report_prediction_in_flanks = FALSE,
 															 ncpu = 1L,
 															 verbose = FALSE) {
@@ -91,6 +99,7 @@ predict_footprints <- function(data,
 	ftpvalout <- validate_footprint_models(footprint_models,
 																				 bgprotectprob,
 																				 bgcoverprior,
+																				 aggrByGroup,
 																				 verbose,
 																				 add = coll)
 	footprint_models <- ftpvalout[["footprint_models"]]

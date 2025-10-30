@@ -3,6 +3,7 @@
 Background::Background(const parameters& params){
   classname = "background";
   name = "background";
+  group = "background";
   len = 1;
   prior = params.bgprior;
   initialprior = prior;

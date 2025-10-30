@@ -56,45 +56,26 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 		Rcpp::Rcout<<"Creating Predict object..."<<endl;
 	}
 	
-	Predict predict(SMFdata,
-                 ftp_models,
-                 params);
+	// 	Predict predict(SMFdata,
+	//                  ftp_models,
+	//                  params);
+	Predict predict();
 	
 	// run prediction
 	if(_VERBOSE_){
 		Rcpp::Rcout<<"Calculating posterior probabilities..."<<endl;
 	}
-	return predict.calcStartCoverProbs(report_prediction_in_flanks_,
-                                    Ncpu_);
-// 	Rcpp::List output_data;
-// 	if(predict.Run(Ncpu_)){
-// 		//predict.Run(Ncpu_);
-// 		
-// 		if(_VERBOSE_){
-// 			Rcpp::Rcout<<"Running predict.getStartProbDF()..."<<endl;
-// 		}
-// 		Rcpp::List startProbdf = predict.getStartProbDF(report_prediction_in_flanks_);
-// 		if(_VERBOSE_){
-// 			Rcpp::Rcout<<"Running predict.getCoverProbDF()..."<<endl;
-// 		}
-// 		Rcpp::List coverProb = predict.getCoverProbDF();
-// 		
-// 		output_data = Rcpp::List::create( Rcpp::Named("START_PROB") = startProbdf,
-//                                     Rcpp::Named("COVER_PROB") = coverProb);
-// 		
-// 		
-// 
-// 	} else {
-// 		output_data = Rcpp::List::create( Rcpp::Named("START_PROB") = R_NilValue,
-//                                     Rcpp::Named("COVER_PROB") = R_NilValue);
-// 		
-// 	}
-// 	
-// 	_VERBOSE_ = 0;
-//	return output_data;
-
-
 	
+	Rcpp::List outList = predict.calcStartCoverProbs(SMFdata,
+                                                  ftp_models,
+                                                  params,
+                                                  report_prediction_in_flanks_,
+                                                  Ncpu_);
+	// clear
+	SMFdata.clear();
+	ftp_models.clear();
+	
+	return outList;
 }
 
 

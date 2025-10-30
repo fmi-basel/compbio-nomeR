@@ -16,6 +16,7 @@ class DNAbinding_object{
  public:
   string classname;
   string name;
+  string group;
   int len;
   double prior;
   double initialprior;

@@ -3,6 +3,7 @@
 validate_footprint_models <- function(footprint_models,
                                       bgprotectprob,
                                       bgcoverprior,
+																			aggrByGroup,
                                       verbose,
                                       add = NULL) {
     ### validate binding_models
@@ -23,6 +24,15 @@ validate_footprint_models <- function(footprint_models,
         }, NA_character_)
         assert_character(x = ftpnames, any.missing = FALSE,
                          unique = TRUE, add = add)
+        
+        ## check/define GROUP ids
+        footprint_models <- sapply(footprint_models,
+        													 function(x){
+        													 	if(is.null(x[["GROUP"]]) | !aggrByGroup)
+        													 		x[["GROUP"]] <- x[["NAME"]]
+        													 	return(x)
+        													 },simplify = F,USE.NAMES = T)
+        
     }
     
     ### validate bgprotectprob
