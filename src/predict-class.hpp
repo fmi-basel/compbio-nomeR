@@ -38,12 +38,23 @@ public:
   Predict();
 
   ~Predict();
+  
+  void getCoverProbsMatrix(const vector<vector<double > >& startProb,
+                                              const DNAbind_obj_vector& ftpModels,
+                                              const int& fDPos, // firstDatPos
+                                              const int& lDPos, // lastDatPos
+                                              const size_t& nFtpGroups,
+                                              vector<vector<double >>& aggrCoverOutProbs
+                                              );
+  
 
   Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
                                  const DNAbind_obj_vector& ftpModels,
                                  const parameters& params,
                                  bool report_prediction_in_flanks,
                                  int ncpu);
+  
+  
 
 };
 

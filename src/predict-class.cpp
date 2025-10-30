@@ -7,11 +7,52 @@ Predict::~Predict(){
 
 Predict::Predict()
 {
-
+	
 }
 
 
-
+void Predict::getCoverProbsMatrix(const vector<vector<double > >& startProb,
+                                  const DNAbind_obj_vector& ftpModels,
+                                  const int& fDPos, // firstDatPos
+                                  const int& lDPos, // lastDatPos
+                                  const size_t& nFtpGroups,
+                                  vector<vector<double >>& aggrCoverOutProbs
+){
+	
+	// for each group
+	for(int igroup = 0; igroup < nFtpGroups; ++igroup){
+		// get name for the current ftp group
+		string groupName = ftpModels.groups[igroup];
+		
+		// 1. calculate coverage probailities for each footprint using recurrence relationship
+		// get footprint indices for current ftp group
+		const vector<int >& groupFtpIndices = ftpModels.getGroupIndexVec(groupName);
+		
+		for(int gFtpi = 0; gFtpi < groupFtpIndices.size(); ++gFtpi){
+			int objlen = ftpModels[groupFtpIndices[gFtpi]]->len;
+			vector<double > currFtpCovProb(lDPos - fDPos + 1,0);
+			// calculate initial probability at the fDPos (which is firstDatPos)
+			for(int p = max(fDPos - objlen + 1,1); p <= fDPos; ++p){
+				currFtpCovProb[0] += startProb[groupFtpIndices[gFtpi]][p];
+			}
+			aggrCoverOutProbs[igroup][0] += currFtpCovProb[0];
+			
+			// calculate the rest coverage probabilities by adding and subtracting the probabilities at the next and behind positions
+			for(int position = fDPos + 1; position <= lDPos; ++position){
+				currFtpCovProb[position - fDPos] = 
+					currFtpCovProb[position - fDPos - 1] - 
+					startProb[groupFtpIndices[gFtpi]][position - objlen] + // substract probability at position left behind
+					startProb[groupFtpIndices[gFtpi]][position];  // add probability at current position
+				
+				aggrCoverOutProbs[igroup][position - fDPos] += currFtpCovProb[position - fDPos];
+			}
+			
+		}
+		
+	}
+	
+	return aggrCoverOutProbs;
+}
 
 
 // method that calculates start and cover probabilities and returns a Rcpp::List with calculated data.
@@ -27,7 +68,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 	
 	size_t nFtpModels = ftpModels.Size(); // number of footprint models including background
 	size_t nFtpGroups = ftpModels.getGroupsSize(); // number of groups of footprint models
-	      																						// probabilities will be aggregated per group
+	// probabilities will be aggregated per group
 	int maxwmlen = ftpModels.maxwmlen; // maximum size of footprint model;
 	int seq = 0;
 	// initial value for partition sums.
@@ -61,7 +102,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 	}
 	
 	
-
+	
 #ifdef _OPENMP
 	omp_set_nested(true);
 	omp_set_num_threads(ncpu);
@@ -238,33 +279,35 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		// fill output vectors for COVER_PROB. Perhaps, this can be optimized by adding and subtracting start prob at end and beginning of footprint
 		vector<int32_t > currSeqCoverOutFragIDs;
 		vector<int32_t > currSeqCoverOutFragPos;
-		vector<double > tmpcov;
-		vector<vector<double >> currSeqCoverOutProbs(nFtpGroups,tmpcov);
+		// vector<double > tmpcov;
+		// vector<vector<double >> currSeqCoverOutProbs(nFtpGroups,tmpcov);
 		
 		for(int position = firstDatPos; position <= lastDatPos; ++position){
 			//// 1. fill fragIDs and fragPos
 			currSeqCoverOutFragIDs.push_back(smfData[seq].Name());
 			currSeqCoverOutFragPos.push_back(position - firstDatPos + 1);
-			//// 2. fill cover probabilities for each footprint
-			for(int igroup = 0; igroup < nFtpGroups; ++igroup){
-				// get name for the current ftp group
-				string groupName = ftpModels.groups[igroup];
-				// get indices for current ftp group
-				const vector<int >& groupFtpIndices = ftpModels.getGroupIndexVec(groupName);
-				double coverprob = 0;
-				for(int gFtpi = 0; gFtpi < groupFtpIndices.size(); ++gFtpi){
-					// get length for current footprint model
-					int objlen = ftpModels[groupFtpIndices[gFtpi]]->len;
-					for(int p = max(position - objlen + 1,1); p <= position; ++p){
-						coverprob += Prob[groupFtpIndices[gFtpi]][p];
-					}
-				}
-				currSeqCoverOutProbs[igroup].push_back(coverprob);
-			}
 		}
+		
 		
 		coverOutFragIDs[seq] = move(currSeqCoverOutFragIDs);
 		coverOutFragPos[seq] = move(currSeqCoverOutFragPos);
+		
+		
+		// allocate vectors for coverage probabilities for each group
+		vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);;
+		vector<vector<double >> currSeqCoverOutProbs(nFtpGroups,tmpcov); // aggregated probabilities across all footprints per group;
+
+		// vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);
+		// coverOutProbs[seq].resize(nFtpGroups,tmpcov);
+		
+		getCoverProbsMatrix(Prob,
+                      ftpModels,
+                      firstDatPos,
+                      lastDatPos,
+                      nFtpGroups,
+                      //coverOutProbs[seq]
+                      currSeqCoverOutProbs
+                      );
 		coverOutProbs[seq] = move(currSeqCoverOutProbs);
 		
 	}
