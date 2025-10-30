@@ -59,13 +59,13 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 	// 	Predict predict(SMFdata,
 	//                  ftp_models,
 	//                  params);
-	Predict predict();
+	
 	
 	// run prediction
 	if(_VERBOSE_){
 		Rcpp::Rcout<<"Calculating posterior probabilities..."<<endl;
 	}
-	
+	Predict predict;
 	Rcpp::List outList = predict.calcStartCoverProbs(SMFdata,
                                                   ftp_models,
                                                   params,

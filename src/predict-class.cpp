@@ -50,8 +50,7 @@ void Predict::getCoverProbsMatrix(const vector<vector<double > >& startProb,
 		}
 		
 	}
-	
-	return aggrCoverOutProbs;
+
 }
 
 
@@ -296,7 +295,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		// allocate vectors for coverage probabilities for each group
 		vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);;
 		vector<vector<double >> currSeqCoverOutProbs(nFtpGroups,tmpcov); // aggregated probabilities across all footprints per group;
-
+		
 		// vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);
 		// coverOutProbs[seq].resize(nFtpGroups,tmpcov);
 		
@@ -307,7 +306,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                       nFtpGroups,
                       //coverOutProbs[seq]
                       currSeqCoverOutProbs
-                      );
+		);
 		coverOutProbs[seq] = move(currSeqCoverOutProbs);
 		
 	}
