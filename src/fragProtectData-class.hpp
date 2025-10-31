@@ -15,7 +15,7 @@ using namespace std;
 
 class fragProtectData{
 
-	// all positions within fragments are 0 - based!
+	// all positions within fragments are 1 - based!
 public:
 	// public data
 	uint32_t _fragID; // the index of the fragment that was passed from the R code
@@ -34,7 +34,7 @@ public:
 	fragProtectData();
 	fragProtectData(const fragProtectData & s);
 	fragProtectData(const uint32_t fragID,
-                 const vector<uint32_t>& fragPosVec, // input positions fragPosVec must be 0-based
+                 const vector<uint32_t>& fragPosVec, // input positions fragPosVec must be 1-based
                  const vector<uint8_t>& protectVec,
                  int maxWMlen);
 	~fragProtectData();

@@ -106,7 +106,7 @@ predict_footprints_SE <- function(se,
 																			assayName,
 																			threshUnmod,
 																			threshMod)
-	browser()
+	
 	if(nrow(protect_data) == 0)
 		stop("No data satisfy thresholds for modified and unmodified bases. Check parameters threshUnmod and threshMod")
 
@@ -114,6 +114,7 @@ predict_footprints_SE <- function(se,
 	ftpvalout <- validate_footprint_models(footprint_models,
 																				 bgprotectprob,
 																				 bgcoverprior,
+																				 aggrByGroup,
 																				 verbose,
 																				 add = coll)
 	footprint_models <- ftpvalout[["footprint_models"]]
@@ -143,6 +144,7 @@ predict_footprints_SE <- function(se,
 	if (verbose) {
 		.message_timestamp("Calling run_cpp_nomeR...")
 	}
+	browser()
 	## protect_data is a matrix returned by validate_prepare_SE
 	## columns are:
 	## sidx - index of sample in SE
@@ -151,30 +153,25 @@ predict_footprints_SE <- function(se,
 	## posidx_ref - index of rows in SE, corresponds to reference position stored in rowRanges(se)
 	## protect - binary protection data, 0 - accessible, 1 - protected
 	## refpos - genomic position within a reference
-	## fragpos - position within a frament, 0 - based
+	## fragpos - position within a frament, 1 - based
 
 	## the C++ needs only fidx_glob, fragpos, protect
-	out.list <- run_cpp_nomeR(protect_data[,"fidx_glob"], ## unique fragment ID or index
-														protect_data[,"fragpos"],      ## position within fragment, 0 - based
-														protect_data[,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
-														footprint_models,
-														bgprotectprob,
-														start_priors["BG"],
-														report_prediction_in_flanks,
-														ncpu,
-														verbose)
+	out.list <- calcStartCoverProbs_cpp(protect_data[,"fidx_glob"], ## unique fragment ID or index
+																			protect_data[,"fragpos"],      ## position within fragment, 1 - based
+																			protect_data[,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
+																			footprint_models,
+																			bgprotectprob,
+																			start_priors["BG"],
+																			report_prediction_in_flanks,
+																			ncpu,
+																			verbose)
+	
+	
+	
 
-	### TODO: the run_cpp_nomeR will return calculated probabilities, START_PROB and COVER_PROB for EACH position within a fragment
+	### TODO: the calcStartCoverProbs_cpp will return calculated probabilities, START_PROB and COVER_PROB for EACH position within a fragment
 	### Convert this output to a format that could be added as assay into SE input object
-	## old call of the function
-	# out.list <- run_cpp_nomeR(data[["data_list"]],
-	# 													data[["fragnames"]],
-	# 													footprint_models,
-	# 													bgprotectprob,
-	# 													start_priors["BG"],
-	# 													report_prediction_in_flanks,
-	# 													ncpu,
-	# 													verbose)
+	
 
 	if (all(c(!is.null(out.list[["START_PROB"]]),
 						!is.null(out.list[["COVER_PROB"]])))) {

@@ -131,7 +131,7 @@ predict_footprints <- function(data,
 	}
 	## the C++ needs only fidx_glob, fragpos, protect
 	out.list <- calcStartCoverProbs_cpp(data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
-																			data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 0 - based
+																			data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 1 - based
 																			data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
 																			footprint_models,
 																			bgprotectprob,

@@ -72,7 +72,7 @@ validate_prepare_SE <- function(se,
 														"refpos" = start(rowRanges(se))[bin_protect_data[,"posidx_ref"]])
 
 	## add position within fragments
-	frag_rstart <-tapply(bin_protect_data[,"refpos"],bin_protect_data[,"fidx_glob"],min,na.rm=T)
+	frag_rstart <-tapply(bin_protect_data[,"refpos"],bin_protect_data[,"fidx_glob"],min,na.rm=T) + 1
 
 	## NOTE: the fragpos are 0 - based positions within fragments
 	bin_protect_data <- cbind(bin_protect_data,
@@ -87,6 +87,6 @@ validate_prepare_SE <- function(se,
 	## posidx_ref - index of rows in SE, corresponds to reference position stored in rowRanges(se)
 	## protect - binary protection data, 0 - accessible, 1 - protected
 	## refpos - genomic position within a reference
-	## fragpos - position within a frament, 0 - based
+	## fragpos - position within a frament, 1 - based
 	return(bin_protect_data)
 }

@@ -31,7 +31,7 @@ bool SMFdataset::create(const Rcpp::IntegerVector& fragIDs,
 		Rcpp::stop("SMFdataset::create: Inconsistent lengths of input vectors fragIDs, fragPos and protecVec.\n");
 
 	int currFragID = -1;
-	vector<uint32_t > currfragPosVec; // input positions fragPosVec must be 0-based
+	vector<uint32_t > currfragPosVec; // input positions fragPosVec must be 1-based
 	vector<uint8_t > currprotectVec;
 	for(int i = 0; i < fragIDs.size(); ++i){
 
@@ -65,7 +65,7 @@ bool SMFdataset::create(const Rcpp::IntegerVector& fragIDs,
 }
 
 void SMFdataset::Add(const uint32_t fragID,
-                     const vector<uint32_t>& fragPosVec, // input positions fragPosVec must be 0-based
+                     const vector<uint32_t>& fragPosVec, // input positions fragPosVec must be 1-based
                      const vector<uint8_t>& protectVec,
                      int maxWMlen){
 	// create a new object of class fragProtectData

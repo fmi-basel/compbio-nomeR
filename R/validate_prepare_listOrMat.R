@@ -30,13 +30,13 @@ validate_prepare_listOrMat <- function(data) {
 												data[nonNA_data])
 		colnames(nonNA_data) <- c("fidx_glob","colidx","protect")
 		
-		## add position within fragments, here just shift to make 0-based
+		## add position within fragments
 		nonNA_data <- cbind(nonNA_data,
-												"fragpos" = nonNA_data[,"colidx"] - 1)
+												"fragpos" = nonNA_data[,"colidx"])
 		## fidx_glob - unique index of fragment across all samples, as if they were cbinded
 		## "colidx" - column index in the input matrix data
 		## protect - binary protection data, 0 - accessible, 1 - protected
-		## fragpos - position within a frament, 0 - based
+		## fragpos - position within a frament, 1 - based
 		fragnames <- row.names(data)
 		
 	} else if (test_list(data,types = "integerish",
@@ -65,9 +65,9 @@ validate_prepare_listOrMat <- function(data) {
 																			 											"protect" = dvec)
 																			 	return(nonNA_data)
 																			 }))
-		## add position within fragments, here just shift to make 0-based
+		## add position within fragments
 		nonNA_data <- cbind(nonNA_data,
-												"fragpos" = nonNA_data[,"colidx"] - 1)
+												"fragpos" = nonNA_data[,"colidx"])
 		fragnames <- names(data)
 		
 	} else {

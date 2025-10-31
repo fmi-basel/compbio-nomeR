@@ -32,7 +32,7 @@ public:
 
 
 	void Add(const uint32_t fragID,
-          const vector<uint32_t>& fragPosVec, // input positions fragPosVec must be 0-based
+          const vector<uint32_t>& fragPosVec, // input positions fragPosVec must be 1-based
           const vector<uint8_t>& protectVec,
           int maxWMlen);
 	void Add(fragProtectData & frag);
