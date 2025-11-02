@@ -12,6 +12,7 @@ Description: \code{nomeR} uses a probabilistic model for analysis of data from
 License: MIT + file LICENSE
 Imports: 
     checkmate,
+    data.table,
     extraDistr,
     GenomicRanges,
     ggplot2,

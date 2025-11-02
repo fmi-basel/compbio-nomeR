@@ -47,6 +47,8 @@ public:
                                               vector<vector<double >>& aggrCoverOutProbs
                                               );
   
+  // void getViterbiMAPftpConf();
+  
 
   Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
                                  const DNAbind_obj_vector& ftpModels,

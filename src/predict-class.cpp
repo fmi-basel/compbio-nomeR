@@ -86,6 +86,16 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 	vector<vector<vector<double >>> startOutProbs; // vectors of size nFtpGroups, i.e. for each group . per each seq
 	vector<vector<vector<double >>> coverOutProbs;
 	
+	// // allocate vectors for maximum aposteriory configurations
+	// vector<vector<int32_t >> viterbiOutFragIDs(smfData.Size(),tmp_vec);
+	// vector<vector<int32_t >> viterbiOutFragPos(smfData.Size(),tmp_vec);
+	// vector<vector<int32_t >> viterbiOutFtpWidth(smfData.Size(),tmp_vec);
+	// 
+	// vector<string > tmp_str;
+	// vector<vector<string >> viterbiOutFtpName(smfData.Size(),tmp_str);
+	// vector<vector<string >> viterbiOutFtpGroup(smfData.Size(),tmp_str);
+	// vector<double > tmp_dbl;
+	// vector<vector<double >> viterbiOutFtpProb(smfData.Size(),tmp_dbl);
 	
 	for(seq = 0; seq < smfData.Size(); ++seq){
 		vector<vector<double >> tmpst;
@@ -99,6 +109,8 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		startOutProbs.push_back(tmpst);
 		coverOutProbs.push_back(tmpcv);
 	}
+	
+	
 	
 	
 	
@@ -236,8 +248,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		
 		
 		// get output data structure for current sequence for start and cover probabilities
-		// namely, append the vectors that we initialized before the for loop
-		// i.e. startOutFragIDs, startOutFragPos, startOutProbs[ftp]
+		// startOutFragIDs, startOutFragPos, startOutProbs[ftp]
 		// and coverOutFragIDs, coverOutFragPos, coverOutProbs[ftp]
 		// for the current molecule
 		// NOTE: startOutProbs and coverOutProbs contain aggregated probabilities per group
@@ -304,10 +315,24 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                       firstDatPos,
                       lastDatPos,
                       nFtpGroups,
-                      //coverOutProbs[seq]
                       currSeqCoverOutProbs
 		);
 		coverOutProbs[seq] = move(currSeqCoverOutProbs);
+		
+// 		// get maximum aposteriori comfiguration of footprints using Viterbi algorithm
+// 		vector<int32_t > currViterbiOutFragIDs;
+// 		vector<int32_t > currViterbiOutFragPos;
+// 		vector<int32_t > currViterbiOutFtpWidth;
+// 		
+// 		vector<string > currViterbiOutFtpName;
+// 		vector<string > currViterbiOutFtpGroup
+// 		
+// 		vector<double > currViterbiOutFtpProb;
+// 		getViterbiMAPftpConf(Prob,
+//                        ftpModels,
+//                        firstDatPos,
+//                        lastDatPos,);
+		
 		
 	}
 	

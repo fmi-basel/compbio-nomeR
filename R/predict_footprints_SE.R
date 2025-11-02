@@ -60,6 +60,7 @@
 #' @importFrom GenomicRanges GPos match seqnames start end
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom S4Vectors DataFrame SimpleList
+#' @import data.table
 #' @export
 #'
 #' @examples
@@ -98,7 +99,7 @@ predict_footprints_SE <- function(se,
 																	report_prediction_in_flanks = FALSE,
 																	ncpu = 1L,
 																	verbose = FALSE) {
-
+	
 	## check arguments
 	coll <- makeAssertCollection()
 	### validate se object and prepare data for nomeR prediction
@@ -109,7 +110,7 @@ predict_footprints_SE <- function(se,
 	
 	if(nrow(protect_data) == 0)
 		stop("No data satisfy thresholds for modified and unmodified bases. Check parameters threshUnmod and threshMod")
-
+	
 	### validate footprint models
 	ftpvalout <- validate_footprint_models(footprint_models,
 																				 bgprotectprob,
@@ -123,7 +124,7 @@ predict_footprints_SE <- function(se,
 	assert_logical(report_prediction_in_flanks,
 								 any.missing = FALSE, all.missing = FALSE,
 								 len = 1, add = coll)
-
+	
 	### validate ncpu
 	assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
 	avail_ncpu <- parallel::detectCores()
@@ -137,14 +138,14 @@ predict_footprints_SE <- function(se,
 												 "available cpus."))
 		ncpu <- avail_ncpu
 	}
-
+	
 	## finish argument check
 	reportAssertions(coll)
-
+	
 	if (verbose) {
 		.message_timestamp("Calling run_cpp_nomeR...")
 	}
-	browser()
+	
 	## protect_data is a matrix returned by validate_prepare_SE
 	## columns are:
 	## sidx - index of sample in SE
@@ -154,33 +155,130 @@ predict_footprints_SE <- function(se,
 	## protect - binary protection data, 0 - accessible, 1 - protected
 	## refpos - genomic position within a reference
 	## fragpos - position within a frament, 1 - based
-
-	## the C++ needs only fidx_glob, fragpos, protect
-	out.list <- calcStartCoverProbs_cpp(protect_data[,"fidx_glob"], ## unique fragment ID or index
-																			protect_data[,"fragpos"],      ## position within fragment, 1 - based
-																			protect_data[,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
-																			footprint_models,
-																			bgprotectprob,
-																			start_priors["BG"],
-																			report_prediction_in_flanks,
-																			ncpu,
-																			verbose)
+	
+	## the calcStartCoverProbs_cpp needs only fidx_glob, fragpos, protect
+	predict_res <- calcStartCoverProbs_cpp(protect_data[["fidx_glob"]], ## unique fragment ID or index
+																				 protect_data[["fragpos"]],      ## position within fragment, 1 - based
+																				 protect_data[["protect"]],   ## binary protection data, 0 - accessible, 1 - protected
+																				 footprint_models,
+																				 bgprotectprob,
+																				 start_priors["BG"],
+																				 report_prediction_in_flanks,
+																				 ncpu,
+																				 verbose)
 	
 	
 	
-
-	### TODO: the calcStartCoverProbs_cpp will return calculated probabilities, START_PROB and COVER_PROB for EACH position within a fragment
-	### Convert this output to a format that could be added as assay into SE input object
-	
-
-	if (all(c(!is.null(out.list[["START_PROB"]]),
-						!is.null(out.list[["COVER_PROB"]])))) {
+	## construct ouput SE
+	if (all(c(!is.null(predict_res[["START_PROB"]]),
+						!is.null(predict_res[["COVER_PROB"]])))) {
 		if (verbose) {
-			.message_timestamp("convert cpp_nomeR output to data.frame...")
+			.message_timestamp("constructing assays for SE...")
 		}
-		return(lapply(out.list,as.data.frame,
-									stringsAsFactors = FALSE,
-									check.names = FALSE))
+		
+		## convert to data.table and rbind
+		predict_res <- rbindlist(lapply(names(predict_res),
+																		function(nm){
+																			x <- as.data.table(predict_res[[nm]])
+																			x <- x[,prob_group := nm]
+																			return(x)
+																		}))
+		
+		
+		## create annotation of reads
+		rowGpos <- rowRanges(se)
+		
+		frag2sample_anno <- protect_data[fragpos == 1][,
+																									 c("strand","chr") := .(as.character(strand(rowRanges(se))[posidx_ref]),
+																									 											 as.character(seqnames(rowRanges(se))[posidx_ref]))][,
+																									 											 																										.(fidx_glob,
+																									 											 																											sidx,
+																									 											 																											fidx_sample,
+																									 											 																											posidx_ref,
+																									 											 																											chr,
+																									 											 																											refpos,
+																									 											 																											strand)]
+		## add readNames
+		mod_prob_assays <- assay(se,"mod_prob")
+		readNames <- data.table::rbindlist(lapply(1:ncol(mod_prob_assays),
+												function(sidx){
+													data.table(sidx = sidx,
+																		 fidx_sample = 1:ncol(mod_prob_assays[[sidx]]),
+																		 readName = colnames(mod_prob_assays[[sidx]]))
+												}))
+		frag2sample_anno <- readNames[frag2sample_anno,on = .(sidx == sidx,fidx_sample == fidx_sample)]
+		## add reference positions
+		predict_res <- predict_res[,refpos := pos - 1 + frag2sample_anno[match(seq,frag2sample_anno[["fidx_glob"]])][["refpos"]]]
+		
+		## add chr, strand, sidx, and fidx_sample
+		predict_res <- frag2sample_anno[,.(fidx_glob,sidx, fidx_sample,chr,strand)][predict_res,
+																																								on = .(fidx_glob = seq)]
+		
+		## add modprob 
+		predict_res <- protect_data[,.(fidx_glob,fragpos,mod_prob)][predict_res, on = .(fidx_glob = fidx_glob,
+																																										fragpos = pos)]
+		fcols <- c("prob_group","fidx_glob","sidx","fidx_sample","fragpos",
+							 "chr","refpos","strand",
+							 "mod_prob")
+		setcolorder(predict_res,c(fcols,
+															setdiff(colnames(predict_res),fcols)))
+		
+		## create rowRanges
+		posuniq <- unique(predict_res[,.(chr,refpos,strand)])[,gpos_idx := 1:.N]
+		## add gposidx
+		predict_res <- posuniq[predict_res,
+													 on = .(chr=chr,refpos=refpos,strand=strand)]
+		seOutRowRanges <- GenomicRanges::GPos(seqnames = posuniq[["chr"]],
+																					pos = posuniq[["refpos"]],
+																					strand = posuniq[["strand"]],
+																					seqinfo = seqinfo(rowGpos))
+		
+		
+		ftpnames <- setdiff(colnames(predict_res),c(fcols,"gpos_idx"))
+		nomeR_assayNames <- c("mod_prob",paste(rep(ftpnames,2),
+															rep(c("coverProb","startProb"),each = length(ftpnames)),
+															sep="_"))
+		assayAnno <- data.frame(assayName = nomeR_assayNames,
+														ftpName = c("mod_prob",rep(ftpnames,2)),
+														probName = c("START_PROB",rep(c("COVER_PROB","START_PROB"),each = length(ftpnames))))
+		
+		## extract readNames
+		
+		## create list of assays
+		assayList <- lapply(1:nrow(assayAnno),
+												function(assayI){
+													assayMat <- make_zero_col_DFrame(nrow = length(seOutRowRanges))
+													for(sI in 1:ncol(se)){
+														
+														### select which fragments belong to current sample. 
+														curDat <- predict_res[sidx == sI & prob_group == assayAnno$probName[assayI]]
+														curDat <- curDat[!is.na(curDat[[assayAnno$ftpName[assayI]]])]
+														maxFidx <- frag2sample_anno[sidx == sI,max(fidx_sample)]
+														curFragNames <- frag2sample_anno[sidx == sI][match(1:maxFidx,fidx_sample)][["readName"]]
+														## get read names
+														
+														namat <- NaArray(dim = c(length(seOutRowRanges), maxFidx),
+																						 dimnames = list(NULL,curFragNames),
+																						 type = "double")
+														## add data
+														
+														namat[as.matrix(curDat[,.(gpos_idx,fidx_sample)])] <- curDat[[assayAnno$ftpName[assayI]]]
+														assayMat[[assayAnno$assayName[assayI]]] <- namat
+													}
+													colnames(assayMat) <- colnames(se)
+													return(assayMat)
+													
+												})
+		names(assayList) <- assayAnno$assayName
+		
+		seOut <- SummarizedExperiment(
+			assays = assayList,
+			rowRanges = seOutRowRanges,
+			colData = colData(se),
+			metadata = metadata(se)
+		)
+		
+		return(seOut)
 	} else {
 		stop("retrieved NULL results from C++ function.")
 	}
