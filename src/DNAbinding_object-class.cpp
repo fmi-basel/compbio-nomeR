@@ -8,6 +8,7 @@ DNAbinding_object::DNAbinding_object(){
   len=0;
   prior = 0;
   initialprior = 0;
+  nonInformPosterior = 0;
 
 }
 

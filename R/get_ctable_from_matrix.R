@@ -13,9 +13,9 @@ get_ctable_from_matrix <- function(data, max_spacing,
                                    ncpu = 1L) {
 
     ### validate data
-    data <- validate_data_for_predict2(data)
+    data <- validate_prepare_listOrMat(data)
     out_data <- count_spacing_freq_cpp(data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
-    																	 data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 0 - based
+    																	 data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 1 - based
     																	 data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
                                        max_spacing)
     return(as.data.frame(out_data))

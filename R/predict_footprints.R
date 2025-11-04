@@ -130,22 +130,24 @@ predict_footprints <- function(data,
 		.message_timestamp("Calling run_cpp_nomeR...")
 	}
 	## the C++ needs only fidx_glob, fragpos, protect
-	out.list <- calcStartCoverProbs_cpp(data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
-																			data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 1 - based
-																			data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
-																			footprint_models,
-																			bgprotectprob,
-																			start_priors["BG"],
-																			report_prediction_in_flanks,
-																			ncpu,
-																			verbose)
+	predict_res_list <- calcStartCoverProbs_cpp(data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
+																							data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 1 - based
+																							data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
+																							footprint_models,
+																							bgprotectprob,
+																							start_priors["BG"],
+																							report_prediction_in_flanks,
+																							ncpu,
+																							verbose)
 	
-	if (all(c(!is.null(out.list[["START_PROB"]]),
-						!is.null(out.list[["COVER_PROB"]])))) {
+	if (all(c(!is.null(predict_res_list[["START_PROB"]]),
+						!is.null(predict_res_list[["COVER_PROB"]]),
+						!is.null(predict_res_list[["VITERBI_CONF"]])))) {
 		if (verbose) {
-			.message_timestamp("convert cpp_nomeR output to data.frame...")
+			.message_timestamp("convert cpp_nomeR output to data.table...")
 		}
-		return(lapply(out.list,as.data.frame,
+		
+		return(lapply(predict_res_list,as.data.frame,
 									stringsAsFactors = FALSE,
 									check.names = FALSE))
 	} else {

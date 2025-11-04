@@ -101,6 +101,17 @@ int DNAbind_obj_vector::create(const Rcpp::List _bind_objs,
 	for(int i=0;i<objvector.size();++i){
 		objvector[i]->prior = (objvector[i]->prior)/priorsum;
 	}
+	
+	// calculate posteriors for infinite non-informative sequence
+	
+	double sum = 0;
+	for(int i = 0; i < objvector.size(); ++i){
+		sum += objvector[i]->prior * objvector[i]->len;
+	}
+	
+	for(int i = 0; i < objvector.size(); ++i){
+		objvector[i]->nonInformPosterior = objvector[i]->prior / sum;
+	}
 	return objvector.size();
 }
 

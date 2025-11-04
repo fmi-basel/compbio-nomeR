@@ -15,6 +15,7 @@
 #include <string>
 #include <time.h>
 #include <Rcpp.h>
+#include <limits>
 using namespace std;
 
 #ifdef _OPENMP
@@ -47,7 +48,15 @@ public:
                                               vector<vector<double >>& aggrCoverOutProbs
                                               );
   
-  // void getViterbiMAPftpConf();
+  void getViterbiMAPftpConf(const vector<vector<double > >& startProb,
+                            const DNAbind_obj_vector& ftpModels,
+                            const int& fDPos, // firstDatPos
+                            const int& lDPos, // lastDatPos
+                            vector<int32_t >& cVitFragPos,
+                            vector<int32_t >& cVitFtpWidth,
+                            vector<string >& cVitFtpName,
+                            vector<string >& cVitFtpGroup,
+                            vector<double >& cVitFtpProb);
   
 
   Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,

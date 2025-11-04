@@ -17,6 +17,10 @@ validate_prepare_SE <- function(se,
 																assayName,
 																threshUnmod,
 																threshMod) {
+	
+	protect = mod_prob = fidx_sample = posidx_ref = refpos = fidx_glob = ftp_group = NULL # due to NSE notes in R CMD check
+	
+	
 	### The code for checking the vailidity of se is copied
 	### from the footprintR package developed by Charlotte Soneson and Michael Stadler
 	
@@ -66,7 +70,7 @@ validate_prepare_SE <- function(se,
 																									 	## fidx_sample - index of fragment for the current sample
 																									 	## posidx_ref - index of rows in SE, corresponds to reference position stored in rowRanges(se)
 																									 	## protect - binary protection data, 0 - accessible, 1 - protected
-																									 	nonNA_data <- nonNA_data[,c("sidx","fidx_glob") := .(rep(sidx,nrow(nonNA_data)),
+																									 	nonNA_data <- nonNA_data[,c("sidx","fidx_glob") := list(rep(sidx,nrow(nonNA_data)),
 																									 																											 ncol(read_naar)*(sidx - 1) + fidx_sample)]
 																									 	
 																									 	## remove those positions which did not pass thresholding and return
@@ -80,7 +84,7 @@ validate_prepare_SE <- function(se,
 	
 	## add position within fragments
 	## NOTE: the fragpos are 1 - based positions within fragments
-	bin_protect_data <- bin_protect_data[,"fragpos" := refpos - min(refpos) + 1, .(fidx_glob)]
+	bin_protect_data <- bin_protect_data[,"fragpos" := refpos - min(refpos) + 1, list(fidx_glob)]
 	
 	## order by fidx_glob and fragpos by setting keyv
 	setkeyv(bin_protect_data,cols = c("fidx_glob","fragpos"))

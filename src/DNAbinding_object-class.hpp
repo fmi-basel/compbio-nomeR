@@ -20,6 +20,8 @@ class DNAbinding_object{
   int len;
   double prior;
   double initialprior;
+  
+  double nonInformPosterior;
 
   DNAbinding_object();
   virtual ~DNAbinding_object() = 0;

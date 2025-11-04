@@ -21,7 +21,7 @@ predict_footprints_SE(
 }
 \arguments{
 \item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-containing read-level data returned by \code{\link[readModBam]{footprintR}} function
+containing read-level data returned by \code{\link[footprintR]{readModBam}} function
 containing modification probabilities.}
 
 \item{assayName}{Character scalar describing the name of tje assay in \code{se} containing
