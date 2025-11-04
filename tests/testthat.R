@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(nomeR)
+library(nomeRpredict)
 
-test_check("nomeR")
+test_check("nomeRpredict")

@@ -20,19 +20,6 @@ test_that("wrong parameters for predict_footprints are handled correctly",{
                           "COVER_PRIOR" = ft.pr,
                           "NAME" = "FOOTPRINT"))
 
-
-  #
-  # expect_warning(nomeR.out <- predict_footprints(data=rmatr,
-  #                                           footprint_models = ftp.models,
-  #                                           bgprotectprob = 0.05,
-  #                                           bgcoverprior = bg.pr,
-  #                                           ncpu = 0))
-  # expect_warning(nomeR.out <- predict_footprints(data=rmatr,
-  #                                           footprint_models = ftp.models,
-  #                                           bgprotectprob = 0.05,
-  #                                           bgcoverprior = bg.pr,
-  #                                           ncpu = Inf))
-
   expect_error(nomeR.out <- predict_footprints(data=rmatr,
                                                footprint_models = ftp.models,
                                                bgprotectprob = 0.05,
@@ -68,7 +55,7 @@ test_that("predict_footprints returns correct object",{
                                   ncpu = 1L)
 
   ## check whether slots exist
-  expect_true(all(c("START_PROB", "COVER_PROB") %in% names(nomeR.out)))
+  expect_true(all(c("START_PROB", "COVER_PROB","VITERBI_CONF") %in% names(nomeR.out)))
 
   ## check whether all required seq exist
   expect_true(all(as.character(1:nr) %in% nomeR.out[["START_PROB"]][["seq"]]) &
@@ -98,5 +85,31 @@ test_that("predict_footprints returns correct object",{
 
 })
 
+
+test_that("predict_footprints returns expected probabilities and MAP configuration",{
+	## load data
+	dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))
+	
+	## calculate for all footprints aggregated by group
+	testinsil <- predict_footprints(data=dlist$test_dat_mat,
+																	footprint_models = dlist$ftp_models,
+																	bgprotectprob = 0.05304034,
+																	bgcoverprior = 0.4822005,
+																	aggrByGroup = TRUE,
+																	report_prediction_in_flanks = T,
+																	ncpu = 1L)
+	## check whether slots exist
+	expect_equal(testinsil,dlist$exp_output)
+	
+	## check whether config is correct
+	map_conf <- subset(testinsil$VITERBI_CONF,ftp_name != "background")
+	map_conf <- map_conf[order(map_conf$start),]
+	row.names(map_conf) <- NULL
+	exp_conf <- data.frame(seq = 1,start=c(151,273,492),width=c(50,150,150),ftp_name = c("ftp1--50","ftp2--150","ftp2--150"),
+												 ftp_group = c("ftp1","ftp2","ftp2"),
+												 start_prob = c(0.9421603, 0.9496543, 0.8856803))
+	expect_equal(map_conf,exp_conf)
+	
+})
 
 

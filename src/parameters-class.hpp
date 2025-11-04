@@ -19,30 +19,20 @@ class parameters
     public:
       string printoutonly;// will be always "All" in R wrapper
 
-      double bgcoverprob;
-      double bgprior;
+      double bgcoverprob; // emission probability of 1 for background (accessible position)
+      double bgprior; // prior probability of background
       parameters();
       ~parameters();
-      
-      
+
+
       // simple constructor with  all parameters
       parameters(double _bgcoverprob,
-                 double _bgprior
-                 // double _bound_fit_tol,
-                 // double _bound_min_fderiv_val,
-                 // int _bound_max_steps,
-                 // double _priorEM_fit_tol,
-                 // int _priorEM_max_steps
-                   );
-      
+                 double _bgprior);
+      parameters(const Rcpp::NumericVector& _bgprotectprob,
+                 const Rcpp::NumericVector& _bgprior);
+
       void setParams(double _bgcoverprob,
-                     double _bgprior
-                     // double _bound_fit_tol,
-                     // double _bound_min_fderiv_val,
-                     // int _bound_max_steps,
-                     // double _priorEM_fit_tol,
-                     // int _priorEM_max_steps
-                       );
+                     double _bgprior);
 
       parameters & operator = (const parameters & other);
       void print();

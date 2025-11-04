@@ -4,8 +4,8 @@
 #include "parameters-class.hpp"
 #include "utils_globvars.hpp"
 #include "DNAbindobj_vector-class.hpp"
-#include "nomeseqdata.h"
-#include "sequence.h"
+#include "fragProtectData-class.hpp"
+#include "SMFdataset-class.hpp"
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -15,6 +15,7 @@
 #include <string>
 #include <time.h>
 #include <Rcpp.h>
+#include <limits>
 using namespace std;
 
 #ifdef _OPENMP
@@ -23,57 +24,49 @@ using namespace std;
 
 
 // [[Rcpp::plugins(openmp)]]
-
 class Predict
 {
-  vector<vector<double> > F; // forward partition sums for fragments
-  vector<vector<double> > R; // backward partition sums for fragments
-  vector<vector<vector<double> > > Prob; // start probabilities for footprints, fragments
-  vector<vector<double > > genomesummary; //this vector contains expected prior, expected number of sites and expected coverage for the whole genome and for each TF
-  
-  vector<int > print_indexes;	// this array contains indexes in object vector that will be printed, i.e. map i - index in Prob array to j - index in object array
-  vector<vector<int > > names2indexes; // this array contains map: i - index in print_names to subarray of indexes in object vector with this name (given that for the same tf we create two object with + and - orientation)
-  vector<string > print_names; // this array contain names of the objects that will be printed
-  
-  vector<vector<int > > names2indicesinprobarray; // this array contains map i - index in names to subarray of indices in Prob array
-  
-  parameters PARAMS; // object containing parameters
-  DNAbind_obj_vector BINDING_OBJECTS; // object containing vector of footprint models as well as background model
-  NOMeSeqData SEQUENCES; // NOMe-seq data sequences
-  
+	
+	// const parameters& PARAMS; // reference to an object containing parameters
+	// const DNAbind_obj_vector& BINDING_OBJECTS; // reference to an object containing vector of footprint models as well as background model
+	// const SMFdataset& SEQUENCES; // reference to an object containing SMF data
+
 public:
   // constructors/destructor
+  // Predict(const SMFdataset& refSmfData,
+  //        const DNAbind_obj_vector& refFtp_models,
+  //        const parameters& refParams);
   Predict();
-  Predict(const Rcpp::List& data,
-          const Rcpp::CharacterVector& fragnames,
-          const Rcpp::List& binding_models,
-          const Rcpp::NumericVector& bgprotectprob,
-          const Rcpp::NumericVector& bgprior);
-  
-  bool Create(const Rcpp::List& data,
-              const Rcpp::CharacterVector& fragnames,
-              const Rcpp::List& binding_models,
-              const Rcpp::NumericVector& bgprotectprob,
-              const Rcpp::NumericVector& bgprior);
-  
+
   ~Predict();
-  void clear();
   
-  // run prediction
-  bool Run(int ncpu);
+  void getCoverProbsMatrix(const vector<vector<double > >& startProb,
+                                              const DNAbind_obj_vector& ftpModels,
+                                              const int& fDPos, // firstDatPos
+                                              const int& lDPos, // lastDatPos
+                                              const size_t& nFtpGroups,
+                                              vector<vector<double >>& aggrCoverOutProbs
+                                              );
   
-  // utility functions
-  vector<double > getPriors();
-  void SetGenomeSummary();
-  double get_coverage_prob_at_pos_name_index(int seq, int pos, int name_index);
-  double get_coverage_prob_at_pos(int seq, int pos, int wm); // wm here is an index in Prob
+  void getViterbiMAPftpConf(const vector<vector<double > >& startProb,
+                            const DNAbind_obj_vector& ftpModels,
+                            const int& fDPos, // firstDatPos
+                            const int& lDPos, // lastDatPos
+                            vector<int32_t >& cVitFragPos,
+                            vector<int32_t >& cVitFtpWidth,
+                            vector<string >& cVitFtpName,
+                            vector<string >& cVitFtpGroup,
+                            vector<double >& cVitFtpProb);
+  
+
+  Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
+                                 const DNAbind_obj_vector& ftpModels,
+                                 const parameters& params,
+                                 bool report_prediction_in_flanks,
+                                 int ncpu);
   
   
-  // output results
-  Rcpp::List getStartProbDF(bool report_prediction_in_flanks);
-  Rcpp::List getCoverProbDF();
-  Rcpp::List getGenomeSummaryDF();
-  
+
 };
 
 

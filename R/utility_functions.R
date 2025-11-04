@@ -26,5 +26,5 @@
 }
 
 .onUnload <- function(libpath) {
-    library.dynam.unload("nomeR", libpath)
+    library.dynam.unload("nomeRpredict", libpath)
 }

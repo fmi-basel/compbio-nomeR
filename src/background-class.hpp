@@ -12,7 +12,7 @@
 #include <string>
 #include "utils_globvars.hpp"
 #include "parameters-class.hpp"
-#include "nomeseqdata.h"
+#include "SMFdataset-class.hpp"
 using namespace std;
 
 class Background:public DNAbinding_object
@@ -21,13 +21,15 @@ class Background:public DNAbinding_object
   double bgcoverprob;
 
   vector<double>  bgmodel;
-  Background(parameters &params);
+  Background(const parameters& params);
   virtual ~Background();
   virtual void print() const;
-  
-  virtual double get_score(NOMeSeqData& SEQUENCES,
+
+  virtual double get_score(const SMFdataset& SEQUENCES,
                            int seq,
-                           int position)const;
+                           int position) const;
+  // method to pre-calculate footprint scores for a given molecule
+  virtual vector<double > get_seq_scores_vec(const fragProtectData& fragData) const;
   virtual void print_normalized() const;
 };
 
