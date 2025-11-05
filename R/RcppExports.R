@@ -2,14 +2,14 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 calcStartCoverProbs_cpp <- function(fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose) {
-    .Call(`_nomeRpredict_calcStartCoverProbs_cpp`, fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose)
+    .Call(`_nomeR_calcStartCoverProbs_cpp`, fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose)
 }
 
 count_spacing_freq_cpp <- function(fragIDs, fragPos, protectVec, maxspacing) {
-    .Call(`_nomeRpredict_count_spacing_freq_cpp`, fragIDs, fragPos, protectVec, maxspacing)
+    .Call(`_nomeR_count_spacing_freq_cpp`, fragIDs, fragPos, protectVec, maxspacing)
 }
 
 calculate_theor_joint_prob_cpp <- function(ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing) {
-    .Call(`_nomeRpredict_calculate_theor_joint_prob_cpp`, ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing)
+    .Call(`_nomeR_calculate_theor_joint_prob_cpp`, ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing)
 }
 

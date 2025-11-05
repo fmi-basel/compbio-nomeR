@@ -2,7 +2,7 @@
 .start_prior2cover_prior <- function(start_prior,
                                      footprint_len) {
     stopifnot(length(start_prior) == length(footprint_len))
-    
+
     cover_prior <- start_prior * footprint_len
     cover_prior / sum(cover_prior)
 }
@@ -12,7 +12,7 @@
                                      footprint_len) {
     stopifnot(length(cover_prior) == length(footprint_len))
     stopifnot(all(footprint_len > 0))
-    
+
     start_prior <- cover_prior / footprint_len
     start_prior / sum(start_prior)
 }
@@ -26,5 +26,5 @@
 }
 
 .onUnload <- function(libpath) {
-    library.dynam.unload("nomeRpredict", libpath)
+    library.dynam.unload("nomeR", libpath)
 }
