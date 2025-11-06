@@ -5,8 +5,8 @@ calcStartCoverProbs_cpp <- function(fragIDs, fragPos, protectVec, binding_models
     .Call(`_nomeR_calcStartCoverProbs_cpp`, fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose)
 }
 
-count_spacing_freq_cpp <- function(fragIDs, fragPos, protectVec, maxspacing) {
-    .Call(`_nomeR_count_spacing_freq_cpp`, fragIDs, fragPos, protectVec, maxspacing)
+count_spacing_freq_cpp <- function(fragIDs, fragPos, protectVec, maxspacing, Ncpu, verbose) {
+    .Call(`_nomeR_count_spacing_freq_cpp`, fragIDs, fragPos, protectVec, maxspacing, Ncpu, verbose)
 }
 
 calculate_theor_joint_prob_cpp <- function(ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing) {

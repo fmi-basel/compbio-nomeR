@@ -2,12 +2,12 @@
 
 
 Predict::~Predict(){
-	
+
 }
 
 Predict::Predict()
 {
-	
+
 }
 
 
@@ -18,16 +18,16 @@ void Predict::getCoverProbsMatrix(const vector<vector<double > >& startProb,
                                   const size_t& nFtpGroups,
                                   vector<vector<double >>& aggrCoverOutProbs
 ){
-	
+
 	// for each group
-	for(int igroup = 0; igroup < nFtpGroups; ++igroup){
+	for(size_t igroup = 0; igroup < nFtpGroups; ++igroup){
 		// get name for the current ftp group
 		string groupName = ftpModels.groups[igroup];
-		
+
 		// 1. calculate coverage probailities for each footprint using recurrence relationship
 		// get footprint indices for current ftp group
 		const vector<int >& groupFtpIndices = ftpModels.getGroupIndexVec(groupName);
-		
+
 		for(int gFtpi = 0; gFtpi < groupFtpIndices.size(); ++gFtpi){
 			int objlen = ftpModels[groupFtpIndices[gFtpi]]->len;
 			vector<double > currFtpCovProb(lDPos - fDPos + 1,0);
@@ -36,19 +36,19 @@ void Predict::getCoverProbsMatrix(const vector<vector<double > >& startProb,
 				currFtpCovProb[0] += startProb[groupFtpIndices[gFtpi]][p + 1];
 			}
 			aggrCoverOutProbs[igroup][0] += currFtpCovProb[0];
-			
+
 			// calculate the rest coverage probabilities by adding and subtracting the probabilities at the next and behind positions
 			for(int position = fDPos + 1; position <= lDPos; ++position){
-				currFtpCovProb[position - fDPos] = 
-					currFtpCovProb[position - fDPos - 1] - 
+				currFtpCovProb[position - fDPos] =
+					currFtpCovProb[position - fDPos - 1] -
 					startProb[groupFtpIndices[gFtpi]][position - objlen + 1] + // substract probability at position left behind
 					startProb[groupFtpIndices[gFtpi]][position + 1];  // add probability at current position
-				
+
 				aggrCoverOutProbs[igroup][position - fDPos] += currFtpCovProb[position - fDPos];
 			}
-			
+
 		}
-		
+
 	}
 
 }
@@ -68,22 +68,22 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& startProb,
 	size_t nFtps = ftpModels.Size(); // number of footprints
 	vector<double > lFMaxProb(probVecLen,0); // vector that keeps maximum configuration log probabilites
 	vector<int32_t > ftpEndsTrace(probVecLen,-1); // vector containing footprint index with maximum log probability to trace back configuration
-	
+
 	// define negative infinity
 	// log(0) = -infinity
 	const double NEG_INF = -std::numeric_limits<double>::infinity();
 	// Convert start probs to log probabilities
 	vector<vector<double >> logP(nFtps, std::vector<double>(probVecLen, NEG_INF));
-	for (int w = 0; w < nFtps; ++w) {
-		for (int i = 0; i < probVecLen; ++i) {
+	for (size_t w = 0; w < nFtps; ++w) {
+		for (size_t i = 0; i < probVecLen; ++i) {
 			if (startProb[w][i] > 0.0)
 				logP[w][i] = log(startProb[w][i]);
 		}
 	}
-	
 
-	
-	
+
+
+
 	for(int pos = 1; pos <= seqlength; ++pos){
 		double maxLogProb = -numeric_limits<double>::infinity();
 		int bestFtpIdx = -1;
@@ -104,10 +104,10 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& startProb,
 		}
 		lFMaxProb[pos] = maxLogProb;
 		ftpEndsTrace[pos] = bestFtpIdx;
-		
+
 	}
-	
-	// trace back and construct the best configuration. 
+
+	// trace back and construct the best configuration.
 	int pos = seqlength;
 	while(pos >= fDPos + 1){
 		int bestFtpLen = ftpModels[ftpEndsTrace[pos]]->len;
@@ -118,12 +118,12 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& startProb,
 		cVitFtpProb.push_back(startProb[ftpEndsTrace[pos]][pos - bestFtpLen + 1]);
 		pos = pos - bestFtpLen;
 	}
-	
+
 }
 
 
 // method that calculates start and cover probabilities and returns a Rcpp::List with calculated data.
-// 
+//
 // /* // [[Rcpp::depends(RcppProgress)]]
 //  * */
 Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
@@ -132,7 +132,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                                         bool report_prediction_in_flanks,
                                         int ncpu){
 	extern bool _VERBOSE_;
-	
+
 	size_t nFtpModels = ftpModels.Size(); // number of footprint models including background
 	size_t nFtpGroups = ftpModels.getGroupsSize(); // number of groups of footprint models
 	// probabilities will be aggregated per group
@@ -142,18 +142,18 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 	// when footprint priors are normalized, i.e. sum of all priors is 1, then initial values for partition sums is always 1.
 	// we normalize the priors, therefore we set value to 1.
 	double part_init = 1;
-	
+
 	// allocate natice C++ vectors for output probabilities
 	vector<int32_t > tmp_vec;
 	vector<vector<int32_t >> startOutFragIDs(smfData.Size(),tmp_vec); // vector of vectors with fragment IDs. one per seq
 	vector<vector<int32_t >> startOutFragPos(smfData.Size(),tmp_vec); // positions within fragments
-	
+
 	vector<vector<int32_t >> coverOutFragIDs(smfData.Size(),tmp_vec); // vector with fragment IDs as was passed from the R side
 	vector<vector<int32_t >> coverOutFragPos(smfData.Size(),tmp_vec); // positions within fragments
-	
+
 	vector<vector<vector<double >>> startOutProbs; // vectors of size nFtpGroups, i.e. for each group . per each seq
 	vector<vector<vector<double >>> coverOutProbs;
-	
+
 	// allocate vectors for maximum aposteriory configurations
 	vector<vector<int32_t >> viterbiOutFragIDs(smfData.Size(),tmp_vec);
 	vector<vector<int32_t >> viterbiOutFragPos(smfData.Size(),tmp_vec);
@@ -164,11 +164,11 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 	vector<vector<string >> viterbiOutFtpGroup(smfData.Size(),tmp_str);
 	vector<double > tmp_dbl;
 	vector<vector<double >> viterbiOutFtpProb(smfData.Size(),tmp_dbl);
-	
+
 	for(seq = 0; seq < smfData.Size(); ++seq){
 		vector<vector<double >> tmpst;
 		vector<vector<double >> tmpcv;
-		for(int i=0; i < nFtpGroups; ++i){
+		for(size_t i=0; i < nFtpGroups; ++i){
 			vector<double > startTmp;
 			vector<double > coverTmp;
 			tmpst.push_back(startTmp);
@@ -177,40 +177,40 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		startOutProbs.push_back(tmpst);
 		coverOutProbs.push_back(tmpcv);
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 #ifdef _OPENMP
 	omp_set_nested(true);
 	omp_set_num_threads(ncpu);
 	if(_VERBOSE_)
 		Rcpp::Rcout<<"Running prediction with "<<omp_get_max_threads()<<" cpu."<<endl;
 #endif
-	
+
 #pragma omp parallel private(seq)
 {
-	
+
 #pragma omp for schedule(dynamic)
 	for(seq = 0; seq < smfData.Size(); ++seq){
 		int seqlength = smfData[seq].Size();
-		
+
 		// calculate footprint model scores for the current fragment
 		vector<vector<double >> ftpModelsScores = ftpModels.getFtpModelScores(smfData[seq]);
-		
-		
+
+
 		// allocate memory for:
 		// F -  forward parition sum
 		// R - backward partition sum
 		// Prob - probability of footprint ends at position pos
-		
+
 		vector<double > F(seqlength + maxwmlen + 1,1); // allocate memory for forward parition sum
 		vector<double > R(seqlength + 2,1); // allocate memory for backward partition sum. it is shorter than F
 		vector<double > probPerFtp(seqlength + 1, 0);
 		vector<vector<double > > Prob(nFtpModels, probPerFtp);
 		// vector<vector<double > > Prob(print_indexes.size(),probPerFtp);
-		
+
 		// calculate forward partition summ
 		F[0] = part_init;
 		vector<double > pf(nFtpModels,1);
@@ -219,9 +219,9 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			for(int wm = 0; wm < nFtpModels; ++wm){
 				pf[wm] = 1;
 				int objlen = ftpModels[wm]->len;
-				
+
 				if(ftpModels[wm]->prior > 0){
-					
+
 					if(pos - objlen >= 0 && pos - objlen < seqlength)
 						pf[wm] = ftpModelsScores[wm][pos - objlen];
 					else
@@ -239,7 +239,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 				}
 				summ += pf[wm];
 			}
-			
+
 			F[pos] = 1/summ;
 			if(pos <= seqlength){
 				for(int wm = 0; wm < nFtpModels; ++wm){
@@ -247,7 +247,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 				}
 			}
 		}
-		
+
 		// calculate backward partition summ
 		vector<double > pb(nFtpModels, 1);
 		R[seqlength + 1] = part_init;
@@ -257,7 +257,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 				pb[wm] = 1;
 				int objlen = ftpModels[wm]->len;
 				if(ftpModels[wm]->prior > 0){
-					
+
 					if(pos - 1 >= 0 && pos + objlen - 1 < seqlength)
 						pb[wm] = ftpModelsScores[wm][pos - 1];
 					else
@@ -269,18 +269,18 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 							pb[wm] *= part_init;
 						}
 					}
-					
+
 				}
 				else{
 					pb[wm] = 0;
 				}
 				summ += pb[wm];
 			}
-			
+
 			R[pos] = 1/summ;
 		}
 		// сalculate Z = Fn/Rn
-		
+
 		// calculate initial value for Z based on requirement that total coverage at L must be 1
 		double zsumm = 0;
 		for(int wm = 0; wm < nFtpModels; ++wm){
@@ -295,14 +295,14 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			}
 			zsumm += ftpModels[wm]->prior * wmsumm;
 		}
-		
+
 		double z_init = 1/zsumm;
-		
+
 		R[seqlength + 1] = z_init;
 		for(int pos = seqlength; pos >= 1; --pos){
 			R[pos] = F[pos] * R[pos + 1]/R[pos];
 		}
-		// calculate start posteriors 
+		// calculate start posteriors
 		// prev for(int pos = 1;pos <= seqlength; ++pos){//
 		for(int pos = 0;pos <= seqlength; ++pos){
 			for(int wm = 0;wm < nFtpModels; ++wm){
@@ -313,15 +313,15 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 					Prob[wm][pos] = 0;
 			}
 		}
-		
-		
+
+
 		// get output data structure for current sequence for start and cover probabilities
 		// startOutFragIDs, startOutFragPos, startOutProbs[ftp]
 		// and coverOutFragIDs, coverOutFragPos, coverOutProbs[ftp]
 		// for the current molecule
 		// NOTE: startOutProbs and coverOutProbs contain aggregated probabilities per group
-		
-		
+
+
 		// fill output vectors for START_PROB
 		int firstDatPos = smfData[seq]._firstDatpos;
 		int lastDatPos = smfData[seq]._lastDatpos;
@@ -352,8 +352,8 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		startOutFragIDs[seq] = move(currSeqStartOutFragIDs);
 		startOutFragPos[seq] = move(currSeqStartOutFragPos);
 		startOutProbs[seq] = move(currSeqStartOutProbs);
-		
-		
+
+
 		// fill output vectors for COVER_PROB. Perhaps, this can be optimized by adding and subtracting start prob at end and beginning of footprint
 		vector<int32_t > currSeqCoverOutFragIDs;
 		vector<int32_t > currSeqCoverOutFragPos;
@@ -363,19 +363,19 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			currSeqCoverOutFragIDs.push_back(smfData[seq].Name());
 			currSeqCoverOutFragPos.push_back(position - firstDatPos + 1);
 		}
-		
-		
+
+
 		coverOutFragIDs[seq] = move(currSeqCoverOutFragIDs);
 		coverOutFragPos[seq] = move(currSeqCoverOutFragPos);
-		
-		
+
+
 		// allocate vectors for coverage probabilities for each group
 		vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);;
 		vector<vector<double >> currSeqCoverOutProbs(nFtpGroups,tmpcov); // aggregated probabilities across all footprints per group;
-		
+
 		// vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);
 		// coverOutProbs[seq].resize(nFtpGroups,tmpcov);
-		
+
 		getCoverProbsMatrix(Prob,
                       ftpModels,
                       firstDatPos,
@@ -384,9 +384,9 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                       currSeqCoverOutProbs
 		);
 		coverOutProbs[seq] = move(currSeqCoverOutProbs);
-		
+
 		// get maximum aposteriori comfiguration of footprints using Viterbi algorithm
-		
+
 		vector<int32_t > currViterbiOutFragPos;
 		vector<int32_t > currViterbiOutFtpWidth;
 
@@ -410,10 +410,10 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		viterbiOutFtpName[seq] = currViterbiOutFtpName;
 		viterbiOutFtpGroup[seq] = currViterbiOutFtpGroup;
 		viterbiOutFtpProb[seq] = currViterbiOutFtpProb;
-		
-		
+
+
 	}
-	
+
 } // end of omp parallel
 
 

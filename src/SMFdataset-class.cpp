@@ -104,41 +104,66 @@ int SMFdataset::TotalLength() const
 }
 
 
-vector<vector<int> > SMFdataset::count_freq_for_spacings(int maxSpacing) const
+vector<vector<uint64_t > > SMFdataset::count_freq_for_spacings(int maxSpacing,
+                                                               int ncpu) const
 {
+	extern bool _VERBOSE_;
 	// here the spacing 0 means that positions are adjacent and gap between them is 0
 	// however output S will be starting from 1
 	// create output vector of vectors
-	vector<vector<int > > freq_mat;
-	// for each spacing 0:maxSpacing
-	for(int s=0; s < maxSpacing; ++s){
-		vector<int > freq_vec(5,0); // columns are S; 0,0; 0,1; 1,0; 1,1;
-		freq_vec[0] = s + 1;
-		// for each sequence
-		for(int f = 0; f < _nmolecs; ++f){
-			fragProtectData fragData = _data[f];
-			uint32_t firstDatPos = fragData._firstDatpos;
-			uint32_t lastDatPos = fragData._lastDatpos;
+	// columns are 0,0; 0,1; 1,0; 1,1;
+	vector<vector<uint64_t > > freqM_glob(maxSpacing,vector<uint64_t>(4, 0));
+
+
+#ifdef _OPENMP
+	omp_set_nested(true);
+	omp_set_num_threads(ncpu);
+	if(_VERBOSE_)
+		Rcpp::Rcout<<"Running aggregation of co-occurrence statistics with "<<omp_get_max_threads()<<" cpu."<<endl;
+#endif
+
+	// parallelize for each molecule
+	int seq = 0;
+#pragma omp parallel private(seq)
+{
+	// Each thread gets a private local matrix
+	vector<vector<uint64_t > > freqM_loc(maxSpacing, std::vector<uint64_t>(4, 0));
+#pragma omp for schedule(dynamic)
+	// for each sequence
+	for(seq = 0; seq < _nmolecs; ++seq){
+		fragProtectData fragData = _data[seq];
+		uint32_t firstDatPos = fragData._firstDatpos;
+		uint32_t lastDatPos = fragData._lastDatpos;
+		// for each spacing
+		for(int s = 0; s < maxSpacing; ++s){
 			// go from first position to the last - s + 1
-			for(int pos = firstDatPos; pos <= lastDatPos - s; pos++){
+			for(int pos = firstDatPos; pos + s <= lastDatPos; ++pos){
 				int letter_pos = fragData[pos];
 				int letter_spac = fragData[pos + s];
 
 				if(letter_pos == 0 && letter_spac == 0){
-					freq_vec[1]++;
+					freqM_loc[s][0]++;
 				} else if(letter_pos == 0 && letter_spac == 1){
-					freq_vec[2]++;
+					freqM_loc[s][1]++;
 				} else if(letter_pos == 1 && letter_spac == 0){
-					freq_vec[4]++;
+					freqM_loc[s][2]++;
 				} else if(letter_pos == 1 && letter_spac == 1){
-					freq_vec[5]++;
+					freqM_loc[s][3]++;
 				}
 
 			}
 		}
-
-		freq_mat.push_back(freq_vec);
 	}
-	return freq_mat;
+
+	// Reduction: safely combine thread-local matrices into global freqM_glob
+#pragma omp critical
+{
+	for (int s = 0; s < maxSpacing; ++s)
+		for (int k = 0; k < 4; ++k)
+			freqM_glob[s][k] += freqM_loc[s][k];
+}
+}
+
+return freqM_glob;
 }
 

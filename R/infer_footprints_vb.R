@@ -5,7 +5,7 @@
 #'     "N11", where "S" represents spacings and "N00", "N01", "N10", "N11" are
 #'     observed counts for 00, 01, 10, and 11 at spacing "S". This table can
 #'     be obtained using functions nomeR::count_joint_frequencies(...) or
-#'     nomeR::get_cooccurrence_ctable_from_bams(...).
+#'     fetchNOMe::get_cooccurrence_ctable_from_bams(...).
 #' @param ftp_lengths A numeric vector representing the lengths of footprints
 #'     for which abundance is being analyzed. This parameter allows users to
 #'     input a vector of footprint lengths of interest for further analysis,

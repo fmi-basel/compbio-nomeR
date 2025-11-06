@@ -2,21 +2,23 @@
 % Please edit documentation in R/get_ctable_from_matrix.R
 \name{get_ctable_from_matrix}
 \alias{get_ctable_from_matrix}
-\title{Create count table for 00, 01, 10, 11, etc occurences in NOMe-Seq data}
+\title{Create count table for 00, 01, 10, 11, etc occurrences SMF data matrix}
 \usage{
-get_ctable_from_matrix(data, max_spacing, ncpu = 1L)
+get_ctable_from_matrix(data, max_spacing = 200L, ncpu = 1L, verbose = FALSE)
 }
 \arguments{
-\item{data}{A matrix containing NOMe-Seq data for an amplicon.}
+\item{data}{A matrix containing binary SMF data for a ROI. 1 represent protected and 0s represent accessible positions.}
 
 \item{max_spacing}{Maximum spacing between positions.}
 
 \item{ncpu}{number of cores to use.}
+
+\item{verbose}{verbose mode for bug fixing.}
 }
 \value{
 data.frame containing frequencies for 0,0; 0,1; etc for each spacing
 between 1 (total number of 0s and 1 in the data) and \code{max_spacing}.
 }
 \description{
-Create count table for 00, 01, 10, 11, etc occurences in NOMe-Seq data
+Create count table for 00, 01, 10, 11, etc occurrences SMF data matrix
 }

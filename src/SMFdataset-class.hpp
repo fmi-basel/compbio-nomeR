@@ -12,6 +12,10 @@
 
 using namespace std;
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 class SMFdataset{
 	int _nmolecs; // number of SMF molecules in the dataset
 	int _totallength;
@@ -44,7 +48,8 @@ public:
 	void clear();
 
 	// function for counting occurrences of 0,0; 0,1 etc at spacing S
-	vector<vector<int> > count_freq_for_spacings(int maxSpacing) const;
+	vector<vector<uint64_t > > count_freq_for_spacings(int maxSpacing,
+                                                    int ncpu) const;
 
 };
 

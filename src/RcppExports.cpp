@@ -31,8 +31,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // count_spacing_freq_cpp
-Rcpp::List count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::IntegerVector& maxspacing);
-RcppExport SEXP _nomeR_count_spacing_freq_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP maxspacingSEXP) {
+Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::IntegerVector& maxspacing, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
+RcppExport SEXP _nomeR_count_spacing_freq_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP maxspacingSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -40,7 +40,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type fragPos(fragPosSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type protectVec(protectVecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type maxspacing(maxspacingSEXP);
-    rcpp_result_gen = Rcpp::wrap(count_spacing_freq_cpp(fragIDs, fragPos, protectVec, maxspacing));
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type Ncpu(NcpuSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(count_spacing_freq_cpp(fragIDs, fragPos, protectVec, maxspacing, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -65,7 +67,7 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod()
 
 static const R_CallMethodDef CallEntries[] = {
     {"_nomeR_calcStartCoverProbs_cpp", (DL_FUNC) &_nomeR_calcStartCoverProbs_cpp, 9},
-    {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 4},
+    {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 6},
     {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
     {"_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod, 0},
     {"_rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod, 0},
