@@ -98,8 +98,6 @@
 #'     tot_count=alpha+beta and influences the spread of the distribution.
 #'     This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
 #' }
-#' @param ... Parameters for \code{\link[rstan]{vb}} function. Please refer to
-#'     \code{\link[rstan]{vb}} documentation.
 #' @param max_nruns Maximum number of trials to run stan function
 #'     \code{\link[rstan]{vb}}. Sometimes, due to bad initial point or other
 #'     reasons this function fails to converge. \code{max_nruns} controls
@@ -107,6 +105,8 @@
 #' @param max_pareto_k maximum pareto_k returned by \code{\link[rstan]{vb}}.
 #'     If it exceeds \code{max_pareto_k} the function will run again until
 #'     max_nruns attempts have been done
+#' @param ... Parameters for \code{\link[rstan]{vb}} function. Please refer to
+#'     \code{\link[rstan]{vb}} documentation.
 #'
 #' @return An S4 class stanfit-class representing the inference results. Please
 #' check \code{\link[rstan]{vb}}.

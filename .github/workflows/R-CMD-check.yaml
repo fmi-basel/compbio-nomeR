@@ -3,7 +3,7 @@
 on:
   push:
   pull_request:
-    branches: 
+    branches:
       - main
       - master
       - devel
@@ -49,7 +49,7 @@ jobs:
           extra-packages: any::rcmdcheck
           cache: true
           cache-version: 1
-        
+
       - name: Session info
         run: |
           install.packages("sessioninfo")
@@ -63,11 +63,12 @@ jobs:
         with:
           upload-snapshots: false
           error-on: '"error"'
-          
+          dependencies: '"hard"'
+
       # - name: Build, Install, Check
       #   id: build-install-check
       #   uses: grimbough/bioc-actions/build-install-check@v1
-      # 
+      #
       # - name: Upload install log if the build/install/check step fails
       #   if: always() && (steps.build-install-check.outcome == 'failure')
       #   uses: actions/upload-artifact@v4
@@ -75,19 +76,19 @@ jobs:
       #     name: install-log
       #     path: |
       #       ${{ steps.build-install-check.outputs.install-log }}
-      # 
+      #
       # - name: Show testthat output (windows)
       #   if: always() && runner.os == 'Windows'
       #   run: |
       #       type ${{ steps.build-install-check.outputs.check-dir }}\tests\testthat.Rout
       #   shell: cmd
-      # 
+      #
       # - name: Show testthat output (non-windows)
       #   if: always() && runner.os != 'Windows'
       #   run: |
       #       cat ${{ steps.build-install-check.outputs.check-dir }}/tests/testthat.Rout
       #   shell: bash
-      # 
+      #
       # - name: Upload check results
       #   if: failure()
       #   uses: actions/upload-artifact@master
@@ -113,4 +114,4 @@ jobs:
       #   run: |
       #     R CMD INSTALL .
       #     Rscript -e "remotes::install_dev('pkgdown'); pkgdown::deploy_to_branch(new_process = FALSE)"
-      #     
+      #

@@ -40,7 +40,7 @@ probabilities to find protected position within a footprint}
 (\code{numeric}) reflecting what fraction of reads you expect to be
 covered by a footprint}
 \item{NAME}{name (\code{character}) of a model, e.g. "Nucleosome"}
-\item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated 
+\item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated
 if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149", "Nucleosome--150" etc. footprint models
 have identical GROUP (e.g. "Nucleosome") and \code{aggrByGroup = TRUE}, probabilities will be aggregated
 across all footprints with identical GROUP.}

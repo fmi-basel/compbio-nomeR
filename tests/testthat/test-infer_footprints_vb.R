@@ -51,7 +51,9 @@ test_that("infer_footprints_stan_vb works", {
 	vb_res <- infer_footprints_vb(cooc_ctable = ftp_5_10_data,
 											ftp_lengths = 2:15,
 											iter = 1,
-											adapt_iter = 1)
+											adapt_iter = 1,
+											max_nruns = 1,
+											max_pareto_k = Inf)
 
 	## check if return is stanfit object
 	expect_s4_class(vb_res,class = "stanfit")

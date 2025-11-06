@@ -18,11 +18,11 @@
 }
 
 .message_timestamp <- function(msg) {
-    message(c("[", Sys.time(), "]: ", msg))
+    message(paste0("[", strftime(Sys.time()), "]: ", msg))
 }
 
 .warning_timestamp <- function(msg){
-    warning(c("[", Sys.time(), "]: ", msg))
+    warning(paste0("[", strftime(Sys.time()), "]: ", msg))
 }
 
 .onUnload <- function(libpath) {

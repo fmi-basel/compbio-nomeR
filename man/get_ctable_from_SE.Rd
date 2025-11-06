@@ -11,6 +11,7 @@ get_ctable_from_SE(
   threshUnmod = 0.5,
   threshMod = 0.5,
   max_spacing = 200L,
+  aggrSamples = F,
   ncpu = 1L,
   verbose = FALSE
 )
@@ -29,13 +30,16 @@ as modified (modification probability >= threshMod), unmodified
 
 \item{max_spacing}{Maximum spacing between positions.}
 
+\item{aggrSamples}{\code{logical} return frequencies for each sample separately or aggregate them for all samples.}
+
 \item{ncpu}{number of cores to use.}
 
 \item{verbose}{verbose mode for bug fixing.}
 }
 \value{
-\code{matrix} containing aggregated frequencies across all samples for
-0,0; 0,1; etc for each spacing between 1 (total number of 0s and 1 in the data) and \code{max_spacing}.
+if \code{aggrSamples = T} \code{matrix} containing aggregated frequencies across all samples for
+    0,0; 0,1; etc for each spacing between 1 (total number of 0s and 1s in the data) and \code{max_spacing}.
+    If \code{aggrSamples = F} a \code{list} of matrices with frequences for each sample separately.
 }
 \description{
 Create count table for 00, 01, 10, 11, etc occurrences in SummarizedExperiment object
