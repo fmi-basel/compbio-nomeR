@@ -18,27 +18,27 @@ generate_insilico_SMF_data(
 
 \item{n_reads}{number of molecules to generate.}
 
-\item{footprint_models}{\code{list} describing footprints which should be 
-generated. Each footprint within footprint_models is also a \code{list} 
+\item{footprint_models}{\code{list} describing footprints which should be
+generated. Each footprint within footprint_models is also a \code{list}
 that must contain:
 \describe{
-\item{\code{PROTECT_PROB}}{vector of emission probabilities 
+\item{\code{PROTECT_PROB}}{vector of emission probabilities
 with same length and footprint length}
 \item{\code{COVER_PROB}}{\code{numeric} scalar
 that describes footprint coverage}
-\item{\code{NAME}}{\code{character} scalar with 
+\item{\code{NAME}}{\code{character} scalar with
 the name of the footprint}
 }}
 
-\item{ftp_emission_posprob}{\code{matrix} describing positional 
-probabilities for each footprint. Number of rows must be equal to 
-number of footprints and number of columns must be equal to 
+\item{ftp_emission_posprob}{\code{matrix} describing positional
+probabilities for each footprint. Number of rows must be equal to
+number of footprints and number of columns must be equal to
 \code{region_len}.}
 
 \item{bgprotectprob}{\code{numeric} emission probability for background.}
 
-\item{infposdens}{if a scalar between 0 and 1 it is treated as percentage of 
-informative positions. If a vector of integers it is treated as 
+\item{infposdens}{if a scalar between 0 and 1 it is treated as percentage of
+informative positions. If a vector of integers it is treated as
 predefined informative positions.}
 }
 \value{

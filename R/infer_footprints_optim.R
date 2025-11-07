@@ -1,110 +1,110 @@
-#' Find point estimate for footprint abundance using STAN optimization 
+#' Find point estimate for footprint abundance using STAN optimization
 #' algorithm
 #'
-#' This function uses `rstan::optimizing` to obtain point estimate for 
+#' This function uses `rstan::optimizing` to obtain point estimate for
 #' footprint abundances by maximizing the joint posterior from the model.
 #'
 #' @param cooc_ctable A data frame containing columns "S", "N00", "N01", "N10",
-#'     "N11", where "S" represents spacings and "N00", "N01", "N10", "N11" 
-#'     are observed counts for 00, 01, 10, and 11 at spacing "S". This table 
-#'     can be obtained using functions nomeR::count_joint_frequencies(...) or 
+#'     "N11", where "S" represents spacings and "N00", "N01", "N10", "N11"
+#'     are observed counts for 00, 01, 10, and 11 at spacing "S". This table
+#'     can be obtained using functions nomeR::count_joint_frequencies(...) or
 #'     nomeR::get_cooccurrence_ctable_from_bams(...).
-#' @param ftp_lengths A numeric vector representing the lengths of footprints 
-#'     for which abundance is being analyzed. This parameter allows users to 
-#'     input a vector of footprint lengths of interest for further analysis, 
+#' @param ftp_lengths A numeric vector representing the lengths of footprints
+#'     for which abundance is being analyzed. This parameter allows users to
+#'     input a vector of footprint lengths of interest for further analysis,
 #'     excluding the length of 1, which is reserved for background.
-#' @param ftp_prior_cover A numeric vector representing the expected coverages 
-#'     for footprints with lengths corresponding to the values provided in the 
-#'     ftp_lengths parameter. This parameter allows users to specify the 
-#'     expected coverage for each footprint length, influencing the Dirichlet 
-#'     distribution used as the prior distribution in the Bayesian model. 
-#'     Higher values indicate a higher expected coverage for the corresponding 
-#'     footprint length, affecting the model's prior assumptions. Users can 
-#'     adjust this parameter to reflect their prior knowledge or assumptions 
-#'     about the coverage of specific footprint lengths in the dataset. Each 
-#'     value in the vector must be between 0 and 1. The sum of the values in 
+#' @param ftp_prior_cover A numeric vector representing the expected coverages
+#'     for footprints with lengths corresponding to the values provided in the
+#'     ftp_lengths parameter. This parameter allows users to specify the
+#'     expected coverage for each footprint length, influencing the Dirichlet
+#'     distribution used as the prior distribution in the Bayesian model.
+#'     Higher values indicate a higher expected coverage for the corresponding
+#'     footprint length, affecting the model's prior assumptions. Users can
+#'     adjust this parameter to reflect their prior knowledge or assumptions
+#'     about the coverage of specific footprint lengths in the dataset. Each
+#'     value in the vector must be between 0 and 1. The sum of the values in
 #'     ftp_prior_cover and bg_prior_cover should equal 1. If the sum is not 1,
 #'     the values are scaled accordingly, and a warning is issued.
-#' @param bg_prior_cover A numeric value representing the expected fraction of 
-#'     unprotected positions, or coverage of background, in the dataset. This 
-#'     parameter influences the Dirichlet distribution used as the prior 
-#'     distribution in the Bayesian model. Higher values indicate a higher 
-#'     proportion of background coverage, affecting the model's prior 
-#'     assumptions. Users can adjust this parameter to reflect their prior 
-#'     knowledge or assumptions about the background coverage in the dataset. 
+#' @param bg_prior_cover A numeric value representing the expected fraction of
+#'     unprotected positions, or coverage of background, in the dataset. This
+#'     parameter influences the Dirichlet distribution used as the prior
+#'     distribution in the Bayesian model. Higher values indicate a higher
+#'     proportion of background coverage, affecting the model's prior
+#'     assumptions. Users can adjust this parameter to reflect their prior
+#'     knowledge or assumptions about the background coverage in the dataset.
 #'     It must be a value between 0 and 1.
-#' @param total_cnt_prior_dirich A numeric value representing the total count 
-#'     parameterization of the prior Dirichlet distribution used in the 
-#'     Bayesian model. This parameter is related to the bg_prior_cover and 
-#'     ftp_prior_cover parameters and reflects the total count of observations. 
-#'     In Bayesian statistics, the Dirichlet distribution is often 
-#'     parameterized using mean and total count, where the total count 
-#'     influences the spread of the distribution. Higher values of 
-#'     total_cnt_prior_dirich result in a narrower distribution, implying 
-#'     stronger prior beliefs, while lower values lead to a wider distribution, 
-#'     indicating weaker prior beliefs. Users can adjust this parameter to 
-#'     reflect their confidence in the prior assumptions encoded by 
+#' @param total_cnt_prior_dirich A numeric value representing the total count
+#'     parameterization of the prior Dirichlet distribution used in the
+#'     Bayesian model. This parameter is related to the bg_prior_cover and
+#'     ftp_prior_cover parameters and reflects the total count of observations.
+#'     In Bayesian statistics, the Dirichlet distribution is often
+#'     parameterized using mean and total count, where the total count
+#'     influences the spread of the distribution. Higher values of
+#'     total_cnt_prior_dirich result in a narrower distribution, implying
+#'     stronger prior beliefs, while lower values lead to a wider distribution,
+#'     indicating weaker prior beliefs. Users can adjust this parameter to
+#'     reflect their confidence in the prior assumptions encoded by
 #'     bg_prior_cover and ftp_prior_cover.
 #' @param ftp_bg_model Type of model used for inference.
 #'     \describe{
-#'     \item{"informative_prior"}{Inference is performed on parameters 
+#'     \item{"informative_prior"}{Inference is performed on parameters
 #'     bg_protect_prob, ftp_protect_prob, and footprint abundances.}
 #'     \item{"bg_fixed"}{bg_protect_prob is fixed and determined by
-#'     bg_model_params[["bg_protect_prob_fixed"]], while inference is conducted 
+#'     `bg_model_params[["bg_protect_prob_fixed"]]`, while inference is conducted
 #'     on ftp_protect_prob and footprint abundances.}
-#'     \item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are 
-#'     fixed, defined by corresponding values in bg_model_params and 
-#'     ftp_model_params, respectively. Inference is solely focused on footprint 
+#'     \item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
+#'     fixed, defined by corresponding values in bg_model_params and
+#'     ftp_model_params, respectively. Inference is solely focused on footprint
 #'     abundances.}
 #' }
-#' @param bg_model_params A list containing parameters for the background 
+#' @param bg_model_params A list containing parameters for the background
 #'     model, which must contain the following elements:
 #'     \describe{
-#'     \item{bg_protect_prob_fixed}{Constant value for the model parameter 
-#'     "bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models and 
+#'     \item{bg_protect_prob_fixed}{Constant value for the model parameter
+#'     "bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models and
 #'     ignored if ftp_bg_model is "informative_prior".}
 #'     \item{bg_protect_min}{Minimum allowed value for the background emission
-#'     probability of the protected state (i.e., 1's in the data). This value 
+#'     probability of the protected state (i.e., 1's in the data). This value
 #'     is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
-#'     \item{bg_protect_max}{Maximum allowed value for the background emission 
-#'     probability of the protected state (i.e., 1's in the data). This value 
+#'     \item{bg_protect_max}{Maximum allowed value for the background emission
+#'     probability of the protected state (i.e., 1's in the data). This value
 #'     is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
-#'     \item{bg_protect_mean}{Mean of the prior Beta distribution for the model 
-#'     parameter "bg_protect_prob". This parameter corresponds to shape 
-#'     parameters of the Beta distribution as mean=alpha/(alpha+beta). This 
+#'     \item{bg_protect_mean}{Mean of the prior Beta distribution for the model
+#'     parameter "bg_protect_prob". This parameter corresponds to shape
+#'     parameters of the Beta distribution as mean=alpha/(alpha+beta). This
 #'     value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
-#'     \item{bg_protect_totcount}{Total count parameter for the prior beta 
-#'     distribution for the model parameter "bg_protect_prob". This parameter 
-#'     corresponds to shape parameters of the Beta distribution as 
-#'     tot_count=alpha+beta and influences the spread of the distribution. 
+#'     \item{bg_protect_totcount}{Total count parameter for the prior beta
+#'     distribution for the model parameter "bg_protect_prob". This parameter
+#'     corresponds to shape parameters of the Beta distribution as
+#'     tot_count=alpha+beta and influences the spread of the distribution.
 #'     This value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
 #' }
-#' @param ftp_model_params A list containing parameters for the footprint 
+#' @param ftp_model_params A list containing parameters for the footprint
 #'     model, which must contain the following elements:
 #'     \describe{
-#'     \item{ftp_protect_prob_fixed}{Constant value for the model parameter 
-#'     "ftp_protect_prob" used in "ftp_bg_fixed" models and ignored if 
+#'     \item{ftp_protect_prob_fixed}{Constant value for the model parameter
+#'     "ftp_protect_prob" used in "ftp_bg_fixed" models and ignored if
 #'     ftp_bg_model is "informative_prior" or "bg_fixed".}
-#'     \item{ftp_protect_min}{Minimum allowed value for the footprint emission 
-#'     probability of the protected state (i.e., 1's in the data). This value 
+#'     \item{ftp_protect_min}{Minimum allowed value for the footprint emission
+#'     probability of the protected state (i.e., 1's in the data). This value
 #'     is ignored if ftp_bg_model is "ftp_bg_fixed".}
-#'     \item{ftp_protect_max}{Maximum allowed value for the footprint emission 
-#'     probability of the protected state (i.e., 1's in the data). This value 
+#'     \item{ftp_protect_max}{Maximum allowed value for the footprint emission
+#'     probability of the protected state (i.e., 1's in the data). This value
 #'     is ignored if ftp_bg_model is "ftp_bg_fixed".}
-#'     \item{ftp_protect_mean}{Alpha parameter for the prior beta distribution 
-#'     for the model parameter "ftp_protect_prob". This parameter corresponds 
-#'     to shape parameters of the Beta distribution as mean=alpha/(alpha+beta). 
+#'     \item{ftp_protect_mean}{Alpha parameter for the prior beta distribution
+#'     for the model parameter "ftp_protect_prob". This parameter corresponds
+#'     to shape parameters of the Beta distribution as mean=alpha/(alpha+beta).
 #'     This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
-#'     \item{ftp_protect_totcount}{Beta parameter for the prior beta 
-#'     distribution for the model parameter "ftp_protect_prob". This parameter 
-#'     corresponds to shape parameters of the Beta distribution as 
-#'     tot_count=alpha+beta and influences the spread of the distribution. 
+#'     \item{ftp_protect_totcount}{Beta parameter for the prior beta
+#'     distribution for the model parameter "ftp_protect_prob". This parameter
+#'     corresponds to shape parameters of the Beta distribution as
+#'     tot_count=alpha+beta and influences the spread of the distribution.
 #'     This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
 #' }
-#' @param ... Parameters for \code{\link[rstan]{vb}} function. Please refer 
+#' @param ... Parameters for \code{\link[rstan]{vb}} function. Please refer
 #'     to \code{\link[rstan]{vb}} documentation.
 #'
-#' @return An S4 class stanfit-class representing the inference results. 
+#' @return An S4 class stanfit-class representing the inference results.
 #' Please check \code{\link[rstan]{vb}}.
 #'
 #' @export
@@ -156,7 +156,7 @@
 #'
 #' ## plot footprint spectrum
 #' get_ftp_inference_summary(inf_output, plot = TRUE)
-#' 
+#'
 #' @importFrom rstan optimizing
 infer_footprints_optim <- function(
         cooc_ctable,
@@ -176,9 +176,9 @@ infer_footprints_optim <- function(
                                 "ftp_protect_mean" = 0.95,
                                 "ftp_protect_totcount" = 100),
         ...) {
-    
+
     ftp_bg_model <- match.arg(ftp_bg_model)
-    
+
     ## validate and construct input for inference
     stan_input <- .validate_construct_stan_input(cooc_ctable,
                                                  ftp_lengths,
@@ -188,7 +188,7 @@ infer_footprints_optim <- function(
                                                  ftp_bg_model,
                                                  bg_model_params,
                                                  ftp_model_params)
-    
+
     ## get initial values for fitting
     stan_initvals <- .init_param_from_prior_distr(stan_input = stan_input,
                                                   nchains = 1)
@@ -198,8 +198,8 @@ infer_footprints_optim <- function(
         data = stan_input$stan_inputdata,
         init = stan_initvals[[1]],
         ...)
-    
+
     attr(stanfit_out,"ftp_lengths") <- ftp_lengths
-    
+
     return(stanfit_out)
 }

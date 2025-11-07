@@ -54,7 +54,7 @@
 #'     \item{"informative_prior"}{Inference is performed on parameters
 #'     bg_protect_prob, ftp_protect_prob, and footprint abundances.}
 #'     \item{"bg_fixed"}{bg_protect_prob is fixed and determined by
-#'     bg_model_params[["bg_protect_prob_fixed"]], while inference is conducted
+#'     `bg_model_params[["bg_protect_prob_fixed"]]`, while inference is conducted
 #'     on ftp_protect_prob and footprint abundances.}
 #'     \item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
 #'     fixed, defined by corresponding values in bg_model_params and
@@ -114,6 +114,9 @@
 #'     max_nruns attempts have been done.
 #' @param ncpu number of threads to use.
 #' @param verbose verbose mode for bug fixing.
+#' @param iter,tol_rel_obj,output_samples,grad_samples,algorithm,...  parameters for
+#'     \code{\link[rstan]{vb}} function that performs inference using Variational Bayes
+#'     approximation of posteriors.
 #'
 #' @return \code{DataFrame} object from \code{colData} of \code{se} with additional columns
 #'     containing pair state statistics, inferred footprint spectra and emission probabilities
@@ -144,10 +147,15 @@ ftp_spectral_analysis_SE <- function(se,
                                        ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,
                                        ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100
                                      ),
-                                     max_nruns = 7,
+																		 max_nruns = 3,
                                      max_pareto_k = 10,
                                      ncpu = 1L,
                                      verbose = FALSE,
+																		 iter = 10000,
+																		 tol_rel_obj = 1e-3,
+																		 output_samples = 2000,
+																		 grad_samples = 1,
+																		 algorithm = "meanfield",
                                      ...) {
   ### validate ncpu
   assert_int(x = ncpu, lower = 0, na.ok = TRUE)
@@ -186,35 +194,35 @@ ftp_spectral_analysis_SE <- function(se,
   if (verbose) {
     .warning_timestamp("Performing footprint spectral analysis")
   }
-
-  ## check input parameters for VB
-
-  dots <- list(...)
-  if ("iter" %in% names(dots)) {
-    iter <- dots$iter
-  } else {
-    iter <- 5000
-  }
-  if ("tol_rel_obj" %in% names(dots)) {
-    tol_rel_obj <- dots$tol_rel_obj
-  } else {
-    tol_rel_obj <- 1e-8
-  }
-  if ("output_samples" %in% names(dots)) {
-    output_samples <- dots$output_samples
-  } else {
-    output_samples <- 4000
-  }
-  if ("grad_samples" %in% names(dots)) {
-    grad_samples <- dots$grad_samples
-  } else {
-    grad_samples <- 1
-  }
-  if ("algorithm" %in% names(dots)) {
-    algorithm <- dots$algorithm
-  } else {
-    algorithm <- "meanfield"
-  }
+#
+#   ## check input parameters for VB
+#
+#   dots <- list(...)
+#   if ("iter" %in% names(dots)) {
+#     iter <- dots$iter
+#   } else {
+#     iter <- 5000
+#   }
+#   if ("tol_rel_obj" %in% names(dots)) {
+#     tol_rel_obj <- dots$tol_rel_obj
+#   } else {
+#     tol_rel_obj <- 1e-8
+#   }
+#   if ("output_samples" %in% names(dots)) {
+#     output_samples <- dots$output_samples
+#   } else {
+#     output_samples <- 4000
+#   }
+#   if ("grad_samples" %in% names(dots)) {
+#     grad_samples <- dots$grad_samples
+#   } else {
+#     grad_samples <- 1
+#   }
+#   if ("algorithm" %in% names(dots)) {
+#     algorithm <- dots$algorithm
+#   } else {
+#     algorithm <- "meanfield"
+#   }
 
 
   infDF <- do.call(rbind, lapply(

@@ -34,7 +34,7 @@ probabilities to find protected position within a footprint}
 (\code{numeric}) reflecting what fraction of reads you expect to be
 covered by a footprint}
 \item{NAME}{unique name (\code{character}) of a model, e.g. "Nucleosome--149", "Nucleosome--150" etc.}
-\item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated 
+\item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated
 if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149", "Nucleosome--150" etc. footprint models
 have identical GROUP (e.g. "Nucleosome") and \code{aggrByGroup = TRUE}, probabilities will be aggregated
 across all footprints with identical GROUP.}
@@ -64,19 +64,19 @@ be reported in the \code{START_PROB}.}
 }
 \value{
 A list which contains 2 data frames:
-    \describe{
-    \item{\code{START_PROB}}{data frame with calculated start probabilities
-    for each SMF molecule (column \code{seq}), each position in ROI (column
-    \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
-    These probabilities reflect how likely it is to find a start in each
-    fragment and at each position of a certain footprint model.}
-    \item{\code{COVER_PROB}}{data frame with calculated coverage
-    probabilities for each SMF molecule (column \code{seq}), each position
-    in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome,
-    background etc. These probabilities reflect how likely it is that a
-    certain position in an amplicon and certain fragment is covered by a
-    certain footprint model.}
-    }
+\describe{
+\item{\code{START_PROB}}{data frame with calculated start probabilities
+for each SMF molecule (column \code{seq}), each position in ROI (column
+\code{pos}) and each footprint model, e.g. Nucleosome, background etc.
+These probabilities reflect how likely it is to find a start in each
+fragment and at each position of a certain footprint model.}
+\item{\code{COVER_PROB}}{data frame with calculated coverage
+probabilities for each SMF molecule (column \code{seq}), each position
+in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome,
+background etc. These probabilities reflect how likely it is that a
+certain position in an amplicon and certain fragment is covered by a
+certain footprint model.}
+}
 }
 \description{
 Calculate coverage probabilities for footprints in single-molecule

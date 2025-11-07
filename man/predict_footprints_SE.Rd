@@ -70,19 +70,19 @@ be reported in the \code{START_PROB}.}
 }
 \value{
 A list which contains 2 data frames:
-    \describe{
-    \item{\code{START_PROB}}{data frame with calculated start probabilities
-    for each SMF molecule (column \code{seq}), each position in ROI (column
-    \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
-    These probabilities reflect how likely it is to find a start in each
-    fragment and at each position of a certain footprint model.}
-    \item{\code{COVER_PROB}}{data frame with calculated coverage
-    probabilities for each SMF molecule (column \code{seq}), each position
-    in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome,
-    background etc. These probabilities reflect how likely it is that a
-    certain position in an amplicon and certain fragment is covered by a
-    certain footprint model.}
-    }
+\describe{
+\item{\code{START_PROB}}{data frame with calculated start probabilities
+for each SMF molecule (column \code{seq}), each position in ROI (column
+\code{pos}) and each footprint model, e.g. Nucleosome, background etc.
+These probabilities reflect how likely it is to find a start in each
+fragment and at each position of a certain footprint model.}
+\item{\code{COVER_PROB}}{data frame with calculated coverage
+probabilities for each SMF molecule (column \code{seq}), each position
+in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome,
+background etc. These probabilities reflect how likely it is that a
+certain position in an amplicon and certain fragment is covered by a
+certain footprint model.}
+}
 }
 \description{
 Calculate coverage probabilities for footprints in SummarizedExperiment object containing

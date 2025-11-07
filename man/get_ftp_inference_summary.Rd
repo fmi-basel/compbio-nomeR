@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_ftp_inference_summary.R
 \name{get_ftp_inference_summary}
 \alias{get_ftp_inference_summary}
-\title{Extract and/or plot estimates from footprint inference and (optionally) 
+\title{Extract and/or plot estimates from footprint inference and (optionally)
 identify potential footprints from spectrum}
 \usage{
 get_ftp_inference_summary(
@@ -20,7 +20,7 @@ get_ftp_inference_summary(
 }
 \arguments{
 \item{infer_stanfit}{\code{\link[rstan]{stanfit}} object returned by
-\code{\link{infer_footprints_vb}}, 
+\code{\link{infer_footprints_vb}},
 \code{\link{infer_footprints_sampling}} or a \code{list} returned by
 \code{\link{infer_footprints_optim}}.}
 
@@ -30,54 +30,54 @@ get_ftp_inference_summary(
 
 \item{suggest_ftps}{\code{logical} return suggestion for footprints.}
 
-\item{plot_posterior_range}{\code{vector} of \code{character} of length 2 
-which specifies which posterior range to plot. 
-\code{\link[rstan]{summary,stanfit-method}} provides "2.5\%", "25\%" 
-and "75\%", "97.5\%" credible intervals as well as SD and SE. Displaying 
+\item{plot_posterior_range}{\code{vector} of \code{character} of length 2
+which specifies which posterior range to plot.
+\code{\link[rstan]{summary,stanfit-method}} provides "2.5\\%", "25\\%"
+and "75\\%", "97.5\\%" credible intervals as well as SD and SE. Displaying
 SD and SE is not implemented at the moment.}
 
-\item{max_peak_width}{parameter for function 
-\code{\link{suggest_footprints}}, namely maximum width of detected peaks 
+\item{max_peak_width}{parameter for function
+\code{\link{suggest_footprints}}, namely maximum width of detected peaks
 in spectrum. Please see \code{\link{suggest_footprints}}.}
 
-\item{spline_spar}{parameter for function \code{\link{suggest_footprints}} 
-controlling smoothness of spline ((0,1], the higher the smoother). 
-Please see \code{\link{suggest_footprints}} 
+\item{spline_spar}{parameter for function \code{\link{suggest_footprints}}
+controlling smoothness of spline ((0,1], the higher the smoother).
+Please see \code{\link{suggest_footprints}}
 \code{\link[stats]{smooth.spline}}.
-It is recommended to test different values for \code{spline_spar}, for 
-example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look 
+It is recommended to test different values for \code{spline_spar}, for
+example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look
 as expected.}
 
-\item{max_abund_log2drop}{parameter for function 
-\code{\link{suggest_footprints}}, namely maximum decrease in abundance 
-relative to value at local maxima until which peaks are extended. Please 
+\item{max_abund_log2drop}{parameter for function
+\code{\link{suggest_footprints}}, namely maximum decrease in abundance
+relative to value at local maxima until which peaks are extended. Please
 see \code{\link{suggest_footprints}}}
 
-\item{ftp_abundance_name}{\code{character} which defines which footprint 
-abundance value to return/display. Currently only ftp_abundances is 
+\item{ftp_abundance_name}{\code{character} which defines which footprint
+abundance value to return/display. Currently only ftp_abundances is
 accepted.}
 
-\item{...}{parameters for \code{\link{suggest_footprints}} which are 
+\item{...}{parameters for \code{\link{suggest_footprints}} which are
 transmitted to function \code{\link[stats]{smooth.spline}}.}
 }
 \value{
 \code{list} containing elements:
 \describe{
-\item{\code{"ESTIMATES"}}{\code{list} which contains a 
-\code{ftp_abundance_estimates} - \code{data.frame} for footprint abundances 
-estimates, \code{"ftp_protect_prob_estimate"} and 
-\code{bg_protect_prob_estimate} which are estimates for 
+\item{\code{"ESTIMATES"}}{\code{list} which contains a
+\code{ftp_abundance_estimates} - \code{data.frame} for footprint abundances
+estimates, \code{"ftp_protect_prob_estimate"} and
+\code{bg_protect_prob_estimate} which are estimates for
 \code{ftp_protect_prob} and \code{bg_protect_prob}.
-\code{"bg_protect_prob_estimate"} and/or \code{"ftp_protect_prob_estimate"} 
+\code{"bg_protect_prob_estimate"} and/or \code{"ftp_protect_prob_estimate"}
 are \code{NA} if inference for these parameters are not available.}
-\item{\code{"FTP_SUGGEST"}}{\code{matrix} with coordinates for suggested 
+\item{\code{"FTP_SUGGEST"}}{\code{matrix} with coordinates for suggested
 footprints as returned by \code{\link{suggest_footprints}}.}
-\item{\code{"PLOT"}}{a \code{ggplot} object with plot for footprint 
+\item{\code{"PLOT"}}{a \code{ggplot} object with plot for footprint
 spectrum.}
 }
 }
 \description{
-This utility function extract estimates from \code{infer_stanfit} and uses 
+This utility function extract estimates from \code{infer_stanfit} and uses
 function \code{\link{suggest_footprints}} (optionally)
 to detect peaks in spectrum and return lengths of potential footprints.
 }

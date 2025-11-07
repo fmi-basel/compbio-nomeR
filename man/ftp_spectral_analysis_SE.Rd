@@ -20,10 +20,15 @@ ftp_spectral_analysis_SE(
     bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),
   ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,
     ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),
-  max_nruns = 7,
+  max_nruns = 3,
   max_pareto_k = 10,
   ncpu = 1L,
   verbose = FALSE,
+  iter = 10000,
+  tol_rel_obj = 0.001,
+  output_samples = 2000,
+  grad_samples = 1,
+  algorithm = "meanfield",
   ...
 )
 }
@@ -84,62 +89,62 @@ reflect their confidence in the prior assumptions encoded by
 bg_prior_cover and ftp_prior_cover.}
 
 \item{ftp_bg_model}{Type of model used for inference.
-    \describe{
-    \item{"informative_prior"}{Inference is performed on parameters
-    bg_protect_prob, ftp_protect_prob, and footprint abundances.}
-    \item{"bg_fixed"}{bg_protect_prob is fixed and determined by
-    bg_model_params[["bg_protect_prob_fixed"]], while inference is conducted
-    on ftp_protect_prob and footprint abundances.}
-    \item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
-    fixed, defined by corresponding values in bg_model_params and
-    ftp_model_params, respectively. Inference is solely focused on footprint
-    abundances.}
+\describe{
+\item{"informative_prior"}{Inference is performed on parameters
+bg_protect_prob, ftp_protect_prob, and footprint abundances.}
+\item{"bg_fixed"}{bg_protect_prob is fixed and determined by
+\code{bg_model_params[["bg_protect_prob_fixed"]]}, while inference is conducted
+on ftp_protect_prob and footprint abundances.}
+\item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
+fixed, defined by corresponding values in bg_model_params and
+ftp_model_params, respectively. Inference is solely focused on footprint
+abundances.}
 }}
 
 \item{bg_model_params}{A list containing parameters for the background
-    model, which must contain the following elements:
-    \describe{
-    \item{bg_protect_prob_fixed}{Constant value for the model parameter
-    "bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models and
-    ignored if ftp_bg_model is "informative_prior".}
-    \item{bg_protect_min}{Minimum allowed value for the background emission
-    probability of the protected state (i.e., 1's in the data). This value
-    is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
-    \item{bg_protect_max}{Maximum allowed value for the background emission
-    probability of the protected state (i.e., 1's in the data). This value
-    is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
-    \item{bg_protect_mean}{Mean of the prior Beta distribution for the model
-    parameter "bg_protect_prob". This parameter corresponds to shape
-    parameters of the Beta distribution as mean=alpha/(alpha+beta). This
-    value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
-    \item{bg_protect_totcount}{Total count parameter for the prior beta
-    distribution for the model parameter "bg_protect_prob". This parameter
-    corresponds to shape parameters of the Beta distribution as
-    tot_count=alpha+beta and influences the spread of the distribution.
-    This value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
+model, which must contain the following elements:
+\describe{
+\item{bg_protect_prob_fixed}{Constant value for the model parameter
+"bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models and
+ignored if ftp_bg_model is "informative_prior".}
+\item{bg_protect_min}{Minimum allowed value for the background emission
+probability of the protected state (i.e., 1's in the data). This value
+is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
+\item{bg_protect_max}{Maximum allowed value for the background emission
+probability of the protected state (i.e., 1's in the data). This value
+is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
+\item{bg_protect_mean}{Mean of the prior Beta distribution for the model
+parameter "bg_protect_prob". This parameter corresponds to shape
+parameters of the Beta distribution as mean=alpha/(alpha+beta). This
+value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
+\item{bg_protect_totcount}{Total count parameter for the prior beta
+distribution for the model parameter "bg_protect_prob". This parameter
+corresponds to shape parameters of the Beta distribution as
+tot_count=alpha+beta and influences the spread of the distribution.
+This value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
 }}
 
 \item{ftp_model_params}{A list containing parameters for the footprint
-    model, which must contain the following elements:
-    \describe{
-    \item{ftp_protect_prob_fixed}{Constant value for the model parameter
-    "ftp_protect_prob" used in "ftp_bg_fixed" models and ignored if
-    ftp_bg_model is "informative_prior" or "bg_fixed".}
-    \item{ftp_protect_min}{Minimum allowed value for the footprint emission
-    probability of the protected state (i.e., 1's in the data). This value
-    is ignored if ftp_bg_model is "ftp_bg_fixed".}
-    \item{ftp_protect_max}{Maximum allowed value for the footprint emission
-    probability of the protected state (i.e., 1's in the data). This value
-    is ignored if ftp_bg_model is "ftp_bg_fixed".}
-    \item{ftp_protect_mean}{Alpha parameter for the prior beta distribution
-    for the model parameter "ftp_protect_prob". This parameter corresponds
-    to shape parameters of the Beta distribution as mean=alpha/(alpha+beta).
-    This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
-    \item{ftp_protect_totcount}{Beta parameter for the prior beta
-    distribution for the model parameter "ftp_protect_prob". This parameter
-    corresponds to shape parameters of the Beta distribution as
-    tot_count=alpha+beta and influences the spread of the distribution.
-    This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
+model, which must contain the following elements:
+\describe{
+\item{ftp_protect_prob_fixed}{Constant value for the model parameter
+"ftp_protect_prob" used in "ftp_bg_fixed" models and ignored if
+ftp_bg_model is "informative_prior" or "bg_fixed".}
+\item{ftp_protect_min}{Minimum allowed value for the footprint emission
+probability of the protected state (i.e., 1's in the data). This value
+is ignored if ftp_bg_model is "ftp_bg_fixed".}
+\item{ftp_protect_max}{Maximum allowed value for the footprint emission
+probability of the protected state (i.e., 1's in the data). This value
+is ignored if ftp_bg_model is "ftp_bg_fixed".}
+\item{ftp_protect_mean}{Alpha parameter for the prior beta distribution
+for the model parameter "ftp_protect_prob". This parameter corresponds
+to shape parameters of the Beta distribution as mean=alpha/(alpha+beta).
+This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
+\item{ftp_protect_totcount}{Beta parameter for the prior beta
+distribution for the model parameter "ftp_protect_prob". This parameter
+corresponds to shape parameters of the Beta distribution as
+tot_count=alpha+beta and influences the spread of the distribution.
+This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
 }}
 
 \item{max_nruns}{Maximum number of trials to run stan function
@@ -154,11 +159,15 @@ max_nruns attempts have been done.}
 \item{ncpu}{number of threads to use.}
 
 \item{verbose}{verbose mode for bug fixing.}
+
+\item{iter, tol_rel_obj, output_samples, grad_samples, algorithm, ...}{parameters for
+\code{\link[rstan]{vb}} function that performs inference using Variational Bayes
+approximation of posteriors.}
 }
 \value{
 \code{DataFrame} object from \code{colData} of \code{se} with additional columns
-    containing pair state statistics, inferred footprint spectra and emission probabilities
-    for each sample in code{se}.
+containing pair state statistics, inferred footprint spectra and emission probabilities
+for each sample in code{se}.
 }
 \description{
 Footprint spectral analysis for SummarizedExperiment object containing

@@ -38,8 +38,8 @@ as modified (modification probability >= threshMod), unmodified
 }
 \value{
 if \code{aggrSamples = T} \code{matrix} containing aggregated frequencies across all samples for
-    0,0; 0,1; etc for each spacing between 1 (total number of 0s and 1s in the data) and \code{max_spacing}.
-    If \code{aggrSamples = F} a \code{list} of matrices with frequences for each sample separately.
+0,0; 0,1; etc for each spacing between 1 (total number of 0s and 1s in the data) and \code{max_spacing}.
+If \code{aggrSamples = F} a \code{list} of matrices with frequences for each sample separately.
 }
 \description{
 Create count table for 00, 01, 10, 11, etc occurrences in SummarizedExperiment object
