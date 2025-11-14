@@ -10,6 +10,10 @@
 #' @param threshUnmod,threshMod Numeric scalars used to classify observations
 #'     as modified (modification probability >= threshMod), unmodified
 #'     (modification probability < threshUnmod) or unknown (otherwise).
+#' @param min_frag_data_len \code{integer} ignore fragments that have genomic lengths from
+#'     most-left to most-right data points less than \code{min_frag_data_len}.
+#' @param min_frag_data_dens \code{numeric} ignore fragments that have density of
+#'     data-containing positions lower than \code{min_frag_data_dens}.
 #' @param max_spacing \code{integer} that defines maximum distance between positions for aggregating
 #'     frequencies of combinations 00, 01, 10, 11 at distances up to \code{max_spacing} observed in
 #'     the SMF dataset.
@@ -131,8 +135,10 @@
 #' @export
 ftp_spectral_analysis_SE <- function(se,
                                      assayName = "mod_prob",
-                                     threshUnmod = 0.5,
-                                     threshMod = 0.5,
+																		 threshMod = 0.5,
+                                     threshUnmod = threshMod,
+																		 min_frag_data_len = 50L,
+																		 min_frag_data_dens = 0.05,
                                      max_spacing = 200,
                                      ftp_lengths = 20:200,
                                      ftp_prior_cover = NULL,
@@ -151,17 +157,19 @@ ftp_spectral_analysis_SE <- function(se,
                                      max_pareto_k = 10,
                                      ncpu = 1L,
                                      verbose = FALSE,
-																		 iter = 10000,
-																		 tol_rel_obj = 1e-3,
+																		 iter = 15000,
+																		 tol_rel_obj = 1e-8,
 																		 output_samples = 2000,
 																		 grad_samples = 1,
 																		 algorithm = "meanfield",
                                      ...) {
+	ftp_bg_model <- match.arg(ftp_bg_model)
+
   ### validate ncpu
   assert_int(x = ncpu, lower = 0, na.ok = TRUE)
   avail_ncpu <- parallel::detectCores()
   if (is.na(avail_ncpu)) {
-    .warning_timestamp(
+  	.warning_timestamp(
       "Could not detect number of available cpu. Setting ncpu to 1L."
     )
     ncpu <- 1L
@@ -183,6 +191,8 @@ ftp_spectral_analysis_SE <- function(se,
     assayName,
     threshUnmod,
     threshMod,
+    min_frag_data_len,
+    min_frag_data_dens,
     max_spacing,
     aggrSamples = F,
     ncpu,
@@ -192,37 +202,8 @@ ftp_spectral_analysis_SE <- function(se,
 
   ## perform parameter inference for each sample
   if (verbose) {
-    .warning_timestamp("Performing footprint spectral analysis")
+  	.message_timestamp("Performing footprint spectral analysis")
   }
-#
-#   ## check input parameters for VB
-#
-#   dots <- list(...)
-#   if ("iter" %in% names(dots)) {
-#     iter <- dots$iter
-#   } else {
-#     iter <- 5000
-#   }
-#   if ("tol_rel_obj" %in% names(dots)) {
-#     tol_rel_obj <- dots$tol_rel_obj
-#   } else {
-#     tol_rel_obj <- 1e-8
-#   }
-#   if ("output_samples" %in% names(dots)) {
-#     output_samples <- dots$output_samples
-#   } else {
-#     output_samples <- 4000
-#   }
-#   if ("grad_samples" %in% names(dots)) {
-#     grad_samples <- dots$grad_samples
-#   } else {
-#     grad_samples <- 1
-#   }
-#   if ("algorithm" %in% names(dots)) {
-#     algorithm <- dots$algorithm
-#   } else {
-#     algorithm <- "meanfield"
-#   }
 
 
   infDF <- do.call(rbind, lapply(
@@ -290,7 +271,7 @@ ftp_spectral_analysis_SE <- function(se,
         ftp_spectrum = I(list(NULL))
       )
 
-      ## get summary and populate a DataFrame
+      ## get summary and populate the DataFrame
       if (!is.null(vb_res)) {
         ftpsumm <- get_ftp_inference_summary(vb_res)
         ftp_spec <- ftpsumm$ESTIMATES$ftp_abundance_estimates[, c("ftp_length", "mean", "sd", "2.5%", "50%", "97.5%")]
@@ -298,22 +279,27 @@ ftp_spectral_analysis_SE <- function(se,
         DFout$pareto_k <- vb_res@sim$diagnostics$psis$pareto_k
 
         ## add inf results for BG emission probs
-        if (!is.null(ftpsumm$ESTIMATES$bg_protect_prob_estimate$mean) & !is.na(ftpsumm$ESTIMATES$bg_protect_prob_estimate$mean)) {
-          DFout$bg_emis_mean <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "mean"]
-          DFout$bg_emis_sd <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "sd"]
-          DFout$bg_emis_2.5perc <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "2.5%"]
-          DFout$bg_emis_50perc <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "50%"]
-          DFout$bg_emis_97.5perc <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "97.5%"]
+        if(ftp_bg_model == "informative_prior"){
+        	DFout$bg_emis_mean <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "mean"]
+        	DFout$bg_emis_sd <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "sd"]
+        	DFout$bg_emis_2.5perc <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "2.5%"]
+        	DFout$bg_emis_50perc <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "50%"]
+        	DFout$bg_emis_97.5perc <- ftpsumm$ESTIMATES$bg_protect_prob_estimate[1, "97.5%"]
+        } else {
+        	DFout$bg_emis_mean <- bg_model_params[["bg_protect_prob_fixed"]]
         }
 
         ## add inf results for FTP emission probs
-        if (!is.null(ftpsumm$ESTIMATES$ftp_protect_prob_estimate$mean) & !is.na(ftpsumm$ESTIMATES$ftp_protect_prob_estimate$mean)) {
-          DFout$ftp_emis_mean <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "mean"]
-          DFout$ftp_emis_sd <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "sd"]
-          DFout$ftp_emis_2.5perc <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "2.5%"]
-          DFout$ftp_emis_50perc <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "50%"]
-          DFout$ftp_emis_97.5perc <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "97.5%"]
+        if(ftp_bg_model %in% c("informative_prior","bg_fixed")){
+        	DFout$ftp_emis_mean <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "mean"]
+        	DFout$ftp_emis_sd <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "sd"]
+        	DFout$ftp_emis_2.5perc <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "2.5%"]
+        	DFout$ftp_emis_50perc <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "50%"]
+        	DFout$ftp_emis_97.5perc <- ftpsumm$ESTIMATES$ftp_protect_prob_estimate[1, "97.5%"]
+        } else {
+        	DFout$ftp_emis_mean <- ftp_model_params[["ftp_protect_prob_fixed"]]
         }
+
         ## add inf results for background
         DFout$bg_coverage_mean <- subset(ftp_spec, ftp_length == 1)[, "mean"]
         DFout$bg_coverage_sd <- subset(ftp_spec, ftp_length == 1)[, "sd"]

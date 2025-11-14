@@ -9,6 +9,10 @@
 #' @param threshUnmod,threshMod Numeric scalars used to classify observations
 #'     as modified (modification probability >= threshMod), unmodified
 #'     (modification probability < threshUnmod) or unknown (otherwise).
+#' @param min_frag_data_len \code{integer} ignore fragments that have genomic lengths from
+#'     most-left to most-right data points less than \code{min_frag_data_len}.
+#' @param min_frag_data_dens \code{numeric} ignore fragments that have density of
+#'     data-containing positions lower than \code{min_frag_data_dens}.
 #' @param max_spacing Maximum spacing between positions.
 #' @param aggrSamples \code{logical} return frequencies for each sample separately or aggregate them for all samples.
 #' @param ncpu number of cores to use.
@@ -25,6 +29,8 @@ get_ctable_from_SE <- function(se,
 															 assayName = "mod_prob",
 															 threshUnmod = 0.5,
 															 threshMod = 0.5,
+															 min_frag_data_len = 50L,
+															 min_frag_data_dens = 0.05,
 															 max_spacing = 200L,
 															 aggrSamples = F,
 															 ncpu = 1L,
@@ -33,14 +39,20 @@ get_ctable_from_SE <- function(se,
 	### validate se object and prepare data for nomeR prediction
 
 
-	protect_data <- validate_prepare_SE(se,
+	dataList <- validate_prepare_SE(se,
 																			assayName,
 																			threshUnmod,
-																			threshMod)
+																			threshMod,
+																			min_frag_data_len,
+																			min_frag_data_dens
+																			)
+	protect_data <- dataList[["bin_protect_data"]]
 
 	## collect pair stats for each sample
 	ctable_list <- lapply(1:ncol(se),
 												function(csidx){
+
+
 													count_spacing_freq_cpp(protect_data[sidx == csidx][["fidx_glob"]], ## unique fragment ID or index
 																								 protect_data[sidx == csidx][["fragpos"]],      ## position within fragment, 1 - based
 																								 protect_data[sidx == csidx][["protect"]],   ## binary protection data, 0 - accessible, 1 - protected

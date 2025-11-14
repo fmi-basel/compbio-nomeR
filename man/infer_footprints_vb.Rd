@@ -18,6 +18,11 @@ infer_footprints_vb(
     ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),
   max_nruns = 3,
   max_pareto_k = 10,
+  iter = 15000,
+  tol_rel_obj = 1e-08,
+  output_samples = 2000,
+  grad_samples = 1,
+  algorithm = "meanfield",
   ...
 )
 }
@@ -136,8 +141,9 @@ maximum number of attempts for inference.}
 If it exceeds \code{max_pareto_k} the function will run again until
 max_nruns attempts have been done}
 
-\item{...}{Parameters for \code{\link[rstan]{vb}} function. Please refer to
-\code{\link[rstan]{vb}} documentation.}
+\item{iter, tol_rel_obj, output_samples, grad_samples, algorithm, ...}{parameters for
+\code{\link[rstan]{vb}} function that performs inference using Variational Bayes
+approximation of posteriors. Please refer to \code{\link[rstan]{vb}} documentation.}
 }
 \value{
 An S4 class stanfit-class representing the inference results. Please

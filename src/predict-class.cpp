@@ -63,6 +63,7 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& startProb,
                           vector<string >& cVitFtpName,
                           vector<string >& cVitFtpGroup,
                           vector<double >& cVitFtpProb){
+
 	size_t probVecLen = startProb[0].size(); //length of the probability vector
 	size_t seqlength = startProb[0].size() - 1; // actuall length of extended sequence
 	size_t nFtps = ftpModels.Size(); // number of footprints

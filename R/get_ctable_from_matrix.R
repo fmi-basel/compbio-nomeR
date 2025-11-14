@@ -23,5 +23,5 @@ get_ctable_from_matrix <- function(data,
                                        max_spacing,
     																	 ncpu,
     																	 verbose)
-    return(as.data.frame(out_data))
+    return(out_data)
 }

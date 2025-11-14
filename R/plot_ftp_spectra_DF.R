@@ -17,8 +17,7 @@ plot_ftp_spectra_DF <- function(DF){
 									 										title = DF$sample[i])
 									 })
 	wrap_plots(pllist,
-						 guides = "auto",
-						 axes = "collect",
 						 axis_title = "collect")
+
 
 }

@@ -1,54 +1,54 @@
-#' Extract and/or plot estimates from footprint inference and (optionally) 
+#' Extract and/or plot estimates from footprint inference and (optionally)
 #' identify potential footprints from spectrum
 #'
-#' This utility function extract estimates from \code{infer_stanfit} and uses 
+#' This utility function extract estimates from \code{infer_stanfit} and uses
 #' function \code{\link{suggest_footprints}} (optionally)
 #' to detect peaks in spectrum and return lengths of potential footprints.
 #'
 #' @param infer_stanfit \code{\link[rstan]{stanfit}} object returned by
-#'     \code{\link{infer_footprints_vb}}, 
+#'     \code{\link{infer_footprints_vb}},
 #'     \code{\link{infer_footprints_sampling}} or a \code{list} returned by
 #'     \code{\link{infer_footprints_optim}}.
-#' @param ftp_abundance_name \code{character} which defines which footprint 
-#'     abundance value to return/display. Currently only ftp_abundances is 
+#' @param ftp_abundance_name \code{character} which defines which footprint
+#'     abundance value to return/display. Currently only ftp_abundances is
 #'     accepted.
 #' @param plot \code{logical} return plot footprint abundance spectrum.
 #' @param show_plot \code{logical} show footprint abundance spectrum.
 #' @param suggest_ftps \code{logical} return suggestion for footprints.
-#' @param plot_posterior_range \code{vector} of \code{character} of length 2 
-#'     which specifies which posterior range to plot. 
-#'     \code{\link[rstan]{summary,stanfit-method}} provides "2.5\%", "25\%" 
-#'     and "75\%", "97.5\%" credible intervals as well as SD and SE. Displaying 
+#' @param plot_posterior_range \code{vector} of \code{character} of length 2
+#'     which specifies which posterior range to plot.
+#'     \code{\link[rstan]{summary,stanfit-method}} provides "2.5\%", "25\%"
+#'     and "75\%", "97.5\%" credible intervals as well as SD and SE. Displaying
 #'     SD and SE is not implemented at the moment.
-#' @param spline_spar parameter for function \code{\link{suggest_footprints}} 
-#'     controlling smoothness of spline ((0,1], the higher the smoother). 
-#'     Please see \code{\link{suggest_footprints}} 
+#' @param spline_spar parameter for function \code{\link{suggest_footprints}}
+#'     controlling smoothness of spline ((0,1], the higher the smoother).
+#'     Please see \code{\link{suggest_footprints}}
 #'     \code{\link[stats]{smooth.spline}}.
-#'     It is recommended to test different values for \code{spline_spar}, for 
-#'     example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look 
+#'     It is recommended to test different values for \code{spline_spar}, for
+#'     example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look
 #'     as expected.
-#' @param max_abund_log2drop parameter for function 
-#'     \code{\link{suggest_footprints}}, namely maximum decrease in abundance 
-#'     relative to value at local maxima until which peaks are extended. Please 
+#' @param max_abund_log2drop parameter for function
+#'     \code{\link{suggest_footprints}}, namely maximum decrease in abundance
+#'     relative to value at local maxima until which peaks are extended. Please
 #'     see \code{\link{suggest_footprints}}
-#' @param max_peak_width parameter for function 
-#'     \code{\link{suggest_footprints}}, namely maximum width of detected peaks 
+#' @param max_peak_width parameter for function
+#'     \code{\link{suggest_footprints}}, namely maximum width of detected peaks
 #'     in spectrum. Please see \code{\link{suggest_footprints}}.
-#' @param ... parameters for \code{\link{suggest_footprints}} which are 
+#' @param ... parameters for \code{\link{suggest_footprints}} which are
 #'     transmitted to function \code{\link[stats]{smooth.spline}}.
 #'
 #' @return \code{list} containing elements:
 #' \describe{
-#' \item{\code{"ESTIMATES"}}{\code{list} which contains a 
-#' \code{ftp_abundance_estimates} - \code{data.frame} for footprint abundances 
-#' estimates, \code{"ftp_protect_prob_estimate"} and 
-#' \code{bg_protect_prob_estimate} which are estimates for 
+#' \item{\code{"ESTIMATES"}}{\code{list} which contains a
+#' \code{ftp_abundance_estimates} - \code{data.frame} for footprint abundances
+#' estimates, \code{"ftp_protect_prob_estimate"} and
+#' \code{bg_protect_prob_estimate} which are estimates for
 #' \code{ftp_protect_prob} and \code{bg_protect_prob}.
-#' \code{"bg_protect_prob_estimate"} and/or \code{"ftp_protect_prob_estimate"} 
+#' \code{"bg_protect_prob_estimate"} and/or \code{"ftp_protect_prob_estimate"}
 #' are \code{NA} if inference for these parameters are not available.}
-#' \item{\code{"FTP_SUGGEST"}}{\code{matrix} with coordinates for suggested 
+#' \item{\code{"FTP_SUGGEST"}}{\code{matrix} with coordinates for suggested
 #' footprints as returned by \code{\link{suggest_footprints}}.}
-#' \item{\code{"PLOT"}}{a \code{ggplot} object with plot for footprint 
+#' \item{\code{"PLOT"}}{a \code{ggplot} object with plot for footprint
 #' spectrum.}
 #' }
 #'
@@ -101,8 +101,8 @@
 #' ## get estimates and plot footprint spectrum
 #' inference_summary_list <- get_ftp_inference_summary(inf, plot = TRUE)
 #'
-#' @importFrom ggplot2 ggplot geom_ribbon aes labs geom_line scale_y_log10 
-#'     scale_color_manual scale_fill_manual guides guide_legend theme_bw theme 
+#' @importFrom ggplot2 ggplot geom_ribbon aes labs geom_line scale_y_log10
+#'     scale_color_manual scale_fill_manual guides guide_legend theme_bw theme
 #'     element_text annotate geom_point scale_x_continuous
 #' @importFrom graphics plot
 #' @importFrom stringr str_extract
@@ -119,10 +119,10 @@ get_ftp_inference_summary <- function(
         max_abund_log2drop = 1.5,
         ftp_abundance_name = c("ftp_abundances"),
         ...) {
-    
+
     ftp_abundance_name <- match.arg(ftp_abundance_name)
     ftp_abund_pattern <- paste0(ftp_abundance_name, "\\[\\d+\\]")
-    
+
     ## get ftp_lengths
     if (!is.null(attr(infer_stanfit, "ftp_lengths"))) {
         ftp_lengths <- attr(infer_stanfit, "ftp_lengths")
@@ -131,32 +131,32 @@ get_ftp_inference_summary <- function(
     } else {
         stop("infer_stanfit must have attribute ftp_lengths")
     }
-    
+
     ## get summary from stanfit
     if (inherits(infer_stanfit, "stanfit")) {
         ftp_infer_summary <- as.data.frame(
             rstan::summary(infer_stanfit)$summary)
         ftp_infer_summary$param <- gsub("\\[\\d+\\]$", "",
                                         row.names(ftp_infer_summary))
-        
+
         ## get vector of ftp coverages
-        infer_ftp_abund_probs <- 
+        infer_ftp_abund_probs <-
             ftp_infer_summary[grep(ftp_abund_pattern,
                                    row.names(ftp_infer_summary),
                                    perl = TRUE), ]
-        
-        infer_ftp_abund_probs$ftp_length <- 
-            ftp_lengths[as.numeric(gsub("[\\[\\]]", "", 
+
+        infer_ftp_abund_probs$ftp_length <-
+            ftp_lengths[as.numeric(gsub("[\\[\\]]", "",
                                         str_extract(
                                             row.names(infer_ftp_abund_probs),
                                             pattern = "\\[(\\d+)\\]"),
                                         perl = TRUE))]
-        
+
         row.names(infer_ftp_abund_probs) <- infer_ftp_abund_probs$ftp_length
         # estimate for ftp_protect_prob
         infer_ftp_protect_prob <- ftp_infer_summary["ftp_protect_prob", ]
-        
-        ## if model with informative prior for bg_protect_prob get estimate, 
+
+        ## if model with informative prior for bg_protect_prob get estimate,
         ## otherwise NA
         if (infer_stanfit@model_name == "ftp_inference_informative_prior") {
             infer_bg_protect_prob <- ftp_infer_summary["bg_protect_prob", ]
@@ -164,7 +164,7 @@ get_ftp_inference_summary <- function(
             infer_bg_protect_prob <- NA
         } else {
             warning("Model name: ", infer_stanfit@model_name,
-                    ". Setting infer_bg_protect_prob, infer_ftp_protect_prob ", 
+                    ". Setting infer_bg_protect_prob, infer_ftp_protect_prob ",
                     "to NA")
             infer_bg_protect_prob <- NA
             infer_ftp_protect_prob <- NA
@@ -176,81 +176,84 @@ get_ftp_inference_summary <- function(
         infer_ftp_abund_probs <- data.frame(mean = opt_ftp_cover)
         infer_ftp_abund_probs$param <- gsub("\\[\\d+\\]$", "",
                                             names(opt_ftp_cover))
-        
+
         infer_ftp_abund_probs$ftp_length <- as.numeric(
-            gsub("[\\[\\]]", "", 
+            gsub("[\\[\\]]", "",
                  str_extract(names(opt_ftp_cover),
                              pattern = "\\[(\\d+)\\]"), perl = TRUE))
-        
+
         tmp_na_mat <- matrix(NA, ncol = 7, nrow = nrow(infer_ftp_abund_probs))
         colnames(tmp_na_mat) <- c("se_mean", "sd", "2.5%", "25%", "50%",
                                   "75%", "97.5%")
         infer_ftp_abund_probs <- cbind(infer_ftp_abund_probs, tmp_na_mat)
-        
+
         if ("bg_protect_prob" %in% names(infer_stanfit$par)) {
             infer_bg_protect_prob <- infer_stanfit$par["bg_protect_prob"]
         } else {
             infer_bg_protect_prob <- NA
         }
-        
+
         if ("ftp_protect_prob" %in% names(infer_stanfit$par)) {
             infer_ftp_protect_prob <- infer_stanfit$par["ftp_protect_prob"]
         } else {
             infer_ftp_protect_prob <- NA
         }
     } else {
-        stop("infer_stanfit must be stanfit object returned by ", 
-             "rstan::sampling or rstan::vb, or list returned by ", 
+        stop("infer_stanfit must be stanfit object returned by ",
+             "rstan::sampling or rstan::vb, or list returned by ",
              "rstan::optimizing")
     }
-    
+
     if (plot) {
-        ## create plot, do not show ftp_length = 1, i.e. background
-        infer_plot <- ggplot(
-            infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1, ])
-        
-        if (inherits(infer_stanfit, "stanfit")) {
-            infer_plot <- infer_plot +
-                geom_ribbon(mapping = aes(
-                    x = .data$ftp_length,
-                    y = .data$mean,
-                    ymin = .data[[plot_posterior_range[1]]],
-                    ymax =  .data[[plot_posterior_range[2]]],
-                    fill = .data$param),
-                    alpha = 0.2, color = "grey") +
-                labs(x = "footprint length, bp",
-                     y = paste0("mean, ", plot_posterior_range[1], " - ",
-                                plot_posterior_range[2], " interval"))
-        } else if (inherits(infer_stanfit, "list")) {
-            infer_plot <- infer_plot +
-                labs(x = "footprint length, bp",
-                     y = "MAP point estimate")
-        }
-        infer_plot <- infer_plot +
-            geom_line(mapping = aes(x = .data$ftp_length,
-                                    y = .data$mean,
-                                    color = .data$param),
-                      linewidth = 1.5
-            ) +
-            scale_y_log10() +
-            scale_color_manual(values = c("ftp_abundances" = "darkgreen")) +
-            scale_fill_manual(values = c("ftp_abundances" = "lightgreen")) +
-            guides(color = guide_legend(title = NULL),
-                   fill = guide_legend(title = NULL)) +
-            theme_bw() +
-            theme(
-                legend.position = "right",
-                axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5,
-                                           size = 7),
-                axis.title = element_text(face = "bold", size = 12)
-            )
+    	infer_plot <- plot_ftp_spectrum(infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1, ])
+
+
+        # ## create plot, do not show ftp_length = 1, i.e. background
+        # infer_plot <- ggplot(
+        #     infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1, ])
+        #
+        # if (inherits(infer_stanfit, "stanfit")) {
+        #     infer_plot <- infer_plot +
+        #         geom_ribbon(mapping = aes(
+        #             x = .data$ftp_length,
+        #             y = .data$mean,
+        #             ymin = .data[[plot_posterior_range[1]]],
+        #             ymax =  .data[[plot_posterior_range[2]]],
+        #             fill = .data$param),
+        #             alpha = 0.2, color = "grey") +
+        #         labs(x = "footprint length, bp",
+        #              y = paste0("mean, ", plot_posterior_range[1], " - ",
+        #                         plot_posterior_range[2], " interval"))
+        # } else if (inherits(infer_stanfit, "list")) {
+        #     infer_plot <- infer_plot +
+        #         labs(x = "footprint length, bp",
+        #              y = "MAP point estimate")
+        # }
+        # infer_plot <- infer_plot +
+        #     geom_line(mapping = aes(x = .data$ftp_length,
+        #                             y = .data$mean,
+        #                             color = .data$param),
+        #               linewidth = 1.5
+        #     ) +
+        #     scale_y_log10() +
+        #     scale_color_manual(values = c("ftp_abundances" = "darkgreen")) +
+        #     scale_fill_manual(values = c("ftp_abundances" = "lightgreen")) +
+        #     guides(color = guide_legend(title = NULL),
+        #            fill = guide_legend(title = NULL)) +
+        #     theme_bw() +
+        #     theme(
+        #         legend.position = "right",
+        #         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5,
+        #                                    size = 7),
+        #         axis.title = element_text(face = "bold", size = 12)
+        #     )
     } else {
         infer_plot <- NULL
     }
-    
+
     if (suggest_ftps) {
         ## get ftp suggestions
-        infer_ftp_abund_probs_subset <- 
+        infer_ftp_abund_probs_subset <-
             infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1, ]
         tryCatch(ftp_suggestions <- suggest_footprints(
             S = infer_ftp_abund_probs_subset$ftp_length,
@@ -267,14 +270,14 @@ get_ftp_inference_summary <- function(
                 ftp_suggestions <- list("ftp_ranges" = ftp_ranges,
                                         "smoothed_signal" = NULL)
             })
-        
+
         if (nrow(ftp_suggestions[["ftp_ranges"]]) > 0) {
             ftp_lengths_suggest <- unlist(apply(
                 ftp_suggestions[["ftp_ranges"]], 1,
                 function(ftp_rng) {
                     seq(ftp_rng[1], ftp_rng[2])
                 }))
-            
+
             if (plot) {
                 infer_plot <- infer_plot +
                     annotate(geom = "rect",
@@ -309,11 +312,11 @@ get_ftp_inference_summary <- function(
     } else {
         ftp_suggestions <- NULL
     }
-    
+
     if (plot && show_plot) {
         plot(infer_plot)
     }
-    
+
     return(invisible(list(
         "ESTIMATES" = list("ftp_abundance_estimates" = infer_ftp_abund_probs,
                            "ftp_protect_prob_estimate" = infer_ftp_protect_prob,

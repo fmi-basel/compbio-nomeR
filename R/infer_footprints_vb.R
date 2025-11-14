@@ -105,8 +105,9 @@
 #' @param max_pareto_k maximum pareto_k returned by \code{\link[rstan]{vb}}.
 #'     If it exceeds \code{max_pareto_k} the function will run again until
 #'     max_nruns attempts have been done
-#' @param ... Parameters for \code{\link[rstan]{vb}} function. Please refer to
-#'     \code{\link[rstan]{vb}} documentation.
+#' @param iter,tol_rel_obj,output_samples,grad_samples,algorithm,...  parameters for
+#'     \code{\link[rstan]{vb}} function that performs inference using Variational Bayes
+#'     approximation of posteriors. Please refer to \code{\link[rstan]{vb}} documentation.
 #'
 #' @return An S4 class stanfit-class representing the inference results. Please
 #' check \code{\link[rstan]{vb}}.
@@ -184,10 +185,14 @@ infer_footprints_vb <- function(
                                 "ftp_protect_totcount" = 100),
         max_nruns = 3,
         max_pareto_k = 10,
+        iter = 15000,
+        tol_rel_obj = 1e-8,
+        output_samples = 2000,
+        grad_samples = 1,
+        algorithm = "meanfield",
         ...) {
 
     ftp_bg_model <- match.arg(ftp_bg_model)
-
     ## validate and construct input for inference
     stan_input <- .validate_construct_stan_input(cooc_ctable,
                                                  ftp_lengths,
@@ -199,11 +204,11 @@ infer_footprints_vb <- function(
                                                  ftp_model_params)
 
     vb_success <- FALSE
-    iter <- 1
+    run_iter <- 1
     best_pareto_k <- Inf
     best_stanfit <- NULL
 
-    while (!vb_success && iter <= max_nruns) {
+    while (!vb_success && run_iter <= max_nruns) {
         stanfit_out <- NULL
 
         tryCatch({
@@ -217,6 +222,11 @@ infer_footprints_vb <- function(
                 object = stanmodels[[stan_input$stan_model_name]],
                 data = stan_input$stan_inputdata,
                 init = stan_initvals[[1]],
+                iter = iter,
+                tol_rel_obj = tol_rel_obj,
+                output_samples = output_samples,
+                grad_samples = grad_samples,
+                algorithm = algorithm,
                 ...)
         },
         error = function(e) {
@@ -237,7 +247,7 @@ infer_footprints_vb <- function(
                 vb_success <- TRUE
             }
         }
-        iter <- iter + 1
+        run_iter <- run_iter + 1
     }
     return(best_stanfit)
 }

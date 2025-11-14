@@ -8,8 +8,10 @@ single-molecule footprinting (SMF) data}
 ftp_spectral_analysis_SE(
   se,
   assayName = "mod_prob",
-  threshUnmod = 0.5,
   threshMod = 0.5,
+  threshUnmod = threshMod,
+  min_frag_data_len = 50L,
+  min_frag_data_dens = 0.05,
   max_spacing = 200,
   ftp_lengths = 20:200,
   ftp_prior_cover = NULL,
@@ -24,8 +26,8 @@ ftp_spectral_analysis_SE(
   max_pareto_k = 10,
   ncpu = 1L,
   verbose = FALSE,
-  iter = 10000,
-  tol_rel_obj = 0.001,
+  iter = 15000,
+  tol_rel_obj = 1e-08,
   output_samples = 2000,
   grad_samples = 1,
   algorithm = "meanfield",
@@ -43,6 +45,12 @@ read-level data.}
 \item{threshUnmod, threshMod}{Numeric scalars used to classify observations
 as modified (modification probability >= threshMod), unmodified
 (modification probability < threshUnmod) or unknown (otherwise).}
+
+\item{min_frag_data_len}{\code{integer} ignore fragments that have genomic lengths from
+most-left to most-right data points less than \code{min_frag_data_len}.}
+
+\item{min_frag_data_dens}{\code{numeric} ignore fragments that have density of
+data-containing positions lower than \code{min_frag_data_dens}.}
 
 \item{max_spacing}{\code{integer} that defines maximum distance between positions for aggregating
 frequencies of combinations 00, 01, 10, 11 at distances up to \code{max_spacing} observed in

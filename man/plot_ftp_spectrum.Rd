@@ -7,18 +7,18 @@
 plot_ftp_spectrum(ftp_spectrum, title = NULL)
 }
 \arguments{
-\item{ftp_spectrum}{`data.frame` with inferred abundances of footprints.
-Columns `ftp_length`, `mean` and `sd` are essential.}
+\item{ftp_spectrum}{\code{data.frame} with inferred abundances of footprints.
+Columns \code{ftp_length}, \code{mean} and \code{sd} are essential.}
 
 \item{title}{optional title for the output plot}
 }
 \value{
-`ggplot2` object that contains the following information.
-       The darkgreen line corresponds to the left Y-axis ("estimated coverage (mean)", in log10 scale) and represents
-       inferred coverages (mean across samples from posterior distribution) for each footprint on the X-axis.
-       The red line corresponds the right Y-axis ("mean/sd", linear scale) and represents ratios between means and
-       standard deviations across samples from posterior distributions for each footprint length on the X-axis.
-       The red line can be interpreted as Z-scores and used to judge statistical significance of coverage esimates for footprints in the red line.
+\code{ggplot2} object that contains the following information.
+The darkgreen line corresponds to the left Y-axis ("estimated coverage (mean)", in log10 scale) and represents
+inferred coverages (mean across samples from posterior distribution) for each footprint on the X-axis.
+The red line corresponds the right Y-axis ("mean/sd", linear scale) and represents ratios between means and
+standard deviations across samples from posterior distributions for each footprint length on the X-axis.
+The red line can be interpreted as Z-scores and used to judge statistical significance of coverage esimates for footprints in the red line.
 }
 \description{
 Plot footprint spectrum

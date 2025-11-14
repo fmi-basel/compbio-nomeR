@@ -13,16 +13,20 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter mutate select
-#' @importFrom ggplot2 ggplot aes geom_line labs theme theme_bw scale_y_continuous scale_x_continuous
+#' @importFrom ggplot2 ggplot aes geom_line labs theme theme_bw scale_y_continuous scale_x_continuous sec_axis
+#' @importFrom checkmate assertDataFrame assertSubset
 #' @export
 #'
 
 plot_ftp_spectrum <- function(ftp_spectrum,
 															title=NULL){
-	assertDataFrame(ftp_spectrum,
-									all.missing = F)
+
 	assertSubset(x = c("ftp_length","mean","sd"),
 							 choices = colnames(ftp_spectrum))
+	ftp_spectrum <- ftp_spectrum %>% select(c("ftp_length","mean","sd"))
+	assertDataFrame(ftp_spectrum,
+									all.missing = F)
+
 	if(any(duplicated(ftp_spectrum$ftp_length)))
 		warning("Found duplicated ftp_length. Please make sure that the input ftp_spectrum contain only one spectrum")
 

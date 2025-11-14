@@ -11,6 +11,10 @@
 #' @param threshUnmod,threshMod Numeric scalars used to classify observations
 #'     as modified (modification probability >= threshMod), unmodified
 #'     (modification probability < threshUnmod) or unknown (otherwise).
+#' @param min_frag_data_len \code{integer} ignore fragments that have genomic lengths from
+#'     most-left to most-right data points less than \code{min_frag_data_len}.
+#' @param min_frag_data_dens \code{numeric} ignore fragments that have density of
+#'     data-containing positions lower than \code{min_frag_data_dens}.
 #' @param footprint_models A list containing footprint models for proteins.
 #'     Each element must have 3 slots:
 #'     \describe{
@@ -91,8 +95,10 @@
 #' @importFrom parallel detectCores
 predict_footprints_SE <- function(se,
 																	assayName = "mod_prob",
-																	threshUnmod = 0.5,
 																	threshMod = 0.5,
+																	threshUnmod = threshMod,
+																	min_frag_data_len = 50L,
+																	min_frag_data_dens = 0.05,
 																	footprint_models,
 																	bgprotectprob,
 																	bgcoverprior,
@@ -103,16 +109,18 @@ predict_footprints_SE <- function(se,
 
 	prob_group = fragpos = posidx_ref = fidx_glob = sidx = fidx_sample = chr = refpos = pos = mod_prob = gpos_idx = ftp_name = ftp_group = readName = sname = NULL # due to NSE notes in R CMD check
 
-	## check arguments
-	coll <- makeAssertCollection()
+
 	### validate se object and prepare data for nomeR prediction
-	protect_data <- validate_prepare_SE(se,
+	dataList <- validate_prepare_SE(se,
 																			assayName,
 																			threshUnmod,
-																			threshMod)
+																			threshMod,
+																			min_frag_data_len,
+																			min_frag_data_dens)
 
-	if(nrow(protect_data) == 0)
-		stop("No data satisfy thresholds for modified and unmodified bases. Check parameters threshUnmod and threshMod")
+	protect_data <- dataList[["bin_protect_data"]]
+	fragAnno <- dataList[["fragAnno"]]
+
 
 	### validate footprint models
 	ftpvalout <- validate_footprint_models(footprint_models,
@@ -142,8 +150,6 @@ predict_footprints_SE <- function(se,
 		ncpu <- avail_ncpu
 	}
 
-	## finish argument check
-	reportAssertions(coll)
 
 	if (verbose) {
 		.message_timestamp("Calling run_cpp_nomeR...")
@@ -193,34 +199,11 @@ predict_footprints_SE <- function(se,
 																			return(x)
 																		}))
 
-
-		## create annotation of reads
-		rowGpos <- rowRanges(se)
-
-		frag2sample_anno <- protect_data[fragpos == 1][,
-																									 c("strand","chr") := list(as.character(strand(rowRanges(se))[posidx_ref]),
-																									 											 as.character(seqnames(rowRanges(se))[posidx_ref]))][,
-																									 											 																										list(fidx_glob,
-																									 											 																											sidx,
-																									 											 																											fidx_sample,
-																									 											 																											posidx_ref,
-																									 											 																											chr,
-																									 											 																											refpos,
-																									 											 																											strand)]
-		## add readNames
-		mod_prob_assays <- assay(se,"mod_prob")
-		readNames <- data.table::rbindlist(lapply(1:ncol(mod_prob_assays),
-																							function(sidx){
-																								data.table(sidx = sidx,
-																													 fidx_sample = 1:ncol(mod_prob_assays[[sidx]]),
-																													 readName = colnames(mod_prob_assays[[sidx]]))
-																							}))
-		frag2sample_anno <- readNames[frag2sample_anno,on = list(sidx == sidx,fidx_sample == fidx_sample)]
 		## add reference positions
-		predict_res <- predict_res[,refpos := pos - 1 + frag2sample_anno[match(seq,frag2sample_anno[["fidx_glob"]])][["refpos"]]]
+		predict_res <- predict_res[,refpos := pos - 1 + fragAnno[match(seq,fragAnno[["fidx_glob"]])][["refStart"]] ]
 
 		## add chr, strand, sidx, and fidx_sample
-		predict_res <- frag2sample_anno[,list(fidx_glob,sidx, fidx_sample,chr,strand)][predict_res,
+		predict_res <- fragAnno[,list(fidx_glob,sidx, fidx_sample,chr,strand)][predict_res,
 																																								on = list(fidx_glob = seq)]
 
 		## add modprob
@@ -237,11 +220,12 @@ predict_footprints_SE <- function(se,
 		## add gposidx
 		predict_res <- posuniq[predict_res,
 													 on = list(chr=chr,refpos=refpos,strand=strand)]
+
+
 		seOutRowRanges <- GenomicRanges::GPos(seqnames = posuniq[["chr"]],
 																					pos = posuniq[["refpos"]],
 																					strand = posuniq[["strand"]],
-																					seqinfo = GenomicRanges::seqinfo(rowGpos))
-
+																					seqinfo = GenomicRanges::seqinfo(se))
 
 		ftpnames <- setdiff(colnames(predict_res),c(fcols,"gpos_idx"))
 		nomeR_assayNames <- c("mod_prob",paste(rep(ftpnames,2),
@@ -252,7 +236,7 @@ predict_footprints_SE <- function(se,
 														ftpName = c("mod_prob",rep(ftpnames,2)),
 														probName = c("START_PROB",rep(c("COVER_PROB","START_PROB"),each = length(ftpnames))))
 
-		## extract readNames
+
 
 		## create list of assays
 		assayList <- lapply(1:nrow(assayAnno),
@@ -260,20 +244,24 @@ predict_footprints_SE <- function(se,
 													assayMat <- make_zero_col_DFrame(nrow = length(seOutRowRanges))
 													for(sI in 1:ncol(se)){
 
-														### select which fragments belong to current sample.
-														curDat <- predict_res[sidx == sI & prob_group == assayAnno$probName[assayI]]
-														curDat <- curDat[!is.na(curDat[[assayAnno$ftpName[assayI]]])]
-														maxFidx <- frag2sample_anno[sidx == sI,max(fidx_sample)]
-														curFragNames <- frag2sample_anno[sidx == sI][match(1:maxFidx,fidx_sample)][["readName"]]
-														## get read names
+														curAssayName <- assayAnno$probName[assayI]
+														curFtpName <- assayAnno$ftpName[assayI]
 
-														namat <- NaArray(dim = c(length(seOutRowRanges), maxFidx),
-																						 dimnames = list(NULL,curFragNames),
+
+														curDat <- predict_res[sidx == sI & prob_group == curAssayName]
+														curDat <- curDat[!is.na(get(curFtpName))]
+														### select which fragments belong to current sample and keep only those which passed the filtering
+														curSmpFrags <- fragAnno[sidx == sI & keep][,curFragIdx := 1:.N]
+														curDat <- curDat[,curFragIdx := curSmpFrags[match(curDat$fidx_glob,curSmpFrags$fidx_glob),"curFragIdx"]]
+
+														namat <- NaArray(dim = c(length(seOutRowRanges), nrow(curSmpFrags)),
+																						 dimnames = list(NULL,curSmpFrags$readName),
 																						 type = "double")
-														## add data
 
-														namat[as.matrix(curDat[,list(gpos_idx,fidx_sample)])] <- curDat[[assayAnno$ftpName[assayI]]]
-														assayMat[[assayAnno$assayName[assayI]]] <- namat
+
+														## add data
+														namat[as.matrix(curDat[,list(gpos_idx,curFragIdx)])] <- curDat[[curFtpName]]
+														assayMat[[curAssayName]] <- namat
 													}
 													colnames(assayMat) <- colnames(se)
 													return(assayMat)
@@ -289,15 +277,16 @@ predict_footprints_SE <- function(se,
 		)
 
 
-		#browser()
+
 		## construct IRangesLists with MAP configurations and add to colData
 		viterbi_conf <- as.data.table(predict_res_list[["VITERBI_CONF"]])
 		## ignore background
 		viterbi_conf <- viterbi_conf[ftp_name != "background"]
 		## add reference positions
-		viterbi_conf <- viterbi_conf[,refpos := start - 1 + frag2sample_anno[match(seq,frag2sample_anno[["fidx_glob"]])][["refpos"]]]
+		viterbi_conf <- viterbi_conf[,refpos := start - 1 + fragAnno[match(seq,fragAnno[["fidx_glob"]])][["refStart"]]]
+
 		## add sidx, fidx_sample, readName
-		viterbi_conf <- frag2sample_anno[,list(fidx_glob,sidx, fidx_sample,readName)][viterbi_conf,
+		viterbi_conf <- fragAnno[,list(fidx_glob,sidx, fidx_sample,readName)][viterbi_conf,
 																																								on = list(fidx_glob = seq)]
 		coldat <- colData(se)
 		## add sample names
@@ -309,8 +298,6 @@ predict_footprints_SE <- function(se,
 			vit_ftpnames <- unique(viterbi_conf[["ftp_name"]])
 		}
 		for(ftp in vit_ftpnames){
-
-
 			lIRl <- sapply(coldat$sample,
 										 function(snm){
 										 	if(aggrByGroup){

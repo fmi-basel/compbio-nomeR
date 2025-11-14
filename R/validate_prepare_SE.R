@@ -2,6 +2,16 @@
 #' and prepares data structure for c++ run_cpp_nomeR function
 #'
 #' @param data \code{matrix} or \code{list} with NOMe-seq data
+#' @param assayName Character scalar describing the name of tje assay in \code{se} containing
+#'     read-level data.
+#'
+#' @param threshMod,threshUnmod Numeric scalars used to classify observations
+#'     as modified (modification probability >= threshMod, converted to 0), unmodified
+#'     (modification probability < threshUnmod, converted to 1) or unknown (otherwise).
+#' @param min_frag_data_len \code{integer} ignore fragments that have genomic lengths from
+#'     most-left to most-right data points less than \code{min_frag_data_len}.
+#' @param min_frag_data_dens \code{numeric} ignore fragments that have density of
+#'     data-containing positions lower than \code{min_frag_data_dens}.
 #'
 #' @return \code{list} with slots - data_list and fragnames
 #'
@@ -14,9 +24,15 @@
 #' @importFrom S4Vectors DataFrame SimpleList metadata
 #' @import data.table
 validate_prepare_SE <- function(se,
-																assayName,
-																threshUnmod,
-																threshMod) {
+																assayName="mod_prob",
+																threshMod = 0.5,
+																threshUnmod = threshMod,
+																min_frag_data_len = 50L,
+																min_frag_data_dens = 0.05
+) {
+
+	if(threshUnmod > threshMod)
+		stop("threshUnmod must be less or equal threshMod")
 
 	protect = mod_prob = fidx_sample = posidx_ref = refpos = fidx_glob = ftp_group = NULL # due to NSE notes in R CMD check
 
@@ -49,8 +65,25 @@ validate_prepare_SE <- function(se,
 	fidx_glob_offset <- cumsum(sapply(mod_prob_assays,ncol))
 	fidx_glob_offset <- c(0,fidx_glob_offset)
 
+
+	## annotation of fragments in input SE
+	fragAnno <- data.table::rbindlist(lapply(1:ncol(mod_prob_assays),
+																					 function(sidx){
+
+																					 	curanno <- data.table(sidx = sidx,
+																					 												fidx_sample = 1:ncol(mod_prob_assays[[sidx]]),
+																					 												readName = colnames(mod_prob_assays[[sidx]]),
+																					 												fidx_glob = fidx_glob_offset[sidx] + 1:ncol(mod_prob_assays[[sidx]]))
+
+
+																					 }))
+
+
+	## binarize modification probabilities by applying thresholds threshMod and threshUnmod
+
 	bin_protect_data <- data.table::rbindlist(lapply(1:ncol(mod_prob_assays),
 																									 function(sidx){
+
 
 																									 	read_naar <- mod_prob_assays[[sidx]]
 																									 	## get M-indices of non-NAs
@@ -82,8 +115,29 @@ validate_prepare_SE <- function(se,
 																									 	return(nonNA_data)
 																									 }))
 
-	## add reference position
-	bin_protect_data <- bin_protect_data[,"refpos" := start(rowRanges(se))[posidx_ref]]
+
+
+	rowGpos <- rowRanges(se)
+	fragSummary <- bin_protect_data[,
+																	list("dataNpoints" = .N,
+																			 "minPosIdx_ref" = min(posidx_ref),
+																			 "maxPosIdx_ref" =  max(posidx_ref)
+																	),
+																	by = .(fidx_glob)]
+
+
+	fragSummary <- fragSummary[,c("chr",
+																"strand",
+																"refStart",
+																"refEnd") := list(as.character(seqnames(rowGpos)[minPosIdx_ref]),
+																									as.character(strand(rowGpos)[minPosIdx_ref]),
+																									start(rowGpos)[minPosIdx_ref],
+																									end(rowGpos)[maxPosIdx_ref])]
+	fragSummary <- fragSummary[,"data_len" := refEnd - refStart + 1][,"data_dens" := dataNpoints/data_len]
+	fragAnno <- fragSummary[fragAnno,on=c(fidx_glob="fidx_glob")]
+
+	# ## add reference position
+	bin_protect_data <- bin_protect_data[,"refpos" := start(rowGpos)[posidx_ref]]
 
 	## add position within fragments
 	## NOTE: the fragpos are 1 - based positions within fragments
@@ -104,5 +158,27 @@ validate_prepare_SE <- function(se,
 	setcolorder(bin_protect_data, c("sidx", "fidx_glob", "fidx_sample","posidx_ref",
 																	"refpos","fragpos",
 																	"mod_prob","protect"))
-	return(bin_protect_data)
+
+	## filter fragments by min_frag_data_len and min_frag_data_dens
+	fragAnno <- fragAnno[,"keep" := !is.na(data_len) & (data_len >= min_frag_data_len & data_dens >= min_frag_data_dens)]
+	fragIDkeep <- fragAnno[keep==TRUE][["fidx_glob"]]
+	bin_protect_data <- bin_protect_data[fidx_glob %in% fragIDkeep]
+
+	if(nrow(bin_protect_data) == 0){
+		stop(paste0("No fragments left after filtering by frag_data_len>=",min_frag_data_len,
+								"; frag_data_dens>=",min_frag_data_dens,
+								" with threshMod=",threshMod,"; threshUnmod=",threshUnmod))
+	}
+	Nremove <- fragAnno[,sum(!keep),]
+	if(Nremove > 0){
+		.warning_timestamp(paste0(Nremove,
+															" fragments have been removed after filtering by frag_data_len>=",min_frag_data_len,
+															"; frag_data_dens>=",min_frag_data_dens,
+															" with threshMod=",threshMod,"; threshUnmod=",threshUnmod))
+	}
+	## order by fidx_glob and fragpos by setting keyv
+	setkeyv(fragAnno,cols = c("fidx_glob"))
+
+	return(list("bin_protect_data" = bin_protect_data,
+							"fragAnno" = fragAnno))
 }
