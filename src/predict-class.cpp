@@ -53,39 +53,38 @@ void Predict::getCoverProbsMatrix(const vector<vector<double > >& startProb,
 
 }
 
-// Viterbi alogirthm to get configuration of footprints with maximum posterior probability
-void Predict::getViterbiMAPftpConf(const vector<vector<double > >& startProb,
-                          const DNAbind_obj_vector& ftpModels,
-                          const int& fDPos, // firstDatPos
-                          const int& lDPos, // lastDatPos
-                          vector<int32_t >& cVitFragPos,
-                          vector<int32_t >& cVitFtpWidth,
-                          vector<string >& cVitFtpName,
-                          vector<string >& cVitFtpGroup,
-                          vector<double >& cVitFtpProb){
 
-	size_t probVecLen = startProb[0].size(); //length of the probability vector
-	size_t seqlength = startProb[0].size() - 1; // actuall length of extended sequence
+// Viterbi alogirthm to get configuration of footprints with maximum posterior probability
+void Predict::getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScores,
+                                   const vector<vector<double > >& startProb,
+                                   const DNAbind_obj_vector& ftpModels,
+                                   const int& fDPos, // firstDatPos
+                                   const int& lDPos, // lastDatPos
+                                   vector<int32_t >& cVitFragPos,
+                                   vector<int32_t >& cVitFtpWidth,
+                                   vector<string >& cVitFtpName,
+                                   vector<string >& cVitFtpGroup,
+                                   vector<double >& cVitFtpProb){
+
+	//size_t probVecLen = startProb[0].size(); //length of the probability vector
+	size_t seqlength = ftpModelsScores[0].size(); // actuall length of extended sequence
 	size_t nFtps = ftpModels.Size(); // number of footprints
-	vector<double > lFMaxProb(probVecLen,0); // vector that keeps maximum configuration log probabilites
-	vector<int32_t > ftpEndsTrace(probVecLen,-1); // vector containing footprint index with maximum log probability to trace back configuration
+	//lastDatPos - firstDatPos + 1
+	vector<double > lFMaxProb(seqlength + 1,0); // vector that keeps maximum configuration log probabilites
+	vector<int32_t > ftpEndsTrace(seqlength + 1,-1); // vector containing footprint index with maximum log probability to trace back configuration
 
 	// define negative infinity
 	// log(0) = -infinity
 	const double NEG_INF = -std::numeric_limits<double>::infinity();
-	// Convert start probs to log probabilities
-	vector<vector<double >> logP(nFtps, std::vector<double>(probVecLen, NEG_INF));
+	// take logs of model scores
+	vector<vector<double >> logFtpModelScores(nFtps, std::vector<double>(seqlength, NEG_INF));
 	for (size_t w = 0; w < nFtps; ++w) {
-		for (size_t i = 0; i < probVecLen; ++i) {
-			if (startProb[w][i] > 0.0)
-				logP[w][i] = log(startProb[w][i]);
+		for (size_t i = 0; i < seqlength; ++i) {
+			if (ftpModelsScores[w][i] > 0.0)
+				logFtpModelScores[w][i] = log(ftpModelsScores[w][i]);
 		}
 	}
-
-
-
-
-	for(int pos = 1; pos <= seqlength; ++pos){
+	for(int pos = fDPos; pos <= seqlength; ++pos){
 		double maxLogProb = -numeric_limits<double>::infinity();
 		int bestFtpIdx = -1;
 		// find footprint that maximizes lFMaxProb[pos - len_w] + logP[pos - len_w + 1]
@@ -93,30 +92,42 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& startProb,
 			int objlen = ftpModels[wm]->len;
 			double curF = 0;
 			if(pos - objlen >= 0){
-				curF = lFMaxProb[pos - objlen] + logP[wm][pos - objlen + 1];
+				curF = lFMaxProb[pos - objlen] + logFtpModelScores[wm][pos - objlen + 1];
 			} else {
-				curF = log(ftpModels[wm]->nonInformPosterior);
-				//curF = NEG_INF;
+				curF = logFtpModelScores[wm][pos - objlen + 1];
 			}
 			if(curF > maxLogProb){
 				maxLogProb = curF;
 				bestFtpIdx = wm;
 			}
 		}
+
 		lFMaxProb[pos] = maxLogProb;
 		ftpEndsTrace[pos] = bestFtpIdx;
 
 	}
 
 	// trace back and construct the best configuration.
+	// int pos = seqlength;
+	// while(pos >= fDPos + 1){
+	// 	int bestFtpLen = ftpModels[ftpEndsTrace[pos]]->len;
+	// 	cVitFragPos.push_back(pos - bestFtpLen + 1 - fDPos); // also shift by firstDatPos
+	// 	cVitFtpWidth.push_back(bestFtpLen);
+	// 	cVitFtpName.push_back(ftpModels[ftpEndsTrace[pos]]->name);
+	// 	cVitFtpGroup.push_back(ftpModels[ftpEndsTrace[pos]]->group);
+	// 	cVitFtpProb.push_back(startProb[ftpEndsTrace[pos]][pos - bestFtpLen + 1]);
+	// 	pos = pos - bestFtpLen;
+	// }
 	int pos = seqlength;
-	while(pos >= fDPos + 1){
+	while(pos >= fDPos){
 		int bestFtpLen = ftpModels[ftpEndsTrace[pos]]->len;
-		cVitFragPos.push_back(pos - bestFtpLen + 1 - fDPos); // also shift by firstDatPos
-		cVitFtpWidth.push_back(bestFtpLen);
-		cVitFtpName.push_back(ftpModels[ftpEndsTrace[pos]]->name);
-		cVitFtpGroup.push_back(ftpModels[ftpEndsTrace[pos]]->group);
-		cVitFtpProb.push_back(startProb[ftpEndsTrace[pos]][pos - bestFtpLen + 1]);
+		if(pos - bestFtpLen + 1 <= lDPos){
+			cVitFragPos.push_back(pos - bestFtpLen + 1 - fDPos + 1); //  shift by firstDatPos and make 1-based
+			cVitFtpWidth.push_back(bestFtpLen);
+			cVitFtpName.push_back(ftpModels[ftpEndsTrace[pos]]->name);
+			cVitFtpGroup.push_back(ftpModels[ftpEndsTrace[pos]]->group);
+			cVitFtpProb.push_back(startProb[ftpEndsTrace[pos]][pos - bestFtpLen + 2]);
+		}
 		pos = pos - bestFtpLen;
 	}
 
@@ -395,7 +406,8 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		vector<string > currViterbiOutFtpGroup;
 
 		vector<double > currViterbiOutFtpProb;
-		getViterbiMAPftpConf(Prob,
+		getViterbiMAPftpConf(ftpModelsScores,
+                       Prob,
                        ftpModels,
                        firstDatPos,
                        lastDatPos,

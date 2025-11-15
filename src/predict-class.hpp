@@ -26,46 +26,47 @@ using namespace std;
 // [[Rcpp::plugins(openmp)]]
 class Predict
 {
-	
+
 	// const parameters& PARAMS; // reference to an object containing parameters
 	// const DNAbind_obj_vector& BINDING_OBJECTS; // reference to an object containing vector of footprint models as well as background model
 	// const SMFdataset& SEQUENCES; // reference to an object containing SMF data
 
 public:
-  // constructors/destructor
-  // Predict(const SMFdataset& refSmfData,
-  //        const DNAbind_obj_vector& refFtp_models,
-  //        const parameters& refParams);
-  Predict();
+	// constructors/destructor
+	// Predict(const SMFdataset& refSmfData,
+	//        const DNAbind_obj_vector& refFtp_models,
+	//        const parameters& refParams);
+	Predict();
 
-  ~Predict();
-  
-  void getCoverProbsMatrix(const vector<vector<double > >& startProb,
-                                              const DNAbind_obj_vector& ftpModels,
-                                              const int& fDPos, // firstDatPos
-                                              const int& lDPos, // lastDatPos
-                                              const size_t& nFtpGroups,
-                                              vector<vector<double >>& aggrCoverOutProbs
-                                              );
-  
-  void getViterbiMAPftpConf(const vector<vector<double > >& startProb,
-                            const DNAbind_obj_vector& ftpModels,
-                            const int& fDPos, // firstDatPos
-                            const int& lDPos, // lastDatPos
-                            vector<int32_t >& cVitFragPos,
-                            vector<int32_t >& cVitFtpWidth,
-                            vector<string >& cVitFtpName,
-                            vector<string >& cVitFtpGroup,
-                            vector<double >& cVitFtpProb);
-  
+	~Predict();
 
-  Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
-                                 const DNAbind_obj_vector& ftpModels,
-                                 const parameters& params,
-                                 bool report_prediction_in_flanks,
-                                 int ncpu);
-  
-  
+	void getCoverProbsMatrix(const vector<vector<double > >& startProb,
+                          const DNAbind_obj_vector& ftpModels,
+                          const int& fDPos, // firstDatPos
+                          const int& lDPos, // lastDatPos
+                          const size_t& nFtpGroups,
+                          vector<vector<double >>& aggrCoverOutProbs
+	);
+
+	void getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScores,
+                                    const vector<vector<double > >& startProb,
+                                    const DNAbind_obj_vector& ftpModels,
+                                    const int& fDPos, // firstDatPos
+                                    const int& lDPos, // lastDatPos
+                                    vector<int32_t >& cVitFragPos,
+                                    vector<int32_t >& cVitFtpWidth,
+                                    vector<string >& cVitFtpName,
+                                    vector<string >& cVitFtpGroup,
+                                    vector<double >& cVitFtpProb);
+
+
+	Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
+                                const DNAbind_obj_vector& ftpModels,
+                                const parameters& params,
+                                bool report_prediction_in_flanks,
+                                int ncpu);
+
+
 
 };
 

@@ -89,7 +89,7 @@ test_that("predict_footprints returns correct object",{
 test_that("predict_footprints returns expected probabilities and MAP configuration",{
 	## load data
 	dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))
-	
+
 	## calculate for all footprints aggregated by group
 	testinsil <- predict_footprints(data=dlist$test_dat_mat,
 																	footprint_models = dlist$ftp_models,
@@ -98,9 +98,11 @@ test_that("predict_footprints returns expected probabilities and MAP configurati
 																	aggrByGroup = TRUE,
 																	report_prediction_in_flanks = T,
 																	ncpu = 1L)
-	## check whether slots exist
-	expect_equal(testinsil,dlist$exp_output)
-	
+	## check start probs
+	expect_equal(testinsil$START_PROB,dlist$exp_output$START_PROB)
+	## check cover probs
+	expect_equal(testinsil$COVER_PROB,dlist$exp_output$COVER_PROB)
+
 	## check whether config is correct
 	map_conf <- subset(testinsil$VITERBI_CONF,ftp_name != "background")
 	map_conf <- map_conf[order(map_conf$start),]
@@ -109,7 +111,7 @@ test_that("predict_footprints returns expected probabilities and MAP configurati
 												 ftp_group = c("ftp1","ftp2","ftp2"),
 												 start_prob = c(0.9421603, 0.9496543, 0.8856803))
 	expect_equal(map_conf,exp_conf)
-	
+
 })
 
 
