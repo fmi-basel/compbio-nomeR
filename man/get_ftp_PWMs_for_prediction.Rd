@@ -3,7 +3,7 @@
 \name{get_ftp_PWMs_for_prediction}
 \alias{get_ftp_PWMs_for_prediction}
 \title{Create footprint models for \code{\link{predict_footprints}} using footprints
-spectrum inferred by \code{\link{infer_footprint_vb}} and summarized by
+spectrum inferred by \code{\link{infer_footprints_vb}} and summarized by
 \code{\link{get_ftp_inference_summary}}}
 \usage{
 get_ftp_PWMs_for_prediction(
@@ -12,6 +12,21 @@ get_ftp_PWMs_for_prediction(
   bg_cover,
   ftp_protect_prob
 )
+}
+\arguments{
+\item{ftp_spectrum}{\code{data.frame} with inferred abundances of footprints.}
+
+\item{ftp_len_mat}{a \code{matrix} with footprint lengths where 1st and 2nd columns
+represent minimum and maximum footprint lengths. The 3rd column will be interpreted as
+increment. Each row will result in PWMs with lengths seq(min_ftp_length,max_ftp_length,by).
+Row names are interpreted as footprint groups.}
+
+\item{bg_cover}{estimated percentage of accessible positions in SMF data}
+
+\item{ftp_protect_prob}{emission probability of protected position within footprints}
+}
+\value{
+\code{list} with footprint models (PWM) required for the function \code{\link{predict_footprints}}.
 }
 \description{
 This utility function creates a list of parameters required by

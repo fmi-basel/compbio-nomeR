@@ -124,7 +124,7 @@
 #'
 #' @return \code{DataFrame} object from \code{colData} of \code{se} with additional columns
 #'     containing pair state statistics, inferred footprint spectra and emission probabilities
-#'     for each sample in code{se}.
+#'     for each sample in \code{se}.
 #' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData colData<-
 #' @importFrom SparseArray NaArray
 #' @importFrom GenomicRanges GPos match seqnames start end strand seqinfo

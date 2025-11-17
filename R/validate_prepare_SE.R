@@ -34,7 +34,7 @@ validate_prepare_SE <- function(se,
 	if(threshUnmod > threshMod)
 		stop("threshUnmod must be less or equal threshMod")
 
-	protect = mod_prob = fidx_sample = posidx_ref = refpos = fidx_glob = ftp_group = NULL # due to NSE notes in R CMD check
+	#protect = mod_prob = fidx_sample = posidx_ref = refpos = fidx_glob = ftp_group = NULL # due to NSE notes in R CMD check
 
 
 	### The code for checking the vailidity of se is copied

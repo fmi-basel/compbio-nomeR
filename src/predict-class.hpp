@@ -16,6 +16,8 @@
 #include <time.h>
 #include <Rcpp.h>
 #include <limits>
+#include <progress.hpp>
+#include <progress_bar.hpp>
 using namespace std;
 
 #ifdef _OPENMP
@@ -24,6 +26,7 @@ using namespace std;
 
 
 // [[Rcpp::plugins(openmp)]]
+// [[Rcpp::depends(RcppProgress)]]
 class Predict
 {
 

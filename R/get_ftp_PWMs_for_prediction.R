@@ -1,10 +1,19 @@
 #' Create footprint models for \code{\link{predict_footprints}} using footprints
-#' spectrum inferred by \code{\link{infer_footprint_vb}} and summarized by
+#' spectrum inferred by \code{\link{infer_footprints_vb}} and summarized by
 #' \code{\link{get_ftp_inference_summary}}
 #'
 #' This utility function creates a list of parameters required by
 #' \code{\link{predict_footprints}} to predict footprint positions in data.
 #'
+#' @param ftp_spectrum `data.frame` with inferred abundances of footprints.
+#' @param ftp_len_mat a \code{matrix} with footprint lengths where 1st and 2nd columns
+#' represent minimum and maximum footprint lengths. The 3rd column will be interpreted as
+#' increment. Each row will result in PWMs with lengths seq(min_ftp_length,max_ftp_length,by).
+#' Row names are interpreted as footprint groups.
+#' @param bg_cover estimated percentage of accessible positions in SMF data
+#' @param ftp_protect_prob emission probability of protected position within footprints
+#'
+#' @returns \code{list} with footprint models (PWM) required for the function \code{\link{predict_footprints}}.
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter mutate select
 #' @importFrom ggplot2 ggplot aes geom_line labs theme theme_bw scale_y_continuous scale_x_continuous sec_axis
@@ -13,6 +22,7 @@
 #' @export
 #'
 # @examples
+
 get_ftp_PWMs_for_prediction <- function(ftp_spectrum,
 																				ftp_len_mat,
 																				bg_cover,

@@ -206,47 +206,6 @@ get_ftp_inference_summary <- function(
 
     if (plot) {
     	infer_plot <- plot_ftp_spectrum(infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1, ])
-
-
-        # ## create plot, do not show ftp_length = 1, i.e. background
-        # infer_plot <- ggplot(
-        #     infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1, ])
-        #
-        # if (inherits(infer_stanfit, "stanfit")) {
-        #     infer_plot <- infer_plot +
-        #         geom_ribbon(mapping = aes(
-        #             x = .data$ftp_length,
-        #             y = .data$mean,
-        #             ymin = .data[[plot_posterior_range[1]]],
-        #             ymax =  .data[[plot_posterior_range[2]]],
-        #             fill = .data$param),
-        #             alpha = 0.2, color = "grey") +
-        #         labs(x = "footprint length, bp",
-        #              y = paste0("mean, ", plot_posterior_range[1], " - ",
-        #                         plot_posterior_range[2], " interval"))
-        # } else if (inherits(infer_stanfit, "list")) {
-        #     infer_plot <- infer_plot +
-        #         labs(x = "footprint length, bp",
-        #              y = "MAP point estimate")
-        # }
-        # infer_plot <- infer_plot +
-        #     geom_line(mapping = aes(x = .data$ftp_length,
-        #                             y = .data$mean,
-        #                             color = .data$param),
-        #               linewidth = 1.5
-        #     ) +
-        #     scale_y_log10() +
-        #     scale_color_manual(values = c("ftp_abundances" = "darkgreen")) +
-        #     scale_fill_manual(values = c("ftp_abundances" = "lightgreen")) +
-        #     guides(color = guide_legend(title = NULL),
-        #            fill = guide_legend(title = NULL)) +
-        #     theme_bw() +
-        #     theme(
-        #         legend.position = "right",
-        #         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5,
-        #                                    size = 7),
-        #         axis.title = element_text(face = "bold", size = 12)
-        #     )
     } else {
         infer_plot <- NULL
     }

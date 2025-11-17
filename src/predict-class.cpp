@@ -135,9 +135,7 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScor
 
 
 // method that calculates start and cover probabilities and returns a Rcpp::List with calculated data.
-//
-// /* // [[Rcpp::depends(RcppProgress)]]
-//  * */
+
 Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                                         const DNAbind_obj_vector& ftpModels,
                                         const parameters& params,
@@ -201,230 +199,235 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		Rcpp::Rcout<<"Running prediction with "<<omp_get_max_threads()<<" cpu."<<endl;
 #endif
 
+	Progress prgbar(smfData.Size(), true);
 #pragma omp parallel private(seq)
 {
 
 #pragma omp for schedule(dynamic)
 	for(seq = 0; seq < smfData.Size(); ++seq){
-		int seqlength = smfData[seq].Size();
+		if (!Progress::check_abort() ) {
+			prgbar.increment(); //update progress bar
 
-		// calculate footprint model scores for the current fragment
-		vector<vector<double >> ftpModelsScores = ftpModels.getFtpModelScores(smfData[seq]);
+			int seqlength = smfData[seq].Size();
+
+			// calculate footprint model scores for the current fragment
+			vector<vector<double >> ftpModelsScores = ftpModels.getFtpModelScores(smfData[seq]);
 
 
-		// allocate memory for:
-		// F -  forward parition sum
-		// R - backward partition sum
-		// Prob - probability of footprint ends at position pos
+			// allocate memory for:
+			// F -  forward parition sum
+			// R - backward partition sum
+			// Prob - probability of footprint ends at position pos
 
-		vector<double > F(seqlength + maxwmlen + 1,1); // allocate memory for forward parition sum
-		vector<double > R(seqlength + 2,1); // allocate memory for backward partition sum. it is shorter than F
-		vector<double > probPerFtp(seqlength + 1, 0);
-		vector<vector<double > > Prob(nFtpModels, probPerFtp);
-		// vector<vector<double > > Prob(print_indexes.size(),probPerFtp);
+			vector<double > F(seqlength + maxwmlen + 1,1); // allocate memory for forward parition sum
+			vector<double > R(seqlength + 2,1); // allocate memory for backward partition sum. it is shorter than F
+			vector<double > probPerFtp(seqlength + 1, 0);
+			vector<vector<double > > Prob(nFtpModels, probPerFtp);
+			// vector<vector<double > > Prob(print_indexes.size(),probPerFtp);
 
-		// calculate forward partition summ
-		F[0] = part_init;
-		vector<double > pf(nFtpModels,1);
-		for(int pos = 1; pos <= seqlength + ftpModels.maxwmlen; ++pos){
-			double summ=0;
-			for(int wm = 0; wm < nFtpModels; ++wm){
-				pf[wm] = 1;
-				int objlen = ftpModels[wm]->len;
-
-				if(ftpModels[wm]->prior > 0){
-
-					if(pos - objlen >= 0 && pos - objlen < seqlength)
-						pf[wm] = ftpModelsScores[wm][pos - objlen];
-					else
-						pf[wm] = ftpModels[wm]->prior;
-					for(int i = pos - objlen + 1; i <= pos - 1; ++i){
-						if(i>=0){
-							pf[wm] *= F[i];
-						} else {
-							pf[wm] *= part_init;
-						}
-					}
-				}
-				else{
-					pf[wm] = 0;
-				}
-				summ += pf[wm];
-			}
-
-			F[pos] = 1/summ;
-			if(pos <= seqlength){
+			// calculate forward partition summ
+			F[0] = part_init;
+			vector<double > pf(nFtpModels,1);
+			for(int pos = 1; pos <= seqlength + ftpModels.maxwmlen; ++pos){
+				double summ=0;
 				for(int wm = 0; wm < nFtpModels; ++wm){
-					Prob[wm][pos] = pf[wm];
-				}
-			}
-		}
+					pf[wm] = 1;
+					int objlen = ftpModels[wm]->len;
 
-		// calculate backward partition summ
-		vector<double > pb(nFtpModels, 1);
-		R[seqlength + 1] = part_init;
-		for(int pos = seqlength; pos >= 1; --pos){
-			double summ = 0;
-			for(int wm = 0; wm < nFtpModels; ++wm){
-				pb[wm] = 1;
-				int objlen = ftpModels[wm]->len;
-				if(ftpModels[wm]->prior > 0){
+					if(ftpModels[wm]->prior > 0){
 
-					if(pos - 1 >= 0 && pos + objlen - 1 < seqlength)
-						pb[wm] = ftpModelsScores[wm][pos - 1];
-					else
-						pb[wm] = ftpModels[wm]->prior;
-					for(int i = pos+1; i <= pos+objlen-1; ++i){
-						if(i<=seqlength + 1){
-							pb[wm] *= R[i];
-						} else{
-							pb[wm] *= part_init;
+						if(pos - objlen >= 0 && pos - objlen < seqlength)
+							pf[wm] = ftpModelsScores[wm][pos - objlen];
+						else
+							pf[wm] = ftpModels[wm]->prior;
+						for(int i = pos - objlen + 1; i <= pos - 1; ++i){
+							if(i>=0){
+								pf[wm] *= F[i];
+							} else {
+								pf[wm] *= part_init;
+							}
 						}
 					}
+					else{
+						pf[wm] = 0;
+					}
+					summ += pf[wm];
+				}
 
+				F[pos] = 1/summ;
+				if(pos <= seqlength){
+					for(int wm = 0; wm < nFtpModels; ++wm){
+						Prob[wm][pos] = pf[wm];
+					}
 				}
-				else{
-					pb[wm] = 0;
-				}
-				summ += pb[wm];
 			}
 
-			R[pos] = 1/summ;
-		}
-		// сalculate Z = Fn/Rn
+			// calculate backward partition summ
+			vector<double > pb(nFtpModels, 1);
+			R[seqlength + 1] = part_init;
+			for(int pos = seqlength; pos >= 1; --pos){
+				double summ = 0;
+				for(int wm = 0; wm < nFtpModels; ++wm){
+					pb[wm] = 1;
+					int objlen = ftpModels[wm]->len;
+					if(ftpModels[wm]->prior > 0){
 
-		// calculate initial value for Z based on requirement that total coverage at L must be 1
-		double zsumm = 0;
-		for(int wm = 0; wm < nFtpModels; ++wm){
-			int objlen = ftpModels[wm]->len;
-			double wmsumm = 0;
-			for(int pos = seqlength; pos <= seqlength + objlen - 1; ++pos){
-				double prod = 1;
-				for(int j=pos - objlen + 1; j<=seqlength;++j){
-					prod *= F[j];
+						if(pos - 1 >= 0 && pos + objlen - 1 < seqlength)
+							pb[wm] = ftpModelsScores[wm][pos - 1];
+						else
+							pb[wm] = ftpModels[wm]->prior;
+						for(int i = pos+1; i <= pos+objlen-1; ++i){
+							if(i<=seqlength + 1){
+								pb[wm] *= R[i];
+							} else{
+								pb[wm] *= part_init;
+							}
+						}
+
+					}
+					else{
+						pb[wm] = 0;
+					}
+					summ += pb[wm];
 				}
-				wmsumm += pow(part_init,pos - seqlength) * prod;
+
+				R[pos] = 1/summ;
 			}
-			zsumm += ftpModels[wm]->prior * wmsumm;
-		}
+			// сalculate Z = Fn/Rn
 
-		double z_init = 1/zsumm;
-
-		R[seqlength + 1] = z_init;
-		for(int pos = seqlength; pos >= 1; --pos){
-			R[pos] = F[pos] * R[pos + 1]/R[pos];
-		}
-		// calculate start posteriors
-		// prev for(int pos = 1;pos <= seqlength; ++pos){//
-		for(int pos = 0;pos <= seqlength; ++pos){
-			for(int wm = 0;wm < nFtpModels; ++wm){
+			// calculate initial value for Z based on requirement that total coverage at L must be 1
+			double zsumm = 0;
+			for(int wm = 0; wm < nFtpModels; ++wm){
 				int objlen = ftpModels[wm]->len;
-				if(pos + objlen - 1 <= seqlength)
-					Prob[wm][pos] = Prob[wm][pos + objlen - 1] * F[pos + objlen -1] * R[pos+objlen];
-				else
-					Prob[wm][pos] = 0;
-			}
-		}
-
-
-		// get output data structure for current sequence for start and cover probabilities
-		// startOutFragIDs, startOutFragPos, startOutProbs[ftp]
-		// and coverOutFragIDs, coverOutFragPos, coverOutProbs[ftp]
-		// for the current molecule
-		// NOTE: startOutProbs and coverOutProbs contain aggregated probabilities per group
-
-
-		// fill output vectors for START_PROB
-		int firstDatPos = smfData[seq]._firstDatpos;
-		int lastDatPos = smfData[seq]._lastDatpos;
-		int spos = report_prediction_in_flanks ? 1 : firstDatPos;
-		int lpos = lastDatPos;
-		vector<int32_t > currSeqStartOutFragIDs;
-		vector<int32_t > currSeqStartOutFragPos;
-		vector<double > tmpstart;
-		vector<vector<double >> currSeqStartOutProbs(nFtpGroups,tmpstart);
-		for(int position = spos; position <= lpos; ++position){
-			//// 1. fill fragIDs and fragPos
-			currSeqStartOutFragIDs.push_back(smfData[seq].Name());
-			currSeqStartOutFragPos.push_back(position - firstDatPos + 1);
-			//// 2. fill start probabilities aggregated for each footprint group
-			for(int igroup = 0; igroup < nFtpGroups; ++igroup){
-				// get name for the current ftp group
-				string groupName = ftpModels.groups[igroup];
-				// get indices for current ftp group
-				const vector<int >& groupFtpIndices = ftpModels.getGroupIndexVec(groupName);
-				// summ across probablities associated with current ftp
-				double totalprob=0;
-				for(int gFtpi = 0; gFtpi < groupFtpIndices.size(); ++gFtpi){
-					totalprob += Prob[groupFtpIndices[gFtpi]][position + 1];
+				double wmsumm = 0;
+				for(int pos = seqlength; pos <= seqlength + objlen - 1; ++pos){
+					double prod = 1;
+					for(int j=pos - objlen + 1; j<=seqlength;++j){
+						prod *= F[j];
+					}
+					wmsumm += pow(part_init,pos - seqlength) * prod;
 				}
-				currSeqStartOutProbs[igroup].push_back(totalprob);
+				zsumm += ftpModels[wm]->prior * wmsumm;
 			}
-		}
-		startOutFragIDs[seq] = move(currSeqStartOutFragIDs);
-		startOutFragPos[seq] = move(currSeqStartOutFragPos);
-		startOutProbs[seq] = move(currSeqStartOutProbs);
+
+			double z_init = 1/zsumm;
+
+			R[seqlength + 1] = z_init;
+			for(int pos = seqlength; pos >= 1; --pos){
+				R[pos] = F[pos] * R[pos + 1]/R[pos];
+			}
+			// calculate start posteriors
+			// prev for(int pos = 1;pos <= seqlength; ++pos){//
+			for(int pos = 0;pos <= seqlength; ++pos){
+				for(int wm = 0;wm < nFtpModels; ++wm){
+					int objlen = ftpModels[wm]->len;
+					if(pos + objlen - 1 <= seqlength)
+						Prob[wm][pos] = Prob[wm][pos + objlen - 1] * F[pos + objlen -1] * R[pos+objlen];
+					else
+						Prob[wm][pos] = 0;
+				}
+			}
 
 
-		// fill output vectors for COVER_PROB. Perhaps, this can be optimized by adding and subtracting start prob at end and beginning of footprint
-		vector<int32_t > currSeqCoverOutFragIDs;
-		vector<int32_t > currSeqCoverOutFragPos;
-
-		for(int position = firstDatPos; position <= lastDatPos; ++position){
-			//// 1. fill fragIDs and fragPos
-			currSeqCoverOutFragIDs.push_back(smfData[seq].Name());
-			currSeqCoverOutFragPos.push_back(position - firstDatPos + 1);
-		}
+			// get output data structure for current sequence for start and cover probabilities
+			// startOutFragIDs, startOutFragPos, startOutProbs[ftp]
+			// and coverOutFragIDs, coverOutFragPos, coverOutProbs[ftp]
+			// for the current molecule
+			// NOTE: startOutProbs and coverOutProbs contain aggregated probabilities per group
 
 
-		coverOutFragIDs[seq] = move(currSeqCoverOutFragIDs);
-		coverOutFragPos[seq] = move(currSeqCoverOutFragPos);
+			// fill output vectors for START_PROB
+			int firstDatPos = smfData[seq]._firstDatpos;
+			int lastDatPos = smfData[seq]._lastDatpos;
+			int spos = report_prediction_in_flanks ? 1 : firstDatPos;
+			int lpos = lastDatPos;
+			vector<int32_t > currSeqStartOutFragIDs;
+			vector<int32_t > currSeqStartOutFragPos;
+			vector<double > tmpstart;
+			vector<vector<double >> currSeqStartOutProbs(nFtpGroups,tmpstart);
+			for(int position = spos; position <= lpos; ++position){
+				//// 1. fill fragIDs and fragPos
+				currSeqStartOutFragIDs.push_back(smfData[seq].Name());
+				currSeqStartOutFragPos.push_back(position - firstDatPos + 1);
+				//// 2. fill start probabilities aggregated for each footprint group
+				for(int igroup = 0; igroup < nFtpGroups; ++igroup){
+					// get name for the current ftp group
+					string groupName = ftpModels.groups[igroup];
+					// get indices for current ftp group
+					const vector<int >& groupFtpIndices = ftpModels.getGroupIndexVec(groupName);
+					// summ across probablities associated with current ftp
+					double totalprob=0;
+					for(int gFtpi = 0; gFtpi < groupFtpIndices.size(); ++gFtpi){
+						totalprob += Prob[groupFtpIndices[gFtpi]][position + 1];
+					}
+					currSeqStartOutProbs[igroup].push_back(totalprob);
+				}
+			}
+			startOutFragIDs[seq] = move(currSeqStartOutFragIDs);
+			startOutFragPos[seq] = move(currSeqStartOutFragPos);
+			startOutProbs[seq] = move(currSeqStartOutProbs);
 
 
-		// allocate vectors for coverage probabilities for each group
-		vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);;
-		vector<vector<double >> currSeqCoverOutProbs(nFtpGroups,tmpcov); // aggregated probabilities across all footprints per group;
+			// fill output vectors for COVER_PROB. Perhaps, this can be optimized by adding and subtracting start prob at end and beginning of footprint
+			vector<int32_t > currSeqCoverOutFragIDs;
+			vector<int32_t > currSeqCoverOutFragPos;
 
-		// vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);
-		// coverOutProbs[seq].resize(nFtpGroups,tmpcov);
+			for(int position = firstDatPos; position <= lastDatPos; ++position){
+				//// 1. fill fragIDs and fragPos
+				currSeqCoverOutFragIDs.push_back(smfData[seq].Name());
+				currSeqCoverOutFragPos.push_back(position - firstDatPos + 1);
+			}
 
-		getCoverProbsMatrix(Prob,
-                      ftpModels,
-                      firstDatPos,
-                      lastDatPos,
-                      nFtpGroups,
-                      currSeqCoverOutProbs
-		);
-		coverOutProbs[seq] = move(currSeqCoverOutProbs);
 
-		// get maximum aposteriori comfiguration of footprints using Viterbi algorithm
+			coverOutFragIDs[seq] = move(currSeqCoverOutFragIDs);
+			coverOutFragPos[seq] = move(currSeqCoverOutFragPos);
 
-		vector<int32_t > currViterbiOutFragPos;
-		vector<int32_t > currViterbiOutFtpWidth;
 
-		vector<string > currViterbiOutFtpName;
-		vector<string > currViterbiOutFtpGroup;
+			// allocate vectors for coverage probabilities for each group
+			vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);;
+			vector<vector<double >> currSeqCoverOutProbs(nFtpGroups,tmpcov); // aggregated probabilities across all footprints per group;
 
-		vector<double > currViterbiOutFtpProb;
-		getViterbiMAPftpConf(ftpModelsScores,
-                       Prob,
+			// vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);
+			// coverOutProbs[seq].resize(nFtpGroups,tmpcov);
+
+			getCoverProbsMatrix(Prob,
                        ftpModels,
                        firstDatPos,
                        lastDatPos,
-                       currViterbiOutFragPos,
-                       currViterbiOutFtpWidth,
-                       currViterbiOutFtpName,
-                       currViterbiOutFtpGroup,
-                       currViterbiOutFtpProb);
-		vector<int32_t > currViterbiOutFragIDs(currViterbiOutFragPos.size(),smfData[seq].Name());
-		viterbiOutFragIDs[seq] = currViterbiOutFragIDs;
-		viterbiOutFragPos[seq] = currViterbiOutFragPos;
-		viterbiOutFtpWidth[seq] = currViterbiOutFtpWidth;
-		viterbiOutFtpName[seq] = currViterbiOutFtpName;
-		viterbiOutFtpGroup[seq] = currViterbiOutFtpGroup;
-		viterbiOutFtpProb[seq] = currViterbiOutFtpProb;
+                       nFtpGroups,
+                       currSeqCoverOutProbs
+			);
+			coverOutProbs[seq] = move(currSeqCoverOutProbs);
+
+			// get maximum aposteriori comfiguration of footprints using Viterbi algorithm
+
+			vector<int32_t > currViterbiOutFragPos;
+			vector<int32_t > currViterbiOutFtpWidth;
+
+			vector<string > currViterbiOutFtpName;
+			vector<string > currViterbiOutFtpGroup;
+
+			vector<double > currViterbiOutFtpProb;
+			getViterbiMAPftpConf(ftpModelsScores,
+                        Prob,
+                        ftpModels,
+                        firstDatPos,
+                        lastDatPos,
+                        currViterbiOutFragPos,
+                        currViterbiOutFtpWidth,
+                        currViterbiOutFtpName,
+                        currViterbiOutFtpGroup,
+                        currViterbiOutFtpProb);
+			vector<int32_t > currViterbiOutFragIDs(currViterbiOutFragPos.size(),smfData[seq].Name());
+			viterbiOutFragIDs[seq] = currViterbiOutFragIDs;
+			viterbiOutFragPos[seq] = currViterbiOutFragPos;
+			viterbiOutFtpWidth[seq] = currViterbiOutFtpWidth;
+			viterbiOutFtpName[seq] = currViterbiOutFtpName;
+			viterbiOutFtpGroup[seq] = currViterbiOutFtpGroup;
+			viterbiOutFtpProb[seq] = currViterbiOutFtpProb;
 
 
+		}
 	}
 
 } // end of omp parallel

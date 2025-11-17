@@ -175,7 +175,7 @@ approximation of posteriors.}
 \value{
 \code{DataFrame} object from \code{colData} of \code{se} with additional columns
 containing pair state statistics, inferred footprint spectra and emission probabilities
-for each sample in code{se}.
+for each sample in \code{se}.
 }
 \description{
 Footprint spectral analysis for SummarizedExperiment object containing

@@ -8,7 +8,7 @@ plot_ftp_spectrum(ftp_spectrum, title = NULL)
 }
 \arguments{
 \item{ftp_spectrum}{\code{data.frame} with inferred abundances of footprints.
-Columns \code{ftp_length}, \code{mean} and \code{sd} are essential.}
+Columns \code{ftp_length}, \code{mean} are essential.}
 
 \item{title}{optional title for the output plot}
 }

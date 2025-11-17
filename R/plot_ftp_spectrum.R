@@ -1,7 +1,7 @@
 #' Plot footprint spectrum
 #'
 #' @param ftp_spectrum `data.frame` with inferred abundances of footprints.
-#'        Columns `ftp_length`, `mean` and `sd` are essential.
+#'        Columns `ftp_length`, `mean` are essential.
 #' @param title optional title for the output plot
 #'
 #' @returns `ggplot2` object that contains the following information.
@@ -14,7 +14,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter mutate select
 #' @importFrom ggplot2 ggplot aes geom_line labs theme theme_bw scale_y_continuous scale_x_continuous sec_axis
-#' @importFrom checkmate assertDataFrame assertSubset
+#' @importFrom checkmate assertDataFrame assertSubset assertNumeric assertIntegerish
 #' @export
 #'
 
@@ -24,13 +24,13 @@ plot_ftp_spectrum <- function(ftp_spectrum,
 	assertSubset(x = c("ftp_length","mean","sd"),
 							 choices = colnames(ftp_spectrum))
 	ftp_spectrum <- ftp_spectrum %>% select(c("ftp_length","mean","sd"))
-	assertDataFrame(ftp_spectrum,
-									all.missing = F)
+	assertNumeric(ftp_spectrum[["mean"]],lower=0,upper=1,all.missing=F)
+	assertIntegerish(ftp_spectrum[["ftp_length"]],lower=1,all.missing=F)
+
+	plotZscore <- !all(is.na(ftp_spectrum[["sd"]]))
 
 	if(any(duplicated(ftp_spectrum$ftp_length)))
 		warning("Found duplicated ftp_length. Please make sure that the input ftp_spectrum contain only one spectrum")
-
-
 
 	## calculate log10mean and zscore and scale them
 	ftp_spectrum <- ftp_spectrum %>%
@@ -39,20 +39,24 @@ plot_ftp_spectrum <- function(ftp_spectrum,
 
 	## scale them
 	lgmn_range <- range(ftp_spectrum$log10mean,na.rm=T)
-	zsc_range <- range(ftp_spectrum$zscore,na.rm=T)
 	ftp_spectrum <- ftp_spectrum %>%
-		mutate(zscore_scaled = (zscore - zsc_range[1])/diff(zsc_range),
-					 log10mean_scaled = (log10mean - lgmn_range[1])/diff(lgmn_range))
+		mutate(log10mean_scaled = (log10mean - lgmn_range[1])/diff(lgmn_range))
+	if(plotZscore){
+		zsc_range <- range(ftp_spectrum$zscore,na.rm=T)
+		ftp_spectrum <- ftp_spectrum %>%
+			mutate(zscore_scaled = (zscore - zsc_range[1])/diff(zsc_range))
+	}
 
 	## get axis breaks
 	lgmn_breaks <- pretty(lgmn_range)
 	lgmn_scl_breaks <- (lgmn_breaks - lgmn_range[1])/diff(lgmn_range)
 	mean_labs <- sapply(lgmn_breaks, function(x) parse(text = paste0("10^", x)))
 
+	if(plotZscore){
+		zsc_breaks <- pretty(zsc_range)
+		zsc_scl_breaks <- (zsc_breaks - zsc_range[1])/diff(zsc_range)
+	}
 
-
-  zsc_breaks <- pretty(zsc_range)
-  zsc_scl_breaks <- (zsc_breaks - zsc_range[1])/diff(zsc_range)
   xbreaks <- sort(c(pretty(ftp_spectrum$ftp_length,
   									bounds=F),
   						 range(ftp_spectrum$ftp_length,na.rm=T)))
@@ -62,17 +66,7 @@ plot_ftp_spectrum <- function(ftp_spectrum,
   	geom_line(aes(y=log10mean_scaled),
   						color="darkgreen",
   						linewidth=1.1) +
-  	geom_line(aes(y=zscore_scaled),
-  						color="red2",
-  						linewidth=1.1,
-  						alpha=0.75) +
   	labs(x = "footprint length, bp",title=title)+
-  	scale_y_continuous(name= "estimated coverage (mean)",
-  										 breaks=lgmn_scl_breaks,
-  										 labels = mean_labs,
-  										 sec.axis = sec_axis(transform = ~ .* diff(zsc_range) + zsc_range[1],
-  										 										name="mean/sd",
-  										 										breaks = zsc_breaks))+
   	scale_x_continuous(breaks = xbreaks,
   										 limits = range(ftp_spectrum$ftp_length))+
   	theme_bw() +
@@ -87,6 +81,23 @@ plot_ftp_spectrum <- function(ftp_spectrum,
 
   	)
 
-
+  if(plotZscore){
+  	ftp_spec_pl <- ftp_spec_pl+
+  		geom_line(aes(y=zscore_scaled),
+  						color="red2",
+  						linewidth=1.1,
+  						alpha=0.75)+
+  		scale_y_continuous(name= "estimated coverage (mean)",
+  											 breaks=lgmn_scl_breaks,
+  											 labels = mean_labs,
+  											 sec.axis = sec_axis(transform = ~ .* diff(zsc_range) + zsc_range[1],
+  											 										name="mean/sd",
+  											 										breaks = zsc_breaks))
+  } else{
+  	ftp_spec_pl <- ftp_spec_pl+
+  		scale_y_continuous(name= "estimated coverage (mean)",
+  											 breaks=lgmn_scl_breaks,
+  											 labels = mean_labs)
+  }
   return(ftp_spec_pl)
 }
