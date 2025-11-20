@@ -57,6 +57,7 @@ get_ftp_PWMs_for_prediction <- function(ftp_spectrum,
 		row.names(ftp_len_mat) <- paste0("ftp",ftp_len_mat[,1],"_",ftp_len_mat[,2])
 
 
+
 	ftp_lengths <- sapply(row.names(ftp_len_mat),
 												function(ridx) {
 													seq(from = ftp_len_mat[ridx, 1],
@@ -65,16 +66,12 @@ get_ftp_PWMs_for_prediction <- function(ftp_spectrum,
 												}, simplify = FALSE, USE.NAMES = TRUE)
 	ftp_cov <- sapply(row.names(ftp_len_mat),
 										function(ridx) {
-											ftp_spectrum <- ftp_spectrum %>%
-												filter(ftp_length >= ftp_len_mat[ridx, 1] & ftp_length <= ftp_len_mat[ridx, 1])
-											sum(ftp_spectrum$mean)
+											selspc <- ftp_spectrum %>%
+												filter(ftp_length >= ftp_len_mat[ridx, 1] & ftp_length <= ftp_len_mat[ridx, 2])
+											sum(selspc$mean)
 										}, simplify = T, USE.NAMES = TRUE)
 	ftp_cov <- ftp_cov/sum(ftp_cov) * (1 - bg_cover)
 
-# browser()
-# 	## select required footprints and renormalize
-# 	ftp_spectrum <- ftp_spectrum %>% filter(ftp_length %in% unlist(ftp_lengths)) %>%
-# 		mutate(mean = mean/sum(mean) * (1 - bg_cover))
 
 	## create models
 	ftp_models <- do.call(

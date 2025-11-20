@@ -151,10 +151,6 @@ predict_footprints_SE <- function(se,
 	}
 
 
-	if (verbose) {
-		.message_timestamp("Calling run_cpp_nomeR...")
-	}
-
 	## protect_data is a matrix returned by validate_prepare_SE
 	## columns are:
 	## sidx - index of sample in SE
