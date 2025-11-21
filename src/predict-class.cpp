@@ -134,6 +134,26 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScor
 }
 
 
+
+// Inerval Scheduling algorithm for getting footprint configuration based on
+// posterior starting probabilities for footprint groups
+void Predict::getIntervalScheduleFtpConf(const vector<vector<double >>& ftpGroupStartProb,
+                                const vector<int32_t >& posVecStartProb,
+                                const vector<vector<double > >& ftpNameStartProb,
+                                const DNAbind_obj_vector& ftpModels,
+                                const int& fDPos, // firstDatPos
+                                const int& lDPos, // lastDatPos
+                                vector<int32_t >& cIntSchedFragPos,
+                                vector<int32_t >& cIntSchedFtpWidth,
+                                vector<string >& cIntSchedFtpName,
+                                vector<string >& cIntSchedFtpGroup,
+                                vector<double >& cIntSchedFtpProb){
+
+}
+
+
+
+
 // method that calculates start and cover probabilities and returns a Rcpp::List with calculated data.
 
 Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
@@ -339,7 +359,8 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			// fill output vectors for START_PROB
 			int firstDatPos = smfData[seq]._firstDatpos;
 			int lastDatPos = smfData[seq]._lastDatpos;
-			int spos = report_prediction_in_flanks ? 1 : firstDatPos;
+			//int spos = report_prediction_in_flanks ? 1 : firstDatPos;
+			int spos = 1; // this is for getting configuration
 			int lpos = lastDatPos;
 			vector<int32_t > currSeqStartOutFragIDs;
 			vector<int32_t > currSeqStartOutFragPos;

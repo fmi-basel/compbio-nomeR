@@ -63,6 +63,19 @@ public:
                                     vector<double >& cVitFtpProb);
 
 
+	void getIntervalScheduleFtpConf(const vector<vector<double >>& ftpGroupStartProb,
+                                 const vector<int32_t >& posVecStartProb,
+                                 const vector<vector<double > >& ftpNameStartProb,
+                                 const DNAbind_obj_vector& ftpModels,
+                                 const int& fDPos, // firstDatPos
+                                 const int& lDPos, // lastDatPos
+                                 vector<int32_t >& cIntSchedFragPos,
+                                 vector<int32_t >& cIntSchedFtpWidth,
+                                 vector<string >& cIntSchedFtpName,
+                                 vector<string >& cIntSchedFtpGroup,
+                                 vector<double >& cIntSchedFtpProb);
+
+
 	Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
                                 const DNAbind_obj_vector& ftpModels,
                                 const parameters& params,
