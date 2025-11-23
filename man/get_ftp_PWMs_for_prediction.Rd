@@ -16,17 +16,20 @@ get_ftp_PWMs_for_prediction(
 \arguments{
 \item{ftp_spectrum}{\code{data.frame} with inferred abundances of footprints.}
 
-\item{ftp_len_mat}{a \code{matrix} with footprint lengths where 1st and 2nd columns
-represent minimum and maximum footprint lengths. The 3rd column will be interpreted as
-increment. Each row will result in PWMs with lengths seq(min_ftp_length,max_ftp_length,by).
-Row names are interpreted as footprint groups.}
+\item{ftp_len_mat}{A \code{matrix} with footprint lengths where 1st and 2nd
+columns represent minimum and maximum footprint lengths. The 3rd column
+will be interpreted as increment. Each row will result in PWMs with
+lengths seq(min_ftp_length,max_ftp_length,by). Row names are interpreted
+as footprint groups.}
 
-\item{bg_cover}{estimated percentage of accessible positions in SMF data}
+\item{bg_cover}{Estimated percentage of accessible positions in SMF data}
 
-\item{ftp_protect_prob}{emission probability of protected position within footprints}
+\item{ftp_protect_prob}{Emission probability of protected position within
+footprints}
 }
 \value{
-\code{list} with footprint models (PWM) required for the function \code{\link{predict_footprints}}.
+\code{list} with footprint models (PWM) required for the function
+\code{\link{predict_footprints}}.
 }
 \description{
 This utility function creates a list of parameters required by
