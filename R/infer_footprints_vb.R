@@ -47,8 +47,8 @@
 #'     \item{"informative_prior"}{Inference is performed on parameters
 #'     bg_protect_prob, ftp_protect_prob, and footprint abundances.}
 #'     \item{"bg_fixed"}{bg_protect_prob is fixed and determined by
-#'     `bg_model_params[["bg_protect_prob_fixed"]]`, while inference is conducted
-#'     on ftp_protect_prob and footprint abundances.}
+#'     `bg_model_params[["bg_protect_prob_fixed"]]`, while inference is 
+#'     conducted on ftp_protect_prob and footprint abundances.}
 #'     \item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
 #'     fixed, defined by corresponding values in bg_model_params and
 #'     ftp_model_params, respectively. Inference is solely focused on footprint
@@ -105,15 +105,16 @@
 #' @param max_pareto_k maximum pareto_k returned by \code{\link[rstan]{vb}}.
 #'     If it exceeds \code{max_pareto_k} the function will run again until
 #'     max_nruns attempts have been done
-#' @param iter,tol_rel_obj,output_samples,grad_samples,algorithm,...  parameters for
-#'     \code{\link[rstan]{vb}} function that performs inference using Variational Bayes
-#'     approximation of posteriors. Please refer to \code{\link[rstan]{vb}} documentation.
+#' @param iter,tol_rel_obj,output_samples,grad_samples,algorithm,... parameters 
+#'     for \code{\link[rstan]{vb}} function that performs inference using 
+#'     Variational Bayes approximation of posteriors. Please refer to 
+#'     \code{\link[rstan]{vb}} documentation.
 #'
 #' @return An S4 class stanfit-class representing the inference results. Please
 #' check \code{\link[rstan]{vb}}.
-#' The attribute \code{attr(<stanfit_object>,"ftp_lengths")} contains vector of
-#' footprint lengths for which inference was run, i.e. parameter \code{ftp_lengths}
-#' provided by user.
+#' The attribute \code{attr(<stanfit_object>,"ftp_lengths")} contains a vector 
+#' of footprint lengths for which inference was run, i.e. parameter 
+#' \code{ftp_lengths} provided by user.
 #'
 #' @export
 #'

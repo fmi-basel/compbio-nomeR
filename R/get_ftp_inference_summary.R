@@ -205,7 +205,8 @@ get_ftp_inference_summary <- function(
     }
 
     if (plot) {
-    	infer_plot <- plot_ftp_spectrum(infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1, ])
+        infer_plot <- plot_ftp_spectrum(
+            infer_ftp_abund_probs[infer_ftp_abund_probs$ftp_length != 1, ])
     } else {
         infer_plot <- NULL
     }

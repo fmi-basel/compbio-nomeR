@@ -71,8 +71,8 @@ bg_prior_cover and ftp_prior_cover.}
 \item{"informative_prior"}{Inference is performed on parameters
 bg_protect_prob, ftp_protect_prob, and footprint abundances.}
 \item{"bg_fixed"}{bg_protect_prob is fixed and determined by
-\code{bg_model_params[["bg_protect_prob_fixed"]]}, while inference is conducted
-on ftp_protect_prob and footprint abundances.}
+\code{bg_model_params[["bg_protect_prob_fixed"]]}, while inference is
+conducted on ftp_protect_prob and footprint abundances.}
 \item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
 fixed, defined by corresponding values in bg_model_params and
 ftp_model_params, respectively. Inference is solely focused on footprint
