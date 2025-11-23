@@ -23,21 +23,23 @@ predict_footprints_SE(
 }
 \arguments{
 \item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-containing read-level data returned by \code{\link[footprintR]{readModBam}} function
-containing modification probabilities.}
+containing read-level data returned by the
+\code{\link[footprintR]{readModBam}} function and containing
+modification probabilities.}
 
-\item{assayName}{Character scalar describing the name of tje assay in \code{se} containing
-read-level data.}
+\item{assayName}{Character scalar describing the name of the assay in
+\code{se} containing read-level data.}
 
 \item{threshUnmod, threshMod}{Numeric scalars used to classify observations
 as modified (modification probability >= threshMod), unmodified
 (modification probability < threshUnmod) or unknown (otherwise).}
 
-\item{min_frag_data_len}{\code{integer} ignore fragments that have genomic lengths from
-most-left to most-right data points less than \code{min_frag_data_len}.}
+\item{min_frag_data_len}{\code{integer} ignore fragments that have genomic
+lengths from most-left to most-right data points less than
+\code{min_frag_data_len}.}
 
-\item{min_frag_data_dens}{\code{numeric} ignore fragments that have density of
-data-containing positions lower than \code{min_frag_data_dens}.}
+\item{min_frag_data_dens}{\code{numeric} ignore fragments that have density
+of data-containing positions lower than \code{min_frag_data_dens}.}
 
 \item{footprint_models}{A list containing footprint models for proteins.
 Each element must have 3 slots:
@@ -48,9 +50,12 @@ probabilities to find protected position within a footprint}
 (\code{numeric}) reflecting what fraction of reads you expect to be
 covered by a footprint}
 \item{NAME}{name (\code{character}) of a model, e.g. "Nucleosome"}
-\item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated
-if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149", "Nucleosome--150" etc. footprint models
-have identical GROUP (e.g. "Nucleosome") and \code{aggrByGroup = TRUE}, probabilities will be aggregated
+\item{GROUP}{non-unique group (\code{character}) which defines how
+probabilities will be aggregated
+if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149",
+"Nucleosome--150" etc. footprint models
+have identical GROUP (e.g. "Nucleosome") and \code{aggrByGroup = TRUE},
+probabilities will be aggregated
 across all footprints with identical GROUP.}
 }}
 
@@ -60,9 +65,10 @@ position within open (accessible) regions.}
 \item{bgcoverprior}{prior probability for percentage of all fragments to be
 in a free (accessible, or background) state.}
 
-\item{aggrByGroup}{if \code{TRUE} probabilities are aggregated by GROUP ID defined
-in \code{footprint_models}. If \code{FALSE} or GROUP IDs are missing in the \code{footprint_models}
-probabilities are reported for each individual footprints NAME defined in the \code{footprint_models}.}
+\item{aggrByGroup}{if \code{TRUE} probabilities are aggregated by GROUP ID
+defined in \code{footprint_models}. If \code{FALSE} or GROUP IDs are
+missing in the \code{footprint_models} probabilities are reported for
+each individual footprints NAME defined in the \code{footprint_models}.}
 
 \item{report_prediction_in_flanks}{\code{logical} whether to return
 calculated start probabilities in left flanking region.
