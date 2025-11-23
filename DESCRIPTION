@@ -15,7 +15,6 @@ Imports:
     data.table,
     dplyr,
     extraDistr,
-    GenomeInfoDb,
     GenomicRanges,
     ggplot2,
     graphics,
