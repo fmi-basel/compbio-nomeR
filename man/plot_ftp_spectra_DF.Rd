@@ -11,7 +11,8 @@ plot_ftp_spectra_DF(DF)
 \code{\link[=ftp_spectral_analysis_SE]{ftp_spectral_analysis_SE()}} and must contain column \code{ftp_spectrum}}
 }
 \value{
-\code{patchwork} object with panel of plots for footprint spectra for all samples in DF.
+\code{patchwork} object with panel of plots for footprint spectra
+for all samples in DF.
 }
 \description{
 Plot footprint spectra provided in the DataFrame
