@@ -13,21 +13,20 @@
     #### CHECK ARGUMENTS ####
     coll <- makeAssertCollection()
 
-    if(testMatrix(cooc_ctable,all.missing = F,min.cols = 4))
-    	cooc_ctable <- data.frame(S = 1:nrow(cooc_ctable),
-    														cooc_ctable)
+    if (testMatrix(cooc_ctable, all.missing = FALSE, min.cols = 4)) {
+        cooc_ctable <- data.frame(S = seq_len(nrow(cooc_ctable)),
+                                  cooc_ctable)
+    }
 
     ## validate count table
     if (check_data_frame(x = cooc_ctable,
                          min.rows = 1)) {
         ## check colnames
         assert_names(x = colnames(cooc_ctable),
-                     must.include = c("S", "N00", "N01", "N10",
-                                      "N11"),
+                     must.include = c("S", "N00", "N01", "N10", "N11"),
                      add = coll)
-    	## remove non-relevant columns
-    	cooc_ctable <- cooc_ctable[,c("S", "N00", "N01", "N10",
-    																"N11")]
+        ## remove non-relevant columns
+        cooc_ctable <- cooc_ctable[,c("S", "N00", "N01", "N10", "N11")]
 
         ## remove rows without data
         cooc_ctable <- cooc_ctable[rowSums(
@@ -41,7 +40,7 @@
                           add = coll)
 
         ## check vector S
-        assert_integerish(x = cooc_ctable[,"S"],
+        assert_integerish(x = cooc_ctable[, "S"],
                           lower = 1L,
                           any.missing = FALSE,
                           min.len = 1,
