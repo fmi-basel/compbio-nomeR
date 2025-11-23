@@ -36,25 +36,27 @@ ftp_spectral_analysis_SE(
 }
 \arguments{
 \item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-containing read-level data returned by \code{\link[footprintR]{readModBam}} function
-containing modification probabilities.}
+containing read-level data returned by the
+\code{\link[footprintR]{readModBam}} function and containing
+modification probabilities.}
 
-\item{assayName}{Character scalar describing the name of tje assay in \code{se} containing
-read-level data.}
+\item{assayName}{Character scalar describing the name of the assay in
+\code{se} containing read-level data.}
 
 \item{threshUnmod, threshMod}{Numeric scalars used to classify observations
 as modified (modification probability >= threshMod), unmodified
 (modification probability < threshUnmod) or unknown (otherwise).}
 
-\item{min_frag_data_len}{\code{integer} ignore fragments that have genomic lengths from
-most-left to most-right data points less than \code{min_frag_data_len}.}
+\item{min_frag_data_len}{\code{integer} ignore fragments that have genomic
+lengths from most-left to most-right data points less than
+\code{min_frag_data_len}.}
 
-\item{min_frag_data_dens}{\code{numeric} ignore fragments that have density of
-data-containing positions lower than \code{min_frag_data_dens}.}
+\item{min_frag_data_dens}{\code{numeric} ignore fragments that have density
+of data-containing positions lower than \code{min_frag_data_dens}.}
 
-\item{max_spacing}{\code{integer} that defines maximum distance between positions for aggregating
-frequencies of combinations 00, 01, 10, 11 at distances up to \code{max_spacing} observed in
-the SMF dataset.}
+\item{max_spacing}{\code{integer} that defines maximum distance between
+positions for aggregating frequencies of combinations 00, 01, 10, 11 at
+distances up to \code{max_spacing} observed in the SMF dataset.}
 
 \item{ftp_lengths}{A numeric vector representing the lengths of footprints
 for which abundance is being analyzed. This parameter allows users to
@@ -101,8 +103,8 @@ bg_prior_cover and ftp_prior_cover.}
 \item{"informative_prior"}{Inference is performed on parameters
 bg_protect_prob, ftp_protect_prob, and footprint abundances.}
 \item{"bg_fixed"}{bg_protect_prob is fixed and determined by
-\code{bg_model_params[["bg_protect_prob_fixed"]]}, while inference is conducted
-on ftp_protect_prob and footprint abundances.}
+\code{bg_model_params[["bg_protect_prob_fixed"]]}, while inference is
+conducted on ftp_protect_prob and footprint abundances.}
 \item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
 fixed, defined by corresponding values in bg_model_params and
 ftp_model_params, respectively. Inference is solely focused on footprint
@@ -168,14 +170,14 @@ max_nruns attempts have been done.}
 
 \item{verbose}{verbose mode for bug fixing.}
 
-\item{iter, tol_rel_obj, output_samples, grad_samples, algorithm, ...}{parameters for
-\code{\link[rstan]{vb}} function that performs inference using Variational Bayes
-approximation of posteriors.}
+\item{iter, tol_rel_obj, output_samples, grad_samples, algorithm, ...}{parameters
+for \code{\link[rstan]{vb}} function that performs inference using
+Variational Bayes approximation of posteriors.}
 }
 \value{
-\code{DataFrame} object from \code{colData} of \code{se} with additional columns
-containing pair state statistics, inferred footprint spectra and emission probabilities
-for each sample in \code{se}.
+\code{DataFrame} object from \code{colData} of \code{se} with
+additional columns containing pair state statistics, inferred footprint
+spectra and emission probabilities for each sample in \code{se}.
 }
 \description{
 Footprint spectral analysis for SummarizedExperiment object containing
