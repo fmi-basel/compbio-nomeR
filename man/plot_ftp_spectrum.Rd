@@ -14,11 +14,15 @@ Columns \code{ftp_length}, \code{mean} are essential.}
 }
 \value{
 \code{ggplot2} object that contains the following information.
-The darkgreen line corresponds to the left Y-axis ("estimated coverage (mean)", in log10 scale) and represents
-inferred coverages (mean across samples from posterior distribution) for each footprint on the X-axis.
-The red line corresponds the right Y-axis ("mean/sd", linear scale) and represents ratios between means and
-standard deviations across samples from posterior distributions for each footprint length on the X-axis.
-The red line can be interpreted as Z-scores and used to judge statistical significance of coverage esimates for footprints in the red line.
+The dark green line corresponds to the left Y-axis ("estimated coverage
+(mean)", in log10 scale) and represents inferred coverages (mean across
+samples from posterior distribution) for each footprint on the X-axis.
+The red line corresponds the right Y-axis ("mean/sd", linear scale) and
+represents ratios between means and standard deviations across samples
+from posterior distributions for each footprint length on the X-axis.
+The red line can be interpreted as Z-scores and used to judge
+statistical significance of coverage esimates for footprints in the
+red line.
 }
 \description{
 Plot footprint spectrum
