@@ -219,45 +219,24 @@ ftp_spectral_analysis_SE <- function(
         seq_len(nrow(infDFout)),
         function(idx) {
             .message_timestamp(paste0("Inference for ", infDFout$sample[idx]))
-            if (verbose) {
-                vb_res <- infer_footprints_vb(ctables_list[[idx]],
-                                              ftp_lengths,
-                                              ftp_prior_cover,
-                                              bg_prior_cover,
-                                              total_cnt_prior_dirich,
-                                              ftp_bg_model,
-                                              bg_model_params,
-                                              ftp_model_params,
-                                              max_nruns,
-                                              max_pareto_k,
-                                              output_samples = output_samples,
-                                              iter = iter,
-                                              grad_samples = grad_samples,
-                                              tol_rel_obj = tol_rel_obj,
-                                              algorithm = algorithm,
-                                              ...
-                )
-            } else {
-                invisible(utils::capture.output(
-                    suppressWarnings(suppressMessages(vb_res <- infer_footprints_vb(ctables_list[[idx]],
-                                                                                    ftp_lengths,
-                                                                                    ftp_prior_cover,
-                                                                                    bg_prior_cover,
-                                                                                    total_cnt_prior_dirich,
-                                                                                    ftp_bg_model,
-                                                                                    bg_model_params,
-                                                                                    ftp_model_params,
-                                                                                    max_nruns,
-                                                                                    max_pareto_k,
-                                                                                    output_samples = output_samples,
-                                                                                    iter = iter,
-                                                                                    grad_samples = grad_samples,
-                                                                                    tol_rel_obj = tol_rel_obj,
-                                                                                    algorithm = algorithm,
-                                                                                    ...
-                    )))
-                ))
-            }
+            vb_res <- infer_footprints_vb(ctables_list[[idx]],
+                                          ftp_lengths,
+                                          ftp_prior_cover,
+                                          bg_prior_cover,
+                                          total_cnt_prior_dirich,
+                                          ftp_bg_model,
+                                          bg_model_params,
+                                          ftp_model_params,
+                                          max_nruns,
+                                          max_pareto_k,
+                                          output_samples = output_samples,
+                                          iter = iter,
+                                          grad_samples = grad_samples,
+                                          tol_rel_obj = tol_rel_obj,
+                                          algorithm = algorithm,
+                                          refresh = ifelse(verbose, 100, 0),
+                                          ...
+            )
             
             DFout <- DataFrame(
                 VB_success = FALSE,
