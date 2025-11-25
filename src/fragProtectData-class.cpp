@@ -61,7 +61,7 @@ fragProtectData & fragProtectData::operator = (const fragProtectData & other){
 
 		_firstDatpos = other._firstDatpos;
 		_lastDatpos = other._lastDatpos;
-		
+
 		_protectVec = other._protectVec;
 	}
 	return *this;

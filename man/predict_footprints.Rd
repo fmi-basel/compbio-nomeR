@@ -11,7 +11,7 @@ predict_footprints(
   bgprotectprob,
   bgcoverprior,
   aggrByGroup = FALSE,
-  report_prediction_in_flanks = FALSE,
+  ftpConfigMethod = c("POFP", "Viterbi"),
   ncpu = 1L,
   verbose = FALSE
 )
@@ -50,6 +50,10 @@ in a free (accessible, or background) state.}
 in \code{footprint_models}. If \code{FALSE} or GROUP IDs are missing in the \code{footprint_models}
 probabilities are reported for each individual footprints NAME defined in the \code{footprint_models}.}
 
+\item{ncpu}{number of threads to use.}
+
+\item{verbose}{verbose mode for bug fixing.}
+
 \item{report_prediction_in_flanks}{\code{logical} whether to return
 calculated start probabilities in left flanking region.
 In order to take into account partial footprints at left edge of
@@ -57,10 +61,6 @@ fragments the algorithm extends each fragment by maximum footprint
 length on the left side. \code{report_prediction_in_flanks} controls
 whether calculated start probabilities in the left flanking region will
 be reported in the \code{START_PROB}.}
-
-\item{ncpu}{number of threads to use.}
-
-\item{verbose}{verbose mode for bug fixing.}
 }
 \value{
 A list which contains 2 data frames:

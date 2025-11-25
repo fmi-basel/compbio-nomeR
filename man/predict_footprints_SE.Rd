@@ -16,7 +16,7 @@ predict_footprints_SE(
   bgprotectprob,
   bgcoverprior,
   aggrByGroup = FALSE,
-  report_prediction_in_flanks = FALSE,
+  ftpConfigMethod = c("POFP", "Viterbi"),
   ncpu = 1L,
   verbose = FALSE
 )
@@ -62,7 +62,20 @@ in a free (accessible, or background) state.}
 
 \item{aggrByGroup}{if \code{TRUE} probabilities are aggregated by GROUP ID defined
 in \code{footprint_models}. If \code{FALSE} or GROUP IDs are missing in the \code{footprint_models}
-probabilities are reported for each individual footprints NAME defined in the \code{footprint_models}.}
+probabilities are reported for each individual footprints NAME defined in the \code{footprint_models}.
+@param ftpConfigMethod method for constructing footprint configurations:
+\describe{
+\item{\code{POFP}}{ (Priority-ordered Footprint Placement) method for constructing footprint configurations
+fills a molecule with non-overlapping footprints starting from highest and going to lowest predicted probabilities.
+}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{\\item\{\code{Viterbi}\} is using Viterbi algorithm to find a configuration of footprints with highest posterior probability.
+\}
+}\if{html}{\out{</div>}}}
+
+\item{ncpu}{number of threads to use.}
+
+\item{verbose}{verbose mode for bug fixing.}
 
 \item{report_prediction_in_flanks}{\code{logical} whether to return
 calculated start probabilities in left flanking region.
@@ -71,10 +84,6 @@ fragments the algorithm extends each fragment by maximum footprint
 length on the left side. \code{report_prediction_in_flanks} controls
 whether calculated start probabilities in the left flanking region will
 be reported in the \code{START_PROB}.}
-
-\item{ncpu}{number of threads to use.}
-
-\item{verbose}{verbose mode for bug fixing.}
 }
 \value{
 A list which contains 2 data frames:

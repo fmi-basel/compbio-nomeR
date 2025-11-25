@@ -135,19 +135,72 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScor
 
 
 
-// Inerval Scheduling algorithm for getting footprint configuration based on
+// Priority-ordered footprint placement algorithm for getting footprint configuration based on
 // posterior starting probabilities for footprint groups
-void Predict::getIntervalScheduleFtpConf(const vector<vector<double >>& ftpGroupStartProb,
-                                const vector<int32_t >& posVecStartProb,
-                                const vector<vector<double > >& ftpNameStartProb,
-                                const DNAbind_obj_vector& ftpModels,
-                                const int& fDPos, // firstDatPos
-                                const int& lDPos, // lastDatPos
-                                vector<int32_t >& cIntSchedFragPos,
-                                vector<int32_t >& cIntSchedFtpWidth,
-                                vector<string >& cIntSchedFtpName,
-                                vector<string >& cIntSchedFtpGroup,
-                                vector<double >& cIntSchedFtpProb){
+void Predict::getPriorityOrderedFtpConf(const vector<vector<double >>& ftpGroupStartProb,
+                                        const vector<int32_t >& posVecStartProb,
+                                        const vector<vector<double > >& ftpNameStartProb,
+                                        const DNAbind_obj_vector& ftpModels,
+                                        const int& fDPos, // firstDatPos
+                                        const int& lDPos, // lastDatPos
+                                        vector<int32_t >& cIntSchedFragPos,
+                                        vector<int32_t >& cIntSchedFtpWidth,
+                                        vector<string >& cIntSchedFtpName,
+                                        vector<string >& cIntSchedFtpGroup,
+                                        vector<double >& cIntSchedFtpProb){
+	// construct vector of candidate ftpSegments
+	size_t posVecSize = posVecStartProb.size();
+	vector<ftpSegment > ftpCandidates;
+
+	for(int posidx = 0; posidx < posVecSize; ++posidx){
+		//
+		for(int igroup=0; igroup < ftpModels.groups.size(); ++igroup){
+			vector<int > ftpIndices = ftpModels.getGroupIndexVec(ftpModels.groups[igroup]);
+			for(int ii = 0; ii < ftpIndices.size(); ++ii){
+				// create candidate footprint segment
+				ftpSegment curFtpSegm;
+				curFtpSegm.ftpPosIndex = posidx; // 0-based index in the molecule vector
+				curFtpSegm.ftpStart = posVecStartProb[posidx]; // 1-based shifted position
+				curFtpSegm.ftpName = ftpModels[ftpIndices[ii]]->name;
+				curFtpSegm.ftpNameStartProb = ftpNameStartProb[ftpIndices[ii]][posidx + 1];
+				curFtpSegm.ftpWidth = ftpModels[ftpIndices[ii]]->len;
+
+				curFtpSegm.ftpGroup =ftpModels.groups[igroup] ;
+				curFtpSegm.ftpGroupStartProb = ftpGroupStartProb[igroup][posidx];
+
+				ftpCandidates.push_back(curFtpSegm);
+			}
+		}
+	}
+
+
+
+	// define priorities for footprint placement
+	// i.e. sort footprint segments by group start probability in descending order
+	sort(ftpCandidates.begin(), ftpCandidates.end(),
+      [](const ftpSegment& a, const ftpSegment& b) {
+      	if(a.ftpGroupStartProb != b.ftpGroupStartProb){
+      		return a.ftpGroupStartProb > b.ftpGroupStartProb;
+      	} else{
+      		return a.ftpNameStartProb > b.ftpNameStartProb;
+      	}
+
+      });
+
+	// add candidates to ftpConfiguration
+	ftpConfig maxGroupFtpConfig(posVecSize);
+
+	for(int i = 0; i < ftpCandidates.size() && !maxGroupFtpConfig.isMoleculeFool(); ++i){
+		maxGroupFtpConfig.addFtp(ftpCandidates[i]);
+	}
+
+	// Fill out the output vectors with the final ftp configuration
+	maxGroupFtpConfig.fillConfigVector(cIntSchedFragPos,
+                                    cIntSchedFtpWidth,
+                                    cIntSchedFtpName,
+                                    cIntSchedFtpGroup,
+                                    cIntSchedFtpProb);
+
 
 }
 
@@ -159,7 +212,7 @@ void Predict::getIntervalScheduleFtpConf(const vector<vector<double >>& ftpGroup
 Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                                         const DNAbind_obj_vector& ftpModels,
                                         const parameters& params,
-                                        bool report_prediction_in_flanks,
+                                        ftpConfigAlgo ftpCnfAlg,
                                         int ncpu){
 	extern bool _VERBOSE_;
 
@@ -184,16 +237,16 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 	vector<vector<vector<double >>> startOutProbs; // vectors of size nFtpGroups, i.e. for each group . per each seq
 	vector<vector<vector<double >>> coverOutProbs;
 
-	// allocate vectors for maximum aposteriory configurations
-	vector<vector<int32_t >> viterbiOutFragIDs(smfData.Size(),tmp_vec);
-	vector<vector<int32_t >> viterbiOutFragPos(smfData.Size(),tmp_vec);
-	vector<vector<int32_t >> viterbiOutFtpWidth(smfData.Size(),tmp_vec);
+	// allocate vectors for footprint configurations
+	vector<vector<int32_t >> ftpConfOutFragIDs(smfData.Size(),tmp_vec);
+	vector<vector<int32_t >> ftpConfOutFragPos(smfData.Size(),tmp_vec);
+	vector<vector<int32_t >> ftpConfOutFtpWidth(smfData.Size(),tmp_vec);
 
 	vector<string > tmp_str;
-	vector<vector<string >> viterbiOutFtpName(smfData.Size(),tmp_str);
-	vector<vector<string >> viterbiOutFtpGroup(smfData.Size(),tmp_str);
+	vector<vector<string >> ftpConfOutFtpName(smfData.Size(),tmp_str);
+	vector<vector<string >> ftpConfOutFtpGroup(smfData.Size(),tmp_str);
 	vector<double > tmp_dbl;
-	vector<vector<double >> viterbiOutFtpProb(smfData.Size(),tmp_dbl);
+	vector<vector<double >> ftpConfOutFtpProb(smfData.Size(),tmp_dbl);
 
 	for(seq = 0; seq < smfData.Size(); ++seq){
 		vector<vector<double >> tmpst;
@@ -370,6 +423,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 				//// 1. fill fragIDs and fragPos
 				currSeqStartOutFragIDs.push_back(smfData[seq].Name());
 				currSeqStartOutFragPos.push_back(position - firstDatPos + 1);
+
 				//// 2. fill start probabilities aggregated for each footprint group
 				for(int igroup = 0; igroup < nFtpGroups; ++igroup){
 					// get name for the current ftp group
@@ -384,9 +438,6 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 					currSeqStartOutProbs[igroup].push_back(totalprob);
 				}
 			}
-			startOutFragIDs[seq] = move(currSeqStartOutFragIDs);
-			startOutFragPos[seq] = move(currSeqStartOutFragPos);
-			startOutProbs[seq] = move(currSeqStartOutProbs);
 
 
 			// fill output vectors for COVER_PROB. Perhaps, this can be optimized by adding and subtracting start prob at end and beginning of footprint
@@ -400,8 +451,6 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			}
 
 
-			coverOutFragIDs[seq] = move(currSeqCoverOutFragIDs);
-			coverOutFragPos[seq] = move(currSeqCoverOutFragPos);
 
 
 			// allocate vectors for coverage probabilities for each group
@@ -418,34 +467,73 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                        nFtpGroups,
                        currSeqCoverOutProbs
 			);
+
+			// get footprint configuration using chosen algorithm
+
+			vector<int32_t > currFtpConfOutFragPos;
+			vector<int32_t > currFtpConfOutFtpWidth;
+
+			vector<string > currFtpConfOutFtpName;
+			vector<string > currFtpConfOutFtpGroup;
+
+			vector<double > currFtpConfOutFtpProb;
+
+			//
+			switch(ftpCnfAlg) {
+			case POFP:{
+				if(_VERBOSE_)
+					Rcpp::Rcout<<"Running POFP algorithm..."<<endl;
+				getPriorityOrderedFtpConf(currSeqStartOutProbs,
+                              currSeqStartOutFragPos,
+                              Prob,
+                              ftpModels,
+                              firstDatPos,
+                              lastDatPos,
+                              currFtpConfOutFragPos,
+                              currFtpConfOutFtpWidth,
+                              currFtpConfOutFtpName,
+                              currFtpConfOutFtpGroup,
+                              currFtpConfOutFtpProb);
+				break;
+			}
+			case VITERBI:{
+				if(_VERBOSE_)
+					Rcpp::Rcout<<"Running Viterbi algorithm..."<<endl;
+				getViterbiMAPftpConf(ftpModelsScores,
+                         Prob,
+                         ftpModels,
+                         firstDatPos,
+                         lastDatPos,
+                         currFtpConfOutFragPos,
+                         currFtpConfOutFtpWidth,
+                         currFtpConfOutFtpName,
+                         currFtpConfOutFtpGroup,
+                         currFtpConfOutFtpProb);
+				break;
+			}
+			}
+
+			// move all into pre-allocated vectors
+			// data for start probabilities
+			startOutFragIDs[seq] = move(currSeqStartOutFragIDs);
+			startOutFragPos[seq] = move(currSeqStartOutFragPos);
+			startOutProbs[seq] = move(currSeqStartOutProbs);
+			// data for cover probabilities
+			coverOutFragIDs[seq] = move(currSeqCoverOutFragIDs);
+			coverOutFragPos[seq] = move(currSeqCoverOutFragPos);
 			coverOutProbs[seq] = move(currSeqCoverOutProbs);
+			// data for footprint configs
+			vector<int32_t > currFtpConfOutFragIDs(currFtpConfOutFragPos.size(),smfData[seq].Name());
+			ftpConfOutFragIDs[seq] = move(currFtpConfOutFragIDs);
+			ftpConfOutFragPos[seq] = move(currFtpConfOutFragPos);
+			ftpConfOutFtpWidth[seq] = move(currFtpConfOutFtpWidth);
+			ftpConfOutFtpName[seq] = move(currFtpConfOutFtpName);
+			ftpConfOutFtpGroup[seq] = move(currFtpConfOutFtpGroup);
+			ftpConfOutFtpProb[seq] = move(currFtpConfOutFtpProb);
 
-			// get maximum aposteriori comfiguration of footprints using Viterbi algorithm
 
-			vector<int32_t > currViterbiOutFragPos;
-			vector<int32_t > currViterbiOutFtpWidth;
 
-			vector<string > currViterbiOutFtpName;
-			vector<string > currViterbiOutFtpGroup;
 
-			vector<double > currViterbiOutFtpProb;
-			getViterbiMAPftpConf(ftpModelsScores,
-                        Prob,
-                        ftpModels,
-                        firstDatPos,
-                        lastDatPos,
-                        currViterbiOutFragPos,
-                        currViterbiOutFtpWidth,
-                        currViterbiOutFtpName,
-                        currViterbiOutFtpGroup,
-                        currViterbiOutFtpProb);
-			vector<int32_t > currViterbiOutFragIDs(currViterbiOutFragPos.size(),smfData[seq].Name());
-			viterbiOutFragIDs[seq] = currViterbiOutFragIDs;
-			viterbiOutFragPos[seq] = currViterbiOutFragPos;
-			viterbiOutFtpWidth[seq] = currViterbiOutFtpWidth;
-			viterbiOutFtpName[seq] = currViterbiOutFtpName;
-			viterbiOutFtpGroup[seq] = currViterbiOutFtpGroup;
-			viterbiOutFtpProb[seq] = currViterbiOutFtpProb;
 
 
 		}
@@ -536,14 +624,14 @@ for(int seq = 0; seq < coverOutProbs.size(); ++seq){
 	offset += coverOutProbs[seq][0].size();
 }
 
-// viterbiOutFragIDs[seq] = currViterbiOutFragIDs;
-// viterbiOutFragPos[seq] = currViterbiOutFragPos;
-// viterbiOutFtpWidth[seq] = currViterbiOutFtpWidth;
-// viterbiOutFtpName[seq] = currViterbiOutFtpName;
-// viterbiOutFtpGroup[seq] = currViterbiOutFtpGroup;
-// viterbiOutFtpProb[seq] = currViterbiOutFtpProb;
-// flatten nested vectors and create Rcpp::vectors for Viterbi MAP footprint configurations
-Rcpp::List RcppListViterbiOut; // this is a list of vectors
+// ftpConfOutFragIDs[seq] = currFtpConfOutFragIDs;
+// ftpConfOutFragPos[seq] = currFtpConfOutFragPos;
+// ftpConfOutFtpWidth[seq] = currFtpConfOutFtpWidth;
+// ftpConfOutFtpName[seq] = currFtpConfOutFtpName;
+// ftpConfOutFtpGroup[seq] = currFtpConfOutFtpGroup;
+// ftpConfOutFtpProb[seq] = currFtpConfOutFtpProb;
+// flatten nested vectors and create Rcpp::vectors for footprint configurations
+Rcpp::List RcppListFtpConfOut; // this is a list of vectors
 // 1st element: Rcpp::IntegerVector with fragment IDs as was passed from the R side
 // 2nd element: Rcpp::IntegerVector with starts of footprints within fragments
 // 3rd element: Rcpp::IntegerVector with widths of footprints
@@ -551,59 +639,59 @@ Rcpp::List RcppListViterbiOut; // this is a list of vectors
 // 5th element: Rcpp::CharacterVector with footprint groups
 // 6th element: Rcpp::NumericVector with start probabilities of footprints
 
-size_t viterbi_total_size = 0;
-for (const auto& v : viterbiOutFragIDs)
-	viterbi_total_size += v.size();
+size_t ftpconf_total_size = 0;
+for (const auto& v : ftpConfOutFragIDs)
+	ftpconf_total_size += v.size();
 
-Rcpp::IntegerVector RcppViterbiOutFragIDs(viterbi_total_size);
+Rcpp::IntegerVector RcppFtpConfOutFragIDs(ftpconf_total_size);
 offset = 0;
-for (const auto& v : viterbiOutFragIDs) {
-	std::copy(v.begin(), v.end(), RcppViterbiOutFragIDs.begin() + offset);
+for (const auto& v : ftpConfOutFragIDs) {
+	std::copy(v.begin(), v.end(), RcppFtpConfOutFragIDs.begin() + offset);
 	offset += v.size();
 }
-RcppListViterbiOut.push_back(RcppViterbiOutFragIDs,"seq");
+RcppListFtpConfOut.push_back(RcppFtpConfOutFragIDs,"seq");
 
-Rcpp::IntegerVector RcppViterbiOutFragPos(viterbi_total_size);
+Rcpp::IntegerVector RcppFtpConfOutFragPos(ftpconf_total_size);
 offset = 0;
-for (const auto& v : viterbiOutFragPos) {
-	std::copy(v.begin(), v.end(), RcppViterbiOutFragPos.begin() + offset);
+for (const auto& v : ftpConfOutFragPos) {
+	std::copy(v.begin(), v.end(), RcppFtpConfOutFragPos.begin() + offset);
 	offset += v.size();
 }
-RcppListViterbiOut.push_back(RcppViterbiOutFragPos,"start");
+RcppListFtpConfOut.push_back(RcppFtpConfOutFragPos,"start");
 
-Rcpp::IntegerVector RcppViterbiOutFtpWidth(viterbi_total_size);
+Rcpp::IntegerVector RcppFtpConfOutFtpWidth(ftpconf_total_size);
 offset = 0;
-for (const auto& v : viterbiOutFtpWidth) {
-	std::copy(v.begin(), v.end(), RcppViterbiOutFtpWidth.begin() + offset);
+for (const auto& v : ftpConfOutFtpWidth) {
+	std::copy(v.begin(), v.end(), RcppFtpConfOutFtpWidth.begin() + offset);
 	offset += v.size();
 }
-RcppListViterbiOut.push_back(RcppViterbiOutFtpWidth,"width");
-// viterbiOutFtpName[seq] = currViterbiOutFtpName;
-// viterbiOutFtpGroup[seq] = currViterbiOutFtpGroup;
-// viterbiOutFtpProb[seq] = currViterbiOutFtpProb;
-Rcpp::CharacterVector RcppViterbiOutFtpName(viterbi_total_size);
+RcppListFtpConfOut.push_back(RcppFtpConfOutFtpWidth,"width");
+// ftpConfOutFtpName[seq] = currFtpConfOutFtpName;
+// ftpConfOutFtpGroup[seq] = currFtpConfOutFtpGroup;
+// ftpConfOutFtpProb[seq] = currFtpConfOutFtpProb;
+Rcpp::CharacterVector RcppFtpConfOutFtpName(ftpconf_total_size);
 offset = 0;
-for (const auto& v : viterbiOutFtpName) {
-	std::copy(v.begin(), v.end(), RcppViterbiOutFtpName.begin() + offset);
+for (const auto& v : ftpConfOutFtpName) {
+	std::copy(v.begin(), v.end(), RcppFtpConfOutFtpName.begin() + offset);
 	offset += v.size();
 }
-RcppListViterbiOut.push_back(RcppViterbiOutFtpName,"ftp_name");
+RcppListFtpConfOut.push_back(RcppFtpConfOutFtpName,"ftp_name");
 
-Rcpp::CharacterVector RcppViterbiOutFtpGroup(viterbi_total_size);
+Rcpp::CharacterVector RcppFtpConfOutFtpGroup(ftpconf_total_size);
 offset = 0;
-for (const auto& v : viterbiOutFtpGroup) {
-	std::copy(v.begin(), v.end(), RcppViterbiOutFtpGroup.begin() + offset);
+for (const auto& v : ftpConfOutFtpGroup) {
+	std::copy(v.begin(), v.end(), RcppFtpConfOutFtpGroup.begin() + offset);
 	offset += v.size();
 }
-RcppListViterbiOut.push_back(RcppViterbiOutFtpGroup,"ftp_group");
+RcppListFtpConfOut.push_back(RcppFtpConfOutFtpGroup,"ftp_group");
 
-Rcpp::NumericVector RcppViterbiOutFtpProb(viterbi_total_size);
+Rcpp::NumericVector RcppFtpConfOutFtpProb(ftpconf_total_size);
 offset = 0;
-for (const auto& v : viterbiOutFtpProb) {
-	std::copy(v.begin(), v.end(), RcppViterbiOutFtpProb.begin() + offset);
+for (const auto& v : ftpConfOutFtpProb) {
+	std::copy(v.begin(), v.end(), RcppFtpConfOutFtpProb.begin() + offset);
 	offset += v.size();
 }
-RcppListViterbiOut.push_back(RcppViterbiOutFtpProb,"start_prob");
+RcppListFtpConfOut.push_back(RcppFtpConfOutFtpProb,"start_prob");
 
 
 
@@ -611,7 +699,7 @@ RcppListViterbiOut.push_back(RcppViterbiOutFtpProb,"start_prob");
 Rcpp::List output_data;
 output_data = Rcpp::List::create( Rcpp::Named("START_PROB") = RcppListStartOut,
                                   Rcpp::Named("COVER_PROB") = RcppListCoverOut,
-                                  Rcpp::Named("VITERBI_CONF") = RcppListViterbiOut);
+                                  Rcpp::Named("FOOTPRINT_CONF") = RcppListFtpConfOut);
 return(output_data);
 }
 

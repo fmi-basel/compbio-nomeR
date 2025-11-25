@@ -6,6 +6,8 @@
 #include "DNAbindobj_vector-class.hpp"
 #include "fragProtectData-class.hpp"
 #include "SMFdataset-class.hpp"
+#include "ftpSegment-struct.hpp"
+#include "ftpConfig-class.hpp"
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -25,22 +27,16 @@ using namespace std;
 #endif
 
 
+
+
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::depends(RcppProgress)]]
 class Predict
 {
 
-	// const parameters& PARAMS; // reference to an object containing parameters
-	// const DNAbind_obj_vector& BINDING_OBJECTS; // reference to an object containing vector of footprint models as well as background model
-	// const SMFdataset& SEQUENCES; // reference to an object containing SMF data
-
 public:
-	// constructors/destructor
-	// Predict(const SMFdataset& refSmfData,
-	//        const DNAbind_obj_vector& refFtp_models,
-	//        const parameters& refParams);
-	Predict();
 
+	Predict();
 	~Predict();
 
 	void getCoverProbsMatrix(const vector<vector<double > >& startProb,
@@ -63,7 +59,7 @@ public:
                                     vector<double >& cVitFtpProb);
 
 
-	void getIntervalScheduleFtpConf(const vector<vector<double >>& ftpGroupStartProb,
+	void getPriorityOrderedFtpConf(const vector<vector<double >>& ftpGroupStartProb,
                                  const vector<int32_t >& posVecStartProb,
                                  const vector<vector<double > >& ftpNameStartProb,
                                  const DNAbind_obj_vector& ftpModels,
@@ -79,7 +75,7 @@ public:
 	Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
                                 const DNAbind_obj_vector& ftpModels,
                                 const parameters& params,
-                                bool report_prediction_in_flanks,
+                                ftpConfigAlgo ftpCnfAlg,
                                 int ncpu);
 
 

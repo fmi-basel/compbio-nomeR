@@ -36,13 +36,22 @@
 #' @param aggrByGroup if \code{TRUE} probabilities are aggregated by GROUP ID defined
 #'     in \code{footprint_models}. If \code{FALSE} or GROUP IDs are missing in the \code{footprint_models}
 #'     probabilities are reported for each individual footprints NAME defined in the \code{footprint_models}.
-#' @param report_prediction_in_flanks \code{logical} whether to return
-#'     calculated start probabilities in left flanking region.
-#'     In order to take into account partial footprints at left edge of
-#'     fragments the algorithm extends each fragment by maximum footprint
-#'     length on the left side. \code{report_prediction_in_flanks} controls
-#'     whether calculated start probabilities in the left flanking region will
-#'     be reported in the \code{START_PROB}.
+#'  @param ftpConfigMethod method for constructing footprint configurations:
+#'     \describe{
+#'     \item{\code{POFP}}{ (Priority-ordered Footprint Placement) method for constructing footprint configurations
+#'     fills a molecule with non-overlapping footprints starting from highest and going to lowest predicted probabilities.
+#'     }
+#'
+#'     \item{\code{Viterbi}} is using Viterbi algorithm to find a configuration of footprints with highest posterior probability.
+#'     }
+#'
+##' @param report_prediction_in_flanks \code{logical} whether to return
+##'     calculated start probabilities in left flanking region.
+##'     In order to take into account partial footprints at left edge of
+##'     fragments the algorithm extends each fragment by maximum footprint
+##'     length on the left side. \code{report_prediction_in_flanks} controls
+##'     whether calculated start probabilities in the left flanking region will
+##'     be reported in the \code{START_PROB}.
 #' @param ncpu number of threads to use.
 #' @param verbose verbose mode for bug fixing.
 #'
@@ -103,13 +112,14 @@ predict_footprints_SE <- function(se,
 																	bgprotectprob,
 																	bgcoverprior,
 																	aggrByGroup = FALSE,
-																	report_prediction_in_flanks = FALSE,
+																	ftpConfigMethod = c("POFP","Viterbi"),
 																	ncpu = 1L,
 																	verbose = FALSE) {
 
 	prob_group = fragpos = posidx_ref = fidx_glob = sidx = fidx_sample = chr = refpos = pos = mod_prob = gpos_idx = ftp_name = ftp_group = readName = sname = NULL # due to NSE notes in R CMD check
 
 
+	ftpConfigMethod <- match.arg(ftpConfigMethod);
 	### validate se object and prepare data for nomeR prediction
 	dataList <- validate_prepare_SE(se,
 																			assayName,
@@ -131,10 +141,6 @@ predict_footprints_SE <- function(se,
 																				 add = coll)
 	footprint_models <- ftpvalout[["footprint_models"]]
 	start_priors <- ftpvalout[["start_priors"]]
-	### validate report_prediction_in_flanks
-	assert_logical(report_prediction_in_flanks,
-								 any.missing = FALSE, all.missing = FALSE,
-								 len = 1, add = coll)
 
 	### validate ncpu
 	assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
@@ -172,7 +178,7 @@ predict_footprints_SE <- function(se,
 																							footprint_models,
 																							bgprotectprob,
 																							start_priors["BG"],
-																							report_prediction_in_flanks,
+																							ftpConfigMethod,
 																							ncpu,
 																							verbose)
 
@@ -181,7 +187,7 @@ predict_footprints_SE <- function(se,
 	## construct ouput SE
 	if (all(c(!is.null(predict_res_list[["START_PROB"]]),
 						!is.null(predict_res_list[["COVER_PROB"]]),
-						!is.null(predict_res_list[["VITERBI_CONF"]])))) {
+						!is.null(predict_res_list[["FOOTPRINT_CONF"]])))) {
 		if (verbose) {
 			.message_timestamp("Constructing output SummarizedExperiment... ")
 		}
@@ -275,31 +281,31 @@ predict_footprints_SE <- function(se,
 
 
 		## construct IRangesLists with MAP configurations and add to colData
-		viterbi_conf <- as.data.table(predict_res_list[["VITERBI_CONF"]])
+		footprint_conf <- as.data.table(predict_res_list[["FOOTPRINT_CONF"]])
 		## ignore background
-		viterbi_conf <- viterbi_conf[ftp_name != "background"]
+		footprint_conf <- footprint_conf[ftp_name != "background"]
 		## add reference positions
-		viterbi_conf <- viterbi_conf[,refpos := start - 1 + fragAnno[match(seq,fragAnno[["fidx_glob"]])][["refStart"]]]
+		footprint_conf <- footprint_conf[,refpos := start - 1 + fragAnno[match(seq,fragAnno[["fidx_glob"]])][["refStart"]]]
 
 		## add sidx, fidx_sample, readName
-		viterbi_conf <- fragAnno[,list(fidx_glob,sidx, fidx_sample,readName)][viterbi_conf,
+		footprint_conf <- fragAnno[,list(fidx_glob,sidx, fidx_sample,readName)][footprint_conf,
 																																								on = list(fidx_glob = seq)]
 		coldat <- colData(se)
 		## add sample names
-		viterbi_conf <- viterbi_conf[,sname := coldat$sample[sidx]]
+		footprint_conf <- footprint_conf[,sname := coldat$sample[sidx]]
 
 		if(aggrByGroup){
-			vit_ftpnames <- unique(viterbi_conf[["ftp_group"]])
+			ftpConf_ftpnames <- unique(footprint_conf[["ftp_group"]])
 		} else{
-			vit_ftpnames <- unique(viterbi_conf[["ftp_name"]])
+			ftpConf_ftpnames <- unique(footprint_conf[["ftp_name"]])
 		}
-		for(ftp in vit_ftpnames){
+		for(ftp in ftpConf_ftpnames){
 			lIRl <- sapply(coldat$sample,
 										 function(snm){
 										 	if(aggrByGroup){
-										 		ftpLoc <- viterbi_conf[ftp_group == ftp & sname == snm]
+										 		ftpLoc <- footprint_conf[ftp_group == ftp & sname == snm]
 										 	} else{
-										 		ftpLoc <- viterbi_conf[ftp_name == ftp & sname == snm]
+										 		ftpLoc <- footprint_conf[ftp_name == ftp & sname == snm]
 										 	}
 
 										 	irL <- IRanges(start = ftpLoc[["refpos"]],
@@ -323,7 +329,7 @@ predict_footprints_SE <- function(se,
 		## add readLevelData assayNames
 		mtdat$readLevelData$assayNames <- assayNames(seOut)
 		mtdat$readLevelData$colDataColumns <- c(mtdat$readLevelData$colDataColumns,
-																						paste0(vit_ftpnames,"_nomeR"))
+																						paste0(ftpConf_ftpnames,"_nomeR"))
 
 		metadata(seOut) <- mtdat
 		return(seOut)

@@ -17,7 +17,7 @@
 #'     (\code{numeric}) reflecting what fraction of reads you expect to be
 #'     covered by a footprint}
 #'     \item{NAME}{unique name (\code{character}) of a model, e.g. "Nucleosome--149", "Nucleosome--150" etc.}
-#'     \item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated 
+#'     \item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated
 #'     if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149", "Nucleosome--150" etc. footprint models
 #'     have identical GROUP (e.g. "Nucleosome") and \code{aggrByGroup = TRUE}, probabilities will be aggregated
 #'     across all footprints with identical GROUP.}
@@ -29,13 +29,14 @@
 #' @param aggrByGroup if \code{TRUE} probabilities are aggregated by GROUP ID defined
 #'     in \code{footprint_models}. If \code{FALSE} or GROUP IDs are missing in the \code{footprint_models}
 #'     probabilities are reported for each individual footprints NAME defined in the \code{footprint_models}.
-#' @param report_prediction_in_flanks \code{logical} whether to return
-#'     calculated start probabilities in left flanking region.
-#'     In order to take into account partial footprints at left edge of
-#'     fragments the algorithm extends each fragment by maximum footprint
-#'     length on the left side. \code{report_prediction_in_flanks} controls
-#'     whether calculated start probabilities in the left flanking region will
-#'     be reported in the \code{START_PROB}.
+#'
+##' @param report_prediction_in_flanks \code{logical} whether to return
+##'     calculated start probabilities in left flanking region.
+##'     In order to take into account partial footprints at left edge of
+##'     fragments the algorithm extends each fragment by maximum footprint
+##'     length on the left side. \code{report_prediction_in_flanks} controls
+##'     whether calculated start probabilities in the left flanking region will
+##'     be reported in the \code{START_PROB}.
 #' @param ncpu number of threads to use.
 #' @param verbose verbose mode for bug fixing.
 #'
@@ -86,15 +87,16 @@ predict_footprints <- function(data,
 															 bgprotectprob,
 															 bgcoverprior,
 															 aggrByGroup = FALSE,
-															 report_prediction_in_flanks = FALSE,
+															 ftpConfigMethod = c("POFP","Viterbi"),
 															 ncpu = 1L,
 															 verbose = FALSE) {
-	
+
 	## check arguments
 	coll <- makeAssertCollection()
 	### validate data. The output is a list("nonNA_data" = nonNA_data,"fragnames" = fragnames)
 	data <- validate_prepare_listOrMat(data)
-	
+
+	ftpConfigMethod <- match.arg(ftpConfigMethod)
 	### validate footprint models
 	ftpvalout <- validate_footprint_models(footprint_models,
 																				 bgprotectprob,
@@ -108,7 +110,7 @@ predict_footprints <- function(data,
 	assert_logical(report_prediction_in_flanks,
 								 any.missing = FALSE, all.missing = FALSE,
 								 len = 1, add = coll)
-	
+
 	### validate ncpu
 	assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
 	avail_ncpu <- parallel::detectCores()
@@ -122,10 +124,10 @@ predict_footprints <- function(data,
 												 "available cpus."))
 		ncpu <- avail_ncpu
 	}
-	
+
 	## finish argument check
 	reportAssertions(coll)
-	
+
 	if (verbose) {
 		.message_timestamp("Calling run_cpp_nomeR...")
 	}
@@ -136,17 +138,17 @@ predict_footprints <- function(data,
 																							footprint_models,
 																							bgprotectprob,
 																							start_priors["BG"],
-																							report_prediction_in_flanks,
+																							ftpConfigMethod,
 																							ncpu,
 																							verbose)
-	
+
 	if (all(c(!is.null(predict_res_list[["START_PROB"]]),
 						!is.null(predict_res_list[["COVER_PROB"]]),
-						!is.null(predict_res_list[["VITERBI_CONF"]])))) {
+						!is.null(predict_res_list[["FOOTPRINT_CONF"]])))) {
 		if (verbose) {
 			.message_timestamp("convert cpp_nomeR output to data.table...")
 		}
-		
+
 		return(lapply(predict_res_list,as.data.frame,
 									stringsAsFactors = FALSE,
 									check.names = FALSE))

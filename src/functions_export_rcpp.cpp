@@ -8,7 +8,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
                                    const Rcpp::List& binding_models,
                                    const Rcpp::NumericVector& bgprotectprob,
                                    const Rcpp::NumericVector& bgprior,
-                                   const Rcpp::LogicalVector& report_prediction_in_flanks,
+                                   const Rcpp::CharacterVector& ftpConfigMethod,
                                    const Rcpp::NumericVector& Ncpu,
                                    const Rcpp::LogicalVector& verbose
 ) {
@@ -17,8 +17,15 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 	extern bool _VERBOSE_;
 	_VERBOSE_ = Rcpp::as<bool >(verbose);
 
-	// set report_prediction_in_flanks
-	bool report_prediction_in_flanks_ = Rcpp::as<bool >(report_prediction_in_flanks);
+	// choose algorithm for getting footprint configuration
+	string ftpConfigMethod_ = Rcpp::as<string >(ftpConfigMethod);
+	ftpConfigAlgo ftpCnfAlg;
+	if(ftpConfigMethod_ == "POFP")
+		ftpCnfAlg = POFP;
+	else if(ftpConfigMethod_ == "Viterbi")
+		ftpCnfAlg = VITERBI;
+	else
+		Rcpp::stop("Only POFP or Viterbi algorithm are currently allowed for determining footprint configurations\n");
 
 	int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
@@ -69,7 +76,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 	Rcpp::List outList = predict.calcStartCoverProbs(SMFdata,
                                                   ftp_models,
                                                   params,
-                                                  report_prediction_in_flanks_,
+                                                  ftpCnfAlg,
                                                   Ncpu_);
 	// clear
 	SMFdata.clear();

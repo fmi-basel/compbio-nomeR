@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // calcStartCoverProbs_cpp
-Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::LogicalVector& report_prediction_in_flanks, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
-RcppExport SEXP _nomeR_calcStartCoverProbs_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP report_prediction_in_flanksSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::CharacterVector& ftpConfigMethod, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
+RcppExport SEXP _nomeR_calcStartCoverProbs_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP ftpConfigMethodSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,10 +23,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::List& >::type binding_models(binding_modelsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprotectprob(bgprotectprobSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprior(bgpriorSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type report_prediction_in_flanks(report_prediction_in_flanksSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type ftpConfigMethod(ftpConfigMethodSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type Ncpu(NcpuSEXP);
     Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(calcStartCoverProbs_cpp(fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, report_prediction_in_flanks, Ncpu, verbose));
+    rcpp_result_gen = Rcpp::wrap(calcStartCoverProbs_cpp(fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, ftpConfigMethod, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
