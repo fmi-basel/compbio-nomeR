@@ -13,6 +13,7 @@
 #include <limits>
 #include "ftpSegment-struct.hpp"
 #include "predict-class.hpp"
+#include "DNAbindobj_vector-class.hpp"
 
 using namespace std;
 
@@ -77,25 +78,24 @@ class ftpConfig
 	bool isFool;
 
 
-	//int64_t findNextOccupPos(const int64_t startPos);   // find next occupied position starting from _pos
-
-// 	void markOccupPositions(const int64_t start,
-//                          const int32_t width);
-
 public:
 	ftpConfig(size_t molLength);
 
 	~ftpConfig();
 
-	bool canFitFtp(const ftpSegment& cFtpSegm);
+	bool canFitFtp(const ftpSegment& cFtpSegm,
+                const DNAbind_obj_vector& ftpModels);
 
-	bool addFtp(const ftpSegment& cFtpSegm);
+	bool addFtp(const ftpSegment& cFtpSegm,
+             const DNAbind_obj_vector& ftpModels,
+             const vector<int32_t >& posVecStartProb,
+             vector<int32_t >& cIntSchedFragPos,
+             vector<int32_t >& cIntSchedFtpWidth,
+             vector<string >& cIntSchedFtpName,
+             vector<string >& cIntSchedFtpGroup,
+             vector<double >& cIntSchedFtpProb);
 
-	void fillConfigVector(vector<int32_t >& cIntSchedFragPos,
-                       vector<int32_t >& cIntSchedFtpWidth,
-                       vector<string >& cIntSchedFtpName,
-                       vector<string >& cIntSchedFtpGroup,
-                       vector<double >& cIntSchedFtpProb);
+
 
 	bool isMoleculeFool(){return isFool;};
 

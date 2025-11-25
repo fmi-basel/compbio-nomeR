@@ -17,12 +17,9 @@ using namespace std;
 
 struct ftpSegment {
 	int32_t ftpPosIndex;
-	int32_t ftpStart;
-	int32_t ftpWidth;
-	string ftpGroup;
 	double ftpGroupStartProb;
-	string ftpName;
 	double ftpNameStartProb;
+	int32_t ftpNameIndex;
 };
 
 

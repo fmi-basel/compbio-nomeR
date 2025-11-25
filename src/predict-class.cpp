@@ -160,20 +160,13 @@ void Predict::getPriorityOrderedFtpConf(const vector<vector<double >>& ftpGroupS
 				// create candidate footprint segment
 				ftpSegment curFtpSegm;
 				curFtpSegm.ftpPosIndex = posidx; // 0-based index in the molecule vector
-				curFtpSegm.ftpStart = posVecStartProb[posidx]; // 1-based shifted position
-				curFtpSegm.ftpName = ftpModels[ftpIndices[ii]]->name;
-				curFtpSegm.ftpNameStartProb = ftpNameStartProb[ftpIndices[ii]][posidx + 1];
-				curFtpSegm.ftpWidth = ftpModels[ftpIndices[ii]]->len;
-
-				curFtpSegm.ftpGroup =ftpModels.groups[igroup] ;
 				curFtpSegm.ftpGroupStartProb = ftpGroupStartProb[igroup][posidx];
-
+				curFtpSegm.ftpNameStartProb = ftpNameStartProb[ftpIndices[ii]][posidx + 1];
+				curFtpSegm.ftpNameIndex = ftpIndices[ii];
 				ftpCandidates.push_back(curFtpSegm);
 			}
 		}
 	}
-
-
 
 	// define priorities for footprint placement
 	// i.e. sort footprint segments by group start probability in descending order
@@ -184,23 +177,22 @@ void Predict::getPriorityOrderedFtpConf(const vector<vector<double >>& ftpGroupS
       	} else{
       		return a.ftpNameStartProb > b.ftpNameStartProb;
       	}
-
       });
 
-	// add candidates to ftpConfiguration
+	// filter footprint segment candidates
 	ftpConfig maxGroupFtpConfig(posVecSize);
 
+	// select footprint segments and add data into output vectors
 	for(int i = 0; i < ftpCandidates.size() && !maxGroupFtpConfig.isMoleculeFool(); ++i){
-		maxGroupFtpConfig.addFtp(ftpCandidates[i]);
+		maxGroupFtpConfig.addFtp(ftpCandidates[i],
+                           ftpModels,
+                           posVecStartProb,
+                           cIntSchedFragPos,
+                           cIntSchedFtpWidth,
+                           cIntSchedFtpName,
+                           cIntSchedFtpGroup,
+                           cIntSchedFtpProb);
 	}
-
-	// Fill out the output vectors with the final ftp configuration
-	maxGroupFtpConfig.fillConfigVector(cIntSchedFragPos,
-                                    cIntSchedFtpWidth,
-                                    cIntSchedFtpName,
-                                    cIntSchedFtpGroup,
-                                    cIntSchedFtpProb);
-
 
 }
 
