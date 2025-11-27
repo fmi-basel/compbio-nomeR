@@ -122,11 +122,11 @@ predict_footprints_SE <- function(se,
 	ftpConfigMethod <- match.arg(ftpConfigMethod);
 	### validate se object and prepare data for nomeR prediction
 	dataList <- validate_prepare_SE(se,
-																			assayName,
-																			threshUnmod,
-																			threshMod,
-																			min_frag_data_len,
-																			min_frag_data_dens)
+																	assayName,
+																	threshUnmod,
+																	threshMod,
+																	min_frag_data_len,
+																	min_frag_data_dens)
 
 	protect_data <- dataList[["bin_protect_data"]]
 	fragAnno <- dataList[["fragAnno"]]
@@ -156,7 +156,8 @@ predict_footprints_SE <- function(se,
 		ncpu <- avail_ncpu
 	}
 
-
+	## restrict data.table to use only ncpu threads
+	setDTthreads(threads = ncpu)
 	## protect_data is a matrix returned by validate_prepare_SE
 	## columns are:
 	## sidx - index of sample in SE
@@ -193,35 +194,40 @@ predict_footprints_SE <- function(se,
 		}
 
 		## convert to data.table and rbind
-		predict_res <- rbindlist(lapply(c("START_PROB",
-																			"COVER_PROB"),
-																		function(nm){
-																			x <- as.data.table(predict_res_list[[nm]])
-																			x <- x[,prob_group := nm]
-																			return(x)
-																		}))
 
-		## add reference positions
-		predict_res <- predict_res[,refpos := pos - 1 + fragAnno[match(seq,fragAnno[["fidx_glob"]])][["refStart"]] ]
+		## positions are defined by START_PROB, because they run from -maxPWMlen..lastDatPos
+		## COVER_PROB run from firstDatPos...lastDatPos
+		## order of columns
+		fcols <- c("fidx_glob","sidx","fidx_sample","fragpos",
+							 "chr","refpos","strand")
 
-		## add chr, strand, sidx, and fidx_sample
-		predict_res <- fragAnno[,list(fidx_glob,sidx, fidx_sample,chr,strand)][predict_res,
-																																								on = list(fidx_glob = seq)]
+		predict_res <- sapply(c("START_PROB",
+														"COVER_PROB"),
+													function(nm){
+														#browser()
+														## convert to data.table
+														prob_dt <- as.data.table(predict_res_list[[nm]])
+														## add reference positions
+														prob_dt <- prob_dt[,refpos := pos - 1 + fragAnno[match(seq,fragAnno[["fidx_glob"]])][["refStart"]] ]
 
-		## add modprob
-		predict_res <- protect_data[,list(fidx_glob,fragpos,mod_prob)][predict_res, on = list(fidx_glob = fidx_glob,
-																																										fragpos = pos)]
-		fcols <- c("prob_group","fidx_glob","sidx","fidx_sample","fragpos",
-							 "chr","refpos","strand",
-							 "mod_prob")
-		setcolorder(predict_res,c(fcols,
-															setdiff(colnames(predict_res),fcols)))
+														## add chr, strand, sidx, and fidx_sample
+														prob_dt <- fragAnno[,list(fidx_glob,sidx, fidx_sample,chr,strand)][prob_dt,
+																																															 on = list(fidx_glob = seq)]
+														setnames(prob_dt,"pos","fragpos")
 
+														setcolorder(prob_dt,c(fcols,
+																									setdiff(colnames(prob_dt),fcols)))
+													},simplify = F,USE.NAMES=T)
+
+
+		## add modprob to COVER_PROB, as it runs from firstDatPos to lastDatPos
+		predict_res[["COVER_PROB"]] <- protect_data[,list(fidx_glob,fragpos,mod_prob)][predict_res[["COVER_PROB"]], on = list(fidx_glob = fidx_glob,
+																																																													fragpos = fragpos)]
 		## create rowRanges
-		posuniq <- unique(predict_res[,list(chr,refpos,strand)])[,gpos_idx := 1:.N]
-		## add gposidx
-		predict_res <- posuniq[predict_res,
-													 on = list(chr=chr,refpos=refpos,strand=strand)]
+		posuniq <- unique(predict_res[["START_PROB"]][,list(chr,refpos,strand)])[,gpos_idx := 1:.N]
+		## add gposidx to START_PROB and COVER_PROB
+		predict_res[["START_PROB"]] <- posuniq[predict_res[["START_PROB"]],on = list(chr=chr,refpos=refpos,strand=strand)]
+		predict_res[["COVER_PROB"]] <- posuniq[predict_res[["COVER_PROB"]],on = list(chr=chr,refpos=refpos,strand=strand)]
 
 
 		seOutRowRanges <- GenomicRanges::GPos(seqnames = posuniq[["chr"]],
@@ -229,30 +235,33 @@ predict_footprints_SE <- function(se,
 																					strand = posuniq[["strand"]],
 																					seqinfo = GenomicRanges::seqinfo(se))
 
-		ftpnames <- setdiff(colnames(predict_res),c(fcols,"gpos_idx"))
+		ftpnames <- setdiff(colnames(predict_res[["COVER_PROB"]]),c(fcols,"mod_prob","gpos_idx"))
 		nomeR_assayNames <- c("mod_prob",paste(rep(ftpnames,2),
 																					 rep(c("coverProb","startProb"),each = length(ftpnames)),
 																					 "nomeR",
 																					 sep="_"))
 		assayAnno <- data.frame(assayName = nomeR_assayNames,
 														ftpName = c("mod_prob",rep(ftpnames,2)),
-														probName = c("START_PROB",rep(c("COVER_PROB","START_PROB"),each = length(ftpnames))))
+														probName = c("COVER_PROB",rep(c("COVER_PROB","START_PROB"),each = length(ftpnames))))
 
-
+		## background_startProb and background_coverProb are identical. keep only coverProb
+		assayAnno <- assayAnno[assayAnno$assayName != "background_startProb_nomeR",,drop=F]
 
 		## create list of assays
 		assayList <- lapply(1:nrow(assayAnno),
 												function(assayI){
 													assayMat <- make_zero_col_DFrame(nrow = length(seOutRowRanges))
 													for(sI in 1:ncol(se)){
-
 														curAssayName <- assayAnno$probName[assayI]
 														curFtpName <- assayAnno$ftpName[assayI]
 
+														## get required data
+														curDat <- predict_res[[curAssayName]][,
+																																	.SD,
+																																	.SDcols = c("fidx_glob","sidx","gpos_idx",curFtpName)][
+																																		sidx == sI & !is.na(get(curFtpName))]
 
-														curDat <- predict_res[sidx == sI & prob_group == curAssayName]
-														curDat <- curDat[!is.na(get(curFtpName))]
-														### select which fragments belong to current sample and keep only those which passed the filtering
+														### select which fragments that belong to current sample and keep only those which passed the filtering
 														curSmpFrags <- fragAnno[sidx == sI & keep][,curFragIdx := 1:.N]
 														curDat <- curDat[,curFragIdx := curSmpFrags[match(curDat$fidx_glob,curSmpFrags$fidx_glob),"curFragIdx"]]
 
@@ -267,7 +276,6 @@ predict_footprints_SE <- function(se,
 													}
 													colnames(assayMat) <- colnames(se)
 													return(assayMat)
-
 												})
 		names(assayList) <- assayAnno$assayName
 
@@ -278,8 +286,6 @@ predict_footprints_SE <- function(se,
 			metadata = metadata(se)
 		)
 
-
-
 		## construct IRangesLists with MAP configurations and add to colData
 		footprint_conf <- as.data.table(predict_res_list[["FOOTPRINT_CONF"]])
 		## ignore background
@@ -289,7 +295,7 @@ predict_footprints_SE <- function(se,
 
 		## add sidx, fidx_sample, readName
 		footprint_conf <- fragAnno[,list(fidx_glob,sidx, fidx_sample,readName)][footprint_conf,
-																																								on = list(fidx_glob = seq)]
+																																						on = list(fidx_glob = seq)]
 		coldat <- colData(se)
 		## add sample names
 		footprint_conf <- footprint_conf[,sname := coldat$sample[sidx]]
