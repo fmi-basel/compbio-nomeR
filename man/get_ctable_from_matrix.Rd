@@ -7,7 +7,8 @@
 get_ctable_from_matrix(data, max_spacing = 200L, ncpu = 1L, verbose = FALSE)
 }
 \arguments{
-\item{data}{A matrix containing binary SMF data for a ROI. 1 represent protected and 0s represent accessible positions.}
+\item{data}{A matrix containing binary SMF data for a ROI. 1s represent
+protected and 0s represent accessible positions.}
 
 \item{max_spacing}{Maximum spacing between positions.}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_ctable_from_SE.R
 \name{get_ctable_from_SE}
 \alias{get_ctable_from_SE}
-\title{Create count table for 00, 01, 10, 11, etc occurrences in SummarizedExperiment object
+\title{Create count table for \code{00}, \code{01}, \code{10}, \code{11}, etc occurrences in SummarizedExperiment object
 containing modificaton probabilities for SMF data}
 \usage{
 get_ctable_from_SE(
@@ -13,43 +13,50 @@ get_ctable_from_SE(
   min_frag_data_len = 50L,
   min_frag_data_dens = 0.05,
   max_spacing = 200L,
-  aggrSamples = F,
+  aggrSamples = FALSE,
   ncpu = 1L,
   verbose = FALSE
 )
 }
 \arguments{
-\item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-containing read-level data returned by \code{\link[footprintR]{readModBam}} function
-containing modification probabilities.}
+\item{se}{\code{\link[SummarizedExperiment]{SummarizedExperiment}} object
+containing read-level data returned by the
+\code{footprintR::readModBam} function and containing
+modification probabilities.}
 
-\item{assayName}{Character scalar describing the name of tje assay in \code{se} containing
-read-level data.}
+\item{assayName}{character scalar describing the name of the assay in
+\code{se} containing read-level data.}
 
-\item{threshUnmod, threshMod}{Numeric scalars used to classify observations
+\item{threshUnmod, threshMod}{numeric scalars used to classify observations
 as modified (modification probability >= threshMod), unmodified
 (modification probability < threshUnmod) or unknown (otherwise).}
 
-\item{min_frag_data_len}{\code{integer} ignore fragments that have genomic lengths from
-most-left to most-right data points less than \code{min_frag_data_len}.}
+\item{min_frag_data_len}{ignore fragments that have genomic
+lengths from most-left to most-right data points less than
+\code{min_frag_data_len}.}
 
-\item{min_frag_data_dens}{\code{numeric} ignore fragments that have density of
-data-containing positions lower than \code{min_frag_data_dens}.}
+\item{min_frag_data_dens}{ignore fragments that have density
+of data-containing positions lower than \code{min_frag_data_dens}.}
 
-\item{max_spacing}{Maximum spacing between positions.}
+\item{max_spacing}{defines maximum distance between
+positions for aggregating frequencies of combinations \code{00}, \code{01}, \code{10}, \code{11} at
+distances up to \code{max_spacing} observed in the SMF dataset.}
 
-\item{aggrSamples}{\code{logical} return frequencies for each sample separately or aggregate them for all samples.}
+\item{aggrSamples}{\code{logical} Return frequencies for each sample
+separately or aggregate them for all samples.}
 
-\item{ncpu}{number of cores to use.}
+\item{ncpu}{Number of cores to use.}
 
-\item{verbose}{verbose mode for bug fixing.}
+\item{verbose}{Verbose mode for bug fixing.}
 }
 \value{
-if \code{aggrSamples = T} \code{matrix} containing aggregated frequencies across all samples for
-0,0; 0,1; etc for each spacing between 1 (total number of 0s and 1s in the data) and \code{max_spacing}.
-If \code{aggrSamples = F} a \code{list} of matrices with frequences for each sample separately.
+If \code{aggrSamples = TRUE}, a \code{matrix} containing aggregated
+frequencies across all samples for 0,0; 0,1; etc for each spacing
+between 1 (total number of 0s and 1s in the data) and \code{max_spacing}.
+If \code{aggrSamples = FALSE}, a \code{list} of matrices with frequencies
+for each sample separately.
 }
 \description{
-Create count table for 00, 01, 10, 11, etc occurrences in SummarizedExperiment object
+Create count table for \code{00}, \code{01}, \code{10}, \code{11}, etc occurrences in SummarizedExperiment object
 containing modificaton probabilities for SMF data
 }

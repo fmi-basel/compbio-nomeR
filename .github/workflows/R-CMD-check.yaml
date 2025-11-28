@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Check out branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up R and install BiocManager
         uses: grimbough/bioc-actions/setup-bioc@v1
@@ -47,10 +47,10 @@ jobs:
           install.packages(c('remotes'))
         shell: Rscript {0}
 
-      - name: Install footprintR from GitHub
-        run: |
-          BiocManager::install("fmicompbio/footprintR", force = TRUE)
-        shell: Rscript {0}
+      # - name: Install footprintR from GitHub
+      #   run: |
+      #     BiocManager::install("fmicompbio/footprintR", force = TRUE)
+      #   shell: Rscript {0}
 
       - name: Install testhat
         run: |

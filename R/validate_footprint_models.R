@@ -3,7 +3,7 @@
 validate_footprint_models <- function(footprint_models,
                                       bgprotectprob,
                                       bgcoverprior,
-																			aggrByGroup,
+                                      aggrByGroup,
                                       verbose,
                                       add = NULL) {
     ### validate binding_models
@@ -27,11 +27,11 @@ validate_footprint_models <- function(footprint_models,
         
         ## check/define GROUP ids
         footprint_models <- sapply(footprint_models,
-        													 function(x){
-        													 	if(is.null(x[["GROUP"]]) | !aggrByGroup)
-        													 		x[["GROUP"]] <- x[["NAME"]]
-        													 	return(x)
-        													 },simplify = F,USE.NAMES = T)
+                                   function(x){
+                                       if(is.null(x[["GROUP"]]) | !aggrByGroup)
+                                           x[["GROUP"]] <- x[["NAME"]]
+                                       return(x)
+                                   }, simplify = FALSE, USE.NAMES = TRUE)
         
     }
     
@@ -63,8 +63,7 @@ validate_footprint_models <- function(footprint_models,
                                    ft.model <- footprint_models[[i]]
                                    c(ft.model,
                                      list("PRIOR" = start_priors[i + 1]))
-                               },
-                               simplify = FALSE, USE.NAMES = TRUE)
+                               }, simplify = FALSE, USE.NAMES = TRUE)
     
     return(list("footprint_models" = footprint_models,
                 "start_priors" = start_priors))

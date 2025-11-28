@@ -1,16 +1,16 @@
 #' Black-box Variational Bayes for inference of footprint abundance using STAN
 #' Automatic Differentiation Variational Inference (ADVI) algorithm
 #'
-#' @param cooc_ctable A data frame containing columns "S", "N00", "N01", "N10",
+#' @param cooc_ctable a data frame containing columns "S", "N00", "N01", "N10",
 #'     "N11", where "S" represents spacings and "N00", "N01", "N10", "N11" are
 #'     observed counts for 00, 01, 10, and 11 at spacing "S". This table can
-#'     be obtained using functions nomeR::count_joint_frequencies(...) or
-#'     fetchNOMe::get_cooccurrence_ctable_from_bams(...).
-#' @param ftp_lengths A numeric vector representing the lengths of footprints
+#'     be obtained using functions \code{nomeR::count_joint_frequencies(...)} or
+#'     \code{fetchNOMe::get_cooccurrence_ctable_from_bams(...)}.
+#' @param ftp_lengths a numeric vector representing the lengths of footprints
 #'     for which abundance is being analyzed. This parameter allows users to
 #'     input a vector of footprint lengths of interest for further analysis,
 #'     excluding the length of 1, which is reserved for background.
-#' @param ftp_prior_cover A numeric vector representing the expected coverages
+#' @param ftp_prior_cover a numeric vector representing the expected coverages
 #'     for footprints with lengths corresponding to the values provided in the
 #'     ftp_lengths parameter. This parameter allows users to specify the
 #'     expected coverage for each footprint length, influencing the Dirichlet
@@ -22,7 +22,7 @@
 #'     value in the vector must be between 0 and 1. The sum of the values in
 #'     ftp_prior_cover and bg_prior_cover should equal 1. If the sum is not 1,
 #'     the values are scaled accordingly, and a warning is issued.
-#' @param bg_prior_cover A numeric value representing the expected fraction of
+#' @param bg_prior_cover a numeric value representing the expected fraction of
 #'     unprotected positions, or coverage of background, in the dataset. This
 #'     parameter influences the Dirichlet distribution used as the prior
 #'     distribution in the Bayesian model. Higher values indicate a higher
@@ -30,7 +30,7 @@
 #'     assumptions. Users can adjust this parameter to reflect their prior
 #'     knowledge or assumptions about the background coverage in the dataset.
 #'     It must be a value between 0 and 1.
-#' @param total_cnt_prior_dirich A numeric value representing the total count
+#' @param total_cnt_prior_dirich a numeric value representing the total count
 #'     parameterization of the prior Dirichlet distribution used in the
 #'     Bayesian model. This parameter is related to the bg_prior_cover and
 #'     ftp_prior_cover parameters and reflects the total count of observations.
@@ -42,19 +42,19 @@
 #'     indicating weaker prior beliefs. Users can adjust this parameter to
 #'     reflect their confidence in the prior assumptions encoded by
 #'     bg_prior_cover and ftp_prior_cover.
-#' @param ftp_bg_model Type of model used for inference.
+#' @param ftp_bg_model type of model used for inference.
 #'     \describe{
 #'     \item{"informative_prior"}{Inference is performed on parameters
 #'     bg_protect_prob, ftp_protect_prob, and footprint abundances.}
 #'     \item{"bg_fixed"}{bg_protect_prob is fixed and determined by
-#'     `bg_model_params[["bg_protect_prob_fixed"]]`, while inference is conducted
-#'     on ftp_protect_prob and footprint abundances.}
+#'     `bg_model_params[["bg_protect_prob_fixed"]]`, while inference is
+#'     conducted on ftp_protect_prob and footprint abundances.}
 #'     \item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
 #'     fixed, defined by corresponding values in bg_model_params and
 #'     ftp_model_params, respectively. Inference is solely focused on footprint
 #'     abundances.}
 #' }
-#' @param bg_model_params A list containing parameters for the background
+#' @param bg_model_params a list containing parameters for the background
 #'     model, which must contain the following elements:
 #'     \describe{
 #'     \item{bg_protect_prob_fixed}{Constant value for the model parameter
@@ -76,7 +76,7 @@
 #'     tot_count=alpha+beta and influences the spread of the distribution.
 #'     This value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
 #' }
-#' @param ftp_model_params A list containing parameters for the footprint
+#' @param ftp_model_params a list containing parameters for the footprint
 #'     model, which must contain the following elements:
 #'     \describe{
 #'     \item{ftp_protect_prob_fixed}{Constant value for the model parameter
@@ -98,22 +98,23 @@
 #'     tot_count=alpha+beta and influences the spread of the distribution.
 #'     This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
 #' }
-#' @param max_nruns Maximum number of trials to run stan function
+#' @param max_nruns maximum number of trials to run stan function
 #'     \code{\link[rstan]{vb}}. Sometimes, due to bad initial point or other
 #'     reasons this function fails to converge. \code{max_nruns} controls
 #'     maximum number of attempts for inference.
 #' @param max_pareto_k maximum pareto_k returned by \code{\link[rstan]{vb}}.
 #'     If it exceeds \code{max_pareto_k} the function will run again until
 #'     max_nruns attempts have been done
-#' @param iter,tol_rel_obj,output_samples,grad_samples,algorithm,...  parameters for
-#'     \code{\link[rstan]{vb}} function that performs inference using Variational Bayes
-#'     approximation of posteriors. Please refer to \code{\link[rstan]{vb}} documentation.
+#' @param iter,tol_rel_obj,output_samples,grad_samples,algorithm,... parameters
+#'     for \code{\link[rstan]{vb}} function from the \code{rstan} package that
+#'     performs inference using Variational Bayes approximation of posteriors.
+#'     Please refer to \code{\link[rstan]{vb}} documentation.
 #'
-#' @return An S4 class stanfit-class representing the inference results. Please
+#' @return S4 class stanfit-class representing the inference results. Please
 #' check \code{\link[rstan]{vb}}.
-#' The attribute \code{attr(<stanfit_object>,"ftp_lengths")} contains vector of
-#' footprint lengths for which inference was run, i.e. parameter \code{ftp_lengths}
-#' provided by user.
+#' The attribute \code{attr(<stanfit_object>,"ftp_lengths")} contains a vector
+#' of footprint lengths for which inference was run, i.e. parameter
+#' \code{ftp_lengths} provided by user.
 #'
 #' @export
 #'

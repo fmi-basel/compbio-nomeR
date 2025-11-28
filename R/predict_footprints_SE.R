@@ -2,106 +2,37 @@
 #' single-molecule footprinting (SMF) data
 #'
 #'
-#' @param se A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-#'     containing read-level data returned by \code{\link[footprintR]{readModBam}} function
-#'     containing modification probabilities.
-#' @param assayName Character scalar describing the name of tje assay in \code{se} containing
-#'     read-level data.
-#'
-#' @param threshUnmod,threshMod Numeric scalars used to classify observations
+#' @param se \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
+#'     containing read-level data returned by the
+#'     \code{footprintR::readModBam} function and containing
+#'     modification probabilities.
+#' @param assayName character scalar describing the name of the assay in
+#'     \code{se} containing read-level data.
+#' @param threshUnmod,threshMod numeric scalars used to classify observations
 #'     as modified (modification probability >= threshMod), unmodified
 #'     (modification probability < threshUnmod) or unknown (otherwise).
-#' @param min_frag_data_len \code{integer} ignore fragments that have genomic lengths from
-#'     most-left to most-right data points less than \code{min_frag_data_len}.
-#' @param min_frag_data_dens \code{numeric} ignore fragments that have density of
-#'     data-containing positions lower than \code{min_frag_data_dens}.
-#' @param footprint_models A list containing footprint models for proteins.
-#'     Each element must have 3 slots:
-#'     \describe{
-#'     \item{PROTECT_PROB}{a numeric vector with footprint emission
-#'     probabilities to find protected position within a footprint}
-#'     \item{COVER_PRIOR}{prior coverage probability (abundance)
-#'     (\code{numeric}) reflecting what fraction of reads you expect to be
-#'     covered by a footprint}
-#'     \item{NAME}{name (\code{character}) of a model, e.g. "Nucleosome"}
-#'     \item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated
-#'     if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149", "Nucleosome--150" etc. footprint models
-#'     have identical GROUP (e.g. "Nucleosome") and \code{aggrByGroup = TRUE}, probabilities will be aggregated
-#'     across all footprints with identical GROUP.}
-#'     }
-#' @param bgprotectprob background emission probability to find a protected
-#'     position within open (accessible) regions.
-#' @param bgcoverprior prior probability for percentage of all fragments to be
-#'     in a free (accessible, or background) state.
-#' @param aggrByGroup if \code{TRUE} probabilities are aggregated by GROUP ID defined
-#'     in \code{footprint_models}. If \code{FALSE} or GROUP IDs are missing in the \code{footprint_models}
-#'     probabilities are reported for each individual footprints NAME defined in the \code{footprint_models}.
-#'  @param ftpConfigMethod method for constructing footprint configurations:
-#'     \describe{
-#'     \item{\code{POFP}}{ (Priority-ordered Footprint Placement) method for constructing footprint configurations
-#'     fills a molecule with non-overlapping footprints starting from highest and going to lowest predicted probabilities.
-#'     }
-#'
-#'     \item{\code{Viterbi}} is using Viterbi algorithm to find a configuration of footprints with highest posterior probability.
-#'     }
-#'
-##' @param report_prediction_in_flanks \code{logical} whether to return
-##'     calculated start probabilities in left flanking region.
-##'     In order to take into account partial footprints at left edge of
-##'     fragments the algorithm extends each fragment by maximum footprint
-##'     length on the left side. \code{report_prediction_in_flanks} controls
-##'     whether calculated start probabilities in the left flanking region will
-##'     be reported in the \code{START_PROB}.
-#' @param ncpu number of threads to use.
-#' @param verbose verbose mode for bug fixing.
-#'
-#' @return A list which contains 2 data frames:
-#'     \describe{
-#'     \item{\code{START_PROB}}{data frame with calculated start probabilities
-#'     for each SMF molecule (column \code{seq}), each position in ROI (column
-#'     \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
-#'     These probabilities reflect how likely it is to find a start in each
-#'     fragment and at each position of a certain footprint model.}
-#'     \item{\code{COVER_PROB}}{data frame with calculated coverage
-#'     probabilities for each SMF molecule (column \code{seq}), each position
-#'     in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome,
-#'     background etc. These probabilities reflect how likely it is that a
-#'     certain position in an amplicon and certain fragment is covered by a
-#'     certain footprint model.}
-#'     }
-#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData colData<-
+#' @param min_frag_data_len ignore fragments that have genomic
+#'     lengths from most-left to most-right data points less than
+#'     \code{min_frag_data_len}.
+#' @param min_frag_data_dens ignore fragments that have density
+#'     of data-containing positions lower than \code{min_frag_data_dens}.
+#' @inheritParams predict_footprints
+#' @return \code{SummarizedExperiment} object containing original \code{mod_prob}
+#'     assay as well as additional assays corresponding to calculated starting and coverage
+#'     posterior probabilities.
+#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData
+#'     colData<-
 #' @importFrom SparseArray NaArray
 #' @importFrom GenomicRanges GPos match seqnames start end strand seqinfo
 #' @importFrom IRanges subsetByOverlaps IRanges IRangesList
-#' @importFrom S4Vectors DataFrame SimpleList metadata metadata<- make_zero_col_DFrame
+#' @importFrom S4Vectors DataFrame SimpleList metadata metadata<-
+#'     make_zero_col_DFrame
 #' @import data.table
-#' @export
-#'
-#' @examples
-#' set.seed(3346)
-#' nc <- 50
-#' nr <- 50
-#' rmatr <- matrix(data = as.integer(rnorm(nc * nr) >= 0.5),
-#'                 ncol = nc,nrow=nr)
-#'
-#' ## create dummy footprints
-#' bg.pr <- 0.5
-#' ft.pr <- 1-bg.pr
-#' ft.len <- 15
-#'
-#' ## creating a list of binding models for nomeR
-#' ftp.models <- list(list("PROTECT_PROB" = rep(0.99,ft.len),
-#'                         "COVER_PRIOR" = ft.pr,
-#'                         "NAME" = "FOOTPRINT"))
-#'
-#' nomeR.out <- predict_footprints(data=rmatr,
-#'                                 footprint_models = ftp.models,
-#'                                 bgprotectprob = 0.05,
-#'                                 bgcoverprior = bg.pr)
-#'
 #' @importFrom checkmate makeAssertCollection assert_logical assert_int
 #'     reportAssertions
 #' @importFrom parallel detectCores
+#' @export
+#'
 predict_footprints_SE <- function(se,
 																	assayName = "mod_prob",
 																	threshMod = 0.5,
@@ -123,8 +54,8 @@ predict_footprints_SE <- function(se,
 	### validate se object and prepare data for nomeR prediction
 	dataList <- validate_prepare_SE(se,
 																	assayName,
-																	threshUnmod,
-																	threshMod,
+																	threshMod = threshMod,
+																	threshUnmod = threshUnmod,
 																	min_frag_data_len,
 																	min_frag_data_dens)
 

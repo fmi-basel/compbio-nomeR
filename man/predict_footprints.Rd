@@ -33,11 +33,15 @@ probabilities to find protected position within a footprint}
 \item{COVER_PRIOR}{prior coverage probability (abundance)
 (\code{numeric}) reflecting what fraction of reads you expect to be
 covered by a footprint}
-\item{NAME}{unique name (\code{character}) of a model, e.g. "Nucleosome--149", "Nucleosome--150" etc.}
-\item{GROUP}{non-unique group (\code{character}) which defines how probabilities will be aggregated
-if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149", "Nucleosome--150" etc. footprint models
-have identical GROUP (e.g. "Nucleosome") and \code{aggrByGroup = TRUE}, probabilities will be aggregated
-across all footprints with identical GROUP.}
+\item{NAME}{unique name (\code{character}) of a model, e.g.
+"Nucleosome--149", "Nucleosome--150" etc.}
+\item{GROUP}{non-unique group (\code{character}) which defines how
+probabilities will be aggregated
+if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149",
+"Nucleosome--150" etc. footprint models have identical GROUP
+(e.g. "Nucleosome") and \code{aggrByGroup = TRUE},
+probabilities will be aggregated across all footprints with GROUP
+"Nucleosome".}
 }}
 
 \item{bgprotectprob}{background emission probability to find a protected
@@ -46,31 +50,34 @@ position within open (accessible) regions.}
 \item{bgcoverprior}{prior probability for percentage of all fragments to be
 in a free (accessible, or background) state.}
 
-\item{aggrByGroup}{if \code{TRUE} probabilities are aggregated by GROUP ID defined
-in \code{footprint_models}. If \code{FALSE} or GROUP IDs are missing in the \code{footprint_models}
-probabilities are reported for each individual footprints NAME defined in the \code{footprint_models}.}
+\item{aggrByGroup}{if \code{TRUE} probabilities are aggregated by GROUP ID
+defined in \code{footprint_models}. If \code{FALSE} or GROUP IDs are
+missing in the \code{footprint_models}
+probabilities are reported for each individual footprints NAME defined
+in the \code{footprint_models}.}
+
+\item{ftpConfigMethod}{method for constructing footprint configurations:
+\describe{
+\item{\code{POFP}}{(Priority-ordered Footprint Placement) method for
+constructing footprint configurations fills a molecule with non-overlapping
+footprints starting from highest and going to lowest predicted probabilities.}
+\item{\code{Viterbi}}{Viterbi algorithm to find a configuration of
+footprints with highest posterior probability.}
+}}
 
 \item{ncpu}{number of threads to use.}
 
 \item{verbose}{verbose mode for bug fixing.}
-
-\item{report_prediction_in_flanks}{\code{logical} whether to return
-calculated start probabilities in left flanking region.
-In order to take into account partial footprints at left edge of
-fragments the algorithm extends each fragment by maximum footprint
-length on the left side. \code{report_prediction_in_flanks} controls
-whether calculated start probabilities in the left flanking region will
-be reported in the \code{START_PROB}.}
 }
 \value{
 A list which contains 2 data frames:
 \describe{
-\item{\code{START_PROB}}{data frame with calculated start probabilities
+\item{\code{START_PROB}}{\code{data.frame} with calculated start probabilities
 for each SMF molecule (column \code{seq}), each position in ROI (column
 \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
 These probabilities reflect how likely it is to find a start in each
 fragment and at each position of a certain footprint model.}
-\item{\code{COVER_PROB}}{data frame with calculated coverage
+\item{\code{COVER_PROB}}{\code{data.frame} with calculated coverage
 probabilities for each SMF molecule (column \code{seq}), each position
 in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome,
 background etc. These probabilities reflect how likely it is that a
@@ -103,5 +110,6 @@ nomeR.out <- predict_footprints(data=rmatr,
                                 footprint_models = ftp.models,
                                 bgprotectprob = 0.05,
                                 bgcoverprior = bg.pr)
+
 
 }

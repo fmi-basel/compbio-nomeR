@@ -20,18 +20,18 @@ infer_footprints_optim(
 )
 }
 \arguments{
-\item{cooc_ctable}{A data frame containing columns "S", "N00", "N01", "N10",
-"N11", where "S" represents spacings and "N00", "N01", "N10", "N11"
-are observed counts for 00, 01, 10, and 11 at spacing "S". This table
-can be obtained using functions nomeR::count_joint_frequencies(...) or
-nomeR::get_cooccurrence_ctable_from_bams(...).}
+\item{cooc_ctable}{a data frame containing columns "S", "N00", "N01", "N10",
+"N11", where "S" represents spacings and "N00", "N01", "N10", "N11" are
+observed counts for 00, 01, 10, and 11 at spacing "S". This table can
+be obtained using functions \code{nomeR::count_joint_frequencies(...)} or
+\code{fetchNOMe::get_cooccurrence_ctable_from_bams(...)}.}
 
-\item{ftp_lengths}{A numeric vector representing the lengths of footprints
+\item{ftp_lengths}{a numeric vector representing the lengths of footprints
 for which abundance is being analyzed. This parameter allows users to
 input a vector of footprint lengths of interest for further analysis,
 excluding the length of 1, which is reserved for background.}
 
-\item{ftp_prior_cover}{A numeric vector representing the expected coverages
+\item{ftp_prior_cover}{a numeric vector representing the expected coverages
 for footprints with lengths corresponding to the values provided in the
 ftp_lengths parameter. This parameter allows users to specify the
 expected coverage for each footprint length, influencing the Dirichlet
@@ -44,7 +44,7 @@ value in the vector must be between 0 and 1. The sum of the values in
 ftp_prior_cover and bg_prior_cover should equal 1. If the sum is not 1,
 the values are scaled accordingly, and a warning is issued.}
 
-\item{bg_prior_cover}{A numeric value representing the expected fraction of
+\item{bg_prior_cover}{a numeric value representing the expected fraction of
 unprotected positions, or coverage of background, in the dataset. This
 parameter influences the Dirichlet distribution used as the prior
 distribution in the Bayesian model. Higher values indicate a higher
@@ -53,7 +53,7 @@ assumptions. Users can adjust this parameter to reflect their prior
 knowledge or assumptions about the background coverage in the dataset.
 It must be a value between 0 and 1.}
 
-\item{total_cnt_prior_dirich}{A numeric value representing the total count
+\item{total_cnt_prior_dirich}{a numeric value representing the total count
 parameterization of the prior Dirichlet distribution used in the
 Bayesian model. This parameter is related to the bg_prior_cover and
 ftp_prior_cover parameters and reflects the total count of observations.
@@ -66,20 +66,20 @@ indicating weaker prior beliefs. Users can adjust this parameter to
 reflect their confidence in the prior assumptions encoded by
 bg_prior_cover and ftp_prior_cover.}
 
-\item{ftp_bg_model}{Type of model used for inference.
+\item{ftp_bg_model}{type of model used for inference.
 \describe{
 \item{"informative_prior"}{Inference is performed on parameters
 bg_protect_prob, ftp_protect_prob, and footprint abundances.}
 \item{"bg_fixed"}{bg_protect_prob is fixed and determined by
-\code{bg_model_params[["bg_protect_prob_fixed"]]}, while inference is conducted
-on ftp_protect_prob and footprint abundances.}
+\code{bg_model_params[["bg_protect_prob_fixed"]]}, while inference is
+conducted on ftp_protect_prob and footprint abundances.}
 \item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
 fixed, defined by corresponding values in bg_model_params and
 ftp_model_params, respectively. Inference is solely focused on footprint
 abundances.}
 }}
 
-\item{bg_model_params}{A list containing parameters for the background
+\item{bg_model_params}{a list containing parameters for the background
 model, which must contain the following elements:
 \describe{
 \item{bg_protect_prob_fixed}{Constant value for the model parameter
@@ -102,7 +102,7 @@ tot_count=alpha+beta and influences the spread of the distribution.
 This value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
 }}
 
-\item{ftp_model_params}{A list containing parameters for the footprint
+\item{ftp_model_params}{a list containing parameters for the footprint
 model, which must contain the following elements:
 \describe{
 \item{ftp_protect_prob_fixed}{Constant value for the model parameter
@@ -125,12 +125,15 @@ tot_count=alpha+beta and influences the spread of the distribution.
 This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
 }}
 
-\item{...}{Parameters for \code{\link[rstan]{vb}} function. Please refer
-to \code{\link[rstan]{vb}} documentation.}
+\item{...}{parameters passed to \code{\link[rstan]{optimizing}} function from the \code{rstan} package. Please
+refer to \code{\link[rstan]{optimizing}} documentation.}
 }
 \value{
-An S4 class stanfit-class representing the inference results.
-Please check \code{\link[rstan]{vb}}.
+A list with components described in \code{\link[rstan]{optimizing}}
+function.
+The attribute \code{attr(<list>,"ftp_lengths")} contains a vector
+of footprint lengths for which inference was run, i.e. parameter
+\code{ftp_lengths} provided by user.
 }
 \description{
 This function uses \code{rstan::optimizing} to obtain point estimate for
