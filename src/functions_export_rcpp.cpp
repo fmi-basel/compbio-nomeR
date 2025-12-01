@@ -24,8 +24,10 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 		ftpCnfAlg = POFP;
 	else if(ftpConfigMethod_ == "Viterbi")
 		ftpCnfAlg = VITERBI;
+	else if(ftpConfigMethod_ == "PV")
+		ftpCnfAlg = POSTERIORVITERBI;
 	else
-		Rcpp::stop("Only POFP or Viterbi algorithm are currently allowed for determining footprint configurations\n");
+		Rcpp::stop("Only PV, POFP or Viterbi algorithm are currently allowed for footprint decoding\n");
 
 	int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
@@ -43,16 +45,15 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 
 	// create object with background/footprint models
 	if(_VERBOSE_){
-		Rcpp::Rcout<<"Creating footprint models object..."<<endl;
+		Rcpp::Rcout<<"Creating footprint models..."<<endl;
 	}
 	DNAbind_obj_vector ftp_models(binding_models,
                                params);
 
 
-
 	// create object with SMF data
 	if(_VERBOSE_){
-		Rcpp::Rcout<<"Creating SEQUENCES object..."<<endl;
+		Rcpp::Rcout<<"Creating SMF data..."<<endl;
 	}
 	SMFdataset SMFdata(fragIDs,
                     fragPos,
@@ -63,15 +64,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 		Rcpp::Rcout<<"Creating Predict object..."<<endl;
 	}
 
-	// 	Predict predict(SMFdata,
-	//                  ftp_models,
-	//                  params);
 
-
-	// run prediction
-	if(_VERBOSE_){
-		Rcpp::Rcout<<"Calculating posterior probabilities..."<<endl;
-	}
 	Predict predict;
 	Rcpp::List outList = predict.calcStartCoverProbs(SMFdata,
                                                   ftp_models,

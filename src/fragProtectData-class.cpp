@@ -25,14 +25,18 @@ fragProtectData::fragProtectData(const uint32_t fragID,
                                  int maxWMlen){
 	_fragID = fragID;
 	// here, we have to redefine positions within the fragment to take into account padding by NAs of size maxWMlen
-	// by definition the first position with data will be maxWMlen;
-	_firstDatpos = maxWMlen;
+	// for Posterior-Viterbi decoding we need coverage posteriors in the left flanking region of size maxWMlen
+	// to calculate these coverage posteriors we need starting posteriors in the left flank of size 2*maxWMlen
+	uint32_t leftPadLen = 2 * maxWMlen;
+	uint32_t rightPadLen = maxWMlen;
+	// by definition the first position with data will be leftPadLen;
+	_firstDatpos = leftPadLen;
 	// find maximum position within the fragment and assign lastDatpos
 	auto max_it = std::max_element(fragPosVec.begin(), fragPosVec.end());
-	_lastDatpos = maxWMlen + (*max_it) - 1; // subtract 1 to make it 0-based
+	_lastDatpos = leftPadLen + (*max_it) - 1; // subtract 1 to make it 0-based
 
 	// define the _size taking into account extensions
-	_size = _lastDatpos + maxWMlen + 1;
+	_size = _lastDatpos + rightPadLen + 1;
 
 	// add protection data to _protectVec
 	_protectVec = std::vector<uint8_t>(_size, 2);

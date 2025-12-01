@@ -47,30 +47,45 @@ public:
                           vector<vector<double >>& aggrCoverOutProbs
 	);
 
+
+	void aggregateProbByGroup(const vector<vector<double > >& ftpNameProbs,
+                           const DNAbind_obj_vector& ftpModels,
+                           const size_t& nFtpGroups,
+                           vector<vector<double >>& aggrGroupProbs);
+
 	void getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScores,
-                                    const vector<vector<double > >& startProb,
-                                    const DNAbind_obj_vector& ftpModels,
-                                    const int& fDPos, // firstDatPos
-                                    const int& lDPos, // lastDatPos
-                                    vector<int32_t >& cVitFragPos,
-                                    vector<int32_t >& cVitFtpWidth,
-                                    vector<string >& cVitFtpName,
-                                    vector<string >& cVitFtpGroup,
-                                    vector<double >& cVitFtpProb);
+                           const vector<vector<double > >& startProb,
+                           const DNAbind_obj_vector& ftpModels,
+                           const int& fDPos, // firstDatPos
+                           const int& lDPos, // lastDatPos
+                           vector<int32_t >& cVitFragPos,
+                           vector<int32_t >& cVitFtpWidth,
+                           vector<string >& cVitFtpName,
+                           vector<string >& cVitFtpGroup,
+                           vector<double >& cVitFtpProb);
 
 
 	void getPriorityOrderedFtpConf(const vector<vector<double >>& ftpGroupStartProb,
-                                 const vector<int32_t >& posVecStartProb,
-                                 const vector<vector<double > >& ftpNameStartProb,
-                                 const DNAbind_obj_vector& ftpModels,
-                                 const int& fDPos, // firstDatPos
-                                 const int& lDPos, // lastDatPos
-                                 vector<int32_t >& cIntSchedFragPos,
-                                 vector<int32_t >& cIntSchedFtpWidth,
-                                 vector<string >& cIntSchedFtpName,
-                                 vector<string >& cIntSchedFtpGroup,
-                                 vector<double >& cIntSchedFtpProb);
+                                const vector<int32_t >& posVecStartProb,
+                                const vector<vector<double > >& ftpNameStartProb,
+                                const DNAbind_obj_vector& ftpModels,
+                                const int& fDPos, // firstDatPos
+                                const int& lDPos, // lastDatPos
+                                vector<int32_t >& cIntSchedFragPos,
+                                vector<int32_t >& cIntSchedFtpWidth,
+                                vector<string >& cIntSchedFtpName,
+                                vector<string >& cIntSchedFtpGroup,
+                                vector<double >& cIntSchedFtpProb);
 
+	void getPosteriorViterbiFtpConf(const vector<vector<double >>& ftpGroupCoverProb,
+                                 const vector<int32_t >& posVecCoverProb,
+                                 const DNAbind_obj_vector& ftpModels,
+                                 vector<int32_t >& cPVFragPos,
+                                 vector<int32_t >& cPVFtpWidth,
+                                 vector<string >& cPVFtpName,
+                                 vector<string >& cPVFtpGroup,
+                                 vector<double >& cPVFtpProb
+	);
 
 	Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
                                 const DNAbind_obj_vector& ftpModels,

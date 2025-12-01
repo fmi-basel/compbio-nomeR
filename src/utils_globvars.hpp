@@ -15,8 +15,9 @@
 using namespace std;
 
 // enumerator for method to determine footprint configurations
-enum ftpConfigAlgo{POFP,
-                 VITERBI
+enum ftpConfigAlgo{POFP,             // Priority-ordered Footprint Placement
+                 VITERBI,            // Classic Viterbi algorithm
+                 POSTERIORVITERBI    // Posterior-Viterbi inspired by Fariselli et.al 2005, doi:10.1186/1471-2105-6-S4-S12
 };
 
 

@@ -49,13 +49,6 @@ bool ftpConfig::addFtp(const ftpSegment& cFtpSegm,
 		cIntSchedFtpGroup.push_back(ftpModels[cFtpSegm.ftpNameIndex]->group);  // footprint groups
 		cIntSchedFtpProb.push_back(cFtpSegm.ftpGroupStartProb);                // start probability for a footprint group, i.e. aggregate across all footprints in the same group
 
-		// ftpStartPosVec.push_back(cFtpSegm.ftpStart);    // starting positions of footprints in a configuration
-		// ftpWidthVec.push_back(cFtpSegm.ftpWidth);       // widths of footprints
-		// ftpGroupStartProbVec.push_back(cFtpSegm.ftpGroupStartProb);  // start probability for a footprint group, i.e. aggregate across all footprints in the same group
-		// ftpNameStartProbVec.push_back(cFtpSegm.ftpNameStartProb);   // start probability for the particular footprint with width W
-		// ftpNameVec.push_back(cFtpSegm.ftpName);         // footprint names
-		// ftpGroupVec.push_back(cFtpSegm.ftpGroup);        // footprint groups
-
 		// add into total occupancy and set occupancy state
 
 		totalOccupied += ftpModels[cFtpSegm.ftpNameIndex]->len;

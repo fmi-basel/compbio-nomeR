@@ -24,9 +24,9 @@ public:
 	          // this was done to be able to calculate probabilities at the edges of molecule
 	          // this parameter used in Predict.Run() and other classes.
 	          // we have to keep this because memory allocation in Predict class takes this into account.
-	uint32_t _firstDatpos; // previously in Sequence class, this was a position within the extended (by NAs) sequence with first actuall data point
-	uint32_t _lastDatpos;  // similarly this was the last position within extended (by NAs) sequence with data points
-	
+	uint32_t _firstDatpos; // a position within the extended (by NAs) sequence with first actuall data point
+	uint32_t _lastDatpos;  // similarly this is the last position within extended (by NAs) sequence with data points
+
 	vector<uint8_t> _protectVec; // expanded vector with protection data, i.e. including NAs (2s)
 
 	// public functions

@@ -54,6 +54,96 @@ void Predict::getCoverProbsMatrix(const vector<vector<double > >& startProb,
 }
 
 
+// Posterior-Viterbi decoding of footprints
+void Predict::getPosteriorViterbiFtpConf(const vector<vector<double >>& ftpGroupCoverProb,
+                                         const vector<int32_t >& posVecCoverProb,
+                                         const DNAbind_obj_vector& ftpModels,
+                                         vector<int32_t >& cPVFragPos,
+                                         vector<int32_t >& cPVFtpWidth,
+                                         vector<string >& cPVFtpName,
+                                         vector<string >& cPVFtpGroup,
+                                         vector<double >& cPVFtpProb){
+
+	size_t seqlength = ftpGroupCoverProb[0].size(); // length of coverage posterior vector
+	size_t nFtps = ftpModels.Size(); // number of footprints
+	size_t nFtpGroups = ftpGroupCoverProb.size(); // number of footprint groups that by design equals to size of cover posterior vector
+
+	vector<double > lFMaxProb(seqlength + 1,0); // vector that keeps maximum configuration log probabilites
+	vector<int32_t > ftpEndsTrace(seqlength + 1,-1); // vector containing footprint index with maximum log probability to trace back configuration
+	vector<int32_t > ftpGroupBestIdx(seqlength + 1,-1); // indices for ftp groups fot tracing back
+
+	// define negative infinity
+	// log(0) = -infinity
+	const double NEG_INF = -std::numeric_limits<double>::infinity();
+
+	// calculate cumulative logs of coverage posteriors
+	// cumSumLogCoverProb[group][pos] is sum of logs in the range [0;pos-1] in the ftpGroupCoverProb
+	vector<vector<double >> cumSumLogCoverProb(nFtpGroups, std::vector<double>(seqlength + 1, 0));
+	for (size_t igroup = 0; igroup < nFtpGroups; ++igroup) {
+		double cumsum = 0;
+		for (size_t pos = 1; pos <= seqlength; ++pos) {
+			if (ftpGroupCoverProb[igroup][pos] > 0.0)
+				cumsum += log(ftpGroupCoverProb[igroup][pos - 1]);
+			cumSumLogCoverProb[igroup][pos] = cumsum;
+		}
+	}
+
+	// Viterbi pass using log of cover posteriors as scores
+	// pos is index in cumSumLogCoverProb that is pos - 1 in the input ftpGroupCoverProb vector
+	for(int pos = 1; pos <= seqlength; ++pos){
+		double maxLogProb = -numeric_limits<double>::infinity();
+		int bestFtpIdx = -1;
+		int bestFtpGroupIdx = -1;
+
+		// loop across groups and footprints to find maximum
+		for(int igroup = 0; igroup < nFtpGroups; ++igroup){
+			// indices of footprints for the current ftpGroup
+			vector<int > ftpIndices = ftpModels.getGroupIndexVec(ftpModels.groups[igroup]);
+			for(int ii = 0; ii < ftpIndices.size(); ++ii){
+				int objlen = ftpModels[ftpIndices[ii]]->len; // length of current footprint
+				double curF = -numeric_limits<double>::infinity();
+				if(pos - objlen >= 0){
+					// cumSumLogCoverProb[group][pos] is sum of logs in the range [0;pos - 1] of the vector ftpGroupCoverProb
+					curF = lFMaxProb[pos - objlen] + (cumSumLogCoverProb[igroup][pos] - cumSumLogCoverProb[igroup][pos - objlen]);
+				} else{
+					curF = -numeric_limits<double>::infinity();
+				}
+				if(curF > maxLogProb){
+					maxLogProb = curF;
+					bestFtpIdx = ftpIndices[ii];
+					bestFtpGroupIdx = igroup;
+				}
+			}
+
+		}
+		// store best values
+		Rcpp::Rcout<<"Best values: pos="<<posVecCoverProb[pos-1]<<"; maxLogProb="<<maxLogProb<<"; bestFtp="<<ftpModels[bestFtpIdx]->name<<endl;
+		lFMaxProb[pos] = maxLogProb;
+		ftpEndsTrace[pos] = bestFtpIdx;
+		ftpGroupBestIdx[pos] = bestFtpGroupIdx;
+	}
+
+	// trace back and construct the best configuration
+	int pos = seqlength;
+	while(pos >=  1){
+		int bestFtpLen = ftpModels[ftpEndsTrace[pos]]->len;
+		cPVFragPos.push_back(posVecCoverProb[pos - bestFtpLen]); // from pos - bestFtpLen + 1 we subtract +1 to get back to indexing of posVecCoverProb
+		cPVFtpWidth.push_back(bestFtpLen);
+		cPVFtpName.push_back(ftpModels[ftpEndsTrace[pos]]->name);
+		cPVFtpGroup.push_back(ftpModels[ftpEndsTrace[pos]]->group);
+		// probability that we report for this algorithm is geometric mean of group coverages
+		int bestGroupIdx = ftpGroupBestIdx[pos];
+		double gMeanCover = exp((cumSumLogCoverProb[bestGroupIdx][pos] - cumSumLogCoverProb[bestGroupIdx][pos - bestFtpLen])/bestFtpLen);
+		cPVFtpProb.push_back(gMeanCover);
+		//Rcpp::Rcout<<"pos="<<pos<<"; bestFtpLen="<<bestFtpLen<<"; ftpName="<<ftpModels[ftpEndsTrace[pos]]->name<<"; ftpGroup="<<ftpModels[ftpEndsTrace[pos]]->group<<endl;
+
+		pos = pos - bestFtpLen;
+	}
+}
+
+
+
+
 // Viterbi alogirthm to get configuration of footprints with maximum posterior probability
 void Predict::getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScores,
                                    const vector<vector<double > >& startProb,
@@ -84,6 +174,8 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScor
 				logFtpModelScores[w][i] = log(ftpModelsScores[w][i]);
 		}
 	}
+
+
 	for(int pos = fDPos; pos <= seqlength; ++pos){
 		double maxLogProb = -numeric_limits<double>::infinity();
 		int bestFtpIdx = -1;
@@ -108,16 +200,6 @@ void Predict::getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScor
 	}
 
 	// trace back and construct the best configuration.
-	// int pos = seqlength;
-	// while(pos >= fDPos + 1){
-	// 	int bestFtpLen = ftpModels[ftpEndsTrace[pos]]->len;
-	// 	cVitFragPos.push_back(pos - bestFtpLen + 1 - fDPos); // also shift by firstDatPos
-	// 	cVitFtpWidth.push_back(bestFtpLen);
-	// 	cVitFtpName.push_back(ftpModels[ftpEndsTrace[pos]]->name);
-	// 	cVitFtpGroup.push_back(ftpModels[ftpEndsTrace[pos]]->group);
-	// 	cVitFtpProb.push_back(startProb[ftpEndsTrace[pos]][pos - bestFtpLen + 1]);
-	// 	pos = pos - bestFtpLen;
-	// }
 	int pos = seqlength;
 	while(pos >= fDPos){
 		int bestFtpLen = ftpModels[ftpEndsTrace[pos]]->len;
@@ -200,7 +282,6 @@ void Predict::getPriorityOrderedFtpConf(const vector<vector<double >>& ftpGroupS
 
 
 // method that calculates start and cover probabilities and returns a Rcpp::List with calculated data.
-
 Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                                         const DNAbind_obj_vector& ftpModels,
                                         const parameters& params,
@@ -253,15 +334,11 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 		coverOutProbs.push_back(tmpcv);
 	}
 
-
-
-
-
 #ifdef _OPENMP
 	omp_set_nested(true);
 	omp_set_num_threads(ncpu);
 	if(_VERBOSE_)
-		Rcpp::Rcout<<"Running prediction with "<<omp_get_max_threads()<<" cpu."<<endl;
+		Rcpp::Rcout<<"Calculating posterior probabilities using "<<omp_get_max_threads()<<" threads."<<endl;
 #endif
 
 	Progress prgbar(smfData.Size(), true);
@@ -405,7 +482,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			int firstDatPos = smfData[seq]._firstDatpos;
 			int lastDatPos = smfData[seq]._lastDatpos;
 			//int spos = report_prediction_in_flanks ? 1 : firstDatPos;
-			int spos = 1; // this is for getting configuration
+			int spos = firstDatPos - maxwmlen + 1; // by default we report calculated posteriors in the left padded region
 			int lpos = lastDatPos;
 			vector<int32_t > currSeqStartOutFragIDs;
 			vector<int32_t > currSeqStartOutFragPos;
@@ -432,36 +509,31 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			}
 
 
-			// fill output vectors for COVER_PROB. Perhaps, this can be optimized by adding and subtracting start prob at end and beginning of footprint
+			// fill output vectors for COVER_PROB for each ftpGroup
 			vector<int32_t > currSeqCoverOutFragIDs;
 			vector<int32_t > currSeqCoverOutFragPos;
 
-			for(int position = firstDatPos; position <= lastDatPos; ++position){
+			// for(int position = firstDatPos - maxwmlen; position <= lastDatPos; ++position){
+			for(int position = spos; position <= lpos; ++position){
 				//// 1. fill fragIDs and fragPos
 				currSeqCoverOutFragIDs.push_back(smfData[seq].Name());
 				currSeqCoverOutFragPos.push_back(position - firstDatPos + 1);
 			}
 
+			// allocate vectors for coverage probabilities for each ftpGroup
+			//vector<double > tmpcov(lastDatPos - firstDatPos + 1 + maxwmlen,0); // add maxwmlen to get coverage posteriors in the left flanking region
+			vector<double > tmpcov(lpos - spos + 1 ,0);
 
-
-
-			// allocate vectors for coverage probabilities for each group
-			vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);;
 			vector<vector<double >> currSeqCoverOutProbs(nFtpGroups,tmpcov); // aggregated probabilities across all footprints per group;
-
-			// vector<double > tmpcov(lastDatPos - firstDatPos + 1,0);
-			// coverOutProbs[seq].resize(nFtpGroups,tmpcov);
-
 			getCoverProbsMatrix(Prob,
                        ftpModels,
-                       firstDatPos,
-                       lastDatPos,
+                       spos,
+                       lpos,
                        nFtpGroups,
                        currSeqCoverOutProbs
 			);
 
 			// get footprint configuration using chosen algorithm
-
 			vector<int32_t > currFtpConfOutFragPos;
 			vector<int32_t > currFtpConfOutFtpWidth;
 
@@ -474,13 +546,13 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			switch(ftpCnfAlg) {
 			case POFP:{
 				if(_VERBOSE_)
-					Rcpp::Rcout<<"Running POFP algorithm..."<<endl;
+					Rcpp::Rcout<<"Footprint decoding using POFP algorithm..."<<endl;
 				getPriorityOrderedFtpConf(currSeqStartOutProbs,
                               currSeqStartOutFragPos,
                               Prob,
                               ftpModels,
-                              firstDatPos,
-                              lastDatPos,
+                              firstDatPos, // TODO: review this! probably it must be changed to spos
+                              lastDatPos,  // and this to lpos
                               currFtpConfOutFragPos,
                               currFtpConfOutFtpWidth,
                               currFtpConfOutFtpName,
@@ -490,17 +562,34 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			}
 			case VITERBI:{
 				if(_VERBOSE_)
-					Rcpp::Rcout<<"Running Viterbi algorithm..."<<endl;
+					Rcpp::Rcout<<"Footprint decoding using Viterbi algorithm..."<<endl;
 				getViterbiMAPftpConf(ftpModelsScores,
                          Prob,
                          ftpModels,
-                         firstDatPos,
-                         lastDatPos,
+                         firstDatPos, // TODO: review this! probably it must be changed to spos
+                         lastDatPos,  // and this to lpos
                          currFtpConfOutFragPos,
                          currFtpConfOutFtpWidth,
                          currFtpConfOutFtpName,
                          currFtpConfOutFtpGroup,
                          currFtpConfOutFtpProb);
+				break;
+			}
+			case POSTERIORVITERBI:{
+				if(_VERBOSE_)
+					Rcpp::Rcout<<"Footprint decoding using Posterior-Viterbi algorithm..."<<endl;
+
+				Rcpp::Rcout<<"before PV"<<endl;
+				getPosteriorViterbiFtpConf(currSeqCoverOutProbs,
+                               currSeqCoverOutFragPos,
+                               ftpModels,
+                               currFtpConfOutFragPos,
+                               currFtpConfOutFtpWidth,
+                               currFtpConfOutFtpName,
+                               currFtpConfOutFtpGroup,
+                               currFtpConfOutFtpProb
+				);
+				Rcpp::Rcout<<"after PV"<<endl;
 				break;
 			}
 			}
@@ -522,12 +611,6 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 			ftpConfOutFtpName[seq] = move(currFtpConfOutFtpName);
 			ftpConfOutFtpGroup[seq] = move(currFtpConfOutFtpGroup);
 			ftpConfOutFtpProb[seq] = move(currFtpConfOutFtpProb);
-
-
-
-
-
-
 		}
 	}
 
@@ -616,12 +699,7 @@ for(int seq = 0; seq < coverOutProbs.size(); ++seq){
 	offset += coverOutProbs[seq][0].size();
 }
 
-// ftpConfOutFragIDs[seq] = currFtpConfOutFragIDs;
-// ftpConfOutFragPos[seq] = currFtpConfOutFragPos;
-// ftpConfOutFtpWidth[seq] = currFtpConfOutFtpWidth;
-// ftpConfOutFtpName[seq] = currFtpConfOutFtpName;
-// ftpConfOutFtpGroup[seq] = currFtpConfOutFtpGroup;
-// ftpConfOutFtpProb[seq] = currFtpConfOutFtpProb;
+
 // flatten nested vectors and create Rcpp::vectors for footprint configurations
 Rcpp::List RcppListFtpConfOut; // this is a list of vectors
 // 1st element: Rcpp::IntegerVector with fragment IDs as was passed from the R side
@@ -642,6 +720,7 @@ for (const auto& v : ftpConfOutFragIDs) {
 	offset += v.size();
 }
 RcppListFtpConfOut.push_back(RcppFtpConfOutFragIDs,"seq");
+Rcpp::Rcout<<"filled RcppFtpConfOutFragIDs"<<endl;
 
 Rcpp::IntegerVector RcppFtpConfOutFragPos(ftpconf_total_size);
 offset = 0;
@@ -650,6 +729,8 @@ for (const auto& v : ftpConfOutFragPos) {
 	offset += v.size();
 }
 RcppListFtpConfOut.push_back(RcppFtpConfOutFragPos,"start");
+Rcpp::Rcout<<"filled RcppFtpConfOutFragPos"<<endl;
+
 
 Rcpp::IntegerVector RcppFtpConfOutFtpWidth(ftpconf_total_size);
 offset = 0;
@@ -658,9 +739,9 @@ for (const auto& v : ftpConfOutFtpWidth) {
 	offset += v.size();
 }
 RcppListFtpConfOut.push_back(RcppFtpConfOutFtpWidth,"width");
-// ftpConfOutFtpName[seq] = currFtpConfOutFtpName;
-// ftpConfOutFtpGroup[seq] = currFtpConfOutFtpGroup;
-// ftpConfOutFtpProb[seq] = currFtpConfOutFtpProb;
+Rcpp::Rcout<<"filled RcppFtpConfOutFtpWidth"<<endl;
+
+
 Rcpp::CharacterVector RcppFtpConfOutFtpName(ftpconf_total_size);
 offset = 0;
 for (const auto& v : ftpConfOutFtpName) {
@@ -668,6 +749,8 @@ for (const auto& v : ftpConfOutFtpName) {
 	offset += v.size();
 }
 RcppListFtpConfOut.push_back(RcppFtpConfOutFtpName,"ftp_name");
+Rcpp::Rcout<<"filled RcppFtpConfOutFtpName"<<endl;
+
 
 Rcpp::CharacterVector RcppFtpConfOutFtpGroup(ftpconf_total_size);
 offset = 0;
@@ -676,6 +759,8 @@ for (const auto& v : ftpConfOutFtpGroup) {
 	offset += v.size();
 }
 RcppListFtpConfOut.push_back(RcppFtpConfOutFtpGroup,"ftp_group");
+Rcpp::Rcout<<"filled RcppFtpConfOutFtpGroup"<<endl;
+
 
 Rcpp::NumericVector RcppFtpConfOutFtpProb(ftpconf_total_size);
 offset = 0;
@@ -684,6 +769,7 @@ for (const auto& v : ftpConfOutFtpProb) {
 	offset += v.size();
 }
 RcppListFtpConfOut.push_back(RcppFtpConfOutFtpProb,"start_prob");
+Rcpp::Rcout<<"filled RcppFtpConfOutFtpProb"<<endl;
 
 
 
