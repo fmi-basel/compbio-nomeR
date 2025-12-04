@@ -2,24 +2,30 @@
 % Please edit documentation in R/get_ctable_from_matrix.R
 \name{get_ctable_from_matrix}
 \alias{get_ctable_from_matrix}
-\title{Create count table for 00, 01, 10, 11, etc occurrences SMF data matrix}
+\title{Create co-occurrence count tables (00, 01, 10, 11, etc.) from a binary SMF data matrix}
 \usage{
 get_ctable_from_matrix(data, max_spacing = 200L, ncpu = 1L, verbose = FALSE)
 }
 \arguments{
-\item{data}{A matrix containing binary SMF data for a ROI. 1s represent
-protected and 0s represent accessible positions.}
+\item{data}{A binary matrix of SMF data for a single ROI.}
 
-\item{max_spacing}{Maximum spacing between positions.}
+\item{max_spacing}{Integer specifying the maximum spacing (in bases)
+between positions for which co-occurrence frequencies are computed.}
 
-\item{ncpu}{number of cores to use.}
+\item{ncpu}{Number of CPU cores to use for parallel computation.}
 
-\item{verbose}{verbose mode for bug fixing.}
+\item{verbose}{Logical. If \code{TRUE}, prints progress and diagnostic
+messages for debugging.}
 }
 \value{
-data.frame containing frequencies for 0,0; 0,1; etc for each spacing
-between 1 (total number of 0s and 1 in the data) and \code{max_spacing}.
+A \code{data.frame} containing co-occurrence frequencies for \code{00}, \code{01},
+\code{10}, and \code{11} at each spacing from 1 up to \code{max_spacing}.
 }
 \description{
-Create count table for 00, 01, 10, 11, etc occurrences SMF data matrix
+Computes co-occurrence frequencies of binary accessibility states
+(\code{00}, \code{01}, \code{10}, \code{11}) at varying spacings within a matrix representing
+a single-molecule footprinting (SMF) region of interest (ROI).
+Rows correspond to individual molecules (or fragments) and columns
+correspond to genomic positions. In the matrix, \code{1} represents a
+protected position and \code{0} represents an accessible position.
 }

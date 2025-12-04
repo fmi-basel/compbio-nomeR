@@ -1,16 +1,23 @@
-#' Plot footprint spectra provided in the DataFrame
+#' Plot footprint spectra from a DataFrame
 #'
-#' @param DF \code{DataFrame} obtained using
-#'     [ftp_spectral_analysis_SE()] and must contain column \code{ftp_spectrum}
+#' @description
+#' Generates a panel of footprint spectrum plots for all samples in a
+#' \code{DataFrame} obtained from \code{\link{ftp_spectral_analysis_SE}}.
+#' The input \code{DataFrame} must contain a column named \code{ftp_spectrum}.
 #'
-#' @returns \code{patchwork} object with panel of plots for footprint spectra 
-#'     for all samples in DF.
+#' @param DF A \code{DataFrame} containing footprint spectra for each sample.
+#'   Must include a column \code{ftp_spectrum} as returned by
+#'   \code{\link{ftp_spectral_analysis_SE}}.
+#'
+#' @return A \code{patchwork} object containing a panel of footprint spectrum
+#'   plots, one for each sample in \code{DF}.
+#'
 #' @importFrom patchwork wrap_plots
-#' @export
 #'
+#' @export
 plot_ftp_spectra_DF <- function(DF) {
     stopifnot("ftp_spectrum" %in% colnames(DF))
-    
+
     ## create list of plots
     pllist <- lapply(seq_len(nrow(DF)),
                      function(i) {

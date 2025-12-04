@@ -2,28 +2,31 @@
 % Please edit documentation in R/plot_ftp_spectrum.R
 \name{plot_ftp_spectrum}
 \alias{plot_ftp_spectrum}
-\title{Plot footprint spectrum}
+\title{Plot a footprint abundance spectrum}
 \usage{
 plot_ftp_spectrum(ftp_spectrum, title = NULL)
 }
 \arguments{
-\item{ftp_spectrum}{\code{data.frame} with inferred abundances of footprints.
-Columns \code{ftp_length}, \code{mean} are essential.}
+\item{ftp_spectrum}{A \code{data.frame} containing inferred footprint
+abundances. Must include the columns \code{ftp_length} and \code{mean}.}
 
-\item{title}{optional title for the output plot}
+\item{title}{Optional character string to use as the plot title.}
 }
 \value{
-\code{ggplot2} object that contains the following information.
-The dark green line corresponds to the left Y-axis ("estimated coverage
-(mean)", in log10 scale) and represents inferred coverages (mean across
-samples from posterior distribution) for each footprint on the X-axis.
-The red line corresponds the right Y-axis ("mean/sd", linear scale) and
-represents ratios between means and standard deviations across samples
-from posterior distributions for each footprint length on the X-axis.
-The red line can be interpreted as Z-scores and used to judge
-statistical significance of coverage esimates for footprints in the
-red line.
+A \code{ggplot2} object.
+\itemize{
+\item The \strong{dark green line} (left Y-axis, log10 scale) represents the
+estimated coverage (mean across samples from the posterior distribution)
+for each footprint length on the X-axis.
+\item The \strong{red line} (right Y-axis, linear scale) represents the ratio of
+mean to standard deviation across samples for each footprint length,
+which can be interpreted as approximate Z-scores. These values can be
+used to assess the statistical significance of the inferred footprint
+coverage estimates.
+}
 }
 \description{
-Plot footprint spectrum
+Generates a \code{ggplot2} plot of inferred footprint abundances across
+different footprint lengths. The plot visualizes both the mean coverage
+estimates and a measure of statistical significance of estimated values.
 }

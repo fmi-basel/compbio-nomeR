@@ -1,28 +1,34 @@
-#' Bayesian inference of footprint abundance using No-U-Turn HMC sampler
-#' implemented in STAN
+#' Footprint spectral analysis using the No-U-Turn Hamiltonian Monte Carlo
+#' sampler implemented in Stan
 #'
-#' This function utilizes rstan functionality for Bayesian inference,
-#' specifically employing Hamiltonian Monte Carlo (HMC) and No-U-Turn Sampler
-#' (NUTS) algorithms to infer footprint abundance in single-molecule
-#' footprinting data, such as NOMe-seq, by sampling from the posterior
-#' distribution.
+#' @description
+#' Performs Bayesian inference of footprint abundances in single-molecule
+#' footprinting data (e.g., NOMe-seq) using \code{rstan}'s implementation of
+#' Hamiltonian Monte Carlo (HMC) with the No-U-Turn Sampler (NUTS). The
+#' algorithm samples from the posterior distribution defined by the underlying
+#' bayesian model.
+#'
+#' WARNING: Although, HMC sampling is unbiased it is very slow for
+#' the range of footprint lengths in real-world SMF datasets.
 #'
 #' @inheritParams infer_footprints_vb
-#' @param nchains Number of Markov chains to run.
-#' @param ncpu Number of CPUs to use.
-#' @param rstan_control A list of tuning parameters for the stan sampler
-#'     algorithm.
-#' @param ... Parameters passed to \code{\link[rstan]{sampling}} function from the \code{rstan} package. Please
-#'     refer to \code{\link[rstan]{sampling}} documentation.
 #'
-#' @return An S4 class stanfit-class representing the inference results.
-#' Please check \code{\link[rstan]{sampling}}.
-#' The attribute \code{attr(<stanfit_object>,"ftp_lengths")} contains a vector
-#' of footprint lengths for which inference was run, i.e. parameter
-#' \code{ftp_lengths} provided by user.
+#' @param nchains Integer specifying the number of Markov chains to run.
+#' @param ncpu Integer specifying the number of CPU cores to use.
+#' @param rstan_control A list of control parameters passed to the Stan sampler.
+#' @param ... Additional arguments passed to
+#'   \code{\link[rstan]{sampling}}. See the \code{rstan} documentation for
+#'   details.
+#'
+#' @return
+#' A \code{stanfit} object (S4 class) containing the posterior samples.
+#' See \code{\link[rstan]{sampling}} for details.
+#' The attribute \code{attr(<stanfit_object>, "ftp_lengths")} contains the
+#' vector of footprint lengths used for inference (i.e., the user-supplied
+#' \code{ftp_lengths} parameter).
 #'
 #' @export
-#'
+
 #' @examples
 #'
 #' ## Simple data with two footprints of lengths 5 and 10 bps.
@@ -74,7 +80,7 @@
 #' @importFrom rstan sampling
 infer_footprints_sampling <- function(
         cooc_ctable,
-        ftp_lengths,
+        ftp_lengths = 2:200,
         ftp_prior_cover = NULL,
         bg_prior_cover = 0.5,
         total_cnt_prior_dirich = NULL,

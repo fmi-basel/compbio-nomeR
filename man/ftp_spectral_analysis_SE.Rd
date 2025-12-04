@@ -2,7 +2,7 @@
 % Please edit documentation in R/ftp_spectral_analysis_SE.R
 \name{ftp_spectral_analysis_SE}
 \alias{ftp_spectral_analysis_SE}
-\title{Footprint spectral analysis for SummarizedExperiment object containing
+\title{Footprint spectral analysis for a SummarizedExperiment containing
 single-molecule footprinting (SMF) data}
 \usage{
 ftp_spectral_analysis_SE(
@@ -35,152 +35,119 @@ ftp_spectral_analysis_SE(
 )
 }
 \arguments{
-\item{se}{\code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-containing read-level data returned by the
-\code{footprintR::readModBam} function and containing
-modification probabilities.}
+\item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
+containing read-level data returned by
+\code{footprintR::readModBam}, including modification probabilities.}
 
-\item{assayName}{character scalar describing the name of the assay in
-\code{se} containing read-level data.}
+\item{assayName}{Character scalar specifying the name of the assay in
+\code{se} that contains read-level modification probabilities.}
 
-\item{threshUnmod, threshMod}{numeric scalars used to classify observations
-as modified (modification probability >= threshMod), unmodified
-(modification probability < threshUnmod) or unknown (otherwise).}
+\item{threshUnmod, threshMod}{Numeric thresholds used to binarize modification
+probabilities into accessible (\code{0}; probability >= \code{threshMod}),
+protected (\code{1}; probability < \code{threshUnmod}), or unknown
+(\code{NA}) states.}
 
-\item{min_frag_data_len}{ignore fragments that have genomic
-lengths from most-left to most-right data points less than
+\item{min_frag_data_len}{Ignore fragments whose genomic span (from the
+leftmost to rightmost non-\code{NA} data point) is shorter than
 \code{min_frag_data_len}.}
 
-\item{min_frag_data_dens}{ignore fragments that have density
-of data-containing positions lower than \code{min_frag_data_dens}.}
+\item{min_frag_data_dens}{Ignore fragments with a density of informative
+(non-\code{NA}) positions below \code{min_frag_data_dens}.}
 
-\item{max_spacing}{defines maximum distance between
-positions for aggregating frequencies of combinations \code{00}, \code{01}, \code{10}, \code{11} at
-distances up to \code{max_spacing} observed in the SMF dataset.}
+\item{max_spacing}{Integer specifying the maximum spacing (in bases)
+between positions when counting co-occurrences of state pairs
+(\code{00}, \code{01}, \code{10}, \code{11}) across the SMF dataset.}
 
-\item{ftp_lengths}{a numeric vector representing the lengths of footprints
-for which abundance is being analyzed. This parameter allows users to
-input a vector of footprint lengths of interest for further analysis,
-excluding the length of 1, which is reserved for background.}
+\item{ftp_lengths}{Numeric vector of footprint lengths for which abundances
+should be inferred. Length 1 is reserved for background and must not be
+included.}
 
-\item{ftp_prior_cover}{a numeric vector representing the expected coverages
-for footprints with lengths corresponding to the values provided in the
-ftp_lengths parameter. This parameter allows users to specify the
-expected coverage for each footprint length, influencing the Dirichlet
-distribution used as the prior distribution in the Bayesian model.
-Higher values indicate a higher expected coverage for the corresponding
-footprint length, affecting the model's prior assumptions. Users can
-adjust this parameter to reflect their prior knowledge or assumptions
-about the coverage of specific footprint lengths in the dataset. Each
-value in the vector must be between 0 and 1. The sum of the values in
-ftp_prior_cover and bg_prior_cover should equal 1. If the sum is not 1,
-the values are scaled accordingly, and a warning is issued.}
+\item{ftp_prior_cover}{Numeric vector of expected (prior) coverages for the
+footprint lengths in \code{ftp_lengths}. These values define the prior
+mean of the Dirichlet distribution over footprint/background abundances.
+All elements must be in \code{[0, 1]}. Together with \code{bg_prior_cover},
+they will be scaled to sum to 1 if necessary (with a warning).}
 
-\item{bg_prior_cover}{a numeric value representing the expected fraction of
-unprotected positions, or coverage of background, in the dataset. This
-parameter influences the Dirichlet distribution used as the prior
-distribution in the Bayesian model. Higher values indicate a higher
-proportion of background coverage, affecting the model's prior
-assumptions. Users can adjust this parameter to reflect their prior
-knowledge or assumptions about the background coverage in the dataset.
-It must be a value between 0 and 1.}
+\item{bg_prior_cover}{Numeric value in \code{[0, 1]} specifying the
+expected (prior) fraction of background (unprotected) positions. Used together with
+\code{ftp_prior_cover} to parameterize the prior Dirichlet distribution.}
 
-\item{total_cnt_prior_dirich}{a numeric value representing the total count
-parameterization of the prior Dirichlet distribution used in the
-Bayesian model. This parameter is related to the bg_prior_cover and
-ftp_prior_cover parameters and reflects the total count of observations.
-In Bayesian statistics, the Dirichlet distribution is often
-parameterized using mean and total count, where the total count
-influences the spread of the distribution. Higher values of
-total_cnt_prior_dirich result in a narrower distribution, implying
-stronger prior beliefs, while lower values lead to a wider distribution,
-indicating weaker prior beliefs. Users can adjust this parameter to
-reflect their confidence in the prior assumptions encoded by
-bg_prior_cover and ftp_prior_cover.}
+\item{total_cnt_prior_dirich}{Numeric value giving the total count parameter
+of the prior Dirichlet distribution. Higher values impose stronger prior
+concentration around the mean (i.e., stronger prior beliefs), while lower
+values yield a more diffuse prior.}
 
-\item{ftp_bg_model}{type of model used for inference.
+\item{ftp_bg_model}{Character string specifying the modeling strategy:
 \describe{
-\item{"informative_prior"}{Inference is performed on parameters
-bg_protect_prob, ftp_protect_prob, and footprint abundances.}
-\item{"bg_fixed"}{bg_protect_prob is fixed and determined by
-\code{bg_model_params[["bg_protect_prob_fixed"]]}, while inference is
-conducted on ftp_protect_prob and footprint abundances.}
-\item{"ftp_bg_fixed"}{Both bg_protect_prob and ftp_protect_prob are
-fixed, defined by corresponding values in bg_model_params and
-ftp_model_params, respectively. Inference is solely focused on footprint
-abundances.}
+\item{\code{"informative_prior"}}{
+Infer \code{bg_protect_prob}, \code{ftp_protect_prob}, and footprint abundances.
+}
+\item{\code{"bg_fixed"}}{
+Fix \code{bg_protect_prob} to the value in
+\code{bg_model_params[["bg_protect_prob_fixed"]]} and infer
+\code{ftp_protect_prob} and footprint abundances.
+}
+\item{\code{"ftp_bg_fixed"}}{
+Fix both \code{bg_protect_prob} and \code{ftp_protect_prob}
+(values in \code{bg_model_params} and \code{ftp_model_params}).
+Only footprint abundances are inferred.
+}
 }}
 
-\item{bg_model_params}{a list containing parameters for the background
-model, which must contain the following elements:
+\item{bg_model_params}{A list of background model parameters:
 \describe{
-\item{bg_protect_prob_fixed}{Constant value for the model parameter
-"bg_protect_prob" used in "bg_fixed" and "ftp_bg_fixed" models and
-ignored if ftp_bg_model is "informative_prior".}
-\item{bg_protect_min}{Minimum allowed value for the background emission
-probability of the protected state (i.e., 1's in the data). This value
-is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
-\item{bg_protect_max}{Maximum allowed value for the background emission
-probability of the protected state (i.e., 1's in the data). This value
-is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
-\item{bg_protect_mean}{Mean of the prior Beta distribution for the model
-parameter "bg_protect_prob". This parameter corresponds to shape
-parameters of the Beta distribution as mean=alpha/(alpha+beta). This
-value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
-\item{bg_protect_totcount}{Total count parameter for the prior beta
-distribution for the model parameter "bg_protect_prob". This parameter
-corresponds to shape parameters of the Beta distribution as
-tot_count=alpha+beta and influences the spread of the distribution.
-This value is ignored if ftp_bg_model is "bg_fixed" or "ftp_bg_fixed".}
+\item{bg_protect_prob_fixed}{Fixed value for \code{bg_protect_prob} used in
+\code{"bg_fixed"} and \code{"ftp_bg_fixed"} models.}
+\item{bg_protect_min, bg_protect_max}{Lower and upper bounds for
+\code{bg_protect_prob} when it is inferred. Ignored in fixed models.}
+\item{bg_protect_mean}{Mean of the prior Beta distribution for
+\code{bg_protect_prob}. Ignored when fixed.}
+\item{bg_protect_totcount}{Total count parameter of the prior Beta
+distribution (controls concentration). Ignored when fixed.}
 }}
 
-\item{ftp_model_params}{a list containing parameters for the footprint
-model, which must contain the following elements:
+\item{ftp_model_params}{A list of footprint model parameters:
 \describe{
-\item{ftp_protect_prob_fixed}{Constant value for the model parameter
-"ftp_protect_prob" used in "ftp_bg_fixed" models and ignored if
-ftp_bg_model is "informative_prior" or "bg_fixed".}
-\item{ftp_protect_min}{Minimum allowed value for the footprint emission
-probability of the protected state (i.e., 1's in the data). This value
-is ignored if ftp_bg_model is "ftp_bg_fixed".}
-\item{ftp_protect_max}{Maximum allowed value for the footprint emission
-probability of the protected state (i.e., 1's in the data). This value
-is ignored if ftp_bg_model is "ftp_bg_fixed".}
-\item{ftp_protect_mean}{Alpha parameter for the prior beta distribution
-for the model parameter "ftp_protect_prob". This parameter corresponds
-to shape parameters of the Beta distribution as mean=alpha/(alpha+beta).
-This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
-\item{ftp_protect_totcount}{Beta parameter for the prior beta
-distribution for the model parameter "ftp_protect_prob". This parameter
-corresponds to shape parameters of the Beta distribution as
-tot_count=alpha+beta and influences the spread of the distribution.
-This value is ignored if ftp_bg_model is "ftp_bg_fixed".}
+\item{ftp_protect_prob_fixed}{Fixed value for \code{ftp_protect_prob}
+(used only in \code{"ftp_bg_fixed"}).}
+\item{ftp_protect_min, ftp_protect_max}{Bounds for
+\code{ftp_protect_prob} when it is inferred. Ignored in
+\code{"ftp_bg_fixed"}.}
+\item{ftp_protect_mean}{Mean of the prior Beta distribution for
+\code{ftp_protect_prob}. Ignored when fixed.}
+\item{ftp_protect_totcount}{Total count parameter of the prior Beta
+distribution. Ignored when fixed.}
 }}
 
-\item{max_nruns}{maximum number of trials to run stan function
-\code{\link[rstan]{vb}}. Sometimes, due to bad initial point or other
-reasons this function fails to converge. \code{max_nruns} controls
-maximum number of attempts for inference.}
+\item{max_nruns}{Maximum number of attempts to run \code{\link[rstan]{vb}}.
+Some initializations may fail to converge, in which case multiple attempts
+are made.}
 
-\item{max_pareto_k}{maximum pareto_k returned by \code{\link[rstan]{vb}}.
-If it exceeds \code{max_pareto_k} the function will run again until
-max_nruns attempts have been done}
+\item{max_pareto_k}{Maximum allowable \code{pareto_k} value returned by
+\code{\link[rstan]{vb}}. If exceeded, inference is retried (up to
+\code{max_nruns} times).}
 
-\item{ncpu}{number of threads to use.}
+\item{ncpu}{Number of threads to use.}
 
-\item{verbose}{verbose mode for bug fixing.}
+\item{verbose}{Logical. If \code{TRUE}, enables verbose output for debugging.}
 
-\item{iter, tol_rel_obj, output_samples, grad_samples, algorithm, ...}{parameters
-for \code{\link[rstan]{vb}} function from the \code{rstan} package that
-performs inference using Variational Bayes approximation of posteriors.
-Please refer to \code{\link[rstan]{vb}} documentation.}
+\item{iter, tol_rel_obj, output_samples, grad_samples, algorithm, ...}{Additional arguments passed to \code{\link[rstan]{vb}}, controlling ADVI
+inference. See \code{\link[rstan]{vb}} for details.}
 }
 \value{
-\code{DataFrame} object from \code{colData} of \code{se} with
-additional columns containing pair state statistics, inferred footprint
-spectra and emission probabilities for each sample in \code{se}.
+A \code{DataFrame} (from \code{colData(se)}) augmented with additional
+columns containing:
+\itemize{
+\item pair-state summary statistics,
+\item inferred footprint spectra,
+\item estimated emission probabilities.
+}
+Each row corresponds to a sample in the input \code{SummarizedExperiment}.
 }
 \description{
-Footprint spectral analysis for SummarizedExperiment object containing
-single-molecule footprinting (SMF) data
+Performs footprint spectral analysis on a \code{SummarizedExperiment}
+object containing single-molecule footprinting (SMF) data. For each sample,
+the function extracts pair-state statistics, computes co-occurrence tables,
+and infers footprint spectra and emission probabilities using the specified
+Bayesian inference method.
 }

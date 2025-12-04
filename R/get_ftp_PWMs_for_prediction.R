@@ -1,54 +1,61 @@
-#' Create footprint models for \code{\link{predict_footprints}} using footprints
-#' spectrum inferred by \code{\link{infer_footprints_vb}} and summarized by
-#' \code{\link{get_ftp_inference_summary}}
+#' Create footprint models for \code{\link{predict_footprints}} from an inferred footprint spectrum
 #'
-#' This utility function creates a list of parameters required by
-#' \code{\link{predict_footprints}} to predict footprint positions in data.
+#' @description
+#' Utility function to generate a list of footprint models required by
+#' \code{\link{predict_footprints}}, using a footprint spectrum inferred by
+#' \code{\link{infer_footprints_vb}} or \code{\link{ftp_spectral_analysis_SE}}
+#' and summarized with \code{\link{get_ftp_inference_summary}}. The models encode footprint lengths,
+#' emission probabilities, and background coverage for downstream prediction.
 #'
-#' @param ftp_spectrum `data.frame` with inferred abundances of footprints.
-#' @param ftp_len_mat A \code{matrix} with footprint lengths where 1st and 2nd 
-#'     columns represent minimum and maximum footprint lengths. The 3rd column 
-#'     will be interpreted as increment. Each row will result in PWMs with 
-#'     lengths seq(min_ftp_length,max_ftp_length,by). Row names are interpreted 
-#'     as footprint groups.
-#' @param bg_cover Estimated percentage of accessible positions in SMF data
-#' @param ftp_protect_prob Emission probability of protected position within 
-#'     footprints
+#' @param ftp_spectrum A \code{data.frame} containing inferred abundances of footprints.
+#' @param ftp_len_mat A \code{matrix} specifying footprint lengths:
+#'   \describe{
+#'     \item{Column 1}{Minimum footprint length.}
+#'     \item{Column 2}{Maximum footprint length.}
+#'     \item{Column 3}{Increment for generating lengths from minimum to maximum.}
+#'   }
+#'   Each row corresponds to a footprint group, with row names interpreted as group labels.
+#'   PWMs will be generated for all lengths in \code{seq(min, max, by)}.
+#' @param bg_cover Numeric value indicating the estimated fraction of accessible positions
+#'   in the SMF dataset (used as background coverage).
+#' @param ftp_protect_prob Numeric value of the emission probability for protected positions
+#'   within footprints.
 #'
-#' @returns \code{list} with footprint models (PWM) required for the function
-#'     \code{\link{predict_footprints}}.
+#' @return A \code{list} of footprint models (position weight matrices) suitable for the
+#'   \code{footprint_models} parameter in \code{\link{predict_footprints}} and \code{\link{predict_footprints_SE}}.
+#'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter mutate select
-#' @importFrom ggplot2 ggplot aes geom_line labs theme theme_bw 
+#' @importFrom ggplot2 ggplot aes geom_line labs theme theme_bw
 #'     scale_y_continuous scale_x_continuous sec_axis
 #' @importFrom checkmate assertDataFrame assertSubset assertMatrix
 #'
 #' @export
-#'
+
 # @examples
 
 get_ftp_PWMs_for_prediction <- function(ftp_spectrum,
                                         ftp_len_mat,
                                         bg_cover,
                                         ftp_protect_prob) {
-    
+
     assertSubset(x = c("ftp_length", "mean"),
                  choices = colnames(ftp_spectrum))
     ftp_spectrum <- ftp_spectrum %>% select(c("ftp_length", "mean"))
     assertDataFrame(ftp_spectrum,
                     all.missing = FALSE)
-    
+
     if (any(duplicated(ftp_spectrum$ftp_length))) {
-        warning("Found duplicated ftp_length. Please make sure that the ", 
+        warning("Found duplicated ftp_length. Please make sure that the ",
                 "input ftp_spectrum contain only one spectrum")
     }
-    
+
     assertMatrix(ftp_len_mat, any.missing = FALSE,
                  min.cols = 2)
-    
+
     ## ftp_len_mat: 1 column - min_ftp_length, 2nd column - max_ftp_length,
     ## if there is a third column - by, i.e increment from min to max
-    
+
     stopifnot(all(ftp_len_mat[, 2] >= ftp_len_mat[, 1]))
     if (ncol(ftp_len_mat) == 2) {
         if (is.null(colnames(ftp_len_mat))) {
@@ -65,7 +72,7 @@ get_ftp_PWMs_for_prediction <- function(ftp_spectrum,
         row.names(ftp_len_mat) <- paste0("ftp", ftp_len_mat[, 1], "_",
                                          ftp_len_mat[, 2])
     }
-    
+
     ftp_lengths <- sapply(row.names(ftp_len_mat),
                           function(ridx) {
                               seq(from = ftp_len_mat[ridx, 1],
@@ -75,13 +82,13 @@ get_ftp_PWMs_for_prediction <- function(ftp_spectrum,
     ftp_cov <- sapply(row.names(ftp_len_mat),
                       function(ridx) {
                           selspc <- ftp_spectrum %>%
-                              filter(ftp_length >= ftp_len_mat[ridx, 1] & 
+                              filter(ftp_length >= ftp_len_mat[ridx, 1] &
                                          ftp_length <= ftp_len_mat[ridx, 2])
                           sum(selspc$mean)
                       }, simplify = TRUE, USE.NAMES = TRUE)
     ftp_cov <- ftp_cov/sum(ftp_cov) * (1 - bg_cover)
-    
-    
+
+
     ## create models
     ftp_models <- do.call(
         c,

@@ -2,9 +2,7 @@
 % Please edit documentation in R/get_ftp_PWMs_for_prediction.R
 \name{get_ftp_PWMs_for_prediction}
 \alias{get_ftp_PWMs_for_prediction}
-\title{Create footprint models for \code{\link{predict_footprints}} using footprints
-spectrum inferred by \code{\link{infer_footprints_vb}} and summarized by
-\code{\link{get_ftp_inference_summary}}}
+\title{Create footprint models for \code{\link{predict_footprints}} from an inferred footprint spectrum}
 \usage{
 get_ftp_PWMs_for_prediction(
   ftp_spectrum,
@@ -14,24 +12,31 @@ get_ftp_PWMs_for_prediction(
 )
 }
 \arguments{
-\item{ftp_spectrum}{\code{data.frame} with inferred abundances of footprints.}
+\item{ftp_spectrum}{A \code{data.frame} containing inferred abundances of footprints.}
 
-\item{ftp_len_mat}{A \code{matrix} with footprint lengths where 1st and 2nd
-columns represent minimum and maximum footprint lengths. The 3rd column
-will be interpreted as increment. Each row will result in PWMs with
-lengths seq(min_ftp_length,max_ftp_length,by). Row names are interpreted
-as footprint groups.}
+\item{ftp_len_mat}{A \code{matrix} specifying footprint lengths:
+\describe{
+\item{Column 1}{Minimum footprint length.}
+\item{Column 2}{Maximum footprint length.}
+\item{Column 3}{Increment for generating lengths from minimum to maximum.}
+}
+Each row corresponds to a footprint group, with row names interpreted as group labels.
+PWMs will be generated for all lengths in \code{seq(min, max, by)}.}
 
-\item{bg_cover}{Estimated percentage of accessible positions in SMF data}
+\item{bg_cover}{Numeric value indicating the estimated fraction of accessible positions
+in the SMF dataset (used as background coverage).}
 
-\item{ftp_protect_prob}{Emission probability of protected position within
-footprints}
+\item{ftp_protect_prob}{Numeric value of the emission probability for protected positions
+within footprints.}
 }
 \value{
-\code{list} with footprint models (PWM) required for the function
-\code{\link{predict_footprints}}.
+A \code{list} of footprint models (position weight matrices) suitable for the
+\code{footprint_models} parameter in \code{\link{predict_footprints}} and \code{\link{predict_footprints_SE}}.
 }
 \description{
-This utility function creates a list of parameters required by
-\code{\link{predict_footprints}} to predict footprint positions in data.
+Utility function to generate a list of footprint models required by
+\code{\link{predict_footprints}}, using a footprint spectrum inferred by
+\code{\link{infer_footprints_vb}} or \code{\link{ftp_spectral_analysis_SE}}
+and summarized with \code{\link{get_ftp_inference_summary}}. The models encode footprint lengths,
+emission probabilities, and background coverage for downstream prediction.
 }

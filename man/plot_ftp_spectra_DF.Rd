@@ -2,18 +2,21 @@
 % Please edit documentation in R/plot_ftp_spectra_DF.R
 \name{plot_ftp_spectra_DF}
 \alias{plot_ftp_spectra_DF}
-\title{Plot footprint spectra provided in the DataFrame}
+\title{Plot footprint spectra from a DataFrame}
 \usage{
 plot_ftp_spectra_DF(DF)
 }
 \arguments{
-\item{DF}{\code{DataFrame} obtained using
-\code{\link[=ftp_spectral_analysis_SE]{ftp_spectral_analysis_SE()}} and must contain column \code{ftp_spectrum}}
+\item{DF}{A \code{DataFrame} containing footprint spectra for each sample.
+Must include a column \code{ftp_spectrum} as returned by
+\code{\link{ftp_spectral_analysis_SE}}.}
 }
 \value{
-\code{patchwork} object with panel of plots for footprint spectra
-for all samples in DF.
+A \code{patchwork} object containing a panel of footprint spectrum
+plots, one for each sample in \code{DF}.
 }
 \description{
-Plot footprint spectra provided in the DataFrame
+Generates a panel of footprint spectrum plots for all samples in a
+\code{DataFrame} obtained from \code{\link{ftp_spectral_analysis_SE}}.
+The input \code{DataFrame} must contain a column named \code{ftp_spectrum}.
 }

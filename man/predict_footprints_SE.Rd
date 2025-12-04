@@ -2,8 +2,8 @@
 % Please edit documentation in R/predict_footprints_SE.R
 \name{predict_footprints_SE}
 \alias{predict_footprints_SE}
-\title{Calculate coverage probabilities for footprints in SummarizedExperiment object containing
-single-molecule footprinting (SMF) data}
+\title{Calculate posterior probabilities and predict footprints in a
+SummarizedExperiment containing single-molecule footprinting (SMF) data}
 \usage{
 predict_footprints_SE(
   se,
@@ -15,82 +15,72 @@ predict_footprints_SE(
   footprint_models,
   bgprotectprob,
   bgcoverprior,
-  aggrByGroup = FALSE,
-  ftpConfigMethod = c("POFP", "Viterbi"),
+  aggrByGroup = TRUE,
+  ftpConfigMethod = c("PV", "Viterbi"),
   ncpu = 1L,
   verbose = FALSE
 )
 }
 \arguments{
-\item{se}{\code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-containing read-level data returned by the
-\code{footprintR::readModBam} function and containing
-modification probabilities.}
+\item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
+containing read-level data returned by
+\code{footprintR::readModBam}, including modification probabilities.}
 
-\item{assayName}{character scalar describing the name of the assay in
-\code{se} containing read-level data.}
+\item{assayName}{Character scalar specifying the name of the assay in
+\code{se} that contains read-level modification probabilities.}
 
-\item{threshUnmod, threshMod}{numeric scalars used to classify observations
-as modified (modification probability >= threshMod), unmodified
-(modification probability < threshUnmod) or unknown (otherwise).}
+\item{threshUnmod, threshMod}{Numeric thresholds used to binarize modification
+probabilities into accessible (\code{0}; probability >= \code{threshMod}),
+protected (\code{1}; probability < \code{threshUnmod}), or unknown
+(\code{NA}) states.}
 
-\item{min_frag_data_len}{ignore fragments that have genomic
-lengths from most-left to most-right data points less than
+\item{min_frag_data_len}{Ignore fragments whose genomic span (from the
+leftmost to rightmost non-\code{NA} data point) is shorter than
 \code{min_frag_data_len}.}
 
-\item{min_frag_data_dens}{ignore fragments that have density
-of data-containing positions lower than \code{min_frag_data_dens}.}
+\item{min_frag_data_dens}{Ignore fragments with a density of informative
+(non-\code{NA}) positions below \code{min_frag_data_dens}.}
 
-\item{footprint_models}{A list containing footprint models for proteins.
-Each element must have 3 slots:
+\item{footprint_models}{A list of footprint models for proteins. Each element must contain:
 \describe{
-\item{PROTECT_PROB}{a numeric vector with footprint emission
-probabilities to find protected position within a footprint}
-\item{COVER_PRIOR}{prior coverage probability (abundance)
-(\code{numeric}) reflecting what fraction of reads you expect to be
-covered by a footprint}
-\item{NAME}{unique name (\code{character}) of a model, e.g.
-"Nucleosome--149", "Nucleosome--150" etc.}
-\item{GROUP}{non-unique group (\code{character}) which defines how
-probabilities will be aggregated
-if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149",
-"Nucleosome--150" etc. footprint models have identical GROUP
-(e.g. "Nucleosome") and \code{aggrByGroup = TRUE},
-probabilities will be aggregated across all footprints with GROUP
-"Nucleosome".}
+\item{PROTECT_PROB}{Numeric vector of footprint emission probabilities for protected positions within a footprint.}
+\item{COVER_PRIOR}{Numeric prior probability reflecting the expected fraction of reads covered by the footprint.}
+\item{NAME}{Unique name of the model (character), e.g., "Nucleosome--149", "Nucleosome--150".}
+\item{GROUP}{Optional non-unique group name (character) used for aggregating probabilities if \code{aggrByGroup = TRUE}. For example, footprints with names "Nucleosome--149" and "Nucleosome--150" may share the GROUP "Nucleosome".}
 }}
 
-\item{bgprotectprob}{background emission probability to find a protected
-position within open (accessible) regions.}
+\item{bgprotectprob}{Background emission probability of a protected position in open (accessible) regions.}
 
-\item{bgcoverprior}{prior probability for percentage of all fragments to be
-in a free (accessible, or background) state.}
+\item{bgcoverprior}{Prior probability of a position being in the free (accessible/background) state.}
 
-\item{aggrByGroup}{if \code{TRUE} probabilities are aggregated by GROUP ID
-defined in \code{footprint_models}. If \code{FALSE} or GROUP IDs are
-missing in the \code{footprint_models}
-probabilities are reported for each individual footprints NAME defined
-in the \code{footprint_models}.}
+\item{aggrByGroup}{Logical. If \code{TRUE}, probabilities are aggregated by the \code{GROUP} ID in \code{footprint_models}. If \code{FALSE}, or if GROUP IDs are missing, probabilities are reported for each individual footprint \code{NAME}.}
 
-\item{ftpConfigMethod}{method for constructing footprint configurations:
+\item{ftpConfigMethod}{Algorithm for decoding footprint configurations:
 \describe{
-\item{\code{POFP}}{(Priority-ordered Footprint Placement) method for
-constructing footprint configurations fills a molecule with non-overlapping
-footprints starting from highest and going to lowest predicted probabilities.}
-\item{\code{Viterbi}}{Viterbi algorithm to find a configuration of
-footprints with highest posterior probability.}
+\item{\code{PV}}{Posterior-Viterbi (default): uses footprint coverage posteriors and a Viterbi-like algorithm to find a valid footprint configuration maximizing posterior coverage probability (see Fariselli et al, 2005). The \code{score} for each footprint is the geometric mean of posterior coverages across all positions covered by the footprint.}
+\item{\code{Viterbi}}{Classic Viterbi algorithm to find the most probable footprint configuration. The \code{score} corresponds to the posterior start probability for each reported footprint.}
 }}
 
-\item{ncpu}{number of threads to use.}
+\item{ncpu}{Number of threads to use.}
 
-\item{verbose}{verbose mode for bug fixing.}
+\item{verbose}{Logical. If \code{TRUE}, enables verbose output for debugging.}
 }
 \value{
-\code{SummarizedExperiment} object containing original \code{mod_prob}
-assay as well as additional assays corresponding to calculated starting and coverage
-posterior probabilities.
+A \code{SummarizedExperiment} object containing:
+\itemize{
+\item the original \code{mod_prob} assay,
+\item additional assays with calculated posterior start and coverage
+probabilities (e.g. "Nucl_coverProb_nomeR"), and
+\item predicted footprint configurations stored as \code{IntegerList} objects
+in \code{colData} (e.g. column "Nucl_nomeR").
+}
 }
 \description{
-Calculate coverage probabilities for footprints in SummarizedExperiment object containing
-single-molecule footprinting (SMF) data
+Computes posterior probabilities and predicts footprint configurations for
+SMF data stored in a \code{SummarizedExperiment} object.
+}
+\references{
+Fariselli, P., Martelli, P. L., & Casadio, R. (2005).
+\emph{A new decoding algorithm for Hidden Markov Models improves the prediction of the topology of all-beta membrane proteins.}
+BMC Bioinformatics, 6(S4), S12. https://doi.org/10.1186/1471-2105-6-S4-S12
 }

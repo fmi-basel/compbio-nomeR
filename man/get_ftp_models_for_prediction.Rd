@@ -2,33 +2,35 @@
 % Please edit documentation in R/get_ftp_models_for_prediction.R
 \name{get_ftp_models_for_prediction}
 \alias{get_ftp_models_for_prediction}
-\title{Create parameters for \code{\link{predict_footprints}} using footprints
-summary returned by \code{\link{get_ftp_inference_summary}}}
+\title{Create parameters for \code{\link{predict_footprints}} and \code{\link{predict_footprints_SE}}
+from a footprint inference summary}
 \usage{
 get_ftp_models_for_prediction(infer_summary)
 }
 \arguments{
-\item{infer_summary}{\code{list} returned by
-\code{\link{get_ftp_inference_summary}} which must contain
-\code{"ESTIMATES"} and \code{"FTP_SUGGEST"}. If case you are not
-satisfied with footprints suggested by
-\code{\link{get_ftp_inference_summary}} substitute slot
-\code{"FTP_SUGGEST"} with your own n x 2 matrix.}
+\item{infer_summary}{A \code{list} returned by
+\code{\link{get_ftp_inference_summary}}, which must contain
+\code{"ESTIMATES"} and \code{"FTP_SUGGEST"}.
+If you wish to override the suggested footprints, you can replace
+the \code{"FTP_SUGGEST"} element with your own \code{n x 2} matrix.}
 }
 \value{
-\code{list} containing
+A \code{list} containing the following elements:
 \describe{
-\item{\code{"FTP_MODELS"}}{footprint models corresponding to parameter
-\code{footprint_models} in \code{\link{predict_footprints}}.}
-\item{\code{"bgprotectprob"}}{\code{numeric} background protection
-probability corresponding to parameter \code{bgprotectprob} in
+\item{\code{FTP_MODELS}}{Footprint models suitable for the
+\code{footprint_models} parameter in \code{\link{predict_footprints}}.}
+\item{\code{bgprotectprob}}{Numeric value of background protection
+probability, corresponding to the \code{bgprotectprob} parameter in
 \code{\link{predict_footprints}}.}
-\item{\code{"bgcoverprior"}}{\code{numeric} background protection
-probability corresponding to parameter \code{bgcoverprior} in
+\item{\code{bgcoverprior}}{Numeric value of background coverage prior,
+corresponding to the \code{bgcoverprior} parameter in
 \code{\link{predict_footprints}}.}
 }
 }
 \description{
-This utility function creates a list of parameters required by
-\code{\link{predict_footprints}} to predict footprint positions in data.
+Utility function to generate a list of parameters required by
+\code{\link{predict_footprints}} or \code{\link{predict_footprints_SE}}
+using a footprint inference summary obtained from
+\code{\link{get_ftp_inference_summary}}. These parameters include
+footprint models, background protection probabilities, and coverage priors.
 }

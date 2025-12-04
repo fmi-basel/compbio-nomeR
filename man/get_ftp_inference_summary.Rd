@@ -2,8 +2,7 @@
 % Please edit documentation in R/get_ftp_inference_summary.R
 \name{get_ftp_inference_summary}
 \alias{get_ftp_inference_summary}
-\title{Extract and/or plot estimates from footprint inference and (optionally)
-identify potential footprints from spectrum}
+\title{Extract and/or plot estimates from footprint inference and optionally suggest footprints}
 \usage{
 get_ftp_inference_summary(
   infer_stanfit,
@@ -19,67 +18,57 @@ get_ftp_inference_summary(
 )
 }
 \arguments{
-\item{infer_stanfit}{\code{\link[rstan]{stanfit}} object returned by
-\code{\link{infer_footprints_vb}},
-\code{\link{infer_footprints_sampling}} or a \code{list} returned by
-\code{\link{infer_footprints_optim}}.}
+\item{infer_stanfit}{A \code{\link[rstan]{stanfit}} object returned by
+\code{\link{infer_footprints_vb}} or \code{\link{infer_footprints_sampling}},
+or a \code{list} returned by \code{\link{infer_footprints_optim}}.}
 
-\item{plot}{\code{logical} return plot footprint abundance spectrum.}
+\item{plot}{Logical. If \code{TRUE}, generate a plot of the footprint abundance spectrum.}
 
-\item{show_plot}{\code{logical} show footprint abundance spectrum.}
+\item{show_plot}{Logical. If \code{TRUE}, display the plot of the footprint spectrum.}
 
-\item{suggest_ftps}{\code{logical} return suggestion for footprints.}
+\item{suggest_ftps}{Logical. If \code{TRUE}, return suggested footprints based on spectrum peaks.}
 
-\item{plot_posterior_range}{\code{vector} of \code{character} of length 2
-which specifies which posterior range to plot.
-\code{\link[rstan]{summary,stanfit-method}} provides "2.5\\%", "25\\%"
-and "75\\%", "97.5\\%" credible intervals as well as SD and SE. Displaying
-SD and SE is not implemented at the moment.}
+\item{plot_posterior_range}{Character vector of length 2 specifying which posterior credible intervals to plot.
+Options provided by \code{\link[rstan]{summary,stanfit-method}} include "2.5\\%", "25\\%", "75\\%", "97.5\\%".
+Standard deviation (SD) and standard error (SE) are not currently supported.}
 
-\item{max_peak_width}{parameter for function
-\code{\link{suggest_footprints}}, namely maximum width of detected peaks
-in spectrum. Please see \code{\link{suggest_footprints}}.}
+\item{max_peak_width}{Numeric. Maximum allowed width of detected peaks in
+the footprint abundance spectrum (used by \code{\link{suggest_footprints}}).}
 
-\item{spline_spar}{parameter for function \code{\link{suggest_footprints}}
-controlling smoothness of spline ((0,1], the higher the smoother).
-Please see \code{\link{suggest_footprints}}
-\code{\link[stats]{smooth.spline}}.
-It is recommended to test different values for \code{spline_spar}, for
-example 0.1, 0.3, 0.5, 0.75 to check whether suggested footprints look
-as expected.}
+\item{spline_spar}{Numeric in (0, 1]. Smoothing parameter for
+\code{\link{suggest_footprints}} controlling the smoothness of the
+spline (\code{\link[stats]{smooth.spline}}). Recommended to test values
+like 0.1, 0.3, 0.5, 0.75 to ensure reasonable footprint detection.}
 
-\item{max_abund_log2drop}{parameter for function
-\code{\link{suggest_footprints}}, namely maximum decrease in abundance
-relative to value at local maxima until which peaks are extended. Please
-see \code{\link{suggest_footprints}}}
+\item{max_abund_log2drop}{Numeric. Maximum decrease in log2 abundance relative
+to the local maximum when extending peaks in \code{\link{suggest_footprints}}.}
 
-\item{ftp_abundance_name}{\code{character} which defines which footprint
-abundance value to return/display. Currently only ftp_abundances is
-accepted.}
+\item{ftp_abundance_name}{Character scalar specifying which footprint
+abundance value to extract or display. Currently only \code{"ftp_abundances"} is supported.}
 
-\item{...}{parameters for \code{\link{suggest_footprints}} which are
-transmitted to function \code{\link[stats]{smooth.spline}}.}
+\item{...}{Additional parameters passed to \code{\link{suggest_footprints}},
+including those for \code{\link[stats]{smooth.spline}}.}
 }
 \value{
-\code{list} containing elements:
+A \code{list} containing:
 \describe{
-\item{\code{"ESTIMATES"}}{\code{list} which contains a
-\code{ftp_abundance_estimates} - \code{data.frame} for footprint abundances
-estimates, \code{"ftp_protect_prob_estimate"} and
-\code{bg_protect_prob_estimate} which are estimates for
-\code{ftp_protect_prob} and \code{bg_protect_prob}.
-\code{"bg_protect_prob_estimate"} and/or \code{"ftp_protect_prob_estimate"}
-are \code{NA} if inference for these parameters are not available.}
-\item{\code{"FTP_SUGGEST"}}{\code{matrix} with coordinates for suggested
-footprints as returned by \code{\link{suggest_footprints}}.}
-\item{\code{"PLOT"}}{a \code{ggplot} object with plot for footprint
-spectrum.}
+\item{\code{ESTIMATES}}{A \code{list} containing:
+\itemize{
+\item \code{ftp_abundance_estimates}: \code{data.frame} of footprint abundance estimates,
+\item \code{ftp_protect_prob_estimate}: estimated footprint protection probability (or \code{NA} if unavailable),
+\item \code{bg_protect_prob_estimate}: estimated background protection probability (or \code{NA} if unavailable).
+}}
+
+\item{\code{FTP_SUGGEST}}{\code{matrix} with coordinates of suggested footprints returned by \code{\link{suggest_footprints}}.}
+\item{\code{PLOT}}{\code{ggplot} object of the footprint abundance spectrum.}
 }
 }
 \description{
-This utility function extract estimates from \code{infer_stanfit} and uses
-function \code{\link{suggest_footprints}} (optionally)
-to detect peaks in spectrum and return lengths of potential footprints.
+Utility function to extract footprint abundance estimates from a
+\code{stanfit} or optimization result (from \code{infer_footprints_vb},
+\code{infer_footprints_sampling}, or \code{infer_footprints_optim}) and,
+optionally, detect potential footprints from the abundance spectrum using
+\code{\link{suggest_footprints}}.
 }
 \examples{
 

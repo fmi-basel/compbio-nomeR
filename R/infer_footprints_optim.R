@@ -1,18 +1,29 @@
-#' Find point estimate for footprint abundance using STAN optimization
-#' algorithm
+#' Find point estimates for footprint abundance using Stan optimization
 #'
-#' This function uses `rstan::optimizing` to obtain point estimate for
-#' footprint abundances by maximizing the joint posterior from the model.
+#' @description
+#' Uses \code{rstan::optimizing} to compute point estimates of footprint
+#' abundances by maximizing the joint posterior defined by the model.
+#'
+#' WARNING: Although finding an optimum of the posterior distribution is fast,
+#' due to highly non-symmetrical shapes of the distribution,
+#' the returned point estimates are often far from means of the distribution.
+#' Therefore, unless very strong and symetrical prior distribution is used, the footprint
+#' spectral analysis using \code{rstan::optimizing} is unreliable.
+#'
+#'
 #'
 #' @inheritParams infer_footprints_vb
-#' @param ... parameters passed to \code{\link[rstan]{optimizing}} function from the \code{rstan} package. Please
-#'     refer to \code{\link[rstan]{optimizing}} documentation.
 #'
-#' @return A list with components described in \code{\link[rstan]{optimizing}}
-#' function.
-#' The attribute \code{attr(<list>,"ftp_lengths")} contains a vector
-#' of footprint lengths for which inference was run, i.e. parameter
-#' \code{ftp_lengths} provided by user.
+#' @param ... Additional arguments passed to
+#'   \code{\link[rstan]{optimizing}}. See the \code{rstan} documentation for
+#'   available parameters.
+#'
+#' @return
+#' A list returned by \code{\link[rstan]{optimizing}}, containing the
+#' optimization results.
+#' The attribute \code{attr(<list>, "ftp_lengths")} stores the vector of
+#' footprint lengths used for inference (i.e., the user-supplied
+#' \code{ftp_lengths} parameter).
 #'
 #' @export
 #'
@@ -67,7 +78,7 @@
 #' @importFrom rstan optimizing
 infer_footprints_optim <- function(
         cooc_ctable,
-        ftp_lengths,
+        ftp_lengths = 2:200,
         ftp_prior_cover = NULL,
         bg_prior_cover = 0.5,
         total_cnt_prior_dirich = NULL,

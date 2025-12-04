@@ -86,6 +86,7 @@ test_that("predict_footprints returns correct object",{
 
 
 test_that("predict_footprints returns expected probabilities and MAP configuration",{
+
     ## load data
     dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))
 
@@ -95,21 +96,41 @@ test_that("predict_footprints returns expected probabilities and MAP configurati
                                     bgprotectprob = 0.05304034,
                                     bgcoverprior = 0.4822005,
                                     aggrByGroup = TRUE,
-    																ftpConfigMethod = "Viterbi",
+                                    ftpConfigMethod = "Viterbi",
                                     ncpu = 1L)
     ## check start probs
+
     expect_equal(testinsil$START_PROB,dlist$exp_output$START_PROB)
     ## check cover probs
     expect_equal(testinsil$COVER_PROB,dlist$exp_output$COVER_PROB)
 
-    ## check whether config is correct
+    ## check whether Viterbi config is correct
     map_conf <- subset(testinsil$FOOTPRINT_CONF,ftp_name != "background")
     map_conf <- map_conf[order(map_conf$start),]
     row.names(map_conf) <- NULL
-    exp_conf <- data.frame(seq = 1,start=c(151,273,492),width=c(50,150,150),ftp_name = c("ftp1--50","ftp2--150","ftp2--150"),
-                           ftp_group = c("ftp1","ftp2","ftp2"),
-                           start_prob = c(0.9421603, 0.9496543, 0.8856803))
-    expect_equal(map_conf,exp_conf)
+    exp_conf <- data.frame(seq = 1,
+                           start=c(151,273,492),
+                           width=c(50,150,150),
+                           ftp_name = c("ftp1--50","ftp2--150","ftp2--150"),
+                           ftp_group = c("ftp1","ftp2","ftp2")
+                           #score = c(0.9421603, 0.9496543, 0.8856803)
+                           )
+    expect_equal(map_conf[,colnames(exp_conf)],exp_conf)
+
+
+    ## check if Posterior-Viterbi is correct
+    testinsil <- predict_footprints(data=dlist$test_dat_mat,
+                                    footprint_models = dlist$ftp_models,
+                                    bgprotectprob = 0.05304034,
+                                    bgcoverprior = 0.4822005,
+                                    aggrByGroup = TRUE,
+                                    ftpConfigMethod = "PV",
+                                    ncpu = 1L)
+    map_conf <- subset(testinsil$FOOTPRINT_CONF,ftp_name != "background")
+    map_conf <- map_conf[order(map_conf$start),]
+    row.names(map_conf) <- NULL
+
+    expect_equal(map_conf[,colnames(exp_conf)],exp_conf)
 
 })
 

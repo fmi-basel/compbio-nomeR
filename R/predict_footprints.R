@@ -1,73 +1,49 @@
-#' Calculate coverage probabilities for footprints in single-molecule
+#' Calculate posterior probabilities and predict footprints in single-molecule
 #' footprinting (SMF) data
 #'
-#' @param data \code{matrix} or \code{list} containing SMF data. If data is a
-#'     \code{matrix} rows represent reads (or fragments), columns represent
-#'     positions in region of interest (ROI). If data is a \code{list}, each
-#'     element must contain vector with SMF data. NOTE that \code{data} must
-#'     contain data for informative positions '0' represents accessible
-#'     (methylated) position, and '1' represents protected (unmethylated)
-#'     position "C" and all other positions must be filled with "NA".
-#' @param footprint_models A list containing footprint models for proteins.
-#'     Each element must have 3 slots:
-#'     \describe{
-#'     \item{PROTECT_PROB}{a numeric vector with footprint emission
-#'     probabilities to find protected position within a footprint}
-#'     \item{COVER_PRIOR}{prior coverage probability (abundance)
-#'     (\code{numeric}) reflecting what fraction of reads you expect to be
-#'     covered by a footprint}
-#'     \item{NAME}{unique name (\code{character}) of a model, e.g.
-#'     "Nucleosome--149", "Nucleosome--150" etc.}
-#'     \item{GROUP}{non-unique group (\code{character}) which defines how
-#'     probabilities will be aggregated
-#'     if \code{aggrByGroup} is \code{TRUE}. Namely, if "Nucleosome--149",
-#'     "Nucleosome--150" etc. footprint models have identical GROUP
-#'     (e.g. "Nucleosome") and \code{aggrByGroup = TRUE},
-#'     probabilities will be aggregated across all footprints with GROUP
-#'     "Nucleosome".}
-#'     }
-#' @param bgprotectprob background emission probability to find a protected
-#'     position within open (accessible) regions.
-#' @param bgcoverprior prior probability for percentage of all fragments to be
-#'     in a free (accessible, or background) state.
-#' @param aggrByGroup if \code{TRUE} probabilities are aggregated by GROUP ID
-#'     defined in \code{footprint_models}. If \code{FALSE} or GROUP IDs are
-#'     missing in the \code{footprint_models}
-#'     probabilities are reported for each individual footprints NAME defined
-#'     in the \code{footprint_models}.
-#' @param ftpConfigMethod method for constructing footprint configurations:
-#'     \describe{
-#'     \item{\code{POFP}}{(Priority-ordered Footprint Placement) method for
-#'     constructing footprint configurations fills a molecule with non-overlapping
-#'     footprints starting from highest and going to lowest predicted probabilities.}
-#'     \item{\code{Viterbi}}{Viterbi algorithm to find a configuration of
-#'     footprints with highest posterior probability.}
-#' }
+#' @description
+#' Computes posterior probabilities and predicts footprint configurations
+#' in single-molecule footprinting (SMF) datasets.
 #'
-#' @param ncpu number of threads to use.
-#' @param verbose verbose mode for bug fixing.
+#' @param data A \code{matrix} or \code{list} containing binarized SMF data.
+#'   - If a \code{matrix}, rows correspond to reads (or fragments) and columns correspond to positions in the region of interest (ROI).
+#'   - If a \code{list}, each element must be a vector containing SMF data.
+#'   Data must be binarized: '0' represents accessible (methylated) positions, '1' represents protected (unmethylated) positions, and all other positions should be \code{NA}.
+#' @param footprint_models A list of footprint models for proteins. Each element must contain:
+#'   \describe{
+#'     \item{PROTECT_PROB}{Numeric vector of footprint emission probabilities for protected positions within a footprint.}
+#'     \item{COVER_PRIOR}{Numeric prior probability reflecting the expected fraction of reads covered by the footprint.}
+#'     \item{NAME}{Unique name of the model (character), e.g., "Nucleosome--149", "Nucleosome--150".}
+#'     \item{GROUP}{Optional non-unique group name (character) used for aggregating probabilities if \code{aggrByGroup = TRUE}. For example, footprints with names "Nucleosome--149" and "Nucleosome--150" may share the GROUP "Nucleosome".}
+#'   }
+#' @param bgprotectprob Background emission probability of a protected position in open (accessible) regions.
+#' @param bgcoverprior Prior probability of a position being in the free (accessible/background) state.
+#' @param aggrByGroup Logical. If \code{TRUE}, probabilities are aggregated by the \code{GROUP} ID in \code{footprint_models}. If \code{FALSE}, or if GROUP IDs are missing, probabilities are reported for each individual footprint \code{NAME}.
+#' @param ftpConfigMethod Algorithm for decoding footprint configurations:
+#'   \describe{
+#'     \item{\code{PV}}{Posterior-Viterbi (default): uses footprint coverage posteriors and a Viterbi-like algorithm to find a valid footprint configuration maximizing posterior coverage probability (see Fariselli et al, 2005). The \code{score} for each footprint is the geometric mean of posterior coverages across all positions covered by the footprint.}
+#'     \item{\code{Viterbi}}{Classic Viterbi algorithm to find the most probable footprint configuration. The \code{score} corresponds to the posterior start probability for each reported footprint.}
+#'   }
+#' @param ncpu Number of threads to use.
+#' @param verbose Logical. If \code{TRUE}, enables verbose output for debugging.
 #'
-#' @return A list which contains 2 data frames:
-#'     \describe{
-#'     \item{\code{START_PROB}}{\code{data.frame} with calculated start probabilities
-#'     for each SMF molecule (column \code{seq}), each position in ROI (column
-#'     \code{pos}) and each footprint model, e.g. Nucleosome, background etc.
-#'     These probabilities reflect how likely it is to find a start in each
-#'     fragment and at each position of a certain footprint model.}
-#'     \item{\code{COVER_PROB}}{\code{data.frame} with calculated coverage
-#'     probabilities for each SMF molecule (column \code{seq}), each position
-#'     in ROI (column \code{pos}) and each footprint model, e.g. Nucleosome,
-#'     background etc. These probabilities reflect how likely it is that a
-#'     certain position in an amplicon and certain fragment is covered by a
-#'     certain footprint model.}
-#'     }
+#' @return A list containing three data frames:
+#'   \describe{
+#'     \item{\code{START_PROB}}{Contains start probabilities for each SMF molecule (\code{seq}), each position in ROI (\code{pos}), and each footprint model. These probabilities indicate how likely a footprint starts at each position in a fragment.}
+#'     \item{\code{COVER_PROB}}{Contains coverage probabilities for each SMF molecule (\code{seq}), each position in ROI (\code{pos}), and each footprint model. These probabilities indicate how likely a position is covered by a given footprint.}
+#'     \item{\code{FOOTPRINT_CONF}}{Contains footprint configurations predicted for each molecule by the selected \code{ftpConfigMethod}. Each row reports the SMF molecule (\code{seq}), start position (\code{start}), width (\code{width}), footprint name (\code{ftp_name}), group (\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}
+#'   }
 #'
-#' @importFrom checkmate makeAssertCollection assert_logical assert_int
-#'     reportAssertions
+#' @importFrom checkmate makeAssertCollection assert_logical assert_int reportAssertions
 #' @importFrom parallel detectCores
 #'
-#' @export
+#' @references
+#' Fariselli, P., Martelli, P. L., & Casadio, R. (2005).
+#' *A new decoding algorithm for Hidden Markov Models improves the prediction of the topology of all-beta membrane proteins.*
+#' BMC Bioinformatics, 6(S4), S12. https://doi.org/10.1186/1471-2105-6-S4-S12
 #'
+#' @export
+
 #' @examples
 #' set.seed(3346)
 #' nc <- 50
@@ -93,72 +69,73 @@
 #'
 
 predict_footprints <- function(data,
-															 footprint_models,
-															 bgprotectprob,
-															 bgcoverprior,
-															 aggrByGroup = FALSE,
-															 ftpConfigMethod = c("POFP","Viterbi"),
-															 ncpu = 1L,
-															 verbose = FALSE) {
+                               footprint_models,
+                               bgprotectprob,
+                               bgcoverprior,
+                               aggrByGroup = TRUE,
+                               ftpConfigMethod = c("PV","Viterbi"),
+                               ncpu = 1L,
+                               verbose = FALSE) {
 
-	## check arguments
-	coll <- makeAssertCollection()
-	### validate data. The output is a list("nonNA_data" = nonNA_data,"fragnames" = fragnames)
-	data <- validate_prepare_listOrMat(data)
+    ## check arguments
+    coll <- makeAssertCollection()
+    ### validate data. The output is a list("nonNA_data" = nonNA_data,"fragnames" = fragnames)
+    data <- validate_prepare_listOrMat(data)
 
-	ftpConfigMethod <- match.arg(ftpConfigMethod)
-	### validate footprint models
-	ftpvalout <- validate_footprint_models(footprint_models,
-																				 bgprotectprob,
-																				 bgcoverprior,
-																				 aggrByGroup,
-																				 verbose,
-																				 add = coll)
-	footprint_models <- ftpvalout[["footprint_models"]]
-	start_priors <- ftpvalout[["start_priors"]]
+    ftpConfigMethod <- match.arg(ftpConfigMethod)
+    ### validate footprint models
+    ftpvalout <- validate_footprint_models(footprint_models,
+                                           bgprotectprob,
+                                           bgcoverprior,
+                                           aggrByGroup,
+                                           verbose,
+                                           add = coll)
+    footprint_models <- ftpvalout[["footprint_models"]]
+    start_priors <- ftpvalout[["start_priors"]]
 
-	### validate ncpu
-	assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
-	avail_ncpu <- parallel::detectCores()
-	if (is.na(avail_ncpu)) {
-		.warning_timestamp(
-			"Could not detect number of available cpu. Setting ncpu to 1L.")
-		ncpu <- 1L
-	} else if (ncpu > avail_ncpu || ncpu == 0) {
-		.warning_timestamp(c("Number of ncpu is 0 or exceeds number of ",
-												 "available cpu. Setting ncpu to number of ",
-												 "available cpus."))
-		ncpu <- avail_ncpu
-	}
+    ### validate ncpu
+    assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
+    avail_ncpu <- parallel::detectCores()
+    if (is.na(avail_ncpu)) {
+        .warning_timestamp(
+            "Could not detect number of available cpu. Setting ncpu to 1L.")
+        ncpu <- 1L
+    } else if (ncpu > avail_ncpu || ncpu == 0) {
+        .warning_timestamp(c("Number of ncpu is 0 or exceeds number of ",
+                             "available cpu. Setting ncpu to number of ",
+                             "available cpus."))
+        ncpu <- avail_ncpu
+    }
 
-	## finish argument check
-	reportAssertions(coll)
+    ## finish argument check
+    reportAssertions(coll)
 
-	if (verbose) {
-		.message_timestamp("Calling run_cpp_nomeR...")
-	}
-	## the C++ needs only fidx_glob, fragpos, protect
-	predict_res_list <- calcStartCoverProbs_cpp(data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
-																							data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 1 - based
-																							data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
-																							footprint_models,
-																							bgprotectprob,
-																							start_priors["BG"],
-																							ftpConfigMethod,
-																							ncpu,
-																							verbose)
+    if (verbose) {
+        .message_timestamp("Calling run_cpp_nomeR...")
+    }
+    ## the C++ needs only fidx_glob, fragpos, protect
+    predict_res_list <- calcStartCoverProbs_cpp(data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
+                                                data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 1 - based
+                                                data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
+                                                footprint_models,
+                                                bgprotectprob,
+                                                start_priors["BG"],
+                                                ftpConfigMethod,
+                                                aggrByGroup,
+                                                ncpu,
+                                                verbose)
 
-	if (all(c(!is.null(predict_res_list[["START_PROB"]]),
-						!is.null(predict_res_list[["COVER_PROB"]]),
-						!is.null(predict_res_list[["FOOTPRINT_CONF"]])))) {
-		if (verbose) {
-			.message_timestamp("convert cpp_nomeR output to data.table...")
-		}
+    if (all(c(!is.null(predict_res_list[["START_PROB"]]),
+              !is.null(predict_res_list[["COVER_PROB"]]),
+              !is.null(predict_res_list[["FOOTPRINT_CONF"]])))) {
+        if (verbose) {
+            .message_timestamp("convert cpp_nomeR output to data.table...")
+        }
 
-		return(lapply(predict_res_list,as.data.frame,
-									stringsAsFactors = FALSE,
-									check.names = FALSE))
-	} else {
-		stop("retrieved NULL results from C++ function.")
-	}
+        return(lapply(predict_res_list,as.data.frame,
+                      stringsAsFactors = FALSE,
+                      check.names = FALSE))
+    } else {
+        stop("retrieved NULL results from C++ function.")
+    }
 }

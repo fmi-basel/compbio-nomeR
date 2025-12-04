@@ -1,24 +1,37 @@
-#' Create count table for `00`, `01`, `10`, `11`, etc occurrences in SummarizedExperiment object
-#' containing modificaton probabilities for SMF data
+#' Create count tables of `00`, `01`, `10`, and `11` co-occurrences in a
+#' SummarizedExperiment object containing SMF modification probabilities
+#'
+#' @description
+#' Computes co-occurrence frequencies of binary accessibility states
+#' (`00`, `01`, `10`, `11`) at varying spacings within a
+#' \code{SummarizedExperiment} object containing single-molecule
+#' footprinting (SMF) modification probabilities. Frequencies are calculated
+#' for distances up to \code{max_spacing}, either per sample or aggregated
+#' across all samples.
 #'
 #' @inheritParams ftp_spectral_analysis_SE
 #' @inheritParams predict_footprints_SE
-#' @param max_spacing defines maximum distance between
-#'     positions for aggregating frequencies of combinations `00`, `01`, `10`, `11` at
-#'     distances up to \code{max_spacing} observed in the SMF dataset.
-#' @param aggrSamples \code{logical} Return frequencies for each sample
-#'     separately or aggregate them for all samples.
-#' @param ncpu Number of cores to use.
-#' @param verbose Verbose mode for bug fixing.
 #'
-#' @return If \code{aggrSamples = TRUE}, a \code{matrix} containing aggregated
-#'     frequencies across all samples for 0,0; 0,1; etc for each spacing
-#'     between 1 (total number of 0s and 1s in the data) and \code{max_spacing}.
-#'     If \code{aggrSamples = FALSE}, a \code{list} of matrices with frequencies
-#'     for each sample separately.
+#' @param max_spacing Integer specifying the maximum spacing (in bases)
+#'     between positions when counting co-occurrences of state pairs
+#'     (`00`, `01`, `10`, `11`) across the SMF dataset.
+#' @param aggrSamples \code{logical}. If \code{TRUE}, co-occurrence frequencies
+#'     are aggregated across all samples. If \code{FALSE}, a separate frequency
+#'     matrix is returned for each sample.
+#' @param ncpu Number of CPU cores to use for parallel processing.
+#' @param verbose Logical. If \code{TRUE}, prints additional progress messages
+#'     for debugging.
+#'
+#' @return
+#' If \code{aggrSamples = TRUE}, a \code{matrix} containing aggregated
+#' co-occurrence frequencies for `00`, `01`, `10`, and `11` at spacings
+#' from 1 to \code{max_spacing}.
+#'
+#' If \code{aggrSamples = FALSE}, a \code{list} of matrices, one per sample,
+#' where each matrix contains the corresponding co-occurrence frequencies.
 #'
 #' @export
-#'
+
 get_ctable_from_SE <- function(se,
                                assayName = "mod_prob",
                                threshUnmod = 0.5,

@@ -6,8 +6,6 @@
 #include "DNAbindobj_vector-class.hpp"
 #include "fragProtectData-class.hpp"
 #include "SMFdataset-class.hpp"
-#include "ftpSegment-struct.hpp"
-#include "ftpConfig-class.hpp"
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -36,67 +34,56 @@ class Predict
 
 public:
 
-	Predict();
-	~Predict();
+    Predict();
+    ~Predict();
 
-	void getCoverProbsMatrix(const vector<vector<double > >& startProb,
+    void getCoverPosteriors(const vector<vector<double > >& startProb,
+                            const DNAbind_obj_vector& ftpModels,
+                            vector<vector<double >>& coverProb
+    );
+
+
+    void getOutputVectors(const vector<vector<double > >& ftpNameProbs,
                           const DNAbind_obj_vector& ftpModels,
-                          const int& fDPos, // firstDatPos
-                          const int& lDPos, // lastDatPos
-                          const size_t& nFtpGroups,
-                          vector<vector<double >>& aggrCoverOutProbs
-	);
+                          const fragProtectData& seqData, // current protection data sequence
+                          const int& startFrom, // index in seqData to start aggregation
+                          const int& endAt, // index in seqData until which to perform aggregation (including)
+                          const bool& aggrByGroup, // aggregate by group?
+                          vector<int32_t >& outFragIDs,
+                          vector<int32_t >& outFragPos,
+                          vector<vector<double >>& outProbs // matrix to store probablities, aggregated or not
+    );
 
+    void getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScores,
+                              const vector<vector<double > >& startProb,
+                              const DNAbind_obj_vector& ftpModels,
+                              const int& fDPos, // firstDatPos
+                              const int& lDPos, // lastDatPos
+                              vector<int32_t >& cVitFragPos,
+                              vector<int32_t >& cVitFtpWidth,
+                              vector<string >& cVitFtpName,
+                              vector<string >& cVitFtpGroup,
+                              vector<double >& cVitFtpProb);
 
-	void aggregateProbByGroup(const vector<vector<double > >& ftpNameProbs,
-                           const DNAbind_obj_vector& ftpModels,
-                           const size_t& nFtpGroups,
-                           vector<vector<double >>& aggrGroupProbs);
+    void getPosteriorViterbiFtpConf(const vector<vector<double >>& coverProb,
+                                    const DNAbind_obj_vector& ftpModels,
+                                    const fragProtectData& seqData, // current protection data sequence
+                                    vector<int32_t >& cPVFragPos,
+                                    vector<int32_t >& cPVFtpWidth,
+                                    vector<string >& cPVFtpName,
+                                    vector<string >& cPVFtpGroup,
+                                    vector<double >& cPVFtpProb
+    );
 
-	void getViterbiMAPftpConf(const vector<vector<double > >& ftpModelsScores,
-                           const vector<vector<double > >& startProb,
-                           const DNAbind_obj_vector& ftpModels,
-                           const int& fDPos, // firstDatPos
-                           const int& lDPos, // lastDatPos
-                           vector<int32_t >& cVitFragPos,
-                           vector<int32_t >& cVitFtpWidth,
-                           vector<string >& cVitFtpName,
-                           vector<string >& cVitFtpGroup,
-                           vector<double >& cVitFtpProb);
-
-
-	void getPriorityOrderedFtpConf(const vector<vector<double >>& ftpGroupStartProb,
-                                const vector<int32_t >& posVecStartProb,
-                                const vector<vector<double > >& ftpNameStartProb,
-                                const DNAbind_obj_vector& ftpModels,
-                                const int& fDPos, // firstDatPos
-                                const int& lDPos, // lastDatPos
-                                vector<int32_t >& cIntSchedFragPos,
-                                vector<int32_t >& cIntSchedFtpWidth,
-                                vector<string >& cIntSchedFtpName,
-                                vector<string >& cIntSchedFtpGroup,
-                                vector<double >& cIntSchedFtpProb);
-
-	void getPosteriorViterbiFtpConf(const vector<vector<double >>& ftpGroupCoverProb,
-                                 const vector<int32_t >& posVecCoverProb,
-                                 const DNAbind_obj_vector& ftpModels,
-                                 vector<int32_t >& cPVFragPos,
-                                 vector<int32_t >& cPVFtpWidth,
-                                 vector<string >& cPVFtpName,
-                                 vector<string >& cPVFtpGroup,
-                                 vector<double >& cPVFtpProb
-	);
-
-	Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
-                                const DNAbind_obj_vector& ftpModels,
-                                const parameters& params,
-                                ftpConfigAlgo ftpCnfAlg,
-                                int ncpu);
+    Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
+                                   const DNAbind_obj_vector& ftpModels,
+                                   const parameters& params,
+                                   ftpConfigAlgo ftpCnfAlg,
+                                   bool aggrByGroup,
+                                   int ncpu);
 
 
 
 };
-
-
 
 #endif

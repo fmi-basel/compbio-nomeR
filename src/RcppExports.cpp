@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // calcStartCoverProbs_cpp
-Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::CharacterVector& ftpConfigMethod, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
-RcppExport SEXP _nomeR_calcStartCoverProbs_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP ftpConfigMethodSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::CharacterVector& ftpConfigMethod, const Rcpp::LogicalVector& aggrByGroup, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
+RcppExport SEXP _nomeR_calcStartCoverProbs_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP ftpConfigMethodSEXP, SEXP aggrByGroupSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -24,9 +24,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprotectprob(bgprotectprobSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprior(bgpriorSEXP);
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type ftpConfigMethod(ftpConfigMethodSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type aggrByGroup(aggrByGroupSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type Ncpu(NcpuSEXP);
     Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(calcStartCoverProbs_cpp(fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, ftpConfigMethod, Ncpu, verbose));
+    rcpp_result_gen = Rcpp::wrap(calcStartCoverProbs_cpp(fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, ftpConfigMethod, aggrByGroup, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -66,7 +67,7 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nomeR_calcStartCoverProbs_cpp", (DL_FUNC) &_nomeR_calcStartCoverProbs_cpp, 9},
+    {"_nomeR_calcStartCoverProbs_cpp", (DL_FUNC) &_nomeR_calcStartCoverProbs_cpp, 10},
     {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 6},
     {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
     {"_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod, 0},

@@ -1,23 +1,38 @@
-#' Footprint spectral analysis for SummarizedExperiment object containing
+#' Footprint spectral analysis for a SummarizedExperiment containing
 #' single-molecule footprinting (SMF) data
 #'
+#' @description
+#' Performs footprint spectral analysis on a \code{SummarizedExperiment}
+#' object containing single-molecule footprinting (SMF) data. For each sample,
+#' the function extracts pair-state statistics, computes co-occurrence tables,
+#' and infers footprint spectra and emission probabilities using the specified
+#' Bayesian inference method.
 #'
 #' @inheritParams predict_footprints_SE
 #' @inheritParams get_ctable_from_SE
 #' @inheritParams infer_footprints_vb
-#' @return \code{DataFrame} object from \code{colData} of \code{se} with
-#'     additional columns containing pair state statistics, inferred footprint
-#'     spectra and emission probabilities for each sample in \code{se}.
+#'
+#' @return
+#' A \code{DataFrame} (from \code{colData(se)}) augmented with additional
+#' columns containing:
+#' \itemize{
+#'   \item pair-state summary statistics,
+#'   \item inferred footprint spectra,
+#'   \item estimated emission probabilities.
+#' }
+#' Each row corresponds to a sample in the input \code{SummarizedExperiment}.
+#'
 #' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData
-#'     colData<-
+#'   colData<-
 #' @importFrom SparseArray NaArray
 #' @importFrom GenomicRanges GPos match seqnames start end strand seqinfo
 #' @importFrom IRanges subsetByOverlaps IRanges IRangesList
 #' @importFrom S4Vectors DataFrame SimpleList metadata metadata<-
-#'     make_zero_col_DFrame
+#'   make_zero_col_DFrame
 #' @import data.table
 #'
 #' @export
+
 ftp_spectral_analysis_SE <- function(
         se,
         assayName = "mod_prob",

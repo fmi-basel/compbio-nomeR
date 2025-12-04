@@ -9,6 +9,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
                                    const Rcpp::NumericVector& bgprotectprob,
                                    const Rcpp::NumericVector& bgprior,
                                    const Rcpp::CharacterVector& ftpConfigMethod,
+                                   const Rcpp::LogicalVector& aggrByGroup,
                                    const Rcpp::NumericVector& Ncpu,
                                    const Rcpp::LogicalVector& verbose
 ) {
@@ -16,6 +17,9 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 	//set verbose
 	extern bool _VERBOSE_;
 	_VERBOSE_ = Rcpp::as<bool >(verbose);
+
+	//set group aggregation
+	bool aggrByGroup_ = Rcpp::as<bool >(aggrByGroup);
 
 	// choose algorithm for getting footprint configuration
 	string ftpConfigMethod_ = Rcpp::as<string >(ftpConfigMethod);
@@ -31,13 +35,13 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 
 	int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
-	Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have effect.\n";
+	Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have an effect.\n";
 #endif
 
 
 	// set parameters
 	if(_VERBOSE_){
-		Rcpp::Rcout<<"Creating PARAMS object..."<<endl;
+		Rcpp::Rcout<<"Setting parameter object..."<<endl;
 	}
 	parameters params(bgprotectprob,
                    bgprior);
@@ -53,7 +57,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 
 	// create object with SMF data
 	if(_VERBOSE_){
-		Rcpp::Rcout<<"Creating SMF data..."<<endl;
+		Rcpp::Rcout<<"Creating SMF data object..."<<endl;
 	}
 	SMFdataset SMFdata(fragIDs,
                     fragPos,
@@ -61,7 +65,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
                     ftp_models.maxwmlen);
 
 	if(_VERBOSE_){
-		Rcpp::Rcout<<"Creating Predict object..."<<endl;
+		Rcpp::Rcout<<"Setting object for footprint prediction..."<<endl;
 	}
 
 
@@ -70,6 +74,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
                                                   ftp_models,
                                                   params,
                                                   ftpCnfAlg,
+                                                  aggrByGroup_,
                                                   Ncpu_);
 	// clear
 	SMFdata.clear();

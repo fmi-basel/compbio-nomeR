@@ -2,8 +2,8 @@
 % Please edit documentation in R/get_ctable_from_SE.R
 \name{get_ctable_from_SE}
 \alias{get_ctable_from_SE}
-\title{Create count table for \code{00}, \code{01}, \code{10}, \code{11}, etc occurrences in SummarizedExperiment object
-containing modificaton probabilities for SMF data}
+\title{Create count tables of \code{00}, \code{01}, \code{10}, and \code{11} co-occurrences in a
+SummarizedExperiment object containing SMF modification probabilities}
 \usage{
 get_ctable_from_SE(
   se,
@@ -19,44 +19,51 @@ get_ctable_from_SE(
 )
 }
 \arguments{
-\item{se}{\code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-containing read-level data returned by the
-\code{footprintR::readModBam} function and containing
-modification probabilities.}
+\item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
+containing read-level data returned by
+\code{footprintR::readModBam}, including modification probabilities.}
 
-\item{assayName}{character scalar describing the name of the assay in
-\code{se} containing read-level data.}
+\item{assayName}{Character scalar specifying the name of the assay in
+\code{se} that contains read-level modification probabilities.}
 
-\item{threshUnmod, threshMod}{numeric scalars used to classify observations
-as modified (modification probability >= threshMod), unmodified
-(modification probability < threshUnmod) or unknown (otherwise).}
+\item{threshUnmod, threshMod}{Numeric thresholds used to binarize modification
+probabilities into accessible (\code{0}; probability >= \code{threshMod}),
+protected (\code{1}; probability < \code{threshUnmod}), or unknown
+(\code{NA}) states.}
 
-\item{min_frag_data_len}{ignore fragments that have genomic
-lengths from most-left to most-right data points less than
+\item{min_frag_data_len}{Ignore fragments whose genomic span (from the
+leftmost to rightmost non-\code{NA} data point) is shorter than
 \code{min_frag_data_len}.}
 
-\item{min_frag_data_dens}{ignore fragments that have density
-of data-containing positions lower than \code{min_frag_data_dens}.}
+\item{min_frag_data_dens}{Ignore fragments with a density of informative
+(non-\code{NA}) positions below \code{min_frag_data_dens}.}
 
-\item{max_spacing}{defines maximum distance between
-positions for aggregating frequencies of combinations \code{00}, \code{01}, \code{10}, \code{11} at
-distances up to \code{max_spacing} observed in the SMF dataset.}
+\item{max_spacing}{Integer specifying the maximum spacing (in bases)
+between positions when counting co-occurrences of state pairs
+(\code{00}, \code{01}, \code{10}, \code{11}) across the SMF dataset.}
 
-\item{aggrSamples}{\code{logical} Return frequencies for each sample
-separately or aggregate them for all samples.}
+\item{aggrSamples}{\code{logical}. If \code{TRUE}, co-occurrence frequencies
+are aggregated across all samples. If \code{FALSE}, a separate frequency
+matrix is returned for each sample.}
 
-\item{ncpu}{Number of cores to use.}
+\item{ncpu}{Number of CPU cores to use for parallel processing.}
 
-\item{verbose}{Verbose mode for bug fixing.}
+\item{verbose}{Logical. If \code{TRUE}, prints additional progress messages
+for debugging.}
 }
 \value{
 If \code{aggrSamples = TRUE}, a \code{matrix} containing aggregated
-frequencies across all samples for 0,0; 0,1; etc for each spacing
-between 1 (total number of 0s and 1s in the data) and \code{max_spacing}.
-If \code{aggrSamples = FALSE}, a \code{list} of matrices with frequencies
-for each sample separately.
+co-occurrence frequencies for \code{00}, \code{01}, \code{10}, and \code{11} at spacings
+from 1 to \code{max_spacing}.
+
+If \code{aggrSamples = FALSE}, a \code{list} of matrices, one per sample,
+where each matrix contains the corresponding co-occurrence frequencies.
 }
 \description{
-Create count table for \code{00}, \code{01}, \code{10}, \code{11}, etc occurrences in SummarizedExperiment object
-containing modificaton probabilities for SMF data
+Computes co-occurrence frequencies of binary accessibility states
+(\code{00}, \code{01}, \code{10}, \code{11}) at varying spacings within a
+\code{SummarizedExperiment} object containing single-molecule
+footprinting (SMF) modification probabilities. Frequencies are calculated
+for distances up to \code{max_spacing}, either per sample or aggregated
+across all samples.
 }

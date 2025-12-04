@@ -1,38 +1,51 @@
-#' Calculate coverage probabilities for footprints in SummarizedExperiment object containing
-#' single-molecule footprinting (SMF) data
+#' Calculate posterior probabilities and predict footprints in a
+#' SummarizedExperiment containing single-molecule footprinting (SMF) data
 #'
+#' @description
+#' Computes posterior probabilities and predicts footprint configurations for
+#' SMF data stored in a \code{SummarizedExperiment} object.
 #'
-#' @param se \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-#'     containing read-level data returned by the
-#'     \code{footprintR::readModBam} function and containing
-#'     modification probabilities.
-#' @param assayName character scalar describing the name of the assay in
-#'     \code{se} containing read-level data.
-#' @param threshUnmod,threshMod numeric scalars used to classify observations
-#'     as modified (modification probability >= threshMod), unmodified
-#'     (modification probability < threshUnmod) or unknown (otherwise).
-#' @param min_frag_data_len ignore fragments that have genomic
-#'     lengths from most-left to most-right data points less than
-#'     \code{min_frag_data_len}.
-#' @param min_frag_data_dens ignore fragments that have density
-#'     of data-containing positions lower than \code{min_frag_data_dens}.
+#' @param se A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
+#'   containing read-level data returned by
+#'   \code{footprintR::readModBam}, including modification probabilities.
+#' @param assayName Character scalar specifying the name of the assay in
+#'   \code{se} that contains read-level modification probabilities.
+#' @param threshUnmod,threshMod Numeric thresholds used to binarize modification
+#'   probabilities into accessible (\code{0}; probability >= \code{threshMod}),
+#'   protected (\code{1}; probability < \code{threshUnmod}), or unknown
+#'   (\code{NA}) states.
+#' @param min_frag_data_len Ignore fragments whose genomic span (from the
+#'   leftmost to rightmost non-\code{NA} data point) is shorter than
+#'   \code{min_frag_data_len}.
+#' @param min_frag_data_dens Ignore fragments with a density of informative
+#'   (non-\code{NA}) positions below \code{min_frag_data_dens}.
 #' @inheritParams predict_footprints
-#' @return \code{SummarizedExperiment} object containing original \code{mod_prob}
-#'     assay as well as additional assays corresponding to calculated starting and coverage
-#'     posterior probabilities.
-#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData
-#'     colData<-
+#'
+#' @return A \code{SummarizedExperiment} object containing:
+#'   \itemize{
+#'     \item the original \code{mod_prob} assay,
+#'     \item additional assays with calculated posterior start and coverage
+#'       probabilities (e.g. "Nucl_coverProb_nomeR"), and
+#'     \item predicted footprint configurations stored as \code{IntegerList} objects
+#'     in \code{colData} (e.g. column "Nucl_nomeR").
+#'   }
+#'
+#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData colData<-
 #' @importFrom SparseArray NaArray
 #' @importFrom GenomicRanges GPos match seqnames start end strand seqinfo
 #' @importFrom IRanges subsetByOverlaps IRanges IRangesList
-#' @importFrom S4Vectors DataFrame SimpleList metadata metadata<-
-#'     make_zero_col_DFrame
+#' @importFrom S4Vectors DataFrame SimpleList metadata metadata<- make_zero_col_DFrame
 #' @import data.table
-#' @importFrom checkmate makeAssertCollection assert_logical assert_int
-#'     reportAssertions
+#' @importFrom checkmate makeAssertCollection assert_logical assert_int reportAssertions
 #' @importFrom parallel detectCores
-#' @export
 #'
+#' @references
+#' Fariselli, P., Martelli, P. L., & Casadio, R. (2005).
+#' *A new decoding algorithm for Hidden Markov Models improves the prediction of the topology of all-beta membrane proteins.*
+#' BMC Bioinformatics, 6(S4), S12. https://doi.org/10.1186/1471-2105-6-S4-S12
+#'
+#' @export
+
 predict_footprints_SE <- function(se,
                                   assayName = "mod_prob",
                                   threshMod = 0.5,
@@ -42,13 +55,12 @@ predict_footprints_SE <- function(se,
                                   footprint_models,
                                   bgprotectprob,
                                   bgcoverprior,
-                                  aggrByGroup = FALSE,
-                                  ftpConfigMethod = c("PV","POFP","Viterbi"),
+                                  aggrByGroup = TRUE,
+                                  ftpConfigMethod = c("PV","Viterbi"),
                                   ncpu = 1L,
                                   verbose = FALSE) {
 
     prob_group = fragpos = posidx_ref = fidx_glob = sidx = fidx_sample = chr = refpos = pos = mod_prob = gpos_idx = ftp_name = ftp_group = readName = sname = NULL # due to NSE notes in R CMD check
-
 
     ftpConfigMethod <- match.arg(ftpConfigMethod);
     ### validate se object and prepare data for nomeR prediction
@@ -111,6 +123,7 @@ predict_footprints_SE <- function(se,
                                                 bgprotectprob,
                                                 start_priors["BG"],
                                                 ftpConfigMethod,
+                                                aggrByGroup,
                                                 ncpu,
                                                 verbose)
 
@@ -252,7 +265,7 @@ predict_footprints_SE <- function(se,
                                               width = ftpLoc[["width"]],
                                               ftp_name = ftpLoc[["ftp_name"]],
                                               ftp_group = ftpLoc[["ftp_group"]],
-                                              start_prob = ftpLoc[["start_prob"]])
+                                              score = ftpLoc[["score"]])
                                irL <- IRangesList(split(irL,ftpLoc[["readName"]]))
                                return(irL)
                            },simplify=F,USE.NAMES = T)
