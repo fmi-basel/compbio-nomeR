@@ -14,141 +14,147 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
                                    const Rcpp::LogicalVector& verbose
 ) {
 
-	//set verbose
-	extern bool _VERBOSE_;
-	_VERBOSE_ = Rcpp::as<bool >(verbose);
+    //set verbose
+    extern bool _VERBOSE_;
+    _VERBOSE_ = Rcpp::as<bool >(verbose);
 
-	//set group aggregation
-	bool aggrByGroup_ = Rcpp::as<bool >(aggrByGroup);
+    //set group aggregation
+    bool aggrByGroup_ = Rcpp::as<bool >(aggrByGroup);
 
-	// choose algorithm for getting footprint configuration
-	string ftpConfigMethod_ = Rcpp::as<string >(ftpConfigMethod);
-	ftpConfigAlgo ftpCnfAlg;
-	if(ftpConfigMethod_ == "POFP")
-		ftpCnfAlg = POFP;
-	else if(ftpConfigMethod_ == "Viterbi")
-		ftpCnfAlg = VITERBI;
-	else if(ftpConfigMethod_ == "PV")
-		ftpCnfAlg = POSTERIORVITERBI;
-	else
-		Rcpp::stop("Only PV, POFP or Viterbi algorithm are currently allowed for footprint decoding\n");
+    // choose algorithm for getting footprint configuration
+    string ftpConfigMethod_ = Rcpp::as<string >(ftpConfigMethod);
+    ftpConfigAlgo ftpCnfAlg;
+    if(ftpConfigMethod_ == "POFP")
+        ftpCnfAlg = POFP;
+    else if(ftpConfigMethod_ == "Viterbi")
+        ftpCnfAlg = VITERBI;
+    else if(ftpConfigMethod_ == "PV")
+        ftpCnfAlg = POSTERIORVITERBI;
+    else
+        Rcpp::stop("Only PV, POFP or Viterbi algorithm are currently allowed for footprint decoding\n");
 
-	int Ncpu_ = Rcpp::as<int >(Ncpu);
+    int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
-	Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have an effect.\n";
+    Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have an effect.\n";
 #endif
 
 
-	// set parameters
-	if(_VERBOSE_){
-		Rcpp::Rcout<<"Setting parameter object..."<<endl;
-	}
-	parameters params(bgprotectprob,
-                   bgprior);
+    // set parameters
+    if(_VERBOSE_){
+        Rcpp::Rcout<<"Setting parameter object..."<<endl;
+    }
+    parameters params(bgprotectprob,
+                      bgprior);
 
 
-	// create object with background/footprint models
-	if(_VERBOSE_){
-		Rcpp::Rcout<<"Creating footprint models..."<<endl;
-	}
-	DNAbind_obj_vector ftp_models(binding_models,
-                               params);
+    // create object with background/footprint models
+    if(_VERBOSE_){
+        Rcpp::Rcout<<"Creating footprint models..."<<endl;
+    }
+    DNAbind_obj_vector ftp_models(binding_models,
+                                  params);
+
+    // print priors
+    // for(int i=0; i < ftp_models.Size(); ++i){
+    //     Rcpp::Rcout<<ftp_models[i]->name<<"  "<<ftp_models[i]->prior<<endl;
+    // }
 
 
-	// create object with SMF data
-	if(_VERBOSE_){
-		Rcpp::Rcout<<"Creating SMF data object..."<<endl;
-	}
-	SMFdataset SMFdata(fragIDs,
-                    fragPos,
-                    protectVec,
-                    ftp_models.maxwmlen);
 
-	if(_VERBOSE_){
-		Rcpp::Rcout<<"Setting object for footprint prediction..."<<endl;
-	}
+    // create object with SMF data
+    if(_VERBOSE_){
+        Rcpp::Rcout<<"Creating SMF data object..."<<endl;
+    }
+    SMFdataset SMFdata(fragIDs,
+                       fragPos,
+                       protectVec,
+                       ftp_models.maxwmlen);
+
+    if(_VERBOSE_){
+        Rcpp::Rcout<<"Setting object for footprint prediction..."<<endl;
+    }
 
 
-	Predict predict;
-	Rcpp::List outList = predict.calcStartCoverProbs(SMFdata,
-                                                  ftp_models,
-                                                  params,
-                                                  ftpCnfAlg,
-                                                  aggrByGroup_,
-                                                  Ncpu_);
-	// clear
-	SMFdata.clear();
-	ftp_models.clear();
+    Predict predict;
+    Rcpp::List outList = predict.calcStartCoverProbs(SMFdata,
+                                                     ftp_models,
+                                                     params,
+                                                     ftpCnfAlg,
+                                                     aggrByGroup_,
+                                                     Ncpu_);
+    // clear
+    SMFdata.clear();
+    ftp_models.clear();
 
-	return outList;
+    return outList;
 }
 
 
 Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
-                                  const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
-                                  const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
-                                  const Rcpp::IntegerVector& maxspacing,
-                                  const Rcpp::NumericVector& Ncpu,
-                                  const Rcpp::LogicalVector& verbose){
+                                           const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
+                                           const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
+                                           const Rcpp::IntegerVector& maxspacing,
+                                           const Rcpp::NumericVector& Ncpu,
+                                           const Rcpp::LogicalVector& verbose){
 
-	//set verbose
-	extern bool _VERBOSE_;
-	_VERBOSE_ = Rcpp::as<bool >(verbose);
+    //set verbose
+    extern bool _VERBOSE_;
+    _VERBOSE_ = Rcpp::as<bool >(verbose);
 
-	int Ncpu_ = Rcpp::as<int >(Ncpu);
+    int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
-	Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have effect.\n";
+    Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have effect.\n";
 #endif
 
 
-	int maxspacing_ = Rcpp::as<int >(maxspacing);
+    int maxspacing_ = Rcpp::as<int >(maxspacing);
 
-	SMFdataset SMFdata(fragIDs,
-                    fragPos,
-                    protectVec,
-                    0);
+    SMFdataset SMFdata(fragIDs,
+                       fragPos,
+                       protectVec,
+                       0);
 
-	vector<vector<uint64_t> > freq_mat = SMFdata.count_freq_for_spacings(maxspacing_,
-                                                                      Ncpu_);
-	Rcpp::NumericMatrix ctable_out(maxspacing_,4);
-	// Set row and column names
-	Rcpp::colnames(ctable_out) = Rcpp::CharacterVector::create("N00", "N01", "N10", "N11");
-	Rcpp::CharacterVector rnames(maxspacing_);
-	for (int i = 0; i < maxspacing_; ++i)
-		rnames[i] = to_string(i + 1);
-	Rcpp::rownames(ctable_out) = rnames;
-	for(size_t s=0; s<freq_mat.size(); ++s){
-		ctable_out(s,0) = freq_mat[s][0];
-		ctable_out(s,1) = freq_mat[s][1];
-		ctable_out(s,2) = freq_mat[s][2];
-		ctable_out(s,3) = freq_mat[s][3];
-	}
+    vector<vector<uint64_t> > freq_mat = SMFdata.count_freq_for_spacings(maxspacing_,
+                                                                         Ncpu_);
+    Rcpp::NumericMatrix ctable_out(maxspacing_,4);
+    // Set row and column names
+    Rcpp::colnames(ctable_out) = Rcpp::CharacterVector::create("N00", "N01", "N10", "N11");
+    Rcpp::CharacterVector rnames(maxspacing_);
+    for (int i = 0; i < maxspacing_; ++i)
+        rnames[i] = to_string(i + 1);
+    Rcpp::rownames(ctable_out) = rnames;
+    for(size_t s=0; s<freq_mat.size(); ++s){
+        ctable_out(s,0) = freq_mat[s][0];
+        ctable_out(s,1) = freq_mat[s][1];
+        ctable_out(s,2) = freq_mat[s][2];
+        ctable_out(s,3) = freq_mat[s][3];
+    }
 
 
-	// //vector<uint64_t > spacings;
-	// vector<uint64_t > freq00;
-	// vector<uint64_t > freq01;
-	// vector<uint64_t > freq10;
-	// vector<uint64_t > freq11;
-	//
-	// for(int s=0; s<freq_mat.size(); ++s){
-	// 	spacings.push_back(s + 1);
-	// 	freq00.push_back(freq_mat[s][0]);
-	// 	freq01.push_back(freq_mat[s][1]);
-	// 	freq10.push_back(freq_mat[s][2]);
-	// 	freq11.push_back(freq_mat[s][3]);
-	// }
-	//
-	// Rcpp::List export_list;
-	//
-	// export_list.push_back(Rcpp::wrap(spacings),"S");
-	// export_list.push_back(Rcpp::wrap(freq00),"N00");
-	// export_list.push_back(Rcpp::wrap(freq01),"N01");
-	// export_list.push_back(Rcpp::wrap(freq10),"N10");
-	// export_list.push_back(Rcpp::wrap(freq11),"N11");
+    // //vector<uint64_t > spacings;
+    // vector<uint64_t > freq00;
+    // vector<uint64_t > freq01;
+    // vector<uint64_t > freq10;
+    // vector<uint64_t > freq11;
+    //
+    // for(int s=0; s<freq_mat.size(); ++s){
+    // 	spacings.push_back(s + 1);
+    // 	freq00.push_back(freq_mat[s][0]);
+    // 	freq01.push_back(freq_mat[s][1]);
+    // 	freq10.push_back(freq_mat[s][2]);
+    // 	freq11.push_back(freq_mat[s][3]);
+    // }
+    //
+    // Rcpp::List export_list;
+    //
+    // export_list.push_back(Rcpp::wrap(spacings),"S");
+    // export_list.push_back(Rcpp::wrap(freq00),"N00");
+    // export_list.push_back(Rcpp::wrap(freq01),"N01");
+    // export_list.push_back(Rcpp::wrap(freq10),"N10");
+    // export_list.push_back(Rcpp::wrap(freq11),"N11");
 
-	SMFdata.clear();
-	return ctable_out;
+    SMFdata.clear();
+    return ctable_out;
 
 }
 
@@ -158,46 +164,46 @@ Rcpp::List calculate_theor_joint_prob_cpp(const Rcpp::NumericVector& ftp_cover_p
                                           const Rcpp::NumericVector& footprint_protect_prob,
                                           const Rcpp::IntegerVector& max_spacing){
 
-	vector<double > ftp_cover_priors_ = Rcpp::as<vector<double > >(ftp_cover_priors);
-	double bg_protect_prob_ = Rcpp::as<double >(bg_protect_prob);
-	double footprint_protect_prob_ = Rcpp::as<double >(footprint_protect_prob);
-	int max_spacing_ = Rcpp::as<int >(max_spacing);
+    vector<double > ftp_cover_priors_ = Rcpp::as<vector<double > >(ftp_cover_priors);
+    double bg_protect_prob_ = Rcpp::as<double >(bg_protect_prob);
+    double footprint_protect_prob_ = Rcpp::as<double >(footprint_protect_prob);
+    int max_spacing_ = Rcpp::as<int >(max_spacing);
 
 
-	DNAbind_obj_vector ftp_array;
-	vector<vector<double > > p_joint = ftp_array.calc_theor_joint_prob(ftp_cover_priors_,
-                                                                    bg_protect_prob_,
-                                                                    footprint_protect_prob_,
-                                                                    max_spacing_);
+    DNAbind_obj_vector ftp_array;
+    vector<vector<double > > p_joint = ftp_array.calc_theor_joint_prob(ftp_cover_priors_,
+                                                                       bg_protect_prob_,
+                                                                       footprint_protect_prob_,
+                                                                       max_spacing_);
 
-	// create Rcpp object
+    // create Rcpp object
 
-	vector<int > spacings;
-	vector<double > p00;
-	vector<double > p01;
-	vector<double > p10;
-	vector<double > p11;
-
-
-	for(size_t i = 0; i < p_joint.size(); ++i){
-		//Rcpp::Rcout<<"S="<<p_joint[i][0]<<"; "<<p_joint[i][1]<<"; "<<p_joint[i][2]<<"; "<<p_joint[i][3]<<"; "<<p_joint[i][4]<<endl;
-		spacings.push_back(p_joint[i][0]);
-		p00.push_back(p_joint[i][1]);
-		p01.push_back(p_joint[i][2]);
-		p10.push_back(p_joint[i][3]);
-		p11.push_back(p_joint[i][4]);
-	}
-
-	Rcpp::List export_list;
-	export_list.push_back(Rcpp::wrap(spacings),"S");
-	export_list.push_back(Rcpp::wrap(p00),"P00");
-	export_list.push_back(Rcpp::wrap(p01),"P01");
-	export_list.push_back(Rcpp::wrap(p10),"P10");
-	export_list.push_back(Rcpp::wrap(p11),"P11");
+    vector<int > spacings;
+    vector<double > p00;
+    vector<double > p01;
+    vector<double > p10;
+    vector<double > p11;
 
 
-	ftp_array.clear();
-	return export_list;
+    for(size_t i = 0; i < p_joint.size(); ++i){
+        //Rcpp::Rcout<<"S="<<p_joint[i][0]<<"; "<<p_joint[i][1]<<"; "<<p_joint[i][2]<<"; "<<p_joint[i][3]<<"; "<<p_joint[i][4]<<endl;
+        spacings.push_back(p_joint[i][0]);
+        p00.push_back(p_joint[i][1]);
+        p01.push_back(p_joint[i][2]);
+        p10.push_back(p_joint[i][3]);
+        p11.push_back(p_joint[i][4]);
+    }
+
+    Rcpp::List export_list;
+    export_list.push_back(Rcpp::wrap(spacings),"S");
+    export_list.push_back(Rcpp::wrap(p00),"P00");
+    export_list.push_back(Rcpp::wrap(p01),"P01");
+    export_list.push_back(Rcpp::wrap(p10),"P10");
+    export_list.push_back(Rcpp::wrap(p11),"P11");
+
+
+    ftp_array.clear();
+    return export_list;
 }
 
 

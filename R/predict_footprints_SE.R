@@ -85,6 +85,8 @@ predict_footprints_SE <- function(se,
     footprint_models <- ftpvalout[["footprint_models"]]
     start_priors <- ftpvalout[["start_priors"]]
 
+
+
     ### validate ncpu
     assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
     avail_ncpu <- parallel::detectCores()
@@ -126,6 +128,7 @@ predict_footprints_SE <- function(se,
                                                 aggrByGroup,
                                                 ncpu,
                                                 verbose)
+
 
 
 
@@ -197,12 +200,12 @@ predict_footprints_SE <- function(se,
         assayList <- lapply(1:nrow(assayAnno),
                             function(assayI){
                                 assayMat <- make_zero_col_DFrame(nrow = length(seOutRowRanges))
+                                curProbName <- assayAnno$probName[assayI]
+                                curFtpName <- assayAnno$ftpName[assayI]
                                 for(sI in 1:ncol(se)){
-                                    curAssayName <- assayAnno$probName[assayI]
-                                    curFtpName <- assayAnno$ftpName[assayI]
 
                                     ## get required data
-                                    curDat <- predict_res[[curAssayName]][,
+                                    curDat <- predict_res[[curProbName]][,
                                                                           .SD,
                                                                           .SDcols = c("fidx_glob","sidx","gpos_idx",curFtpName)][
                                                                               sidx == sI & !is.na(get(curFtpName))]
@@ -218,7 +221,7 @@ predict_footprints_SE <- function(se,
 
                                     ## add data
                                     namat[as.matrix(curDat[,list(gpos_idx,curFragIdx)])] <- curDat[[curFtpName]]
-                                    assayMat[[curAssayName]] <- namat
+                                    assayMat[[sI]] <- namat
                                 }
                                 colnames(assayMat) <- colnames(se)
                                 return(assayMat)

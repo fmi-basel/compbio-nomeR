@@ -589,6 +589,23 @@ Rcpp::List RcppListStartOut; // this is a list of vectors
 // 1st element: Rcpp::IntegerVector with fragment IDs as was passed from the R side
 // 2nd element: Rcpp::IntegerVector with positions within fragments
 // 3rd, 4th and so on: Rcpp::NumericVector with starting probabilities for ftp1, ftp2 and so on
+
+// 0. set how many columns base on aggrByGroup
+int nElems = 0;
+vector<string > elemNames;
+if(aggrByGroup){
+    nElems = nFtpGroups;
+    elemNames = ftpModels.groups;
+}
+else{
+    nElems = nFtpModels;
+    for(int iftp=0; iftp < nFtpModels; ++iftp){
+        elemNames.push_back(ftpModels[iftp]->name);
+    }
+
+}
+
+
 // 1. Compute total length
 size_t start_total_size = 0;
 for (const auto& v : startOutFragIDs)
@@ -609,16 +626,16 @@ for (const auto& v : startOutFragPos) {
 }
 RcppListStartOut.push_back(RcppStartOutFragPos,"pos");
 
-// add flattened start probabilities for each footprint group
-for(int igroup = 0; igroup < nFtpGroups; ++igroup){
+// add flattened start probabilities for each footprint name/group (depend on aggrByGroup bool)
+for(int iElem = 0; iElem < nElems; ++iElem){
     Rcpp::NumericVector ftpStartProbs(start_total_size,NA_REAL);
-    RcppListStartOut.push_back(ftpStartProbs,ftpModels.groups[igroup]);
+    RcppListStartOut.push_back(ftpStartProbs,elemNames[iElem]);
 }
 offset = 0;
 for(int seq = 0; seq < startOutProbs.size(); ++seq){
-    for(int igroup = 0; igroup < nFtpGroups; ++igroup){
-        Rcpp::NumericVector ftpProbVec = RcppListStartOut[igroup + 2]; // 0 - fragID, 1 - fragPos, 2 - ftpGroup1, 3 - ftpGroup2 etc.
-        std::copy(startOutProbs[seq][igroup].begin(), startOutProbs[seq][igroup].end(), ftpProbVec.begin() + offset);
+    for(int iElem = 0; iElem < nElems; ++iElem){
+        Rcpp::NumericVector ftpProbVec = RcppListStartOut[iElem + 2]; // 0 - fragID, 1 - fragPos, 2 - ftp1, 3 - ftp2 etc.
+        std::copy(startOutProbs[seq][iElem].begin(), startOutProbs[seq][iElem].end(), ftpProbVec.begin() + offset);
     }
     offset += startOutProbs[seq][0].size();
 }
@@ -651,16 +668,16 @@ for (const auto& v : coverOutFragPos) {
 RcppListCoverOut.push_back(RcppCoverOutFragPos,"pos");
 
 // add flattened cover probabilities for each footprint group
-for(int igroup = 0; igroup < nFtpGroups; ++igroup){
+for(int iElem = 0; iElem < nElems; ++iElem){
     Rcpp::NumericVector ftpCoverProbs(cover_total_size,NA_REAL);
-    RcppListCoverOut.push_back(ftpCoverProbs,ftpModels.groups[igroup]);
+    RcppListCoverOut.push_back(ftpCoverProbs,elemNames[iElem]);
 }
 
 offset = 0;
 for(int seq = 0; seq < coverOutProbs.size(); ++seq){
-    for(int igroup = 0; igroup < nFtpGroups; ++igroup){
-        Rcpp::NumericVector ftpProbVec = RcppListCoverOut[igroup + 2]; // 0 - fragID, 1 - fragPos, 2 - ftp1, 3 - ftp2 etc.
-        std::copy(coverOutProbs[seq][igroup].begin(), coverOutProbs[seq][igroup].end(), ftpProbVec.begin() + offset);
+    for(int iElem = 0; iElem < nElems; ++iElem){
+        Rcpp::NumericVector ftpProbVec = RcppListCoverOut[iElem + 2]; // 0 - fragID, 1 - fragPos, 2 - ftp1, 3 - ftp2 etc.
+        std::copy(coverOutProbs[seq][iElem].begin(), coverOutProbs[seq][iElem].end(), ftpProbVec.begin() + offset);
     }
     offset += coverOutProbs[seq][0].size();
 }
