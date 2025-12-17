@@ -69,44 +69,24 @@ get_ftp_models_for_prediction <- function(infer_summary) {
                 "\"bg_protect_prob_fixed\" which was used for inference as ",
                 "parameter bgprotectprob in predict_footprints.")
     }
-    ftp_suggest <- infer_summary[["FTP_SUGGEST"]]
 
-    ftp_lengths <- sapply(row.names(ftp_suggest),
-                          function(ridx) {
-                              seq(from = ftp_suggest[ridx, 1],
-                                  to = ftp_suggest[ridx, 2],
-                                  by = 1)
-                          }, simplify = FALSE, USE.NAMES = TRUE)
-    ## select required footprints
-    req_infer_ftp_lengths <-
-        infer_ftp_abund_probs[infer_ftp_abund_probs[, "ftp_length"] %in%
-                                  c(1, unlist(ftp_lengths)), ]
-    req_infer_ftp_lengths[,"mean"] <- req_infer_ftp_lengths[, "mean"] /
-        sum(req_infer_ftp_lengths[, "mean"])
 
-    ## create models
-    ftp_models <- do.call(
-        c,
-        lapply(
-            names(ftp_lengths),
-            function(nm) {
-                lapply(
-                    ftp_lengths[[nm]],
-                    function(flen) {
-                        list("PROTECT_PROB" = rep(ftp_protect_prob,flen),
-                             "COVER_PRIOR" =
-                                 req_infer_ftp_lengths[
-                                     req_infer_ftp_lengths[, "ftp_length"] ==
-                                         flen,
-                                     "mean"],
-                             "NAME" = paste0(nm, "--", flen))
-                    })
-            }))
+    bg_cover <- infer_ftp_abund_probs[infer_ftp_abund_probs[, "ftp_length"] == 1,
+                                      "mean"]
+    ftp_spectrum <- infer_ftp_abund_probs[infer_ftp_abund_probs[, "ftp_length"] > 1,
+                                          c("ftp_length","mean"),
+                                          drop=F]
+
+    ## get ftp models
+    ftp_models <- get_ftp_PWMs_for_prediction(ftp_spectrum = ftp_spectrum,
+                                              ftp_len_mat = infer_summary[["FTP_SUGGEST"]],
+                                              bg_cover = bg_cover,
+                                              ftp_protect_prob = ftp_protect_prob)
+
+
 
     return(list(
         "FTP_MODELS" = ftp_models,
         "bgprotectprob" = bg_protect_prob,
-        "bgcoverprior" =
-            req_infer_ftp_lengths[req_infer_ftp_lengths[, "ftp_length"] == 1,
-                                  "mean"]))
+        "bgcoverprior" = bg_cover))
 }

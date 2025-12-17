@@ -34,8 +34,8 @@
 
 get_ctable_from_SE <- function(se,
                                assayName = "mod_prob",
-                               threshUnmod = 0.5,
                                threshMod = 0.5,
+                               threshUnmod = threshMod,
                                min_frag_data_len = 50L,
                                min_frag_data_dens = 0.05,
                                max_spacing = 200L,

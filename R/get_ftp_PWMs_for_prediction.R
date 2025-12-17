@@ -73,37 +73,18 @@ get_ftp_PWMs_for_prediction <- function(ftp_spectrum,
                                          ftp_len_mat[, 2])
     }
 
-    ftp_lengths <- sapply(row.names(ftp_len_mat),
-                          function(ridx) {
-                              seq(from = ftp_len_mat[ridx, 1],
-                                  to = ftp_len_mat[ridx, 2],
-                                  by = ftp_len_mat[ridx, 3])
-                          }, simplify = FALSE, USE.NAMES = TRUE)
-    ftp_cov <- sapply(row.names(ftp_len_mat),
-                      function(ridx) {
-                          selspc <- ftp_spectrum %>%
-                              filter(ftp_length >= ftp_len_mat[ridx, 1] &
-                                         ftp_length <= ftp_len_mat[ridx, 2])
-                          sum(selspc$mean)
-                      }, simplify = TRUE, USE.NAMES = TRUE)
-    ftp_cov <- ftp_cov/sum(ftp_cov) * (1 - bg_cover)
-
+    ftp_anno <- .get_ftp_annotation(ftp_len_mat,
+                                    ftp_spectrum,
+                                    bg_cover)
 
     ## create models
-    ftp_models <- do.call(
-        c,
-        lapply(
-            names(ftp_lengths),
-            function(nm) {
-                cov_prior <- ftp_cov[nm]/length(ftp_lengths[[nm]])
-                lapply(
-                    ftp_lengths[[nm]],
-                    function(flen) {
-                        list("PROTECT_PROB" = rep(ftp_protect_prob,flen),
-                             "COVER_PRIOR" = cov_prior,
-                             "NAME" = paste0(nm, "--", flen),
-                             "GROUP" = nm)
-                    })
-            }))
+    ftp_models <- lapply(1:nrow(ftp_anno),
+                         function(i){
+                             list("PROTECT_PROB" = rep(ftp_protect_prob,ftp_anno$ftp_length[i]),
+                                  "COVER_PRIOR" = ftp_anno$ftp_cover[i],
+                                  "NAME" = ftp_anno$ftp_name[i],
+                                  "GROUP" = ftp_anno$ftp_group[i])
+
+                         })
     return(ftp_models)
 }

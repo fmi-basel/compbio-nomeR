@@ -529,8 +529,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
             //
             switch(ftpCnfAlg) {
             case VITERBI:{
-                if(_VERBOSE_)
-                    Rcpp::Rcout<<"Footprint decoding using Viterbi algorithm..."<<endl;
+
                 getViterbiMAPftpConf(ftpModelsScores,
                                      Prob,
                                      ftpModels,
@@ -544,8 +543,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                 break;
             }
             case POSTERIORVITERBI:{
-                if(_VERBOSE_)
-                    Rcpp::Rcout<<"Footprint decoding using Posterior-Viterbi algorithm..."<<endl;
+
                 getPosteriorViterbiFtpConf(coverProb,
                                            ftpModels,
                                            smfData[seq],
