@@ -87,14 +87,14 @@ validate_prepare_SE <- function(se,
                    read_naar <- mod_prob_assays[[sidx]]
                    ## get M-indices of non-NAs
                    nonNA_data <- nnawhich(read_naar, arr.ind = TRUE)
-                   colnames(nonNA_data) <- c("posidx_ref","fidx_sample")
+                   colnames(nonNA_data) <- c("posidx_ref", "fidx_sample")
                    ## convert to data.table
                    nonNA_data <- as.data.table(nonNA_data)
                    ## first column - positions (rows), second column - reads(columns)
                    
                    ## add modprob
                    nonNA_data <- 
-                       nonNA_data[,"mod_prob" := read_naar[as.matrix(nonNA_data)]]
+                       nonNA_data[, "mod_prob" := read_naar[as.matrix(nonNA_data)]]
                    
                    ## convert to binary protection
                    nonNA_data <- nonNA_data[, protect := ifelse(
@@ -162,7 +162,7 @@ validate_prepare_SE <- function(se,
     ## reorder columns
     setcolorder(bin_protect_data, 
                 c("sidx", "fidx_glob", "fidx_sample", "posidx_ref",
-                  "refpos", "fragpos", "mod_prob","protect"))
+                  "refpos", "fragpos", "mod_prob", "protect"))
     
     ## filter fragments by min_frag_data_len and min_frag_data_dens
     fragAnno <- fragAnno[,"keep" := !is.na(data_len) & 

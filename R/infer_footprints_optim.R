@@ -7,10 +7,9 @@
 #' WARNING: Although finding an optimum of the posterior distribution is fast,
 #' due to highly non-symmetrical shapes of the distribution,
 #' the returned point estimates are often far from means of the distribution.
-#' Therefore, unless very strong and symetrical prior distribution is used, the footprint
+#' Therefore, unless very strong and symmetrical prior distribution is used, 
+#' the footprint
 #' spectral analysis using \code{rstan::optimizing} is unreliable.
-#'
-#'
 #'
 #' @inheritParams infer_footprints_vb
 #'
@@ -117,7 +116,7 @@ infer_footprints_optim <- function(
         init = stan_initvals[[1]],
         ...)
 
-    attr(stanfit_out,"ftp_lengths") <- ftp_lengths
+    attr(stanfit_out, "ftp_lengths") <- ftp_lengths
 
     return(stanfit_out)
 }

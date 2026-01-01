@@ -74,16 +74,15 @@ get_ftp_models_for_prediction <- function(infer_summary) {
     bg_cover <- infer_ftp_abund_probs[infer_ftp_abund_probs[, "ftp_length"] == 1,
                                       "mean"]
     ftp_spectrum <- infer_ftp_abund_probs[infer_ftp_abund_probs[, "ftp_length"] > 1,
-                                          c("ftp_length","mean"),
-                                          drop=F]
+                                          c("ftp_length", "mean"),
+                                          drop = FALSE]
 
     ## get ftp models
-    ftp_models <- get_ftp_PWMs_for_prediction(ftp_spectrum = ftp_spectrum,
-                                              ftp_len_mat = infer_summary[["FTP_SUGGEST"]],
-                                              bg_cover = bg_cover,
-                                              ftp_protect_prob = ftp_protect_prob)
-
-
+    ftp_models <- get_ftp_PWMs_for_prediction(
+        ftp_spectrum = ftp_spectrum,
+        ftp_len_mat = infer_summary[["FTP_SUGGEST"]],
+        bg_cover = bg_cover,
+        ftp_protect_prob = ftp_protect_prob)
 
     return(list(
         "FTP_MODELS" = ftp_models,

@@ -6,35 +6,67 @@
 #' in single-molecule footprinting (SMF) datasets.
 #'
 #' @param data A \code{matrix} or \code{list} containing binarized SMF data.
-#'   - If a \code{matrix}, rows correspond to reads (or fragments) and columns correspond to positions in the region of interest (ROI).
+#'   - If a \code{matrix}, rows correspond to reads (or fragments) and columns
+#'   correspond to positions in the region of interest (ROI).
 #'   - If a \code{list}, each element must be a vector containing SMF data.
-#'   Data must be binarized: '0' represents accessible (methylated) positions, '1' represents protected (unmethylated) positions, and all other positions should be \code{NA}.
-#' @param footprint_models A list of footprint models for proteins. Each element must contain:
+#'   Data must be binarized: '0' represents accessible (methylated) positions, 
+#'   '1' represents protected (unmethylated) positions, and all other positions 
+#'   should be \code{NA}.
+#' @param footprint_models A list of footprint models for proteins. Each element 
+#'   must contain:
 #'   \describe{
-#'     \item{PROTECT_PROB}{Numeric vector of footprint emission probabilities for protected positions within a footprint.}
-#'     \item{COVER_PRIOR}{Numeric prior probability reflecting the expected fraction of reads covered by the footprint.}
-#'     \item{NAME}{Unique name of the model (character), e.g., "Nucleosome--149", "Nucleosome--150".}
-#'     \item{GROUP}{Optional non-unique group name (character) used for aggregating probabilities if \code{aggrByGroup = TRUE}. For example, footprints with names "Nucleosome--149" and "Nucleosome--150" may share the GROUP "Nucleosome".}
+#'     \item{PROTECT_PROB}{Numeric vector of footprint emission probabilities 
+#'     for protected positions within a footprint.}
+#'     \item{COVER_PRIOR}{Numeric prior probability reflecting the expected 
+#'     fraction of reads covered by the footprint.}
+#'     \item{NAME}{Unique name of the model (character), e.g., 
+#'     "Nucleosome--149", "Nucleosome--150".}
+#'     \item{GROUP}{Optional non-unique group name (character) used for 
+#'     aggregating probabilities if \code{aggrByGroup = TRUE}. For example, 
+#'     footprints with names "Nucleosome--149" and "Nucleosome--150" may share 
+#'     the GROUP "Nucleosome".}
 #'   }
-#' @param bgprotectprob Background emission probability of a protected position in open (accessible) regions.
-#' @param bgcoverprior Prior probability of a position being in the free (accessible/background) state.
-#' @param aggrByGroup Logical. If \code{TRUE}, probabilities are aggregated by the \code{GROUP} ID in \code{footprint_models}. If \code{FALSE}, or if GROUP IDs are missing, probabilities are reported for each individual footprint \code{NAME}.
+#' @param bgprotectprob Background emission probability of a protected position 
+#'   in open (accessible) regions.
+#' @param bgcoverprior Prior probability of a position being in the free 
+#'   (accessible/background) state.
+#' @param aggrByGroup Logical. If \code{TRUE}, probabilities are aggregated by 
+#'   the \code{GROUP} ID in \code{footprint_models}. If \code{FALSE}, or if 
+#'   GROUP IDs are missing, probabilities are reported for each individual 
+#'   footprint \code{NAME}.
 #' @param ftpConfigMethod Algorithm for decoding footprint configurations:
 #'   \describe{
-#'     \item{\code{PV}}{Posterior-Viterbi (default): uses footprint coverage posteriors and a Viterbi-like algorithm to find a valid footprint configuration maximizing posterior coverage probability (see Fariselli et al, 2005). The \code{score} for each footprint is the geometric mean of posterior coverages across all positions covered by the footprint.}
-#'     \item{\code{Viterbi}}{Classic Viterbi algorithm to find the most probable footprint configuration. The \code{score} corresponds to the posterior start probability for each reported footprint.}
+#'     \item{\code{PV}}{Posterior-Viterbi (default): uses footprint coverage 
+#'     posteriors and a Viterbi-like algorithm to find a valid footprint 
+#'     configuration maximizing posterior coverage probability (see Fariselli 
+#'     et al, 2005). The \code{score} for each footprint is the geometric mean 
+#'     of posterior coverages across all positions covered by the footprint.}
+#'     \item{\code{Viterbi}}{Classic Viterbi algorithm to find the most probable
+#'     footprint configuration. The \code{score} corresponds to the posterior 
+#'     start probability for each reported footprint.}
 #'   }
 #' @param ncpu Number of threads to use.
 #' @param verbose Logical. If \code{TRUE}, enables verbose output for debugging.
 #'
 #' @return A list containing three data frames:
 #'   \describe{
-#'     \item{\code{START_PROB}}{Contains start probabilities for each SMF molecule (\code{seq}), each position in ROI (\code{pos}), and each footprint model. These probabilities indicate how likely a footprint starts at each position in a fragment.}
-#'     \item{\code{COVER_PROB}}{Contains coverage probabilities for each SMF molecule (\code{seq}), each position in ROI (\code{pos}), and each footprint model. These probabilities indicate how likely a position is covered by a given footprint.}
-#'     \item{\code{FOOTPRINT_CONF}}{Contains footprint configurations predicted for each molecule by the selected \code{ftpConfigMethod}. Each row reports the SMF molecule (\code{seq}), start position (\code{start}), width (\code{width}), footprint name (\code{ftp_name}), group (\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}
+#'     \item{\code{START_PROB}}{Contains start probabilities for each SMF 
+#'     molecule (\code{seq}), each position in ROI (\code{pos}), and each 
+#'     footprint model. These probabilities indicate how likely a footprint 
+#'     starts at each position in a fragment.}
+#'     \item{\code{COVER_PROB}}{Contains coverage probabilities for each SMF 
+#'     molecule (\code{seq}), each position in ROI (\code{pos}), and each 
+#'     footprint model. These probabilities indicate how likely a position is 
+#'     covered by a given footprint.}
+#'     \item{\code{FOOTPRINT_CONF}}{Contains footprint configurations predicted 
+#'     for each molecule by the selected \code{ftpConfigMethod}. Each row 
+#'     reports the SMF molecule (\code{seq}), start position (\code{start}), 
+#'     width (\code{width}), footprint name (\code{ftp_name}), group 
+#'     (\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}
 #'   }
 #'
-#' @importFrom checkmate makeAssertCollection assert_logical assert_int reportAssertions
+#' @importFrom checkmate makeAssertCollection assert_logical assert_int
+#'     reportAssertions
 #' @importFrom parallel detectCores
 #'
 #' @references
@@ -43,7 +75,7 @@
 #' BMC Bioinformatics, 6(S4), S12. https://doi.org/10.1186/1471-2105-6-S4-S12
 #'
 #' @export
-
+#' 
 #' @examples
 #' set.seed(3346)
 #' nc <- 50
@@ -66,20 +98,19 @@
 #'                                 bgprotectprob = 0.05,
 #'                                 bgcoverprior = bg.pr)
 #'
-#'
-
 predict_footprints <- function(data,
                                footprint_models,
                                bgprotectprob,
                                bgcoverprior,
                                aggrByGroup = TRUE,
-                               ftpConfigMethod = c("PV","Viterbi"),
+                               ftpConfigMethod = c("PV", "Viterbi"),
                                ncpu = 1L,
                                verbose = FALSE) {
 
     ## check arguments
     coll <- makeAssertCollection()
-    ### validate data. The output is a list("nonNA_data" = nonNA_data,"fragnames" = fragnames)
+    ### validate data. The output is a list 
+    ### ("nonNA_data" = nonNA_data,"fragnames" = fragnames)
     data <- validate_prepare_listOrMat(data)
 
     ftpConfigMethod <- match.arg(ftpConfigMethod)
@@ -114,16 +145,17 @@ predict_footprints <- function(data,
         .message_timestamp("Calling run_cpp_nomeR...")
     }
     ## the C++ needs only fidx_glob, fragpos, protect
-    predict_res_list <- calcStartCoverProbs_cpp(data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
-                                                data[["nonNA_data"]][,"fragpos"],      ## position within fragment, 1 - based
-                                                data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
-                                                footprint_models,
-                                                bgprotectprob,
-                                                start_priors["BG"],
-                                                ftpConfigMethod,
-                                                aggrByGroup,
-                                                ncpu,
-                                                verbose)
+    predict_res_list <- calcStartCoverProbs_cpp(
+        data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
+        data[["nonNA_data"]][,"fragpos"],   ## position within fragment, 1 - based
+        data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
+        footprint_models,
+        bgprotectprob,
+        start_priors["BG"],
+        ftpConfigMethod,
+        aggrByGroup,
+        ncpu,
+        verbose)
 
     if (all(c(!is.null(predict_res_list[["START_PROB"]]),
               !is.null(predict_res_list[["COVER_PROB"]]),

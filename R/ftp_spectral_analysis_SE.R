@@ -23,12 +23,12 @@
 #' Each row corresponds to a sample in the input \code{SummarizedExperiment}.
 #'
 #' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData
-#'   colData<-
+#'     colData<-
 #' @importFrom SparseArray NaArray
 #' @importFrom GenomicRanges GPos match seqnames start end strand seqinfo
 #' @importFrom IRanges subsetByOverlaps IRanges IRangesList
 #' @importFrom S4Vectors DataFrame SimpleList metadata metadata<-
-#'   make_zero_col_DFrame
+#'     make_zero_col_DFrame
 #' @import data.table
 #'
 #' @export

@@ -17,16 +17,20 @@ calculate_BG_TF_scores_SE(
 containing read-level data returned by
 \code{footprintR::readModBam}, including modification probabilities.}
 
-\item{bgAssayNames}{vector of assay names that contain predicted coverage probabilities for background (accessible state)}
+\item{bgAssayNames}{vector of assay names that contain predicted coverage
+probabilities for background (accessible state)}
 
-\item{tfAssayNames}{vector of assay names that contain predicted coverage probabilities for transcription factors}
+\item{tfAssayNames}{vector of assay names that contain predicted coverage
+probabilities for transcription factors}
 
-\item{nuclAssayNames}{vector of assay names that contain predicted coverage probabilities for nucleosomes}
+\item{nuclAssayNames}{vector of assay names that contain predicted coverage
+probabilities for nucleosomes}
 
 \item{psc}{pseudo-count to avoid log(0)}
 }
 \value{
-\code{SummarizeExperiment} object with BG and TF scores stored as assays
+\code{SummarizeExperiment} object with BG and TF scores stored
+as assays
 }
 \description{
 Perform log-ratio transformations to predicted posterior coverages

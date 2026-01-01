@@ -38,7 +38,8 @@ All elements must be in \code{[0, 1]}. Together with \code{bg_prior_cover},
 they will be scaled to sum to 1 if necessary (with a warning).}
 
 \item{bg_prior_cover}{Numeric value in \code{[0, 1]} specifying the
-expected (prior) fraction of background (unprotected) positions. Used together with
+expected (prior) fraction of background (unprotected) positions. Used
+together with
 \code{ftp_prior_cover} to parameterize the prior Dirichlet distribution.}
 
 \item{total_cnt_prior_dirich}{Numeric value giving the total count parameter
@@ -106,7 +107,8 @@ abundances by maximizing the joint posterior defined by the model.
 WARNING: Although finding an optimum of the posterior distribution is fast,
 due to highly non-symmetrical shapes of the distribution,
 the returned point estimates are often far from means of the distribution.
-Therefore, unless very strong and symetrical prior distribution is used, the footprint
+Therefore, unless very strong and symmetrical prior distribution is used,
+the footprint
 spectral analysis using \code{rstan::optimizing} is unreliable.
 }
 \examples{

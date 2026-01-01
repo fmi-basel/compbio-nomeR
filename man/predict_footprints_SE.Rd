@@ -41,24 +41,42 @@ leftmost to rightmost non-\code{NA} data point) is shorter than
 \item{min_frag_data_dens}{Ignore fragments with a density of informative
 (non-\code{NA}) positions below \code{min_frag_data_dens}.}
 
-\item{footprint_models}{A list of footprint models for proteins. Each element must contain:
+\item{footprint_models}{A list of footprint models for proteins. Each element
+must contain:
 \describe{
-\item{PROTECT_PROB}{Numeric vector of footprint emission probabilities for protected positions within a footprint.}
-\item{COVER_PRIOR}{Numeric prior probability reflecting the expected fraction of reads covered by the footprint.}
-\item{NAME}{Unique name of the model (character), e.g., "Nucleosome--149", "Nucleosome--150".}
-\item{GROUP}{Optional non-unique group name (character) used for aggregating probabilities if \code{aggrByGroup = TRUE}. For example, footprints with names "Nucleosome--149" and "Nucleosome--150" may share the GROUP "Nucleosome".}
+\item{PROTECT_PROB}{Numeric vector of footprint emission probabilities
+for protected positions within a footprint.}
+\item{COVER_PRIOR}{Numeric prior probability reflecting the expected
+fraction of reads covered by the footprint.}
+\item{NAME}{Unique name of the model (character), e.g.,
+"Nucleosome--149", "Nucleosome--150".}
+\item{GROUP}{Optional non-unique group name (character) used for
+aggregating probabilities if \code{aggrByGroup = TRUE}. For example,
+footprints with names "Nucleosome--149" and "Nucleosome--150" may share
+the GROUP "Nucleosome".}
 }}
 
-\item{bgprotectprob}{Background emission probability of a protected position in open (accessible) regions.}
+\item{bgprotectprob}{Background emission probability of a protected position
+in open (accessible) regions.}
 
-\item{bgcoverprior}{Prior probability of a position being in the free (accessible/background) state.}
+\item{bgcoverprior}{Prior probability of a position being in the free
+(accessible/background) state.}
 
-\item{aggrByGroup}{Logical. If \code{TRUE}, probabilities are aggregated by the \code{GROUP} ID in \code{footprint_models}. If \code{FALSE}, or if GROUP IDs are missing, probabilities are reported for each individual footprint \code{NAME}.}
+\item{aggrByGroup}{Logical. If \code{TRUE}, probabilities are aggregated by
+the \code{GROUP} ID in \code{footprint_models}. If \code{FALSE}, or if
+GROUP IDs are missing, probabilities are reported for each individual
+footprint \code{NAME}.}
 
 \item{ftpConfigMethod}{Algorithm for decoding footprint configurations:
 \describe{
-\item{\code{PV}}{Posterior-Viterbi (default): uses footprint coverage posteriors and a Viterbi-like algorithm to find a valid footprint configuration maximizing posterior coverage probability (see Fariselli et al, 2005). The \code{score} for each footprint is the geometric mean of posterior coverages across all positions covered by the footprint.}
-\item{\code{Viterbi}}{Classic Viterbi algorithm to find the most probable footprint configuration. The \code{score} corresponds to the posterior start probability for each reported footprint.}
+\item{\code{PV}}{Posterior-Viterbi (default): uses footprint coverage
+posteriors and a Viterbi-like algorithm to find a valid footprint
+configuration maximizing posterior coverage probability (see Fariselli
+et al, 2005). The \code{score} for each footprint is the geometric mean
+of posterior coverages across all positions covered by the footprint.}
+\item{\code{Viterbi}}{Classic Viterbi algorithm to find the most probable
+footprint configuration. The \code{score} corresponds to the posterior
+start probability for each reported footprint.}
 }}
 
 \item{ncpu}{Number of threads to use.}
@@ -71,8 +89,8 @@ A \code{SummarizedExperiment} object containing:
 \item the original \code{mod_prob} assay,
 \item additional assays with calculated posterior start and coverage
 probabilities (e.g. "Nucl_coverProb_nomeR"), and
-\item predicted footprint configurations stored as \code{IntegerList} objects
-in \code{colData} (e.g. column "Nucl_nomeR").
+\item predicted footprint configurations stored as \code{IntegerList}
+objects in \code{colData} (e.g. column "Nucl_nomeR").
 }
 }
 \description{

@@ -15,26 +15,22 @@
 #'   \code{nomeR::count_joint_frequencies()},
 #'   \code{fetchNOMe::get_cooccurrence_ctable_from_bams()} or
 #'   \code{footprintR::countStatePairs}.
-#'
 #' @param ftp_lengths Numeric vector of footprint lengths for which abundances
 #'   should be inferred. Length 1 is reserved for background and must not be
 #'   included.
-#'
 #' @param ftp_prior_cover Numeric vector of expected (prior) coverages for the
 #'   footprint lengths in \code{ftp_lengths}. These values define the prior
 #'   mean of the Dirichlet distribution over footprint/background abundances.
 #'   All elements must be in \code{[0, 1]}. Together with \code{bg_prior_cover},
 #'   they will be scaled to sum to 1 if necessary (with a warning).
-#'
 #' @param bg_prior_cover Numeric value in \code{[0, 1]} specifying the
-#'   expected (prior) fraction of background (unprotected) positions. Used together with
+#'   expected (prior) fraction of background (unprotected) positions. Used 
+#'   together with
 #'   \code{ftp_prior_cover} to parameterize the prior Dirichlet distribution.
-#'
 #' @param total_cnt_prior_dirich Numeric value giving the total count parameter
 #'   of the prior Dirichlet distribution. Higher values impose stronger prior
 #'   concentration around the mean (i.e., stronger prior beliefs), while lower
 #'   values yield a more diffuse prior.
-#'
 #' @param ftp_bg_model Character string specifying the modeling strategy:
 #'   \describe{
 #'     \item{\code{"informative_prior"}}{
@@ -51,7 +47,6 @@
 #'       Only footprint abundances are inferred.
 #'     }
 #'   }
-#'
 #' @param bg_model_params A list of background model parameters:
 #'   \describe{
 #'     \item{bg_protect_prob_fixed}{Fixed value for \code{bg_protect_prob} used in
@@ -63,7 +58,6 @@
 #'     \item{bg_protect_totcount}{Total count parameter of the prior Beta
 #'       distribution (controls concentration). Ignored when fixed.}
 #'   }
-#'
 #' @param ftp_model_params A list of footprint model parameters:
 #'   \describe{
 #'     \item{ftp_protect_prob_fixed}{Fixed value for \code{ftp_protect_prob}
@@ -76,15 +70,12 @@
 #'     \item{ftp_protect_totcount}{Total count parameter of the prior Beta
 #'       distribution. Ignored when fixed.}
 #'   }
-#'
 #' @param max_nruns Maximum number of attempts to run \code{\link[rstan]{vb}}.
 #'   Some initializations may fail to converge, in which case multiple attempts
 #'   are made.
-#'
 #' @param max_pareto_k Maximum allowable \code{pareto_k} value returned by
 #'   \code{\link[rstan]{vb}}. If exceeded, inference is retried (up to
 #'   \code{max_nruns} times).
-#'
 #' @param iter,tol_rel_obj,output_samples,grad_samples,algorithm,...
 #'   Additional arguments passed to \code{\link[rstan]{vb}}, controlling ADVI
 #'   inference. See \code{\link[rstan]{vb}} for details.
@@ -95,7 +86,7 @@
 #' lengths used for inference (i.e., the supplied \code{ftp_lengths}).
 #'
 #' @export
-
+#'
 #' @examples
 #'
 #' ## Simple data with two footprints of lengths 5 and 10 bps.

@@ -5,7 +5,7 @@
 #' @importFrom truncdist rtrunc
 .init_param_from_prior_distr <- function(stan_input,
                                          nchains,
-                                         delta_from_max_min =  0.001) {
+                                         delta_from_max_min = 0.001) {
     
     stan_model_name <- stan_input[["stan_model_name"]]
     stan_inputdata <- stan_input[["stan_inputdata"]]

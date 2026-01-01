@@ -22,29 +22,37 @@ get_ftp_inference_summary(
 \code{\link{infer_footprints_vb}} or \code{\link{infer_footprints_sampling}},
 or a \code{list} returned by \code{\link{infer_footprints_optim}}.}
 
-\item{plot}{Logical. If \code{TRUE}, generate a plot of the footprint abundance spectrum.}
+\item{plot}{Logical. If \code{TRUE}, generate a plot of the footprint
+abundance spectrum.}
 
-\item{show_plot}{Logical. If \code{TRUE}, display the plot of the footprint spectrum.}
+\item{show_plot}{Logical. If \code{TRUE}, display the plot of the footprint
+spectrum.}
 
-\item{suggest_ftps}{Logical. If \code{TRUE}, return suggested footprints based on spectrum peaks.}
+\item{suggest_ftps}{Logical. If \code{TRUE}, return suggested footprints
+based on spectrum peaks.}
 
-\item{plot_posterior_range}{Character vector of length 2 specifying which posterior credible intervals to plot.
-Options provided by \code{\link[rstan]{summary,stanfit-method}} include "2.5\\%", "25\\%", "75\\%", "97.5\\%".
+\item{plot_posterior_range}{Character vector of length 2 specifying which
+posterior credible intervals to plot.
+Options provided by \code{\link[rstan]{summary,stanfit-method}} include
+"2.5\\%", "25\\%", "75\\%", "97.5\\%".
 Standard deviation (SD) and standard error (SE) are not currently supported.}
 
 \item{max_peak_width}{Numeric. Maximum allowed width of detected peaks in
-the footprint abundance spectrum (used by \code{\link{suggest_footprints}}).}
+the footprint abundance spectrum (used by
+\code{\link{suggest_footprints}}).}
 
 \item{spline_spar}{Numeric in (0, 1]. Smoothing parameter for
 \code{\link{suggest_footprints}} controlling the smoothness of the
 spline (\code{\link[stats]{smooth.spline}}). Recommended to test values
 like 0.1, 0.3, 0.5, 0.75 to ensure reasonable footprint detection.}
 
-\item{max_abund_log2drop}{Numeric. Maximum decrease in log2 abundance relative
-to the local maximum when extending peaks in \code{\link{suggest_footprints}}.}
+\item{max_abund_log2drop}{Numeric. Maximum decrease in log2 abundance
+relative to the local maximum when extending peaks in
+\code{\link{suggest_footprints}}.}
 
 \item{ftp_abundance_name}{Character scalar specifying which footprint
-abundance value to extract or display. Currently only \code{"ftp_abundances"} is supported.}
+abundance value to extract or display. Currently only
+\code{"ftp_abundances"} is supported.}
 
 \item{...}{Additional parameters passed to \code{\link{suggest_footprints}},
 including those for \code{\link[stats]{smooth.spline}}.}
@@ -54,12 +62,16 @@ A \code{list} containing:
 \describe{
 \item{\code{ESTIMATES}}{A \code{list} containing:
 \itemize{
-\item \code{ftp_abundance_estimates}: \code{data.frame} of footprint abundance estimates,
-\item \code{ftp_protect_prob_estimate}: estimated footprint protection probability (or \code{NA} if unavailable),
-\item \code{bg_protect_prob_estimate}: estimated background protection probability (or \code{NA} if unavailable).
+\item \code{ftp_abundance_estimates}: \code{data.frame} of footprint
+abundance estimates,
+\item \code{ftp_protect_prob_estimate}: estimated footprint protection
+probability (or \code{NA} if unavailable),
+\item \code{bg_protect_prob_estimate}: estimated background protection
+probability (or \code{NA} if unavailable).
 }}
 
-\item{\code{FTP_SUGGEST}}{\code{matrix} with coordinates of suggested footprints returned by \code{\link{suggest_footprints}}.}
+\item{\code{FTP_SUGGEST}}{\code{matrix} with coordinates of suggested
+footprints returned by \code{\link{suggest_footprints}}.}
 \item{\code{PLOT}}{\code{ggplot} object of the footprint abundance spectrum.}
 }
 }

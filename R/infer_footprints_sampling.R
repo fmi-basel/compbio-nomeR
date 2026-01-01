@@ -126,6 +126,6 @@ infer_footprints_sampling <- function(
         cores = ncpu,
         control = rstan_control,
         ...)
-    attr(stanfit_out,"ftp_lengths") <- ftp_lengths
+    attr(stanfit_out, "ftp_lengths") <- ftp_lengths
     return(stanfit_out)
 }

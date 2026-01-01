@@ -12,7 +12,8 @@ get_ftp_PWMs_for_prediction(
 )
 }
 \arguments{
-\item{ftp_spectrum}{A \code{data.frame} containing inferred abundances of footprints.}
+\item{ftp_spectrum}{A \code{data.frame} containing inferred abundances of
+footprints.}
 
 \item{ftp_len_mat}{A \code{matrix} specifying footprint lengths:
 \describe{
@@ -20,23 +21,26 @@ get_ftp_PWMs_for_prediction(
 \item{Column 2}{Maximum footprint length.}
 \item{Column 3}{Increment for generating lengths from minimum to maximum.}
 }
-Each row corresponds to a footprint group, with row names interpreted as group labels.
+Each row corresponds to a footprint group, with row names interpreted as
+group labels.
 PWMs will be generated for all lengths in \code{seq(min, max, by)}.}
 
-\item{bg_cover}{Numeric value indicating the estimated fraction of accessible positions
-in the SMF dataset (used as background coverage).}
+\item{bg_cover}{Numeric value indicating the estimated fraction of accessible
+positions in the SMF dataset (used as background coverage).}
 
-\item{ftp_protect_prob}{Numeric value of the emission probability for protected positions
-within footprints.}
+\item{ftp_protect_prob}{Numeric value of the emission probability for
+protected positions within footprints.}
 }
 \value{
-A \code{list} of footprint models (position weight matrices) suitable for the
-\code{footprint_models} parameter in \code{\link{predict_footprints}} and \code{\link{predict_footprints_SE}}.
+A \code{list} of footprint models (position weight matrices)
+suitable for the \code{footprint_models} parameter in
+\code{\link{predict_footprints}} and \code{\link{predict_footprints_SE}}.
 }
 \description{
 Utility function to generate a list of footprint models required by
 \code{\link{predict_footprints}}, using a footprint spectrum inferred by
 \code{\link{infer_footprints_vb}} or \code{\link{ftp_spectral_analysis_SE}}
-and summarized with \code{\link{get_ftp_inference_summary}}. The models encode footprint lengths,
+and summarized with \code{\link{get_ftp_inference_summary}}. The models
+encode footprint lengths,
 emission probabilities, and background coverage for downstream prediction.
 }

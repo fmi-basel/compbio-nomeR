@@ -31,34 +31,38 @@
 
 .get_ftp_annotation <- function(ftp_len_mat,
                                       ftp_spec,
-                                      bg_cover){
+                                      bg_cover) {
 
-
-
-    ftp_anno <- do.call(rbind,lapply(1:nrow(ftp_len_mat),
-                       function(ridx){
+    ftp_anno <- do.call(rbind,lapply(seq_len(nrow(ftp_len_mat)),
+                       function(ridx) {
 
                            ## get middle points
                            ftplen <- seq(from = ftp_len_mat[ridx, 1],
                                          to = ftp_len_mat[ridx, 2],
                                          by = ftp_len_mat[ridx, 3])
-                           if(ftp_len_mat[ridx, 3] == 1){
-                               ftpcov <- ftp_spec$mean[match(ftplen,ftp_spec$ftp_length)]
-                           } else{
-
-                               intstep <- round(ftp_len_mat[ridx, 3]/2)
-                               curftp_spec <- ftp_spec[(ftp_spec$ftp_length >= min(ftplen) - intstep + 1) & (ftp_spec$ftp_length <= max(ftplen) + intstep),,drop=F]
+                           if (ftp_len_mat[ridx, 3] == 1) {
+                               ftpcov <- ftp_spec$mean[match(ftplen,
+                                                             ftp_spec$ftp_length)]
+                           } else {
+                               intstep <- round(ftp_len_mat[ridx, 3] / 2)
+                               curftp_spec <- ftp_spec[(ftp_spec$ftp_length >= 
+                                                            min(ftplen) - intstep + 1) &
+                                                           (ftp_spec$ftp_length <= 
+                                                                max(ftplen) + intstep),
+                                                       , drop = FALSE]
                                curftp_spec$group <- cut(curftp_spec$ftp_length,
                                                         breaks = length(ftplen),
                                                         labels = ftplen,
-                                                        include.lowest = T
+                                                        include.lowest = TRUE
                                                         )
-                               ftpcov <- tapply(curftp_spec$mean,curftp_spec$group,sum)
+                               ftpcov <- tapply(curftp_spec$mean, curftp_spec$group,
+                                                sum)
                            }
-                           ftp_anno <- data.frame(ftp_name = paste0("ftp--",ftplen),
-                                                  ftp_group = row.names(ftp_len_mat)[ridx],
-                                                  ftp_length = ftplen,
-                                                  ftp_cover = ftpcov)
+                           ftp_anno <- data.frame(
+                               ftp_name = paste0("ftp--", ftplen),
+                               ftp_group = row.names(ftp_len_mat)[ridx],
+                               ftp_length = ftplen,
+                               ftp_cover = ftpcov)
                            return(ftp_anno)
                        }))
     ftp_anno$ftp_cover <- ftp_anno$ftp_cover/sum(ftp_anno$ftp_cover) * (1 - bg_cover)
