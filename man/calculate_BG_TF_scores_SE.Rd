@@ -9,6 +9,7 @@ calculate_BG_TF_scores_SE(
   bgAssayNames = c("background_coverProb_nomeR"),
   tfAssayNames = c("TF_coverProb_nomeR"),
   nuclAssayNames = c("Nucl_coverProb_nomeR"),
+  mod_probAssayName = "mod_prob",
   psc = 0.1
 )
 }
