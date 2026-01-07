@@ -9,10 +9,10 @@
 #'   probabilities for nucleosomes
 #' @param psc pseudo-count to avoid log(0)
 #'
-#' @returns \code{SummarizeExperiment} object with BG and TF scores stored 
+#' @returns \code{SummarizeExperiment} object with BG and TF scores stored
 #' as assays
 #'
-#' @importFrom SummarizedExperiment SummarizedExperiment assay assayNames 
+#' @importFrom SummarizedExperiment SummarizedExperiment assay assayNames
 #'     colnames
 #' @importFrom SparseArray NaArray
 #' @importFrom checkmate assert_vector assert_number
@@ -22,6 +22,7 @@ calculate_BG_TF_scores_SE <- function(se,
                                       bgAssayNames = c("background_coverProb_nomeR"),
                                       tfAssayNames = c("TF_coverProb_nomeR"),
                                       nuclAssayNames = c("Nucl_coverProb_nomeR"),
+                                      mod_probAssayName = "mod_prob",
                                       psc = 0.1) {
 
     ## check assay names
@@ -33,7 +34,7 @@ calculate_BG_TF_scores_SE <- function(se,
                   unique = TRUE, null.ok = FALSE)
     assert_number(x = psc, lower = 0, finite = TRUE)
 
-    stopifnot(all(c(bgAssayNames, tfAssayNames, nuclAssayNames) %in% 
+    stopifnot(all(c(bgAssayNames, tfAssayNames, nuclAssayNames) %in%
                       assayNames(se)))
 
     ## extract/aggregate bg assays
@@ -67,10 +68,11 @@ calculate_BG_TF_scores_SE <- function(se,
         bg_scores_DF[[snm]] <- bg_score_smpl
         tf_scores_DF[[snm]] <- tf_score_smpl
     }
-    if ("mod_prob" %in% assayNames(se)) {
-        assayList <- list("mod_prob" = assay(se, "mod_prob"),
+    if (mod_probAssayName %in% assayNames(se)) {
+        assayList <- list("mod_prob" = assay(se, mod_probAssayName),
                           "BG_score_nomeR" = bg_scores_DF,
                           "TF_score_nomeR" = tf_scores_DF)
+        names(assayList) <- mod_probAssayName
     } else{
         assayList <- list("BG_score_nomeR" = bg_scores_DF,
                           "TF_score_nomeR" = tf_scores_DF)
