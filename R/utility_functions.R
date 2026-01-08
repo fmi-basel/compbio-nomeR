@@ -1,3 +1,29 @@
+
+.is_profiling_enabled <- function(profile) {
+    isTRUE(profile) || isTRUE(getOption("nomeR.profile", FALSE))
+}
+
+
+.time_block <- function(expr, label, timings_env, enabled, cli_report = TRUE) {
+    if (!enabled) {
+        return(force(expr))
+    }
+
+    t0 <- proc.time()[["elapsed"]]
+    out <- force(expr)
+    dt <- proc.time()[["elapsed"]] - t0
+
+    timings_env[[label]] <- dt
+
+    if (cli_report) {
+        cli::cli_inform(
+            "{.emph {label}} took {formatC(dt, digits = 3, format = 'f')} s"
+        )
+    }
+
+    out
+}
+
 ## function for converting vector of start priors to cover priors
 .start_prior2cover_prior <- function(start_prior,
                                      footprint_len) {
@@ -45,9 +71,9 @@
                                                              ftp_spec$ftp_length)]
                            } else {
                                intstep <- round(ftp_len_mat[ridx, 3] / 2)
-                               curftp_spec <- ftp_spec[(ftp_spec$ftp_length >= 
+                               curftp_spec <- ftp_spec[(ftp_spec$ftp_length >=
                                                             min(ftplen) - intstep + 1) &
-                                                           (ftp_spec$ftp_length <= 
+                                                           (ftp_spec$ftp_length <=
                                                                 max(ftplen) + intstep),
                                                        , drop = FALSE]
                                curftp_spec$group <- cut(curftp_spec$ftp_length,

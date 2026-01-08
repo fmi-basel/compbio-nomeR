@@ -18,7 +18,8 @@ predict_footprints_SE(
   aggrByGroup = TRUE,
   ftpConfigMethod = c("PV", "Viterbi"),
   ncpu = 1L,
-  verbose = FALSE
+  verbose = FALSE,
+  profile = FALSE
 )
 }
 \arguments{
@@ -82,6 +83,8 @@ start probability for each reported footprint.}
 \item{ncpu}{Number of threads to use.}
 
 \item{verbose}{Logical. If \code{TRUE}, enables verbose output for debugging.}
+
+\item{profile}{Enable time profiling.}
 }
 \value{
 A \code{SummarizedExperiment} object containing:

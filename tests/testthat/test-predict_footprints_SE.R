@@ -20,7 +20,12 @@ test_that("predict_footprints_SE works", {
                                       bgprotectprob = 0.01,
                                       bgcoverprior = 0.59,
                                       ftpConfigMethod = "Viterbi",
-                                      ncpu = 1)
+                                      ncpu = 1,
+                                      profile=T)
+    ## remove timing metadata
+    mtdat <- metadata(ftp_pred)
+    mtdat$timings <- NULL
+    metadata(ftp_pred) <- mtdat
 
     expect_equal(ftp_pred, dlist$exp_output_viterbi)
 
@@ -31,5 +36,9 @@ test_that("predict_footprints_SE works", {
                                       bgcoverprior = 0.59,
                                       ftpConfigMethod = "PV",
                                       ncpu = 1)
+    ## remove timing metadata
+    mtdat <- metadata(ftp_pred)
+    mtdat$timings <- NULL
+    metadata(ftp_pred) <- mtdat
     expect_equal(ftp_pred, dlist$exp_output_PV)
 })
