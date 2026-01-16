@@ -144,9 +144,15 @@ validate_prepare_SE <- function(se,
 
     ## add position within fragments
     ## NOTE: the fragpos are 1 - based positions within fragments
-    bin_protect_data <-
-        bin_protect_data[, "fragpos" := refpos - min(refpos) + 1,
-                         by = fidx_glob]
+    bin_protect_data <- bin_protect_data[,
+                                         "fragpos" := refpos - fragAnno[["refStart"]][match(fidx_sample,fragAnno[["fidx_sample"]])] + 1]
+
+    ## the below fails on MacOS
+    # bin_protect_data <-
+    #     bin_protect_data[, "fragpos" := refpos - min(refpos) + 1,
+    #                      by = fidx_glob]
+
+
 
     ## order by fidx_glob and fragpos by setting keyv
     setkeyv(bin_protect_data, cols = c("fidx_glob", "fragpos"))
