@@ -15,6 +15,7 @@ Imports:
     cli,
     data.table,
     dplyr,
+    GenomeInfoDb,
     GenomicRanges,
     ggplot2,
     graphics,
@@ -36,7 +37,6 @@ Imports:
     SummarizedExperiment,
     truncdist
 Suggests: 
-    GenomeInfoDb,
     footprintR,
     testthat (>= 3.0.0)
 LinkingTo: 
