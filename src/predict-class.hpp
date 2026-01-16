@@ -75,6 +75,16 @@ public:
                                     vector<double >& cPVFtpProb
     );
 
+    void getPosteriorDecodingFtpConf(const vector<vector<double >>& outCoverProb,
+                                     const vector<int32_t >& outCoverFragPos,
+                                     const DNAbind_obj_vector& ftpModels,
+                                     vector<int32_t >& cPDFragPos,
+                                     vector<int32_t >& cPDFtpWidth,
+                                     vector<string >& cPDFtpName,
+                                     vector<string >& cPDFtpGroup,
+                                     vector<double >& cPDFtpProb
+    );
+
     Rcpp::List calcStartCoverProbs(const SMFdataset& smfData,
                                    const DNAbind_obj_vector& ftpModels,
                                    const parameters& params,

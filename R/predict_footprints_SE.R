@@ -60,7 +60,7 @@ predict_footprints_SE <- function(se,
                                   bgprotectprob,
                                   bgcoverprior,
                                   aggrByGroup = TRUE,
-                                  ftpConfigMethod = c("PV", "Viterbi"),
+                                  ftpConfigMethod = c("PV","PosteriorDecoding", "Viterbi"),
                                   ncpu = 1L,
                                   verbose = FALSE,
                                   profile = FALSE) {
@@ -125,7 +125,8 @@ predict_footprints_SE <- function(se,
     profiling <- .is_profiling_enabled(profile)
     timings <- new.env(parent = emptyenv())
 
-    cli::cli_h1("predict_footprints_SE time-profiling", .envir = if (profiling) parent.frame() else NULL)
+    if(profiling)
+        cli::cli_h1("predict_footprints_SE time-profiling", .envir = if (profiling) parent.frame() else NULL)
 
     predict_res_list <- .time_block({
         calcStartCoverProbs_cpp(
@@ -140,17 +141,6 @@ predict_footprints_SE <- function(se,
             ncpu,
             verbose)
     }, "Step 1: Calling C++ for posterior calculations ", timings, profiling)
-    # predict_res_list <- calcStartCoverProbs_cpp(
-    #     protect_data[["fidx_glob"]], ## unique fragment ID or index
-    #     protect_data[["fragpos"]],      ## position within fragment, 1 - based
-    #     protect_data[["protect"]],   ## binary protection data, 0 - accessible, 1 - protected
-    #     footprint_models,
-    #     bgprotectprob,
-    #     start_priors["BG"],
-    #     ftpConfigMethod,
-    #     aggrByGroup,
-    #     ncpu,
-    #     verbose)
 
 
 

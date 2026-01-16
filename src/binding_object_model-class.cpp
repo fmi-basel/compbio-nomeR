@@ -6,13 +6,10 @@ binding_object_model::binding_object_model(const vector<double > &_protect_prob,
                      const string _group){
 
   classname = "wm";
-
-
   prior = _prior;
   initialprior = _prior;
   name = _name;
   group = _group;
-
 
   for(int pos=0;pos < _protect_prob.size();++pos){
     vector<double > tmp;
@@ -23,7 +20,7 @@ binding_object_model::binding_object_model(const vector<double > &_protect_prob,
   }
   len = mat.size();
   normalize();
-  
+
   // calculate first last ratios firstLastRatios
   for(int llet = 0; llet <= 2; ++llet){
   	vector<double > curFlet;
@@ -32,7 +29,7 @@ binding_object_model::binding_object_model(const vector<double > &_protect_prob,
   	}
   	firstLastRatios.push_back(curFlet);
   }
-  
+
 }
 
 binding_object_model::~binding_object_model() {
@@ -77,7 +74,7 @@ double binding_object_model::get_score(const SMFdataset& SEQUENCES,
                                        int seq,
                                        int position) const{
 
-  
+
   if(seq<0 || seq>=SEQUENCES.Size()){
     Rcpp::stop("binding_object_model::get_score: Index of sequence is out of range: ");
 	}

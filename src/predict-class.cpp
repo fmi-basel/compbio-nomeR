@@ -136,7 +136,6 @@ void Predict::getPosteriorViterbiFtpConf(const vector<vector<double >>& coverPro
     for(int pos = 1; pos <= seqlength; ++pos){
         double maxLogProb = NEG_INF;
         int bestFtpIdx = -1;
-        int bestFtpGroupIdx = -1;
 
         // go across footprints to find maximum
         for(size_t iFtp = 0; iFtp < cumSumLogCoverProb.size(); ++iFtp){
@@ -183,6 +182,91 @@ void Predict::getPosteriorViterbiFtpConf(const vector<vector<double >>& coverPro
     }
 }
 
+
+// Posterior-Decoding ftp configrations
+void Predict::getPosteriorDecodingFtpConf(const vector<vector<double >>& outCoverProb,
+                                          const vector<int32_t >& outCoverFragPos,
+                                          const DNAbind_obj_vector& ftpModels,
+                                          vector<int32_t >& cPDFragPos,
+                                          vector<int32_t >& cPDFtpWidth,
+                                          vector<string >& cPDFtpName,
+                                          vector<string >& cPDFtpGroup,
+                                          vector<double >& cPDFtpProb
+){
+    size_t seqlength = outCoverProb[0].size(); // length of coverage posteriors vector
+
+    // define whether the outCoverProb are aggregated by group
+    size_t nFtpGroups = ftpModels.getGroupsSize();
+    size_t nFtpNames = ftpModels.Size();
+
+    vector<string > ftpNames;
+    vector<string > ftpGroupNames;
+
+    if(outCoverProb.size() == nFtpGroups){ // probabilities are aggregated by group
+        ftpGroupNames = ftpModels.groups;
+        ftpNames = ftpModels.groups; // we register ftpGroups in the column for ftpNames as well
+    } else if(outCoverProb.size() == nFtpNames){ // probabilities are NOT aggregated by ftpGroup
+        for(size_t iFtp = 0; iFtp < nFtpNames; ++iFtp){
+            ftpNames.push_back(ftpModels[iFtp]->name);
+            ftpGroupNames.push_back(ftpModels[iFtp]->group);
+        }
+    } else {
+        Rcpp::stop("ERROR:getPosteriorDecodingFtpConf: Number of rows in outCoverProb must equal to number of footprint groups or names.");
+    }
+
+
+    // define negative infinity
+    // log(0) = -infinity
+    const double NEG_INF = -std::numeric_limits<double>::infinity();
+
+    // find ftp with highest posterior coverage for position one
+    int curFtpIdx = -1;
+    int32_t curFtpStart = outCoverFragPos[0];
+    double curFtpCumLogScore = NEG_INF;
+    double maxProb = 0;
+    for (size_t iFtp = 0; iFtp < outCoverProb.size(); ++iFtp) {
+        if(outCoverProb[iFtp][0] > maxProb){
+            maxProb = outCoverProb[iFtp][0];
+            curFtpIdx = iFtp;
+            curFtpCumLogScore = log(outCoverProb[iFtp][0]);
+        }
+    }
+
+    // for each position get ftp with maximum posterior coverage and get intervals of continous ftp coverage
+    for(int posI = 1; posI < seqlength; ++posI){
+        maxProb = 0;
+        int maxFtpIdx = -1;
+
+        // find a footprint with maximum coverage posterior
+        for (size_t iFtp = 0; iFtp < outCoverProb.size(); ++iFtp) {
+            if(outCoverProb[iFtp][posI] > maxProb){
+                maxProb = outCoverProb[iFtp][posI];
+                maxFtpIdx = iFtp;
+            }
+        }
+
+        // continue, if the ftp name is the same as at previous position
+        if(maxFtpIdx == curFtpIdx){
+            curFtpCumLogScore += log(maxProb);
+        } else{  // register the segment and start a new segment
+            // record positions of the segment
+            cPDFragPos.push_back(curFtpStart);
+            int32_t ftpWidth = outCoverFragPos[posI - 1] - curFtpStart + 1;
+            cPDFtpWidth.push_back(ftpWidth);
+
+            cPDFtpName.push_back(ftpNames[curFtpIdx]);
+            cPDFtpGroup.push_back(ftpGroupNames[curFtpIdx]);
+            // probability that we report for this algorithm is the geometric mean of ftp coverages
+            double gMeanCover = exp(curFtpCumLogScore/ftpWidth);
+            cPDFtpProb.push_back(gMeanCover);
+
+            // start a new segment
+            curFtpIdx = maxFtpIdx;
+            curFtpStart = outCoverFragPos[posI];
+            curFtpCumLogScore = log(maxProb);
+        }
+    }
+}
 
 
 // Viterbi alogirthm to get configuration of footprints with maximum posterior probability
@@ -526,7 +610,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 
             vector<double > currFtpConfOutFtpProb;
 
-            //
+
             switch(ftpCnfAlg) {
             case VITERBI:{
 
@@ -552,6 +636,19 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                                                   currFtpConfOutFtpName,
                                                   currFtpConfOutFtpGroup,
                                                   currFtpConfOutFtpProb
+                );
+                break;
+            }
+            case POSTERIORDECODING:{
+
+                getPosteriorDecodingFtpConf(currSeqCoverOutProbs,
+                                            currSeqCoverOutFragPos,
+                                            ftpModels,
+                                            currFtpConfOutFragPos,
+                                            currFtpConfOutFtpWidth,
+                                            currFtpConfOutFtpName,
+                                            currFtpConfOutFtpGroup,
+                                            currFtpConfOutFtpProb
                 );
                 break;
             }

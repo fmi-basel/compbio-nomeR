@@ -30,8 +30,10 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
         ftpCnfAlg = VITERBI;
     else if(ftpConfigMethod_ == "PV")
         ftpCnfAlg = POSTERIORVITERBI;
+    else if(ftpConfigMethod_ == "PosteriorDecoding")
+        ftpCnfAlg = POSTERIORDECODING;
     else
-        Rcpp::stop("Only PV, POFP or Viterbi algorithm are currently allowed for footprint decoding\n");
+        Rcpp::stop("Only PV, PosteriorDecoding or Viterbi algorithm are currently allowed for footprint decoding\n");
 
     int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
@@ -53,13 +55,6 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
     }
     DNAbind_obj_vector ftp_models(binding_models,
                                   params);
-
-    // print priors
-    // for(int i=0; i < ftp_models.Size(); ++i){
-    //     Rcpp::Rcout<<ftp_models[i]->name<<"  "<<ftp_models[i]->prior<<endl;
-    // }
-
-
 
     // create object with SMF data
     if(_VERBOSE_){

@@ -41,4 +41,6 @@ test_that("predict_footprints_SE works", {
     mtdat$timings <- NULL
     metadata(ftp_pred) <- mtdat
     expect_equal(ftp_pred, dlist$exp_output_PV)
+
+
 })

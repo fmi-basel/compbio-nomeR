@@ -11,7 +11,7 @@ predict_footprints(
   bgprotectprob,
   bgcoverprior,
   aggrByGroup = TRUE,
-  ftpConfigMethod = c("PV", "Viterbi"),
+  ftpConfigMethod = c("PV", "PosteriorDecoding", "Viterbi"),
   ncpu = 1L,
   verbose = FALSE
 )
@@ -40,7 +40,12 @@ fraction of reads covered by the footprint.}
 aggregating probabilities if \code{aggrByGroup = TRUE}. For example,
 footprints with names "Nucleosome--149" and "Nucleosome--150" may share
 the GROUP "Nucleosome".}
-}}
+}
+NOTE: To account for very short footprints, which likely reflect correlated
+noise within accessible regions, a user can define short footprints (usually 2-5bp)
+and set \code{GROUP} to "background". In this case, if \code{aggrByGroup} is
+\code{TRUE}, the posteriors for background will additionally be aggregated across
+these short footprints.}
 
 \item{bgprotectprob}{Background emission probability of a protected position
 in open (accessible) regions.}
@@ -60,6 +65,16 @@ posteriors and a Viterbi-like algorithm to find a valid footprint
 configuration maximizing posterior coverage probability (see Fariselli
 et al, 2005). The \code{score} for each footprint is the geometric mean
 of posterior coverages across all positions covered by the footprint.}
+\item{\code{PosteriorDecoding}}{Posterior decoding using calculated
+coverage posteriors. The algorithm returns segments where coverage posteriors
+for a corresponding footprint is maximum compared to other footprints.
+If coverage posteriors are aggregated by \code{GROUP}, i.e. \code{aggrByGroup}
+is \code{TRUE}, the \code{ftp_name} and \code{ftp_group} are identical and
+correspond to groups defined in \code{footprint_models}. NOTE: The widths of
+the segments do not necessarily match the footprint lengths defined by
+\code{footprint_models}. The \code{score} for each segment is the geometric
+mean of posterior coverage for a corresponding footprint across all positions
+within the segment.}
 \item{\code{Viterbi}}{Classic Viterbi algorithm to find the most probable
 footprint configuration. The \code{score} corresponds to the posterior
 start probability for each reported footprint.}

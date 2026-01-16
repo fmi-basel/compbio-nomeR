@@ -32,12 +32,7 @@ validate_footprint_models <- function(footprint_models,
                                            x[["GROUP"]] <- x[["NAME"]]
                                        return(x)
                                    }, simplify = FALSE, USE.NAMES = TRUE)
-        # footprint_models <- sapply(footprint_models,
-        #                            function(x){
-        #                                if(is.null(x[["GROUP"]]) | !aggrByGroup)
-        #                                    x[["GROUP"]] <- x[["NAME"]]
-        #                                return(x)
-        #                            }, simplify = FALSE, USE.NAMES = TRUE)
+
 
     }
 
