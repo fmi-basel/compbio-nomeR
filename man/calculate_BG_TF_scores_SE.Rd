@@ -27,6 +27,8 @@ probabilities for transcription factors}
 \item{nuclAssayNames}{vector of assay names that contain predicted coverage
 probabilities for nucleosomes}
 
+\item{mod_probAssayName}{name of the assay containing modification probabilities}
+
 \item{psc}{pseudo-count to avoid log(0)}
 }
 \value{

@@ -7,6 +7,7 @@
 #'   probabilities for transcription factors
 #' @param nuclAssayNames vector of assay names that contain predicted coverage
 #'   probabilities for nucleosomes
+#' @param mod_probAssayName name of the assay containing modification probabilities
 #' @param psc pseudo-count to avoid log(0)
 #'
 #' @returns \code{SummarizeExperiment} object with BG and TF scores stored
