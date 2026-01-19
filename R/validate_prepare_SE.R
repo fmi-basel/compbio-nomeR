@@ -84,6 +84,7 @@ validate_prepare_SE <- function(se,
     bin_protect_data <- data.table::rbindlist(
         lapply(seq_len(ncol(mod_prob_assays)),
                function(sidx) {
+
                    read_naar <- mod_prob_assays[[sidx]]
                    ## get M-indices of non-NAs
                    nonNA_data <- nnawhich(read_naar, arr.ind = TRUE)
@@ -145,7 +146,7 @@ validate_prepare_SE <- function(se,
     ## add position within fragments
     ## NOTE: the fragpos are 1 - based positions within fragments
     bin_protect_data <- bin_protect_data[,
-                                         "fragpos" := refpos - fragAnno[["refStart"]][match(fidx_sample,fragAnno[["fidx_sample"]])] + 1]
+                                         "fragpos" := refpos - fragAnno[["refStart"]][match(fidx_glob,fragAnno[["fidx_glob"]])] + 1]
 
     ## the below fails on MacOS
     # bin_protect_data <-

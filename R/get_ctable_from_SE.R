@@ -56,6 +56,7 @@ get_ctable_from_SE <- function(se,
     ctable_list <- lapply(
         seq_len(ncol(se)),
         function(csidx) {
+
             count_spacing_freq_cpp(
                 protect_data[sidx == csidx][["fidx_glob"]], ## unique fragment ID or index
                 protect_data[sidx == csidx][["fragpos"]],   ## position within fragment, 1 - based
