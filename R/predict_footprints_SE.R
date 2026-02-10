@@ -274,7 +274,7 @@ predict_footprints_SE <- function(se,
                 metadata = metadata(se)
             )
 
-            ## construct IRangesLists with MAP configurations and add to colData
+            ## construct IRangesLists with footprint configurations and add to colData
             footprint_conf <- as.data.table(predict_res_list[["FOOTPRINT_CONF"]])
 
             ## ignore background
