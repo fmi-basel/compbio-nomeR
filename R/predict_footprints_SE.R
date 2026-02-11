@@ -62,6 +62,7 @@ predict_footprints_SE <- function(se,
                                   bgcoverprior,
                                   aggrByGroup = TRUE,
                                   ftpConfigMethod = c("PV","PosteriorDecoding", "Viterbi"),
+
                                   ncpu = 1L,
                                   verbose = FALSE,
                                   profile = FALSE) {
@@ -156,7 +157,7 @@ predict_footprints_SE <- function(se,
                 .message_timestamp("Constructing output SummarizedExperiment... ")
             }
 
-            ## convert to data.table and rbind
+            ## convert to data.table
 
             ## positions are defined by START_PROB, because they run from
             ## -maxPWMlen..lastDatPos
@@ -168,7 +169,7 @@ predict_footprints_SE <- function(se,
             predict_res <- sapply(
                 c("START_PROB", "COVER_PROB"),
                 function(nm) {
-                    #browser()
+
                     ## convert to data.table
                     prob_dt <- as.data.table(predict_res_list[[nm]])
                     ## add reference positions
@@ -278,7 +279,7 @@ predict_footprints_SE <- function(se,
             footprint_conf <- as.data.table(predict_res_list[["FOOTPRINT_CONF"]])
 
             ## ignore background
-            footprint_conf <- footprint_conf[ftp_name != "background"]
+            #footprint_conf <- footprint_conf[ftp_name != "background"]
             ## add reference positions
             footprint_conf <-
                 footprint_conf[, refpos := start - 1 +
@@ -290,9 +291,11 @@ predict_footprints_SE <- function(se,
                                               fidx_sample,
                                               readName)][footprint_conf,
                                                          on = list(fidx_glob = seq)]
-            coldat <- colData(se)
+
             ## add sample names
+            coldat <- colData(se)
             footprint_conf <- footprint_conf[, sname := coldat$sample[sidx]]
+
 
             if (aggrByGroup) {
                 ftpConf_ftpnames <- unique(footprint_conf[["ftp_group"]])

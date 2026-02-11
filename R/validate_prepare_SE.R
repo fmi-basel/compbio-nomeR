@@ -47,6 +47,12 @@ validate_prepare_SE <- function(se,
                   !any(duplicated(assayNames(se))))
 
     if (nrow(se) > 0) {
+        if (!is.null(rownames(se))) {
+            stopifnot(anyDuplicated(rownames(se)) == 0L)
+        }
+    }
+
+    if (nrow(se) > 0) {
         stopifnot(!is.null(rownames(se)) &&
                       !any(duplicated(rownames(se))))
     }

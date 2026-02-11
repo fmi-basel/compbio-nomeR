@@ -408,7 +408,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
         Rcpp::Rcout<<"Calculating posterior probabilities using "<<omp_get_max_threads()<<" threads."<<endl;
 #endif
 
-    Progress prgbar(smfData.Size(), true);
+    Progress prgbar(smfData.Size(), _VERBOSE_);
 #pragma omp parallel private(seq)
 {
 
