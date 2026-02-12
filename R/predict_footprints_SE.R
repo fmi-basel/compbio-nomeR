@@ -32,18 +32,19 @@
 #'     \item predicted footprint configurations stored as \code{IntegerList}
 #'     objects in \code{colData} (e.g. column "Nucl_nomeR").
 #'   }
+#'
 #'   If \code{returnAs="data.table"} - a list containing data.tables for:
-#'   \itemize{
-#'     \item{\code{COVER_PROB}}{ contains coverage probabilities for each SMF
+#'   \describe{
+#'     \item{\code{COVER_PROB}}{Contains coverage probabilities for each SMF
 #'     molecule (\code{fragID}) and each footprint model. These probabilities indicate
 #'     how likely a position is covered by a given footprint. The column \code{mod_prob}
 #'     reports the original modification probabilities provided in the input\code{se} object.
 #'     }
-#'     \item{\code{START_PROB}}{ contains start probabilities for each SMF
+#'     \item{\code{START_PROB}}{Contains start probabilities for each SMF
 #'     molecule (\code{fragID}) and each footprint model. These probabilities indicate
 #'     how likely a footprint starts at each position in a fragment.
 #'     }
-#'     \item{\code{FOOTPRINT_CONF}}{ contains footprint configurations (decoding) predicted
+#'     \item{\code{FOOTPRINT_CONF}}{Contains footprint configurations (decoding) predicted
 #'     for each molecule using the selected \code{ftpConfigMethod}. Each row
 #'     reports the SMF molecule (\code{fragID}), start position (\code{start}),
 #'     width (\code{width}), footprint name (\code{ftp_name}), group
@@ -241,6 +242,7 @@ predict_footprints_SE <- function(se,
 
                 footprint_conf <- footprint_conf[,sample := snames[sidx]]
                 footprint_conf <- footprint_conf[,seqnames := fragAnno[["chr"]][match(fidx_glob,fragAnno[["fidx_glob"]])]]
+                footprint_conf <- footprint_conf[,strand := fragAnno[["strand"]][match(fidx_glob,fragAnno[["fidx_glob"]])]]
 
 
 
@@ -263,7 +265,7 @@ predict_footprints_SE <- function(se,
                 setnames(predict_res[["START_PROB"]], "chr", "seqnames")
                 setnames(predict_res[["START_PROB"]], "refpos", "start")
 
-                keep_ftp_cols <- c("seqnames","refpos","width","fragID","sample","ftp_name","ftp_group","score")
+                keep_ftp_cols <- c("seqnames","refpos","width","strand","fragID","sample","ftp_name","ftp_group","score")
                 drop_ftp_cols <- setdiff(colnames(footprint_conf),keep_ftp_cols)
                 footprint_conf <- footprint_conf[,(drop_ftp_cols) := NULL]
                 setcolorder(footprint_conf, neworder = keep_ftp_cols,skip_absent = TRUE)
