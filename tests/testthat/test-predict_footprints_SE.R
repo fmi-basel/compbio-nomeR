@@ -13,7 +13,7 @@ test_that("predict_footprints_SE works", {
                                    "COVER_PRIOR" = 0.01,
                                    "NAME" = "TF",
                                    "GROUP" = "TF"))
-    ## check Viterbi
+    ## test Viterbi
 
     ftp_pred <- predict_footprints_SE(se = dlist$test_se,
                                       footprint_models = ftp_models,
@@ -29,7 +29,7 @@ test_that("predict_footprints_SE works", {
 
     expect_equal(ftp_pred, dlist$exp_output_viterbi)
 
-    ## check Posterior-Viterbi
+    ## test Posterior-Viterbi
     ftp_pred <- predict_footprints_SE(se = dlist$test_se,
                                       footprint_models = ftp_models,
                                       bgprotectprob = 0.01,
@@ -42,5 +42,13 @@ test_that("predict_footprints_SE works", {
     metadata(ftp_pred) <- mtdat
     expect_equal(ftp_pred, dlist$exp_output_PV)
 
-
+    ## test returnAs="data.table"
+    ftp_pred <- predict_footprints_SE(se = dlist$test_se,
+                                      footprint_models = ftp_models,
+                                      bgprotectprob = 0.01,
+                                      bgcoverprior = 0.59,
+                                      ftpConfigMethod = "PV",
+                                      returnAs = "data.table",
+                                      ncpu = 1)
+    expect_equal(ftp_pred, dlist$exp_output_PV_dt)
 })

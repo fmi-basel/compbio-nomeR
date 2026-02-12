@@ -78,7 +78,7 @@ validate_prepare_SE <- function(se,
                    curanno <- data.table(
                        sidx = sidx,
                        fidx_sample = seq_len(ncol(mod_prob_assays[[sidx]])),
-                       readName = colnames(mod_prob_assays[[sidx]]),
+                       fragID = colnames(mod_prob_assays[[sidx]]),
                        fidx_glob = fidx_glob_offset[sidx] +
                            seq_len(ncol(mod_prob_assays[[sidx]])))
                }))

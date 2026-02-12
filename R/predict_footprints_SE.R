@@ -7,7 +7,7 @@
 #'
 #' @param se A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
 #'   containing read-level data returned by
-#'   \code{footprintR::readModBam}, including modification probabilities.
+#'   \code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.
 #' @param assayName Character scalar specifying the name of the assay in
 #'   \code{se} that contains read-level modification probabilities.
 #' @param threshUnmod,threshMod Numeric thresholds used to binarize modification
@@ -19,10 +19,12 @@
 #'   \code{min_frag_data_len}.
 #' @param min_frag_data_dens Ignore fragments with a density of informative
 #'   (non-\code{NA}) positions below \code{min_frag_data_dens}.
+#' @param returnAs return output as \code{SummarizedExperiment} (\code{SE}) or
+#'   \code{data.table}.
 #' @param profile Enable time profiling.
 #' @inheritParams predict_footprints
 #'
-#' @return A \code{SummarizedExperiment} object containing:
+#' @return If \code{returnAs="SE"} - a \code{SummarizedExperiment} object containing:
 #'   \itemize{
 #'     \item the original \code{mod_prob} assay,
 #'     \item additional assays with calculated posterior start and coverage
@@ -30,6 +32,24 @@
 #'     \item predicted footprint configurations stored as \code{IntegerList}
 #'     objects in \code{colData} (e.g. column "Nucl_nomeR").
 #'   }
+#'   If \code{returnAs="data.table"} - a list containing data.tables for:
+#'   \itemize{
+#'     \item{\code{COVER_PROB}}{ contains coverage probabilities for each SMF
+#'     molecule (\code{fragID}) and each footprint model. These probabilities indicate
+#'     how likely a position is covered by a given footprint. The column \code{mod_prob}
+#'     reports the original modification probabilities provided in the input\code{se} object.
+#'     }
+#'     \item{\code{START_PROB}}{ contains start probabilities for each SMF
+#'     molecule (\code{fragID}) and each footprint model. These probabilities indicate
+#'     how likely a footprint starts at each position in a fragment.
+#'     }
+#'     \item{\code{FOOTPRINT_CONF}}{ contains footprint configurations (decoding) predicted
+#'     for each molecule using the selected \code{ftpConfigMethod}. Each row
+#'     reports the SMF molecule (\code{fragID}), start position (\code{start}),
+#'     width (\code{width}), footprint name (\code{ftp_name}), group
+#'     (\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}
+#'   }
+#'   \code{seqnames}, \code{start} and \code{strand} are genomic coordinates in the reference.
 #'
 #' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData
 #'     colData<-
@@ -62,16 +82,17 @@ predict_footprints_SE <- function(se,
                                   bgcoverprior,
                                   aggrByGroup = TRUE,
                                   ftpConfigMethod = c("PV","PosteriorDecoding", "Viterbi"),
-
+                                  returnAs = c("SE","data.table"),
                                   ncpu = 1L,
                                   verbose = FALSE,
                                   profile = FALSE) {
 
     prob_group <- fragpos <- posidx_ref <- fidx_glob <- sidx <- fidx_sample <- chr <-
-        refpos <- pos <- mod_prob <- gpos_idx <- ftp_name <- ftp_group <- readName <-
+        refpos <- pos <- mod_prob <- gpos_idx <- ftp_name <- ftp_group <- fragID <-
         sname <- NULL # due to NSE notes in R CMD check
 
     ftpConfigMethod <- match.arg(ftpConfigMethod)
+    returnAs <- match.arg(returnAs)
     ### validate se object and prepare data for nomeR prediction
     dataList <- validate_prepare_SE(se,
                                     assayName,
@@ -166,6 +187,7 @@ predict_footprints_SE <- function(se,
             fcols <- c("fidx_glob", "sidx", "fidx_sample", "fragpos",
                        "chr", "refpos", "strand")
 
+
             predict_res <- sapply(
                 c("START_PROB", "COVER_PROB"),
                 function(nm) {
@@ -175,12 +197,13 @@ predict_footprints_SE <- function(se,
                     ## add reference positions
                     prob_dt <- prob_dt[, refpos := pos - 1 + fragAnno[match(seq, fragAnno[["fidx_glob"]])][["refStart"]]]
 
-                    ## add chr, strand, sidx, and fidx_sample
+                    ## add chr, strand, sidx, fidx_sample
                     prob_dt <- fragAnno[, list(fidx_glob,sidx,
                                                fidx_sample, chr,
                                                strand)][prob_dt,
                                                         on = list(fidx_glob = seq)]
                     setnames(prob_dt, "pos", "fragpos")
+
 
                     setcolorder(prob_dt, c(fcols,
                                            setdiff(colnames(prob_dt), fcols)))
@@ -192,6 +215,72 @@ predict_footprints_SE <- function(se,
                                     mod_prob)][predict_res[["COVER_PROB"]],
                                                on = list(fidx_glob = fidx_glob,
                                                          fragpos = fragpos)]
+
+            ## construct data.table for footprint_conf
+            footprint_conf <- as.data.table(predict_res_list[["FOOTPRINT_CONF"]])
+
+            ## add reference positions
+            footprint_conf <-
+                footprint_conf[, refpos := start - 1 +
+                                   fragAnno[match(seq,
+                                                  fragAnno[["fidx_glob"]])][["refStart"]]]
+
+            ## add sidx, fidx_sample, fragID
+            footprint_conf <- fragAnno[, list(fidx_glob,sidx,
+                                              fidx_sample,
+                                              fragID)][footprint_conf,
+                                                         on = list(fidx_glob = seq)]
+
+
+            ### if data.table is requested to be returned
+            if(returnAs == "data.table"){
+                ## add sample name to COVER_PROB, START_PROB, footprint_conf
+                snames <- colnames(se)
+                predict_res[["COVER_PROB"]] <- predict_res[["COVER_PROB"]][,sample := snames[sidx]]
+                predict_res[["START_PROB"]] <- predict_res[["START_PROB"]][,sample := snames[sidx]]
+
+                footprint_conf <- footprint_conf[,sample := snames[sidx]]
+                footprint_conf <- footprint_conf[,seqnames := fragAnno[["chr"]][match(fidx_glob,fragAnno[["fidx_glob"]])]]
+
+
+
+                ## add fragID to COVER_PROB, START_PROB
+                predict_res[["COVER_PROB"]] <- predict_res[["COVER_PROB"]][,fragID := fragAnno[["fragID"]][match(fidx_glob,fragAnno[["fidx_glob"]])]]
+                predict_res[["START_PROB"]] <- predict_res[["START_PROB"]][,fragID := fragAnno[["fragID"]][match(fidx_glob,fragAnno[["fidx_glob"]])]]
+
+                ## select and reorder columns
+                ftpnames <- setdiff(colnames(predict_res[["COVER_PROB"]]),
+                                    c(fcols, "mod_prob","sample","fragID"))
+                cols_to_keep <- c("chr","refpos","strand","fragID","sample","mod_prob",ftpnames)
+                cols_to_drop <- setdiff(colnames(predict_res[["COVER_PROB"]]),cols_to_keep)
+                predict_res[["COVER_PROB"]] <- predict_res[["COVER_PROB"]][, (cols_to_drop) := NULL]
+                predict_res[["START_PROB"]] <- predict_res[["START_PROB"]][, (cols_to_drop) := NULL]
+                setcolorder(predict_res[["COVER_PROB"]], neworder = cols_to_keep,skip_absent = TRUE)
+                setcolorder(predict_res[["START_PROB"]], neworder = cols_to_keep,skip_absent = TRUE)
+                ## rename chr -> seqnames, refstart -> start
+                setnames(predict_res[["COVER_PROB"]], "chr", "seqnames")
+                setnames(predict_res[["COVER_PROB"]], "refpos", "start")
+                setnames(predict_res[["START_PROB"]], "chr", "seqnames")
+                setnames(predict_res[["START_PROB"]], "refpos", "start")
+
+                keep_ftp_cols <- c("seqnames","refpos","width","fragID","sample","ftp_name","ftp_group","score")
+                drop_ftp_cols <- setdiff(colnames(footprint_conf),keep_ftp_cols)
+                footprint_conf <- footprint_conf[,(drop_ftp_cols) := NULL]
+                setcolorder(footprint_conf, neworder = keep_ftp_cols,skip_absent = TRUE)
+                setnames(footprint_conf, "refpos", "start")
+                ## set keys
+                sort_by_keys <- c("seqnames","start")
+                setkeyv(predict_res[["COVER_PROB"]],cols = sort_by_keys)
+                setkeyv(predict_res[["START_PROB"]],cols = sort_by_keys)
+                setkeyv(footprint_conf,cols = sort_by_keys)
+                predict_res[["FOOTPRINT_CONF"]] <- footprint_conf
+
+                return(predict_res)
+            }
+
+
+
+
             ## create rowRanges
             posuniq <- unique(
                 predict_res[["START_PROB"]][, list(chr, refpos,
@@ -255,7 +344,7 @@ predict_footprints_SE <- function(se,
 
                         namat <- NaArray(dim = c(length(seOutRowRanges),
                                                  nrow(curSmpFrags)),
-                                         dimnames = list(NULL, curSmpFrags$readName),
+                                         dimnames = list(NULL, curSmpFrags$fragID),
                                          type = "double")
 
                         ## add data
@@ -276,21 +365,6 @@ predict_footprints_SE <- function(se,
             )
 
             ## construct IRangesLists with footprint configurations and add to colData
-            footprint_conf <- as.data.table(predict_res_list[["FOOTPRINT_CONF"]])
-
-            ## ignore background
-            #footprint_conf <- footprint_conf[ftp_name != "background"]
-            ## add reference positions
-            footprint_conf <-
-                footprint_conf[, refpos := start - 1 +
-                                   fragAnno[match(seq,
-                                                  fragAnno[["fidx_glob"]])][["refStart"]]]
-
-            ## add sidx, fidx_sample, readName
-            footprint_conf <- fragAnno[, list(fidx_glob,sidx,
-                                              fidx_sample,
-                                              readName)][footprint_conf,
-                                                         on = list(fidx_glob = seq)]
 
             ## add sample names
             coldat <- colData(se)
@@ -317,7 +391,7 @@ predict_footprints_SE <- function(se,
                                        ftp_name = ftpLoc[["ftp_name"]],
                                        ftp_group = ftpLoc[["ftp_group"]],
                                        score = ftpLoc[["score"]])
-                        irL <- IRangesList(split(irL,ftpLoc[["readName"]]))
+                        irL <- IRangesList(split(irL,ftpLoc[["fragID"]]))
                         return(irL)
                     }, simplify = FALSE, USE.NAMES = TRUE)
 

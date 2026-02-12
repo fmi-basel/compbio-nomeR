@@ -96,7 +96,7 @@ molecule (\code{seq}), each position in ROI (\code{pos}), and each
 footprint model. These probabilities indicate how likely a position is
 covered by a given footprint.}
 \item{\code{FOOTPRINT_CONF}}{Contains footprint configurations predicted
-for each molecule by the selected \code{ftpConfigMethod}. Each row
+for each molecule using the selected \code{ftpConfigMethod}. Each row
 reports the SMF molecule (\code{seq}), start position (\code{start}),
 width (\code{width}), footprint name (\code{ftp_name}), group
 (\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}

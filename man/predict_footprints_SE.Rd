@@ -17,6 +17,7 @@ predict_footprints_SE(
   bgcoverprior,
   aggrByGroup = TRUE,
   ftpConfigMethod = c("PV", "PosteriorDecoding", "Viterbi"),
+  returnAs = c("SE", "data.table"),
   ncpu = 1L,
   verbose = FALSE,
   profile = FALSE
@@ -25,7 +26,7 @@ predict_footprints_SE(
 \arguments{
 \item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
 containing read-level data returned by
-\code{footprintR::readModBam}, including modification probabilities.}
+\code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.}
 
 \item{assayName}{Character scalar specifying the name of the assay in
 \code{se} that contains read-level modification probabilities.}
@@ -95,6 +96,9 @@ footprint configuration. The \code{score} corresponds to the posterior
 start probability for each reported footprint.}
 }}
 
+\item{returnAs}{return output as \code{SummarizedExperiment} (\code{SE}) or
+\code{data.table}.}
+
 \item{ncpu}{Number of threads to use.}
 
 \item{verbose}{Logical. If \code{TRUE}, enables verbose output for debugging.}
@@ -102,7 +106,7 @@ start probability for each reported footprint.}
 \item{profile}{Enable time profiling.}
 }
 \value{
-A \code{SummarizedExperiment} object containing:
+If \code{returnAs="SE"} - a \code{SummarizedExperiment} object containing:
 \itemize{
 \item the original \code{mod_prob} assay,
 \item additional assays with calculated posterior start and coverage
@@ -110,6 +114,24 @@ probabilities (e.g. "Nucl_coverProb_nomeR"), and
 \item predicted footprint configurations stored as \code{IntegerList}
 objects in \code{colData} (e.g. column "Nucl_nomeR").
 }
+If \code{returnAs="data.table"} - a list containing data.tables for:
+\itemize{
+\item{\code{COVER_PROB}}{ contains coverage probabilities for each SMF
+molecule (\code{fragID}) and each footprint model. These probabilities indicate
+how likely a position is covered by a given footprint. The column \code{mod_prob}
+reports the original modification probabilities provided in the input\code{se} object.
+}
+\item{\code{START_PROB}}{ contains start probabilities for each SMF
+molecule (\code{fragID}) and each footprint model. These probabilities indicate
+how likely a footprint starts at each position in a fragment.
+}
+\item{\code{FOOTPRINT_CONF}}{ contains footprint configurations (decoding) predicted
+for each molecule using the selected \code{ftpConfigMethod}. Each row
+reports the SMF molecule (\code{fragID}), start position (\code{start}),
+width (\code{width}), footprint name (\code{ftp_name}), group
+(\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}
+}
+\code{seqnames}, \code{start} and \code{strand} are genomic coordinates in the reference.
 }
 \description{
 Computes posterior probabilities and predicts footprint configurations for

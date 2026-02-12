@@ -16,7 +16,7 @@ calculate_BG_TF_scores_SE(
 \arguments{
 \item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
 containing read-level data returned by
-\code{footprintR::readModBam}, including modification probabilities.}
+\code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.}
 
 \item{bgAssayNames}{vector of assay names that contain predicted coverage
 probabilities for background (accessible state)}

@@ -37,7 +37,7 @@ ftp_spectral_analysis_SE(
 \arguments{
 \item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
 containing read-level data returned by
-\code{footprintR::readModBam}, including modification probabilities.}
+\code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.}
 
 \item{assayName}{Character scalar specifying the name of the assay in
 \code{se} that contains read-level modification probabilities.}
