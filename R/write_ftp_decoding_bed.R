@@ -20,7 +20,7 @@ write_ftp_decoding_bed <- function(ftp_decode_dt,
         score <- strand <- thickStart <- thickEnd <- itemRgb <- blockCount <- blockSizes <-
         blockStarts <- NULL # due to NSE notes in R CMD check
 
-    assertDataTable(x = ftp_decode_dt,min.cols = 4)
+    assertDataTable(x = ftp_decode_dt,min.cols = 5)
     if(!all(c("seqnames","start","width","strand","fragID") %in% colnames(ftp_decode_dt))){
         stop("ftp_decode_dt must contain columns \"seqnames\",\"start\",\"width\",\"fragID\"")
     }

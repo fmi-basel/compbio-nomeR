@@ -48,25 +48,13 @@ jobs:
         shell: Rscript {0}
       - name: Install gettext (macOS)
         if: runner.os == 'macOS'
-        run: brew install gettext
-
-      - name: Configure environment (macOS)
-        if: runner.os == 'macOS'
         run: |
-            echo "LDFLAGS=-L/usr/local/opt/gettext/lib" >> $GITHUB_ENV
-            echo "CPPFLAGS=-I/usr/local/opt/gettext/include" >> $GITHUB_ENV
-      # - name: Install gettext (macOS)
-      #   if: runner.os == 'macOS'
-      #   run: brew install gettext
-      # - name: Configure environment (macOS)
-      #   if: runner.os == 'macOS'
-      #   run: |
-      #     export LDFLAGS="-L/usr/local/opt/gettext/lib"
-      #     export CPPFLAGS="-I/usr/local/opt/gettext/include"
-      # - name: Install footprintR from GitHub
-      #   run: |
-      #     BiocManager::install("fmicompbio/footprintR", force = TRUE)
-      #   shell: Rscript {0}
+          brew install gettext
+          mkdir -p ~/.R
+          cat <<EOF >> ~/.R/Makevars
+          CPPFLAGS += -I$(brew --prefix gettext)/include
+          LDFLAGS  += -L$(brew --prefix gettext)/lib
+          EOF
 
       - name: Install testhat
         run: |
