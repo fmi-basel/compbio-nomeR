@@ -14,6 +14,8 @@
 #' @param bg_score_thresh Threshold for background (accessible) scores.
 #' @param tf_score_thresh Threshold for TF footprint scores.
 #' @param psc Pseudo-count added when calculating background and TF scores.
+#' @param threads Number or threads used by \code{data.table}.
+#' NULL (default) rereads environment variables. 0 means to use all logical CPUs available. Otherwise a number >= 1
 #'
 #' @returns A \code{data.table} with enrichment values and statistical significance calculated using a binomial test.
 #' The table contains the following columns:
@@ -43,11 +45,15 @@ calculate_tile_BG_TF_enrichments <- function(cover_dt,
                                              nucl_colname = "Nucl",
                                              bg_score_thresh = 0.1,
                                              tf_score_thresh = bg_score_thresh,
-                                             psc = 0.1){
+                                             psc = 0.1,
+                                             threads = NULL){
 
     mod_prob <- fragID <- seqnames <- start <- end <- width <-
         nPoints <- bg_score_mean <- tf_score_mean <- bg_pos_cnt <- tf_pos_cnt <- tile_ID <-
         bg_prob <- bg_binom_pval <- tf_binom_pval <- NULL
+
+
+    setDTthreads(threads = threads)
 
     assertDataTable(x = cover_dt,min.cols = 4)
     if(!all(c("seqnames","start","mod_prob",bg_colname,tf_colname,nucl_colname) %in% colnames(cover_dt))){
