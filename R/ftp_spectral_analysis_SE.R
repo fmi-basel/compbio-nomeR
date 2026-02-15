@@ -127,7 +127,7 @@ ftp_spectral_analysis_SE <- function(
                                           grad_samples = grad_samples,
                                           tol_rel_obj = tol_rel_obj,
                                           algorithm = algorithm,
-                                          refresh = ifelse(verbose, 100, 0),
+                                          refresh = ifelse(verbose, 1000, 0),
                                           ...
             )
 

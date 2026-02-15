@@ -110,13 +110,12 @@ predict_footprints_SE <- function(se,
                                            bgprotectprob,
                                            bgcoverprior,
                                            aggrByGroup,
-                                           verbose,
-                                           add = coll)
+                                           verbose)
     footprint_models <- ftpvalout[["footprint_models"]]
     start_priors <- ftpvalout[["start_priors"]]
 
     ### validate ncpu
-    assert_int(x = ncpu, lower = 0, na.ok = TRUE, add = coll)
+    assert_int(x = ncpu, lower = 0, na.ok = TRUE)
     avail_ncpu <- parallel::detectCores()
     if (is.na(avail_ncpu)) {
         .warning_timestamp(

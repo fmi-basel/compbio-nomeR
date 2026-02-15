@@ -49,8 +49,10 @@ calculate_tile_BG_TF_enrichments <- function(cover_dt,
                                              threads = NULL){
 
     mod_prob <- fragID <- seqnames <- start <- end <- width <-
-        nPoints <- bg_score_mean <- tf_score_mean <- bg_pos_cnt <- tf_pos_cnt <- tile_ID <-
-        bg_prob <- bg_binom_pval <- tf_binom_pval <- NULL
+        bg_score <- tf_score <- n_data_points <-
+        bg_score_mean <- tf_score_mean <- bg_pos_cnt <- tf_pos_cnt <- tile_ID <-
+        bg_prob <- bg_binom_pval <- tf_binom_pval <-
+        bg_log2enr <- tf_log2enr <- bg_FDR <- tf_FDR<- NULL
 
 
     setDTthreads(threads = threads)
@@ -99,7 +101,9 @@ calculate_tile_BG_TF_enrichments <- function(cover_dt,
                                      bg_score_mean = mean(bg_score,na.rm=T),
                                      tf_score_mean = mean(tf_score,na.rm=T),
                                      bg_pos_cnt = sum(bg_score >= bg_score_thresh), ## number of positions with bg_score above threshold
-                                     tf_pos_cnt = sum(tf_score >= tf_score_thresh & bg_score < bg_score_thresh) ## number of positions  tf_score  above cutoff
+                                     tf_pos_cnt = sum(tf_score >= tf_score_thresh) ## number of positions  tf_score  above cutoff
+
+                                     #tf_pos_cnt = sum(tf_score >= tf_score_thresh & bg_score < bg_score_thresh) ## number of positions  tf_score  above cutoff
     ),
     .(seqnames,start,end,tile_ID)]
     #### run binomial test
