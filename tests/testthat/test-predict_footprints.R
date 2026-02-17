@@ -51,6 +51,7 @@ test_that("predict_footprints returns correct object",{
                                     footprint_models = ftp.models,
                                     bgprotectprob = 0.05,
                                     bgcoverprior = bg.pr,
+                                    keepStartProb=TRUE,
                                     ncpu = 1L)
 
     ## check whether slots exist
@@ -97,6 +98,7 @@ test_that("predict_footprints returns expected probabilities and MAP configurati
                                     bgcoverprior = 0.4822005,
                                     aggrByGroup = TRUE,
                                     ftpConfigMethod = "Viterbi",
+                                    keepStartProb=TRUE,
                                     ncpu = 1L)
     ## check start probs
 
@@ -125,6 +127,7 @@ test_that("predict_footprints returns expected probabilities and MAP configurati
                                     bgcoverprior = 0.4822005,
                                     aggrByGroup = TRUE,
                                     ftpConfigMethod = "PV",
+                                    keepStartProb=TRUE,
                                     ncpu = 1L)
     map_conf <- subset(testinsil$FOOTPRINT_CONF,ftp_name != "background")
     map_conf <- map_conf[order(map_conf$start),]

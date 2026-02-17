@@ -10,6 +10,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
                                    const Rcpp::NumericVector& bgprior,
                                    const Rcpp::CharacterVector& ftpConfigMethod,
                                    const Rcpp::LogicalVector& aggrByGroup,
+                                   const Rcpp::LogicalVector& keepStartProb,
                                    const Rcpp::NumericVector& Ncpu,
                                    const Rcpp::LogicalVector& verbose
 ) {
@@ -20,6 +21,9 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 
     //set group aggregation
     bool aggrByGroup_ = Rcpp::as<bool >(aggrByGroup);
+
+    //set whether return start probabilities
+    bool keepStartProb_ = Rcpp::as<bool >(keepStartProb);
 
     // choose algorithm for getting footprint configuration
     string ftpConfigMethod_ = Rcpp::as<string >(ftpConfigMethod);
@@ -76,6 +80,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
                                                      params,
                                                      ftpCnfAlg,
                                                      aggrByGroup_,
+                                                     keepStartProb_,
                                                      Ncpu_);
     // clear
     SMFdata.clear();

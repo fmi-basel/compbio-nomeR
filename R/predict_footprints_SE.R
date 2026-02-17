@@ -27,8 +27,9 @@
 #' @return If \code{returnAs="SE"} - a \code{SummarizedExperiment} object containing:
 #'   \itemize{
 #'     \item the original \code{mod_prob} assay,
-#'     \item additional assays with calculated posterior start and coverage
-#'       probabilities (e.g. "Nucl_coverProb_nomeR"), and
+#'     \item additional assays with calculated posterior coverage
+#'       probabilities (and start probabilities if \code{keepStartProb = TRUE})
+#'       (e.g. "Nucl_coverProb_nomeR"), and
 #'     \item predicted footprint configurations stored as \code{IntegerList}
 #'     objects in \code{colData} (e.g. column "Nucl_nomeR").
 #'   }
@@ -40,15 +41,16 @@
 #'     how likely a position is covered by a given footprint. The column \code{mod_prob}
 #'     reports the original modification probabilities provided in the input\code{se} object.
 #'     }
-#'     \item{\code{START_PROB}}{Contains start probabilities for each SMF
-#'     molecule (\code{fragID}) and each footprint model. These probabilities indicate
-#'     how likely a footprint starts at each position in a fragment.
-#'     }
 #'     \item{\code{FOOTPRINT_CONF}}{Contains footprint configurations (decoding) predicted
 #'     for each molecule using the selected \code{ftpConfigMethod}. Each row
 #'     reports the SMF molecule (\code{fragID}), start position (\code{start}),
 #'     width (\code{width}), footprint name (\code{ftp_name}), group
 #'     (\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}
+#'     \item{\code{START_PROB} (optional, if \code{keepStartProb = TRUE}.)}{
+#'     Contains start probabilities for each SMF
+#'     molecule (\code{fragID}) and each footprint model. These probabilities indicate
+#'     how likely a footprint starts at each position in a fragment.
+#'     }
 #'   }
 #'   \code{seqnames}, \code{start} and \code{strand} are genomic coordinates in the reference.
 #'
@@ -82,6 +84,7 @@ predict_footprints_SE <- function(se,
                                   bgprotectprob,
                                   bgcoverprior,
                                   aggrByGroup = TRUE,
+                                  keepStartProb = FALSE,
                                   ftpConfigMethod = c("PV","PosteriorDecoding", "Viterbi"),
                                   returnAs = c("SE","data.table"),
                                   ncpu = 1L,
@@ -161,6 +164,7 @@ predict_footprints_SE <- function(se,
             start_priors["BG"],
             ftpConfigMethod,
             aggrByGroup,
+            keepStartProb,
             ncpu,
             verbose)
     }, "Step 1: Calling C++ for posterior calculations ", timings, profiling)
@@ -188,8 +192,12 @@ predict_footprints_SE <- function(se,
                        "chr", "refpos", "strand")
 
 
+            if(keepStartProb)
+                probNames <- c("START_PROB", "COVER_PROB")
+            else
+                probNames <- "COVER_PROB"
             predict_res <- sapply(
-                c("START_PROB", "COVER_PROB"),
+                probNames,
                 function(nm) {
 
                     ## convert to data.table
@@ -229,7 +237,7 @@ predict_footprints_SE <- function(se,
             footprint_conf <- fragAnno[, list(fidx_glob,sidx,
                                               fidx_sample,
                                               fragID)][footprint_conf,
-                                                         on = list(fidx_glob = seq)]
+                                                       on = list(fidx_glob = seq)]
 
 
             ### if data.table is requested to be returned
@@ -237,7 +245,9 @@ predict_footprints_SE <- function(se,
                 ## add sample name to COVER_PROB, START_PROB, footprint_conf
                 snames <- colnames(se)
                 predict_res[["COVER_PROB"]] <- predict_res[["COVER_PROB"]][,sample := snames[sidx]]
-                predict_res[["START_PROB"]] <- predict_res[["START_PROB"]][,sample := snames[sidx]]
+
+                if(keepStartProb)
+                    predict_res[["START_PROB"]] <- predict_res[["START_PROB"]][,sample := snames[sidx]]
 
                 footprint_conf <- footprint_conf[,sample := snames[sidx]]
                 footprint_conf <- footprint_conf[,seqnames := fragAnno[["chr"]][match(fidx_glob,fragAnno[["fidx_glob"]])]]
@@ -247,7 +257,9 @@ predict_footprints_SE <- function(se,
 
                 ## add fragID to COVER_PROB, START_PROB
                 predict_res[["COVER_PROB"]] <- predict_res[["COVER_PROB"]][,fragID := fragAnno[["fragID"]][match(fidx_glob,fragAnno[["fidx_glob"]])]]
-                predict_res[["START_PROB"]] <- predict_res[["START_PROB"]][,fragID := fragAnno[["fragID"]][match(fidx_glob,fragAnno[["fidx_glob"]])]]
+
+                if(keepStartProb)
+                    predict_res[["START_PROB"]] <- predict_res[["START_PROB"]][,fragID := fragAnno[["fragID"]][match(fidx_glob,fragAnno[["fidx_glob"]])]]
 
                 ## select and reorder columns
                 ftpnames <- setdiff(colnames(predict_res[["COVER_PROB"]]),
@@ -255,14 +267,12 @@ predict_footprints_SE <- function(se,
                 cols_to_keep <- c("chr","refpos","strand","fragID","sample","mod_prob",ftpnames)
                 cols_to_drop <- setdiff(colnames(predict_res[["COVER_PROB"]]),cols_to_keep)
                 predict_res[["COVER_PROB"]] <- predict_res[["COVER_PROB"]][, (cols_to_drop) := NULL]
-                predict_res[["START_PROB"]] <- predict_res[["START_PROB"]][, (cols_to_drop) := NULL]
                 setcolorder(predict_res[["COVER_PROB"]], neworder = cols_to_keep,skip_absent = TRUE)
-                setcolorder(predict_res[["START_PROB"]], neworder = cols_to_keep,skip_absent = TRUE)
                 ## rename chr -> seqnames, refstart -> start
                 setnames(predict_res[["COVER_PROB"]], "chr", "seqnames")
                 setnames(predict_res[["COVER_PROB"]], "refpos", "start")
-                setnames(predict_res[["START_PROB"]], "chr", "seqnames")
-                setnames(predict_res[["START_PROB"]], "refpos", "start")
+
+
 
                 keep_ftp_cols <- c("seqnames","refpos","width","strand","fragID","sample","ftp_name","ftp_group","score")
                 drop_ftp_cols <- setdiff(colnames(footprint_conf),keep_ftp_cols)
@@ -272,25 +282,33 @@ predict_footprints_SE <- function(se,
                 ## set keys
                 sort_by_keys <- c("seqnames","start")
                 setkeyv(predict_res[["COVER_PROB"]],cols = sort_by_keys)
-                setkeyv(predict_res[["START_PROB"]],cols = sort_by_keys)
                 setkeyv(footprint_conf,cols = sort_by_keys)
                 predict_res[["FOOTPRINT_CONF"]] <- footprint_conf
+
+                if(keepStartProb){
+                    predict_res[["START_PROB"]] <- predict_res[["START_PROB"]][, (cols_to_drop) := NULL]
+                    setcolorder(predict_res[["START_PROB"]], neworder = cols_to_keep,skip_absent = TRUE)
+                    setnames(predict_res[["START_PROB"]], "chr", "seqnames")
+                    setnames(predict_res[["START_PROB"]], "refpos", "start")
+                    setkeyv(predict_res[["START_PROB"]],cols = sort_by_keys)
+                }
 
                 return(predict_res)
             }
 
-
-
-
             ## create rowRanges
             posuniq <- unique(
-                predict_res[["START_PROB"]][, list(chr, refpos,
+                predict_res[["COVER_PROB"]][, list(chr, refpos,
                                                    strand)])[, gpos_idx := 1:.N]
+
+
             ## add gposidx to START_PROB and COVER_PROB
-            predict_res[["START_PROB"]] <- posuniq[predict_res[["START_PROB"]],
-                                                   on = list(chr = chr,
-                                                             refpos = refpos,
-                                                             strand = strand)]
+            if(keepStartProb){
+                predict_res[["START_PROB"]] <- posuniq[predict_res[["START_PROB"]],
+                                                       on = list(chr = chr,
+                                                                 refpos = refpos,
+                                                                 strand = strand)]
+            }
             predict_res[["COVER_PROB"]] <- posuniq[predict_res[["COVER_PROB"]],
                                                    on = list(chr = chr,
                                                              refpos = refpos,
@@ -303,6 +321,7 @@ predict_footprints_SE <- function(se,
 
             ftpnames <- setdiff(colnames(predict_res[["COVER_PROB"]]),
                                 c(fcols, "mod_prob", "gpos_idx"))
+
             nomeR_assayNames <- c("mod_prob", paste(rep(ftpnames, 2),
                                                     rep(c("coverProb", "startProb"),
                                                         each = length(ftpnames)),
@@ -313,7 +332,9 @@ predict_footprints_SE <- function(se,
                                     probName = c("COVER_PROB",
                                                  rep(c("COVER_PROB", "START_PROB"),
                                                      each = length(ftpnames))))
-
+            if(!keepStartProb){
+                assayAnno <- assayAnno[assayAnno$probName != "START_PROB",,drop=F]
+            }
             ## background_startProb and background_coverProb are identical.
             ## keep only coverProb
             assayAnno <- assayAnno[assayAnno$assayName !=

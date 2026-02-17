@@ -39,6 +39,8 @@
 #'   the \code{GROUP} ID in \code{footprint_models}. If \code{FALSE}, or if
 #'   GROUP IDs are missing, probabilities are reported for each individual
 #'   footprint \code{NAME}.
+#' @param keepStartProb Logical. If \code{TRUE} calculated posteriors for
+#'   footprint starts are returned.
 #' @param ftpConfigMethod Algorithm for decoding footprint configurations:
 #'   \describe{
 #'     \item{\code{PV}}{Posterior-Viterbi (default): uses footprint coverage
@@ -65,10 +67,6 @@
 #'
 #' @return A list containing three data frames:
 #'   \describe{
-#'     \item{\code{START_PROB}}{Contains start probabilities for each SMF
-#'     molecule (\code{seq}), each position in ROI (\code{pos}), and each
-#'     footprint model. These probabilities indicate how likely a footprint
-#'     starts at each position in a fragment.}
 #'     \item{\code{COVER_PROB}}{Contains coverage probabilities for each SMF
 #'     molecule (\code{seq}), each position in ROI (\code{pos}), and each
 #'     footprint model. These probabilities indicate how likely a position is
@@ -78,6 +76,11 @@
 #'     reports the SMF molecule (\code{seq}), start position (\code{start}),
 #'     width (\code{width}), footprint name (\code{ftp_name}), group
 #'     (\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}
+#'     \item{\code{START_PROB} (optional, if \code{keepStartProb = TRUE}.)}{
+#'     Contains start probabilities for each SMF
+#'     molecule (\code{seq}), each position in ROI (\code{pos}), and each
+#'     footprint model. These probabilities indicate how likely a footprint
+#'     starts at each position in a fragment.}
 #'   }
 #'
 #' @importFrom checkmate makeAssertCollection assert_logical assert_int
@@ -119,6 +122,7 @@ predict_footprints <- function(data,
                                bgcoverprior,
                                aggrByGroup = TRUE,
                                ftpConfigMethod = c("PV","PosteriorDecoding", "Viterbi"),
+                               keepStartProb = FALSE,
                                ncpu = 1L,
                                verbose = FALSE) {
 
@@ -169,6 +173,7 @@ predict_footprints <- function(data,
         start_priors["BG"],
         ftpConfigMethod,
         aggrByGroup,
+        keepStartProb,
         ncpu,
         verbose)
 
@@ -176,7 +181,11 @@ predict_footprints <- function(data,
               !is.null(predict_res_list[["COVER_PROB"]]),
               !is.null(predict_res_list[["FOOTPRINT_CONF"]])))) {
         if (verbose) {
-            .message_timestamp("convert cpp_nomeR output to data.table...")
+            .message_timestamp("convert cpp_nomeR output to data.frame...")
+        }
+
+        if(!keepStartProb){
+            predict_res_list <- predict_res_list[c("COVER_PROB","FOOTPRINT_CONF")]
         }
 
         return(lapply(predict_res_list,as.data.frame,

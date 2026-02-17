@@ -16,6 +16,7 @@ predict_footprints_SE(
   bgprotectprob,
   bgcoverprior,
   aggrByGroup = TRUE,
+  keepStartProb = FALSE,
   ftpConfigMethod = c("PV", "PosteriorDecoding", "Viterbi"),
   returnAs = c("SE", "data.table"),
   ncpu = 1L,
@@ -74,6 +75,9 @@ the \code{GROUP} ID in \code{footprint_models}. If \code{FALSE}, or if
 GROUP IDs are missing, probabilities are reported for each individual
 footprint \code{NAME}.}
 
+\item{keepStartProb}{Logical. If \code{TRUE} calculated posteriors for
+footprint starts are returned.}
+
 \item{ftpConfigMethod}{Algorithm for decoding footprint configurations:
 \describe{
 \item{\code{PV}}{Posterior-Viterbi (default): uses footprint coverage
@@ -109,8 +113,9 @@ start probability for each reported footprint.}
 If \code{returnAs="SE"} - a \code{SummarizedExperiment} object containing:
 \itemize{
 \item the original \code{mod_prob} assay,
-\item additional assays with calculated posterior start and coverage
-probabilities (e.g. "Nucl_coverProb_nomeR"), and
+\item additional assays with calculated posterior coverage
+probabilities (and start probabilities if \code{keepStartProb = TRUE})
+(e.g. "Nucl_coverProb_nomeR"), and
 \item predicted footprint configurations stored as \code{IntegerList}
 objects in \code{colData} (e.g. column "Nucl_nomeR").
 }
@@ -122,15 +127,16 @@ molecule (\code{fragID}) and each footprint model. These probabilities indicate
 how likely a position is covered by a given footprint. The column \code{mod_prob}
 reports the original modification probabilities provided in the input\code{se} object.
 }
-\item{\code{START_PROB}}{Contains start probabilities for each SMF
-molecule (\code{fragID}) and each footprint model. These probabilities indicate
-how likely a footprint starts at each position in a fragment.
-}
 \item{\code{FOOTPRINT_CONF}}{Contains footprint configurations (decoding) predicted
 for each molecule using the selected \code{ftpConfigMethod}. Each row
 reports the SMF molecule (\code{fragID}), start position (\code{start}),
 width (\code{width}), footprint name (\code{ftp_name}), group
 (\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}
+\item{\code{START_PROB} (optional, if \code{keepStartProb = TRUE}.)}{
+Contains start probabilities for each SMF
+molecule (\code{fragID}) and each footprint model. These probabilities indicate
+how likely a footprint starts at each position in a fragment.
+}
 }
 \code{seqnames}, \code{start} and \code{strand} are genomic coordinates in the reference.
 }

@@ -34,6 +34,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
                                    const Rcpp::NumericVector& bgprior,
                                    const Rcpp::CharacterVector& ftpConfigMethod,
                                    const Rcpp::LogicalVector& aggrByGroup,
+                                   const Rcpp::LogicalVector& keepStartProb,
                                    const Rcpp::NumericVector& Ncpu,
                                    const Rcpp::LogicalVector& verbose);
 

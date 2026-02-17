@@ -12,6 +12,7 @@ predict_footprints(
   bgcoverprior,
   aggrByGroup = TRUE,
   ftpConfigMethod = c("PV", "PosteriorDecoding", "Viterbi"),
+  keepStartProb = FALSE,
   ncpu = 1L,
   verbose = FALSE
 )
@@ -80,6 +81,9 @@ footprint configuration. The \code{score} corresponds to the posterior
 start probability for each reported footprint.}
 }}
 
+\item{keepStartProb}{Logical. If \code{TRUE} calculated posteriors for
+footprint starts are returned.}
+
 \item{ncpu}{Number of threads to use.}
 
 \item{verbose}{Logical. If \code{TRUE}, enables verbose output for debugging.}
@@ -87,10 +91,6 @@ start probability for each reported footprint.}
 \value{
 A list containing three data frames:
 \describe{
-\item{\code{START_PROB}}{Contains start probabilities for each SMF
-molecule (\code{seq}), each position in ROI (\code{pos}), and each
-footprint model. These probabilities indicate how likely a footprint
-starts at each position in a fragment.}
 \item{\code{COVER_PROB}}{Contains coverage probabilities for each SMF
 molecule (\code{seq}), each position in ROI (\code{pos}), and each
 footprint model. These probabilities indicate how likely a position is
@@ -100,6 +100,11 @@ for each molecule using the selected \code{ftpConfigMethod}. Each row
 reports the SMF molecule (\code{seq}), start position (\code{start}),
 width (\code{width}), footprint name (\code{ftp_name}), group
 (\code{ftp_group}), and confidence score (\code{score}) between 0 and 1.}
+\item{\code{START_PROB} (optional, if \code{keepStartProb = TRUE}.)}{
+Contains start probabilities for each SMF
+molecule (\code{seq}), each position in ROI (\code{pos}), and each
+footprint model. These probabilities indicate how likely a footprint
+starts at each position in a fragment.}
 }
 }
 \description{

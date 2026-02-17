@@ -353,6 +353,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                                         const parameters& params,
                                         ftpConfigAlgo ftpCnfAlg,
                                         bool aggrByGroup,
+                                        bool keepStartProb,
                                         int ncpu){
     extern bool _VERBOSE_;
 
@@ -368,14 +369,17 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 
     // allocate native C++ vectors for output probabilities
     vector<int32_t > tmp_vec;
-    vector<vector<int32_t >> startOutFragIDs(smfData.Size(),tmp_vec); // vector of vectors with fragment IDs. one per seq
-    vector<vector<int32_t >> startOutFragPos(smfData.Size(),tmp_vec); // positions within fragments
+    vector<vector<int32_t >> startOutFragIDs;
+    vector<vector<int32_t >> startOutFragPos;
+    vector<vector<vector<double >>> startOutProbs; // vectors of size nFtpGroups, i.e. for each group . per each seq
+    if(keepStartProb){
+        startOutFragIDs.assign(smfData.Size(), tmp_vec); // vector of vectors with fragment IDs. one per seq
+        startOutFragPos.assign(smfData.Size(), tmp_vec); // positions within fragments
+    }
 
     vector<vector<int32_t >> coverOutFragIDs(smfData.Size(),tmp_vec); // vector with fragment IDs as was passed from the R side
     vector<vector<int32_t >> coverOutFragPos(smfData.Size(),tmp_vec); // positions within fragments
-
-    vector<vector<vector<double >>> startOutProbs; // vectors of size nFtpGroups, i.e. for each group . per each seq
-    vector<vector<vector<double >>> coverOutProbs;
+    vector<vector<vector<double >>> coverOutProbs; // vectors of size nFtpGroups, i.e. for each group . per each seq
 
     // allocate vectors for footprint configurations
     vector<vector<int32_t >> ftpConfOutFragIDs(smfData.Size(),tmp_vec);
@@ -392,13 +396,18 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
         vector<vector<double >> tmpst;
         vector<vector<double >> tmpcv;
         for(size_t i=0; i < nFtpGroups; ++i){
-            vector<double > startTmp;
             vector<double > coverTmp;
-            tmpst.push_back(startTmp);
             tmpcv.push_back(coverTmp);
+            if(keepStartProb){
+                vector<double > startTmp;
+                tmpst.push_back(startTmp);
+            }
+
+
         }
-        startOutProbs.push_back(tmpst);
         coverOutProbs.push_back(tmpcv);
+        if(keepStartProb)
+            startOutProbs.push_back(tmpst);
     }
 
 #ifdef _OPENMP
@@ -550,34 +559,35 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
             // NOTE: startOutProbs and coverOutProbs contain aggregated probabilities per group if aggrByGroup is TRUE
 
 
-            // fill output vectors for START_PROB
             int firstDatPos = smfData[seq]._firstDatpos;
             int lastDatPos = smfData[seq]._lastDatpos;
-            // int spos = firstDatPos - maxwmlen + 1; // by default we report calculated posteriors in the left padded region
-            // int lpos = lastDatPos;
+
             int spos = firstDatPos; // ignore padded regions
             int lpos = lastDatPos;
+
             vector<int32_t > currSeqStartOutFragIDs;
-            currSeqStartOutFragIDs.reserve(lpos - spos + 1);
             vector<int32_t > currSeqStartOutFragPos;
-            currSeqStartOutFragPos.reserve(lpos - spos + 1);
             vector<vector<double >> currSeqStartOutProbs;
-            if(aggrByGroup)
-                currSeqStartOutProbs.reserve(ftpModels.groups.size());
-            else
-                currSeqStartOutProbs.reserve(ftpModels.Size());
+            if(keepStartProb){
+                // fill output vectors for START_PROB
+                currSeqStartOutFragIDs.reserve(lpos - spos + 1);
+                currSeqStartOutFragPos.reserve(lpos - spos + 1);
+                if(aggrByGroup)
+                    currSeqStartOutProbs.reserve(ftpModels.groups.size());
+                else
+                    currSeqStartOutProbs.reserve(ftpModels.Size());
 
-            getOutputVectors(Prob,
-                             ftpModels,
-                             smfData[seq], // current protection data sequence
-                                    spos, // index in seqData to start aggregation
-                                    lpos, // index in seqData until which to perform aggregation (including)
-                                    aggrByGroup, // aggregate by group?
-                                    currSeqStartOutFragIDs,
-                                    currSeqStartOutFragPos,
-                                    currSeqStartOutProbs // matrix to store probablities, aggregated or not
-            );
-
+                getOutputVectors(Prob,
+                                 ftpModels,
+                                 smfData[seq], // current protection data sequence
+                                        spos, // index in seqData to start aggregation
+                                        lpos, // index in seqData until which to perform aggregation (including)
+                                        aggrByGroup, // aggregate by group?
+                                        currSeqStartOutFragIDs,
+                                        currSeqStartOutFragPos,
+                                        currSeqStartOutProbs // matrix to store probablities, aggregated or not
+                );
+            }
 
             // fill output vectors for COVER_PROB
             vector<int32_t > currSeqCoverOutFragIDs;
@@ -655,10 +665,12 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
             }
 
             // move all into pre-allocated vectors
-            // data for start probabilities
-            startOutFragIDs[seq] = move(currSeqStartOutFragIDs);
-            startOutFragPos[seq] = move(currSeqStartOutFragPos);
-            startOutProbs[seq] = move(currSeqStartOutProbs);
+            if(keepStartProb){
+                // data for start probabilities
+                startOutFragIDs[seq] = move(currSeqStartOutFragIDs);
+                startOutFragPos[seq] = move(currSeqStartOutFragPos);
+                startOutProbs[seq] = move(currSeqStartOutProbs);
+            }
             // data for cover probabilities
             coverOutFragIDs[seq] = move(currSeqCoverOutFragIDs);
             coverOutFragPos[seq] = move(currSeqCoverOutFragPos);
@@ -684,6 +696,7 @@ Rcpp::List RcppListStartOut; // this is a list of vectors
 // 1st element: Rcpp::IntegerVector with fragment IDs as was passed from the R side
 // 2nd element: Rcpp::IntegerVector with positions within fragments
 // 3rd, 4th and so on: Rcpp::NumericVector with starting probabilities for ftp1, ftp2 and so on
+// if keepStartProb ==FALSE it should be empty
 
 // 0. set how many columns base on aggrByGroup
 int nElems = 0;
@@ -699,42 +712,42 @@ else{
     }
 
 }
-
-
-// 1. Compute total length
-size_t start_total_size = 0;
-for (const auto& v : startOutFragIDs)
-    start_total_size += v.size();
-Rcpp::IntegerVector RcppStartOutFragIDs(start_total_size);
 size_t offset = 0;
-for (const auto& v : startOutFragIDs) {
-    std::copy(v.begin(), v.end(), RcppStartOutFragIDs.begin() + offset);
-    offset += v.size();
-}
-RcppListStartOut.push_back(RcppStartOutFragIDs,"seq");
+if(keepStartProb){
+    // 1. Compute total length
+    size_t start_total_size = 0;
+    for (const auto& v : startOutFragIDs)
+        start_total_size += v.size();
+    Rcpp::IntegerVector RcppStartOutFragIDs(start_total_size);
 
-Rcpp::IntegerVector RcppStartOutFragPos(start_total_size);
-offset = 0;
-for (const auto& v : startOutFragPos) {
-    std::copy(v.begin(), v.end(), RcppStartOutFragPos.begin() + offset);
-    offset += v.size();
-}
-RcppListStartOut.push_back(RcppStartOutFragPos,"pos");
-
-// add flattened start probabilities for each footprint name/group (depend on aggrByGroup bool)
-for(int iElem = 0; iElem < nElems; ++iElem){
-    Rcpp::NumericVector ftpStartProbs(start_total_size,NA_REAL);
-    RcppListStartOut.push_back(ftpStartProbs,elemNames[iElem]);
-}
-offset = 0;
-for(int seq = 0; seq < startOutProbs.size(); ++seq){
-    for(int iElem = 0; iElem < nElems; ++iElem){
-        Rcpp::NumericVector ftpProbVec = RcppListStartOut[iElem + 2]; // 0 - fragID, 1 - fragPos, 2 - ftp1, 3 - ftp2 etc.
-        std::copy(startOutProbs[seq][iElem].begin(), startOutProbs[seq][iElem].end(), ftpProbVec.begin() + offset);
+    for (const auto& v : startOutFragIDs) {
+        std::copy(v.begin(), v.end(), RcppStartOutFragIDs.begin() + offset);
+        offset += v.size();
     }
-    offset += startOutProbs[seq][0].size();
-}
+    RcppListStartOut.push_back(RcppStartOutFragIDs,"seq");
 
+    Rcpp::IntegerVector RcppStartOutFragPos(start_total_size);
+    offset = 0;
+    for (const auto& v : startOutFragPos) {
+        std::copy(v.begin(), v.end(), RcppStartOutFragPos.begin() + offset);
+        offset += v.size();
+    }
+    RcppListStartOut.push_back(RcppStartOutFragPos,"pos");
+
+    // add flattened start probabilities for each footprint name/group (depend on aggrByGroup bool)
+    for(int iElem = 0; iElem < nElems; ++iElem){
+        Rcpp::NumericVector ftpStartProbs(start_total_size,NA_REAL);
+        RcppListStartOut.push_back(ftpStartProbs,elemNames[iElem]);
+    }
+    offset = 0;
+    for(int seq = 0; seq < startOutProbs.size(); ++seq){
+        for(int iElem = 0; iElem < nElems; ++iElem){
+            Rcpp::NumericVector ftpProbVec = RcppListStartOut[iElem + 2]; // 0 - fragID, 1 - fragPos, 2 - ftp1, 3 - ftp2 etc.
+            std::copy(startOutProbs[seq][iElem].begin(), startOutProbs[seq][iElem].end(), ftpProbVec.begin() + offset);
+        }
+        offset += startOutProbs[seq][0].size();
+    }
+}
 
 // flatten nested vectors and create Rcpp::vectors for COVER_PROB
 // memory for cover probabilities

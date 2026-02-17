@@ -90,6 +90,7 @@ public:
                                    const parameters& params,
                                    ftpConfigAlgo ftpCnfAlg,
                                    bool aggrByGroup,
+                                   bool keepStartProb,
                                    int ncpu);
 
 

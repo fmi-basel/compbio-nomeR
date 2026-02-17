@@ -52,6 +52,7 @@ write_ftp_decoding_bed <- function(ftp_decode_dt,
         file = file,
         sep = "\t",
         col.names = FALSE,
+        scipen = 9999,
         ...
     )
 
