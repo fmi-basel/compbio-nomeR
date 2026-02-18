@@ -86,7 +86,7 @@ test_that("predict_footprints returns correct object",{
 })
 
 
-test_that("predict_footprints returns expected probabilities and MAP configuration",{
+test_that("predict_footprints returns expected probabilities and ftp configuration",{
 
     ## load data
     dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))

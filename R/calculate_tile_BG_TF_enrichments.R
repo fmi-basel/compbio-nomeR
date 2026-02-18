@@ -85,6 +85,7 @@ calculate_tile_BG_TF_enrichments <- function(cover_dt,
                                         step = tile_step))
     tiles_loci$tile_ID <- as.character(tiles_loci)
 
+
     ## overlap cover_dt with tiles
     cover_dt <- cover_dt[,end := start]
     setkeyv(cover_dt,cols = c("seqnames","start","end"))
