@@ -97,13 +97,19 @@ calculate_tile_BG_TF_enrichments <- function(cover_dt,
 
 
     ## apply thresholds, calculate aggregated statistics for each tile
+    ## the reason for selecting tf positives not only on tf score but also on bg score lies
+    ## in the distribution of points on bg_score vs tf_score scatter.
+    ## it looks like a triangle |> where
+    ## top left corner correspond to positions with TF posterior coverage near 1.
+    ## right corner corresponds to positions with bg posteriors near 1
+    ## and bottom left correspond to Nucl posteriors near 1.
+    ## therefore, thresholding only on tf_score may select many points from the right corner, i.e. bg positive points.
+
     tile_aggr_stats <- smftile_ov[,.(n_data_points = .N, ## total number of points, i.e. A/T across overlaping tile
                                      bg_score_mean = mean(bg_score,na.rm=T),
                                      tf_score_mean = mean(tf_score,na.rm=T),
                                      bg_pos_cnt = sum(bg_score >= bg_score_thresh), ## number of positions with bg_score above threshold
-                                     tf_pos_cnt = sum(tf_score >= tf_score_thresh) ## number of positions  tf_score  above cutoff
-
-                                     #tf_pos_cnt = sum(tf_score >= tf_score_thresh & bg_score < bg_score_thresh) ## number of positions  tf_score  above cutoff
+                                     tf_pos_cnt = sum(tf_score >= tf_score_thresh & bg_score < bg_score_thresh) ## number of positions  tf_score  above cutoff and not bg positive
     ),
     .(seqnames,start,end,tile_ID)]
     #### run binomial test
