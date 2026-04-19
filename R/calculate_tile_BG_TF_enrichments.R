@@ -76,7 +76,6 @@ calculate_tile_BG_TF_enrichments <- function(cover_dt,
 
 
     ### create sliding windows
-
     span_reg <- range(GRanges(seqnames = cover_dt[["seqnames"]],
                               IRanges(start = cover_dt[["start"]],
                                       width=1)))
@@ -106,7 +105,8 @@ calculate_tile_BG_TF_enrichments <- function(cover_dt,
     ## and bottom left correspond to Nucl posteriors near 1.
     ## therefore, thresholding only on tf_score may select many points from the right corner, i.e. bg positive points.
 
-    tile_aggr_stats <- smftile_ov[,.(n_data_points = .N, ## total number of points, i.e. A/T across overlaping tile
+    tile_aggr_stats <- smftile_ov[,.(n_data_points = .N, ## total number of data points
+                                     n_inf_pos = length(unique(i.start)),
                                      bg_score_mean = mean(bg_score,na.rm=T),
                                      tf_score_mean = mean(tf_score,na.rm=T),
                                      bg_pos_cnt = sum(bg_score >= bg_score_thresh), ## number of positions with bg_score above threshold
