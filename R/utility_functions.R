@@ -1,4 +1,5 @@
 
+
 .is_profiling_enabled <- function(profile) {
     isTRUE(profile) || isTRUE(getOption("nomeR.profile", FALSE))
 }
