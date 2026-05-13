@@ -52,10 +52,11 @@ validate_prepare_SE <- function(se,
         }
     }
 
-    if (nrow(se) > 0) {
-        stopifnot(!is.null(rownames(se)) &&
-                      !any(duplicated(rownames(se))))
-    }
+    # if (nrow(se) > 0) {
+    #     stopifnot(!is.null(rownames(se)) &&
+    #                   !any(duplicated(rownames(se))))
+    # }
+
     stopifnot(!is.null(metadata(se)$readLevelData) &&
                   is.list(metadata(se)$readLevelData) &&
                   all(c("assayNames", "colDataColumns") %in%

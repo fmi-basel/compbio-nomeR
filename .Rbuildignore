@@ -11,3 +11,5 @@ test_rnome.R
 ^\.travis\.yml$
 ^\.github$
 CITATION.cff
+^\.positai$
+^\.claude$

@@ -16,3 +16,4 @@ TODO
 *.nfs*
 model_deriv_docs/*
 config.*
+.positai

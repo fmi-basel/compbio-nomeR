@@ -9,7 +9,10 @@ correct_modprob_SE(
   assayName = "mod_prob",
   corrected_assayName = "mod_prob_corrected",
   neg_control_shapes,
-  pos_control_shapes
+  pos_control_shapes,
+  mod_prior = 0.5,
+  eps = .Machine$double.eps,
+  qnorm_to_raw = FALSE
 )
 }
 \arguments{

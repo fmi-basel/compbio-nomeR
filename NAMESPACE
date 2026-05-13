@@ -2,7 +2,10 @@
 
 export(calculate_BG_TF_scores_SE)
 export(calculate_tile_BG_TF_enrichments)
+export(calculate_tile_BG_TF_enrichments2)
+export(calculate_tile_BG_TF_enrichments3)
 export(correct_modprob_SE)
+export(extract_assay_datatable)
 export(ftp_spectral_analysis_SE)
 export(generate_insilico_SMF_data)
 export(get_SeqContext_control_beta_shapes_SE)
