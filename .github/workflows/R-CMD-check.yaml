@@ -56,15 +56,10 @@ jobs:
           LDFLAGS  += -L$(brew --prefix gettext)/lib
           EOF
 
-      - name: Install testhat
-        run: |
-          install.packages("testthat")
-        shell: Rscript {0}
-
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck, any::testthat
           dependencies: '"hard"'
           cache: true
           cache-version: 1
@@ -82,7 +77,6 @@ jobs:
         with:
           upload-snapshots: false
           error-on: '"error"'
-          extra-packages: any::testthat
           dependencies: '"hard"'
 
       # - name: Build, Install, Check
