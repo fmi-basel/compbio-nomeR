@@ -82,6 +82,7 @@ jobs:
         with:
           upload-snapshots: false
           error-on: '"error"'
+          extra-packages: any::testthat
           dependencies: '"hard"'
 
       # - name: Build, Install, Check
