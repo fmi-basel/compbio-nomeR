@@ -9,7 +9,7 @@
 #' @returns corrected modification probability
 #' @noRd
 #' @keywords internal
-#' @importFrom stats pbeta
+#' @importFrom stats dbeta plogis
 .calc_beta_corrected_mod_prob_dbeta <- function (mod_prob,
                                                  neg_shape1,
                                                  neg_shape2,
@@ -78,25 +78,9 @@
     ref_sorted[ref_idx]
 }
 
-# .calc_beta_corrected_mod_prob_pbeta <- function(mod_prob,
-#                                                 neg_shape1,
-#                                                 neg_shape2,
-#                                                 pos_shape1,
-#                                                 pos_shape2,
-#                                                 pos_prior = 0.5){
-#
-#     posbeta <- pos_prior * pbeta(q = mod_prob,
-#                                  shape1 = pos_shape1,
-#                                  shape2 = pos_shape2)
-#     negbeta <- (1 - pos_prior) * (1 - pbeta(q = mod_prob,
-#                                             shape1 = neg_shape1,
-#                                             shape2 = neg_shape2))
-#     mod_prob_correct <- posbeta/(posbeta + negbeta)
-#     return(mod_prob_correct)
-# }
+
 
 .correct_sample <- function(dat_na_matrix,
-                            seqcontext,
                             neg_shape1_vec,
                             neg_shape2_vec,
                             pos_shape1_vec,
@@ -107,7 +91,6 @@
 
     nonna_idx <- nnawhich(dat_na_matrix, arr.ind = TRUE)
     ## row; column
-
 
     ## create NaArray
     corrected_namat <- NaArray(dim = dim(dat_na_matrix),
@@ -122,27 +105,42 @@
                                                                       mod_prior = mod_prior,
                                                                       eps=eps)
     if(qnorm_to_raw){
-        corrected_namat[nonna_idx] <- .quantile_normalise(p_z1 = corrected_namat[nonna_idx], y_raw = dat_na_matrix[nonna_idx])
+        corrected_namat[nonna_idx] <- .quantile_normalise(p_z1 = corrected_namat[nonna_idx],
+                                                          y_raw = dat_na_matrix[nonna_idx])
     }
 
     return(corrected_namat)
 
 }
 
-#' Correct modification probabilities
+#' Correct modification probabilities for sequence-context bias
 #'
-
-#' @param corrected_assayName Character scalar specifying the name of the additional
-#'   assay in returned \code{se} that will contain read-level corrected modification probabilities.
-#' @param neg_control_shapes \code{data.table}'s containing shapes of Beta distributions
-#'   for negative control experiments. Can be obtained using \code{\link{get_SeqContext_control_beta_shapes_SE}}.
-#' @param pos_control_shapes \code{data.table}'s containing shapes of Beta distributions
-#'   for positive control experiments. Can be obtained using \code{\link{get_SeqContext_control_beta_shapes_SE}}.
+#' @description
+#' Applies a per-position Bayesian correction to raw modification probabilities
+#' using Beta distributions fitted to negative-control (unmodified) and
+#' positive-control (fully modified) samples, stratified by sequence context.
+#'
+#' @param corrected_assayName Character scalar. Name of the additional assay
+#'   added to the returned \code{se} that will contain the corrected
+#'   read-level modification probabilities.
+#' @param neg_control_shapes A \code{data.table} containing Beta distribution
+#'   shape parameters for the negative control experiment (no MTase treatment),
+#'   as returned by \code{\link{get_SeqContext_control_beta_shapes_SE}}.
+#' @param pos_control_shapes A \code{data.table} containing Beta distribution
+#'   shape parameters for the positive control experiment (MTase treatment of
+#'   naked DNA), as returned by \code{\link{get_SeqContext_control_beta_shapes_SE}}.
+#' @param mod_prior Numeric. Prior probability of a modified base.
+#' @param eps Numeric. Small value used to clamp modification probabilities away
+#'   from the exact boundaries 0 and 1 before evaluating the Beta log-densities.
+#'   Defaults to \code{.Machine$double.eps}.
+#' @param qnorm_to_raw Logical. If \code{TRUE}, perform quantile normalisation of
+#'   the corrected probabilities to match the distribution of the raw probabilities.
 #'
 #' @inheritParams predict_footprints_SE
 #'
-#' @returns \code{se} with additional assay (with name defined by \code{corrected_assayName}) containing
-#'   corrected modification probabilities.
+#' @returns The input \code{se} with an additional assay (named by
+#'   \code{corrected_assayName}) containing the corrected modification
+#'   probabilities.
 #' @export
 #' @importFrom SummarizedExperiment SummarizedExperiment rowData colData
 #'     assay assayNames assay<-
@@ -189,7 +187,6 @@ correct_modprob_SE <- function(se,
     assayMat <- make_zero_col_DFrame(nrow = nrow(se))
     for(sI in seq_len(ncol(se))) {
         corrected_data <- .correct_sample(dat_na_matrix = mod_prob_assays[,sI],
-                                          seqcontext = seqcont,
                                           neg_shape1_vec = neg_shape1_per_row,
                                           neg_shape2_vec = neg_shape2_per_row,
                                           pos_shape1_vec = pos_shape1_per_row,

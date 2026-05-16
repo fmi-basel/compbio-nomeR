@@ -15,7 +15,6 @@ Imports:
     cli,
     data.table,
     dplyr,
-    GenomeInfoDb,
     GenomicRanges,
     ggplot2,
     graphics,
@@ -49,7 +48,6 @@ LinkingTo:
     StanHeaders (>= 2.18.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Biarch: true
 Depends: 
     R (>= 3.5)
@@ -58,3 +56,5 @@ Config/testthat/edition: 3
 URL: https://github.com/fmi-basel/compbio-nomeR
 BugReports: https://github.com/fmi-basel/compbio-nomeR/issues
 biocViews: Epigenetics, LongRead, Sequencing, Coverage
+Config/roxygen2/version: 8.0.0
+RoxygenNote: 7.3.3

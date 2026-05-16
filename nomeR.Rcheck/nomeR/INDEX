@@ -1,0 +1,62 @@
+.quantile_normalise     Standard quantile normalisation
+calculate_BG_TF_scores_SE
+                        Compute isometric log-ratio scores from
+                        predicted posterior coverages
+calculate_tile_BG_TF_enrichments
+                        Enrichment of Accessible Sites and TF
+                        Footprints Across Genomic Tiles
+correct_modprob_SE      Correct modification probabilities for
+                        sequence-context bias
+extract_assay_datatable
+                        Extract assay data from a SummarizedExperiment
+                        as a 'data.table'
+ftp_spectral_analysis_SE
+                        Footprint spectral analysis for a
+                        SummarizedExperiment containing single-molecule
+                        footprinting (SMF) data
+generate_insilico_SMF_data
+                        Generate an in-silico single-molecule
+                        footprinting dataset
+get_ctable_from_matrix
+                        Create co-occurrence count tables (00, 01, 10,
+                        11) from a binary SMF data matrix
+get_ctable_from_SE      Create count tables of '00', '01', '10', and
+                        '11' co-occurrences in a SummarizedExperiment
+                        object containing SMF modification
+                        probabilities
+get_ftp_inference_summary
+                        Extract and/or plot estimates from footprint
+                        inference and optionally suggest footprints
+get_ftp_models_for_prediction
+                        Create parameters for 'predict_footprints' and
+                        'predict_footprints_SE' from a footprint
+                        inference summary
+get_ftp_PWMs_for_prediction
+                        Create footprint models for
+                        'predict_footprints' from an inferred footprint
+                        spectrum
+get_SeqContext_control_beta_shapes_SE
+                        Fit Beta distribution shapes for positive and
+                        negative controls
+infer_footprints_optim
+                        Find point estimates for footprint abundance
+                        using Stan optimization
+infer_footprints_sampling
+                        Footprint spectral analysis using the No-U-Turn
+                        Sampler (NUTS) implemented in Stan
+infer_footprints_vb     Footprint spectral analysis by Variational
+                        Bayes inference using Stan Automatic
+                        Differentiation Variational Inference (ADVI)
+nomeR-package           The 'nomeR' package.
+plot_ftp_spectra_DF     Plot footprint spectra from a DataFrame
+plot_ftp_spectrum       Plot a footprint abundance spectrum
+predict_footprints      Calculate posterior probabilities and predict
+                        footprints in single-molecule footprinting
+                        (SMF) data
+predict_footprints_SE   Calculate posterior probabilities and predict
+                        footprints in a SummarizedExperiment containing
+                        single-molecule footprinting (SMF) data
+suggest_footprints      Suggest potential footprints from an inferred
+                        spectrum
+write_ftp_decoding_bed
+                        Write footprint decoding to a BED12 file

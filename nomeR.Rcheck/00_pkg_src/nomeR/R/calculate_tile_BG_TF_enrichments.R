@@ -11,13 +11,15 @@
 #' @param bg_colname Name of the column containing posterior coverage for background (accessible positions).
 #' @param tf_colname Name of the column containing posterior coverage for TF footprints.
 #' @param nucl_colname Name of the column containing posterior coverage for nucleosome footprints.
-#' @param bg_score_thresh Threshold for background (accessible) scores.
-#' @param tf_score_thresh Threshold for TF footprint scores.
 #' @param psc Pseudo-count added when calculating background and TF scores.
-#' @param threads Number or threads used by \code{data.table}.
-#' NULL (default) rereads environment variables. 0 means to use all logical CPUs available. Otherwise a number >= 1
+#' @param threads Number of threads used by \code{data.table}.
+#'   \code{NULL} (default) re-reads environment variables. \code{0} uses all
+#'   available logical CPUs. Otherwise a positive integer.
 #'
-#' @returns A \code{data.table} with enrichment values and statistical significance calculated using a binomial test.
+#' @returns A \code{data.table} with enrichment values and statistical
+#'   significance calculated using a Z-test on BG and TF scores.
+#'   The null hypothesis is that the mean BG/TF score for each tile equals the
+#'   mean across all tiles.
 #' The table contains the following columns:
 #' \describe{
 #'   \item{seqnames, start, end, tileID}{Genomic coordinates of sliding windows (tiles).}
@@ -33,20 +35,16 @@
 #' }
 
 #' @importFrom GenomicRanges GRanges reduce slidingWindows
-#' @importFrom stats p.adjust binom.test
+#' @importFrom stats p.adjust binom.test pnorm
 #' @import data.table
 #' @export
 #'
-calculate_tile_BG_TF_enrichments3 <- function(cover_dt,
+calculate_tile_BG_TF_enrichments <- function(cover_dt,
                                               tile_width = 500,
                                               tile_step = 250,
                                               bg_colname = "background",
                                               tf_colname = "TF",
                                               nucl_colname = "Nucl",
-                                              bg_score_thresh = 0.1,
-                                              tf_score_thresh = bg_score_thresh,
-                                              bgscoreZ_thresh = 2,
-                                              tfscoreZ_thresh = 2,
                                               psc = 0.1,
                                               threads = NULL){
 
@@ -70,15 +68,9 @@ calculate_tile_BG_TF_enrichments3 <- function(cover_dt,
 
 
     ### calculate BG and TF scores (isometric log-ratio transformation)
-    # bg_score_smpl <- sqrt(2/3) * log(bg_smpl/sqrt(tf_smpl * nucl_smpl))
-    # tf_score_smpl <- sqrt(1/2) * log(tf_smpl/nucl_smpl)
     cover_dt <- cover_dt[,`:=`(bg_score = sqrt(2/3) * log((get(bg_colname) + psc) / sqrt((get(tf_colname) + psc) * (get(nucl_colname) + psc))),
                                tf_score = sqrt(1/2) * log((get(tf_colname) + psc)/ (get(nucl_colname) + psc))
     )]
-
-    ### calculate Z-transformed BGand TF scores
-    cover_dt <- cover_dt[,':='(bg_score_Z = scale(bg_score),
-                               tf_score_Z = scale(tf_score))]
 
     ### create sliding windows
     span_reg <- range(GRanges(seqnames = cover_dt[["seqnames"]],
@@ -101,33 +93,16 @@ calculate_tile_BG_TF_enrichments3 <- function(cover_dt,
     )
 
 
-    ## apply thresholds, calculate aggregated statistics for each tile
-    ## the reason for selecting tf positives not only on tf score but also on bg score lies
-    ## in the distribution of points on bg_score vs tf_score scatter.
-    ## it looks like a triangle |> where
-    ## top left corner correspond to positions with TF posterior coverage near 1.
-    ## right corner corresponds to positions with bg posteriors near 1
-    ## and bottom left correspond to Nucl posteriors near 1.
-    ## therefore, thresholding only on tf_score may select many points from the right corner, i.e. bg positive points.
+    ## calculate mean BG/TF scores across all molecules and positions overlapping tiles
 
     tile_aggr_stats <- smftile_ov[,.(n_data_points = .N, ## total number of data points
                                      n_inf_pos = length(unique(i.start)),
                                      bg_score_mean = mean(bg_score,na.rm=T),
-                                     tf_score_mean = mean(tf_score,na.rm=T),
-                                     #bg_pos_cnt = sum(bg_score >= bg_score_thresh), ## number of positions with bg_score above threshold
-                                     #tf_pos_cnt = sum(tf_score >= tf_score_thresh & bg_score < bg_score_thresh), ## number of positions  tf_score  above cutoff and not bg positive
-                                     bg_pos_cnt = sum(bg_score_Z >= bgscoreZ_thresh),
-                                     tf_pos_cnt = sum(tf_score_Z >= tfscoreZ_thresh)
+                                     tf_score_mean = mean(tf_score,na.rm=T)
     ),
     .(seqnames,start,end,tile_ID)]
-    #### run binomial test
-    ## get total numbers
-
-    # bg_tf_cnts <- cover_dt[,.(bg_prob = sum(bg_score >= bg_score_thresh)/.N,
-    # 													tf_prob = sum(tf_score >= tf_score_thresh & bg_score < bg_score_thresh)/.N)]
+    ## get mean and SD across all positions
     bg_tf_cnts <- cover_dt[,.(N_total = .N,
-                              bg_prob = sum(bg_score_Z >= bgscoreZ_thresh)/.N,
-                              tf_prob = sum(tf_score_Z >= tfscoreZ_thresh)/.N,
                               bg_score_mean_total = mean(bg_score,na.rm=T),
                               bg_score_sd_total = sd(bg_score) * sqrt((.N - 1) /.N),
                               tf_score_mean_total = mean(tf_score,na.rm=T),
@@ -136,54 +111,36 @@ calculate_tile_BG_TF_enrichments3 <- function(cover_dt,
     ## calculate enrichments and run binomial test
 
     tile_aggr_stats <- tile_aggr_stats[,(c(
-        "bg_log2enr",
-        "bg_binom_pval",
-        "tf_log2enr",
-        "tf_binom_pval",
         "bg_score_mean_Zstat",
         "bg_score_mean_Ztest_pval",
         "tf_score_mean_Zstat",
         "tf_score_mean_Ztest_pval"
     )) := {
-        bgbinom_res <- binom.test(
-            x = bg_pos_cnt,
-            n = n_data_points,
-            p = bg_tf_cnts$bg_prob,
-            alternative = "greater"
-        )
-        bg_log_enr <- unname(log2((bgbinom_res$statistic + 1)/(bgbinom_res$null.value * bgbinom_res$parameter + 1)))
-        bg_pval <- bgbinom_res$p.value
-
-        tfbinom_res <- binom.test(
-            x = tf_pos_cnt,
-            n = n_data_points,
-            p = bg_tf_cnts$tf_prob,
-            alternative = "greater"
-        )
-        tf_log_enr <- unname(log2((tfbinom_res$statistic + 1)/(tfbinom_res$null.value * tfbinom_res$parameter + 1)))
-        tf_pval <- tfbinom_res$p.value
 
         ## Z-test for BG/TF score means in tiles
-        size_factor <- sqrt(n_data_points * (bg_tf_cnts$N_total - 1) / (bg_tf_cnts$N_total - n_data_points))
-        bg_score_mean_zstat <- (bg_score_mean - bg_tf_cnts$bg_score_mean_total) / bg_tf_cnts$bg_score_sd_total * size_factor
+        denom <- bg_tf_cnts$N_total - n_data_points
+        size_factor <- ifelse(denom > 0,
+                              sqrt(n_data_points * (bg_tf_cnts$N_total - 1) / denom),
+                              NA_real_)
+        bg_score_mean_zstat <- ifelse(bg_tf_cnts$bg_score_sd_total > 0,
+                                      (bg_score_mean - bg_tf_cnts$bg_score_mean_total) /
+                                          bg_tf_cnts$bg_score_sd_total * size_factor,
+                                      NA_real_)
         bg_score_mean_zpval <- pnorm(bg_score_mean_zstat, lower.tail = FALSE)  # one-sided
 
-        tf_score_mean_zstat <- (tf_score_mean - bg_tf_cnts$tf_score_mean_total) / bg_tf_cnts$tf_score_sd_total * size_factor
+        tf_score_mean_zstat <- ifelse(bg_tf_cnts$tf_score_sd_total > 0,
+                                      (tf_score_mean - bg_tf_cnts$tf_score_mean_total) /
+                                          bg_tf_cnts$tf_score_sd_total * size_factor,
+                                      NA_real_)
         tf_score_mean_zpval <- pnorm(tf_score_mean_zstat, lower.tail = FALSE)
 
         list(
-            bg_log_enr,
-            bg_pval,
-            tf_log_enr,
-            tf_pval,
             bg_score_mean_zstat,
             bg_score_mean_zpval,
             tf_score_mean_zstat,
             tf_score_mean_zpval
         )
-    },by = tile_ID][,`:=`(bg_FDR = p.adjust(bg_binom_pval,method = "fdr"),
-                          tf_FDR = p.adjust(tf_binom_pval,method = "fdr"),
-                          bg_score_mean_FDR = p.adjust(bg_score_mean_Ztest_pval,method = "fdr"),
+    },by = tile_ID][,`:=`(bg_score_mean_FDR = p.adjust(bg_score_mean_Ztest_pval,method = "fdr"),
                           tf_score_mean_FDR = p.adjust(tf_score_mean_Ztest_pval,method = "fdr"))]
 
     return(tile_aggr_stats)

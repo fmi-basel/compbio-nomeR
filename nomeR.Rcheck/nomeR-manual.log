@@ -1,0 +1,1014 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.10.1)  15 MAY 2026 23:08
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**Rd2.tex
+(./Rd2.tex
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-09-02>
+
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/bk10.clo
+File: bk10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@chapter=\count276
+\c@section=\count277
+\c@subsection=\count278
+\c@subsubsection=\count279
+\c@paragraph=\count280
+\c@subparagraph=\count281
+\c@figure=\count282
+\c@table=\count283
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+) (/tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.2-foss-2024.05/lib64/R/share/texmf/tex/latex/Rd.sty
+Package: Rd 
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2024-12-18 v4.23 Multi-page Table package (DPC)
+\LTleft=\skip51
+\LTright=\skip52
+\LTpre=\skip53
+\LTpost=\skip54
+\LTchunksize=\count284
+\LTcapwidth=\dimen149
+\LT@head=\box53
+\LT@firsthead=\box54
+\LT@foot=\box55
+\LT@lastfoot=\box56
+\LT@gbox=\box57
+\LT@cols=\count285
+\LT@rows=\count286
+\c@LT@tables=\count287
+\c@LT@chunks=\count288
+\LT@p@ftn=\toks17
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/bm.sty
+Package: bm 2023/12/19 v1.2f Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup4
+\symboldletters=\mathgroup5
+\symboldsymbols=\mathgroup6
+Package bm Info: No bold for \OMX/cmex/m/n, using \pmb.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 149.
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 2024/07/07 v2.0g defines alltt environment
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/verbatim.sty
+Package: verbatim 2024-01-22 v1.5x LaTeX2e package for verbatim enhancements
+\every@verbatim=\toks18
+\verbatim@line=\toks19
+\verbatim@in@stream=\read2
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2025/06/16 v2.17y AMS math features
+\@mathmargin=\skip55
+
+For additional information on amsmath, use the `?' option.
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2024/11/17 v2.01 AMS text
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks20
+\ex@=\dimen150
+)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+LaTeX Info: Redefining \boldsymbol on input line 28.
+\pmbraise@=\dimen151
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count289
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count290
+\leftroot@=\count291
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count292
+\DOTSCASE@=\count293
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box58
+\strutbox@=\box59
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen152
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count294
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count295
+\dotsspace@=\muskip18
+\c@parentequation=\count296
+\dspbrk@lvl=\count297
+\tag@help=\toks21
+\row@=\count298
+\column@=\count299
+\maxfields@=\count300
+\andhelp@=\toks22
+\eqnshift@=\dimen153
+\alignsep@=\dimen154
+\tagshift@=\dimen155
+\tagwidth@=\dimen156
+\totwidth@=\dimen157
+\lineht@=\dimen158
+\@envbody=\toks23
+\multlinegap=\skip56
+\multlinetaggap=\skip57
+\mathdisplay@stack=\toks24
+LaTeX Info: Redefining \[ on input line 2949.
+LaTeX Info: Redefining \] on input line 2950.
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup7
+\symAMSb=\mathgroup8
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/jknapltx/mathrsfs.sty
+Package: mathrsfs 1996/01/01 Math RSFS package v1.0 (jk)
+\symrsfs=\mathgroup9
+)
+\ldescriptionwidth=\skip58
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2024/12/21 v2.1c Standard LaTeX package
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/times.sty
+Package: times 2020/03/25 PSNFSS-v9.3 (SPQR) 
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2025/01/14 v1.3e Standard LaTeX Color (DPC)
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 149.
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks25
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count301
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2025/02/11 v2.5l e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count302
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/stringenc/stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
+)
+\@linkdim=\dimen159
+\Hy@linkcounter=\count303
+\Hy@pagecounter=\count304
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count305
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4195.
+Package hyperref Info: Link nesting OFF on input line 4200.
+Package hyperref Info: Hyper index ON on input line 4203.
+Package hyperref Info: Plain pages OFF on input line 4210.
+Package hyperref Info: Backreferencing OFF on input line 4215.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4462.
+\c@Hy@tempcnt=\count306
+LaTeX Info: Redefining \url on input line 4801.
+\XeTeXLinkMargin=\dimen160
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+))
+\Fld@menulength=\count307
+\Field@Width=\dimen161
+\Fld@charsize=\dimen162
+Package hyperref Info: Hyper figures OFF on input line 6078.
+Package hyperref Info: Link nesting OFF on input line 6083.
+Package hyperref Info: Hyper index ON on input line 6086.
+Package hyperref Info: backreferencing OFF on input line 6093.
+Package hyperref Info: Link coloring OFF on input line 6098.
+Package hyperref Info: Link coloring with OCG OFF on input line 6103.
+Package hyperref Info: PDF/A mode OFF on input line 6108.
+\Hy@abspage=\count308
+\c@Item=\count309
+\c@Hfootnote=\count310
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
+\Fld@listcount=\count311
+\c@bookmark@seq@number=\count312
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 284.
+)
+\Hy@SectionHShift=\skip59
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 413.
+Package hyperref Info: Option `linktocpage' set `true' on input line 413.
+Package hyperref Info: Option `plainpages' set `false' on input line 413.
+LaTeX Encoding Info:    Ignoring declaration for text command \textdegree (encoding ?) on input line 462.
+LaTeX Encoding Info:    Ignoring declaration for text command \textonehalf (encoding ?) on input line 463.
+LaTeX Encoding Info:    Ignoring declaration for text command \textonequarter (encoding ?) on input line 464.
+LaTeX Encoding Info:    Ignoring declaration for text command \textthreequarters (encoding ?) on input line 465.
+LaTeX Encoding Info:    Ignoring declaration for text command \textcent (encoding ?) on input line 466.
+LaTeX Encoding Info:    Ignoring declaration for text command \textyen (encoding ?) on input line 467.
+LaTeX Encoding Info:    Ignoring declaration for text command \textcurrency (encoding ?) on input line 468.
+LaTeX Encoding Info:    Ignoring declaration for text command \textbrokenbar (encoding ?) on input line 469.
+LaTeX Encoding Info:    Ignoring declaration for text command \texteuro (encoding ?) on input line 470.
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/makeidx.sty
+Package: makeidx 2021/10/04 v1.0m Standard LaTeX package
+)
+\@indexfile=\write3
+\openout3 = `Rd2.idx'.
+
+
+Writing index file Rd2.idx
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 8.
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/t1ptm.fd
+File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
+) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2025-06-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count313
+) (./Rd2.aux)
+\openout1 = `Rd2.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+Package hyperref Info: Link coloring ON on input line 8.
+ (./Rd2.out) (./Rd2.out)
+\@outlinefile=\write4
+\openout4 = `Rd2.out'.
+
+LaTeX Font Info:    Trying to load font information for T1+pcr on input line 44.
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/t1pcr.fd
+File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
+)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 44.
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 44.
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Trying to load font information for U+rsfs on input line 44.
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/jknapltx/ursfs.fd
+File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
+) (./Rd2.toc
+
+[1
+
+
+{/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/enc/dvips/base/8r.enc}])
+\tf@toc=\write5
+\openout5 = `Rd2.toc'.
+
+
+
+[2]
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 96.
+ (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 147--150
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+ []
+
+
+
+[3]
+Overfull \hbox (49.339pt too wide) in paragraph at lines 196--198
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 data.table []\T1/ptm/m/n/10 con-tain-ing pos-te-rior cov-er-ages re-turned by [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+ []
+
+
+
+[4]
+Overfull \hbox (19.53664pt too wide) in paragraph at lines 226--227
+[]\T1/ptm/m/n/10 Number of in-for-ma-tive po-si-tions with mod-i-fi-ca-tion data ag-gre-gated across all molecules. 
+ []
+
+
+Overfull \hbox (4.08836pt too wide) in paragraph at lines 230--231
+[]\T1/ptm/m/n/10 Log2 ra-tios of ob-served over ex-pected counts for ac-ces-si-ble and TF-covered
+ []
+
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 264--267
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+ []
+
+
+
+[5]
+Overfull \hbox (130.58879pt too wide) in paragraph at lines 275--278
+\T1/ptm/m/n/10 con-trol ex-per-i-ment (no MTase treat-ment), as re-turned by [][][]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE[][][][]\T1/ptm/m/n/10 . 
+ []
+
+
+Overfull \hbox (177.68861pt too wide) in paragraph at lines 279--282
+\T1/ptm/m/n/10 con-trol ex-per-i-ment (MTase treat-ment of naked DNA), as re-turned by [][][]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE[][][][]\T1/ptm/m/n/10 . 
+ []
+
+
+Overfull \hbox (18.78088pt too wide) in paragraph at lines 303--303
+ []\T1/pcr/m/n/10 extract_assay_datatable(se, sampleName, assayName, datColName = NULL) 
+ []
+
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 309--312
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+ []
+
+
+
+[6]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 358--358
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+ []
+
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 359--359
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+ []
+
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 360--360
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+ []
+
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 361--361
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+ []
+
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 362--362
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+ []
+
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 379--382
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+ []
+
+
+
+[7]
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 395--397
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+ []
+
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 406--411
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+ []
+
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 406--411
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+ []
+
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 406--411
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 426--427
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 429--432
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+ []
+
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 434--437
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+ []
+
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 445--447
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+ []
+
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 447--449
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+ []
+
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 449--451
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+ []
+
+
+
+[8]
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 465--467
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+ []
+
+
+
+[9]
+
+[10]
+Overfull \hbox (60.78088pt too wide) in paragraph at lines 615--615
+ []\T1/pcr/m/n/10 get_ctable_from_matrix(data, max_spacing = 200L, ncpu = 1L, verbose = FALSE) 
+ []
+
+
+
+[11]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 667--670
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+ []
+
+
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 683--685
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+ []
+
+
+
+[12]
+Overfull \hbox (48.05064pt too wide) in paragraph at lines 712--717
+\T1/ptm/m/n/10 (from []\T1/pcr/m/n/10 infer_footprints_vb[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 infer_footprints_sampling[]\T1/ptm/m/n/10 , or []\T1/pcr/m/n/10 infer_footprints_optim[]\T1/ptm/m/n/10 )
+ []
+
+
+Overfull \hbox (24.18796pt too wide) in paragraph at lines 712--717
+\T1/ptm/m/n/10 and, op-tion-ally, de-tect po-ten-tial foot-prints from the abun-dance spec-trum us-ing [][][]\T1/pcr/m/n/10 suggest_footprints[][][][]\T1/ptm/m/n/10 . 
+ []
+
+
+Overfull \hbox (87.15973pt too wide) in paragraph at lines 738--741
+[]\T1/ptm/m/n/10 A [][][]\T1/pcr/m/n/10 stanfit[][][] []\T1/ptm/m/n/10 ob-ject re-turned by [][][]\T1/pcr/m/n/10 infer_footprints_vb[][][] []\T1/ptm/m/n/10 or [][][]\T1/pcr/m/n/10 infer_footprints_sampling[][][][]\T1/ptm/m/n/10 ,
+ []
+
+
+
+[13]
+Overfull \hbox (31.33897pt too wide) in paragraph at lines 796--798
+[]\T1/pcr/m/n/10 matrix []\T1/ptm/m/n/10 with co-or-di-nates of sug-gested foot-prints re-turned by [][][]\T1/pcr/m/n/10 suggest_footprints[][][][]\T1/ptm/m/n/10 . 
+ []
+
+
+
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 854--854
+[]\T1/ptm/m/it/10 Create pa-ram-e-ters for [][][]\T1/pcr/m/n/10 predict_footprints[][][] []\T1/ptm/m/it/10 and
+ []
+
+
+Underfull \hbox (badness 4156) in paragraph at lines 854--854
+[][][]\T1/pcr/m/n/10 predict_footprints_SE[][][] []\T1/ptm/m/it/10 from a foot-print in-fer-ence sum-
+ []
+
+
+Overfull \hbox (83.19826pt too wide) in paragraph at lines 857--862
+[]\T1/ptm/m/n/10 Utility func-tion to gen-er-ate a list of pa-ram-e-ters re-quired by [][][]\T1/pcr/m/n/10 predict_footprints[][][] []\T1/ptm/m/n/10 or [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+ []
+
+
+Overfull \hbox (60.19891pt too wide) in paragraph at lines 884--886
+[]\T1/ptm/m/n/10 Footprint mod-els suit-able for the []\T1/pcr/m/n/10 footprint_models []\T1/ptm/m/n/10 pa-ram-e-ter in [][][]\T1/pcr/m/n/10 predict_footprints[][][][]\T1/ptm/m/n/10 . 
+ []
+
+
+Overfull \hbox (58.43864pt too wide) in paragraph at lines 886--889
+[]\T1/ptm/m/n/10 Numeric value of back-ground pro-tec-tion prob-a-bil-ity, cor-re-spond-ing to the []\T1/pcr/m/n/10 bgprotectprob
+ []
+
+
+Overfull \hbox (17.47937pt too wide) in paragraph at lines 889--892
+[]\T1/ptm/m/n/10 Numeric value of back-ground cov-er-age prior, cor-re-spond-ing to the []\T1/pcr/m/n/10 bgcoverprior
+ []
+
+
+
+[15]
+
+[16]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 969--972
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+ []
+
+
+
+[17]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1014--1014
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+ []
+
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1015--1015
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+ []
+
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1016--1016
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+ []
+
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1017--1017
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+ []
+
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1018--1018
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+ []
+
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1026--1033
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1026--1033
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+ []
+
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1038--1043
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+ []
+
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1038--1043
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+ []
+
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1038--1043
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1058--1059
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1061--1064
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+ []
+
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1066--1069
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+ []
+
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1077--1079
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+ []
+
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1079--1081
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+ []
+
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1081--1083
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+ []
+
+
+
+[18]
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1097--1099
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+ []
+
+
+Overfull \hbox (6.35722pt too wide) in paragraph at lines 1112--1117
+[]\T1/ptm/m/n/10 A list re-turned by [][][]\T1/pcr/m/n/10 optimizing[][][][]\T1/ptm/m/n/10 , con-tain-ing the op-ti-miza-tion re-sults. The at-tribute []\T1/pcr/m/n/10 attr(<list>,
+ []
+
+
+
+[19]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1191--1191
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+ []
+
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1192--1192
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+ []
+
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1193--1193
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+ []
+
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1194--1194
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+ []
+
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1195--1195
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+ []
+
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1206--1213
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1206--1213
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+ []
+
+
+
+[20]
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1218--1223
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+ []
+
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1218--1223
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+ []
+
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1218--1223
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1238--1239
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1241--1244
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+ []
+
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1246--1249
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+ []
+
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1257--1259
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+ []
+
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1259--1261
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+ []
+
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1261--1263
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+ []
+
+
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1277--1279
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+ []
+
+
+
+[21]
+Overfull \hbox (5.09906pt too wide) in paragraph at lines 1298--1303
+\T1/ptm/m/n/10 tribute []\T1/pcr/m/n/10 attr(<stanfit_object>, "ftp_lengths") []\T1/ptm/m/n/10 con-tains the vec-tor of foot-print lengths
+ []
+
+
+
+[22]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1374--1374
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+ []
+
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1375--1375
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+ []
+
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1376--1376
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+ []
+
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1377--1377
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+ []
+
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1378--1378
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+ []
+
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1393--1400
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1393--1400
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+ []
+
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1405--1410
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+ []
+
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1405--1410
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+ []
+
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1405--1410
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+ []
+
+
+
+[23]
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1425--1426
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+ []
+
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1428--1431
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+ []
+
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1433--1436
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+ []
+
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1444--1446
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+ []
+
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1446--1448
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+ []
+
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1448--1450
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+ []
+
+
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1464--1466
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+ []
+
+
+Overfull \hbox (54.5272pt too wide) in paragraph at lines 1486--1489
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 stanfit []\T1/ptm/m/n/10 ob-ject con-tain-ing the ADVI pos-te-rior ap-prox-i-ma-tion. The at-tribute []\T1/pcr/m/n/10 attr(<stanfit_object>,
+ []
+
+
+Overfull \hbox (12.41827pt too wide) in paragraph at lines 1486--1489
+\T1/pcr/m/n/10 "ftp_lengths") []\T1/ptm/m/n/10 stores the foot-print lengths used for in-fer-ence (i.e., the sup-plied []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 ). 
+ []
+
+
+
+[24]
+
+[25]
+Overfull \hbox (42.9796pt too wide) in paragraph at lines 1545--1548
+[][][]\T1/pcr/m/n/10 ftp_spectral_analysis_SE[][][][]\T1/ptm/m/n/10 . The in-put []\T1/pcr/m/n/10 DataFrame []\T1/ptm/m/n/10 must con-tain a col-umn named []\T1/pcr/m/n/10 ftp_spectrum[]\T1/ptm/m/n/10 . 
+ []
+
+
+
+[26]
+Overfull \hbox (32.06818pt too wide) in paragraph at lines 1653--1655
+[]\T1/ptm/m/n/10 Unique name of the model (char-ac-ter), e.g., "Nucleosome--149", "Nucleosome--
+ []
+
+
+Overfull \hbox (5.55875pt too wide) in paragraph at lines 1655--1659
+[]\T1/ptm/m/n/10 Optional non-unique group name (char-ac-ter) used for ag-gre-gat-ing prob-
+ []
+
+
+
+[27]
+Overfull \hbox (45.08794pt too wide) in paragraph at lines 1674--1678
+[]\T1/ptm/m/n/10 Logical. If []\T1/pcr/m/n/10 TRUE[]\T1/ptm/m/n/10 , prob-a-bil-i-ties are ag-gre-gated by the []\T1/pcr/m/n/10 GROUP []\T1/ptm/m/n/10 ID in []\T1/pcr/m/n/10 footprint_models[]\T1/ptm/m/n/10 .
+ []
+
+
+Overfull \hbox (5.32819pt too wide) in paragraph at lines 1727--1731
+[]\T1/ptm/m/n/10 Contains start prob-a-bil-i-ties for each SMF
+ []
+
+
+
+[28]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 1799--1802
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+ []
+
+
+
+[29]
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 1815--1817
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+ []
+
+
+Overfull \hbox (32.06818pt too wide) in paragraph at lines 1826--1828
+[]\T1/ptm/m/n/10 Unique name of the model (char-ac-ter), e.g., "Nucleosome--149", "Nucleosome--
+ []
+
+
+Overfull \hbox (5.55875pt too wide) in paragraph at lines 1828--1832
+[]\T1/ptm/m/n/10 Optional non-unique group name (char-ac-ter) used for ag-gre-gat-ing prob-
+ []
+
+
+Overfull \hbox (45.08794pt too wide) in paragraph at lines 1847--1851
+[]\T1/ptm/m/n/10 Logical. If []\T1/pcr/m/n/10 TRUE[]\T1/ptm/m/n/10 , prob-a-bil-i-ties are ag-gre-gated by the []\T1/pcr/m/n/10 GROUP []\T1/ptm/m/n/10 ID in []\T1/pcr/m/n/10 footprint_models[]\T1/ptm/m/n/10 .
+ []
+
+
+
+[30]
+Overfull \hbox (5.32819pt too wide) in paragraph at lines 1919--1922
+[]\T1/ptm/m/n/10 Contains start prob-a-bil-i-ties for each SMF
+ []
+
+
+Overfull \hbox (0.81802pt too wide) in paragraph at lines 1937--1943
+\T1/ptm/m/n/10 po-ten-tial foot-prints, and peaks are ex-tended un-til the sig-nal de-creases by []\T1/pcr/m/n/10 max_abund_log2drop[]\T1/ptm/m/n/10 ,
+ []
+
+
+
+[31]
+
+[32]
+Overfull \hbox (62.18857pt too wide) in paragraph at lines 2011--2013
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 data.table []\T1/ptm/m/n/10 with foot-print de-cod-ing re-sults, as re-turned by [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+ []
+
+(./Rd2.ind
+
+[33]
+Overfull \hbox (5.3567pt too wide) in paragraph at lines 12--13
+[]\T1/pcr/m/n/10 calculate_tile_BG_TF_enrichments\T1/ptm/m/n/10 , 
+ []
+
+
+Overfull \hbox (35.3567pt too wide) in paragraph at lines 35--37
+[]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE\T1/ptm/m/n/10 , 
+ []
+
+LaTeX Font Info:    Font shape `T1/pcr/m/it' in size <10> not available
+(Font)              Font shape `T1/pcr/m/sl' tried instead on input line 51.
+
+
+
+
+[34
+
+]) (./Rd2.aux)
+ ***********
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-09-02>
+ ***********
+Package rerunfilecheck Info: File `Rd2.out' has not changed.
+(rerunfilecheck)             Checksum: ABB440D657742F3D74E9B89C751D9638;4534.
+ ) 
+Here is how much of TeX's memory you used:
+ 10224 strings out of 469668
+ 159046 string characters out of 5475383
+ 572756 words of memory out of 5000000
+ 38327 multiletter control sequences out of 15000+600000
+ 662951 words of font info for 87 fonts, out of 8000000 for 9000
+ 36 hyphenation exceptions out of 8191
+ 92i,6n,95p,390b,769s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+pdfTeX warning (dest): name{Rfn.fwrite} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.sampling} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.optimizing} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.smooth.spline} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.summary\\unhbox\040\\voidb@x\040\\kern\040\\z@\040\\char\040`\\protect\040\\protect\040\\leavevmode@ifvmode\040\\kern\040+.1667em\\relax\040stanfit.Rdash.method} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stanfit} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.vb} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.p.adjust} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.binom.test} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.SummarizedExperiment} has been referenced but does not exist, replaced by a fixed one
+
+</tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (34 pages, 163584 bytes).
+PDF statistics:
+ 607 PDF objects out of 1000 (max. 8388607)
+ 553 compressed objects within 6 object streams
+ 194 named destinations out of 1000 (max. 500000)
+ 193 words of extra memory for PDF output out of 10000 (max. 10000000)
+

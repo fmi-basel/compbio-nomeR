@@ -1,0 +1,1262 @@
+Hmm ... looks like a package
+Converting parsed Rd's to LaTeX ..
+Creating pdf output from LaTeX ...
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-09-02>
+
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/bk10.clo)) (/tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.2-foss-2024.05/lib64/R/share/texmf/tex/latex/Rd.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/ifthen.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/iftex/iftex.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/longtable.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/bm.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/alltt.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/verbatim.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/url/url.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/textcomp.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amstext.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsgen.sty)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsbsy.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsopn.sty)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/amsfonts.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/amssymb.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/jknapltx/mathrsfs.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/fontenc.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/times.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/color.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics-cfg/color.cfg) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics-def/pdftex.def) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/hyperref.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/keyval.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/pdfescape/pdfescape.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/infwarerr/infwarerr.sty))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hycolor/hycolor.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/nameref.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/refcount/refcount.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/kvoptions/kvoptions.sty))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/etoolbox/etoolbox.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/stringenc/stringenc.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/pd1enc.def) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/intcalc/intcalc.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/puenc.def) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/bitset/bitset.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/hpdftex.def (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/makeidx.sty)
+Writing index file Rd2.idx
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/t1ptm.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+No file Rd2.aux.
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/t1pcr.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/umsa.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/umsb.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/jknapltx/ursfs.fd)
+No file Rd2.toc.
+
+[1{/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/enc/dvips/base/8r.enc}] (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+[2]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 147--150
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[3]
+Overfull \hbox (49.339pt too wide) in paragraph at lines 196--198
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 data.table []\T1/ptm/m/n/10 con-tain-ing pos-te-rior cov-er-ages re-turned by [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+
+Overfull \hbox (19.53664pt too wide) in paragraph at lines 226--227
+[]\T1/ptm/m/n/10 Number of in-for-ma-tive po-si-tions with mod-i-fi-ca-tion data ag-gre-gated across all molecules. 
+
+Overfull \hbox (4.08836pt too wide) in paragraph at lines 230--231
+[]\T1/ptm/m/n/10 Log2 ra-tios of ob-served over ex-pected counts for ac-ces-si-ble and TF-covered
+
+[4]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 264--267
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+Overfull \hbox (130.58879pt too wide) in paragraph at lines 275--278
+\T1/ptm/m/n/10 con-trol ex-per-i-ment (no MTase treat-ment), as re-turned by [][][]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (177.68861pt too wide) in paragraph at lines 279--282
+\T1/ptm/m/n/10 con-trol ex-per-i-ment (MTase treat-ment of naked DNA), as re-turned by [][][]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE[][][][]\T1/ptm/m/n/10 . 
+
+[5]
+Overfull \hbox (18.78088pt too wide) in paragraph at lines 303--303
+ []\T1/pcr/m/n/10 extract_assay_datatable(se, sampleName, assayName, datColName = NULL) 
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 309--312
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[6]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 358--358
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 359--359
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 360--360
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 361--361
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 362--362
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 379--382
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 395--397
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 406--411
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 406--411
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 406--411
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+[7]
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 426--427
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 429--432
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 434--437
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 445--447
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 447--449
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 449--451
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 465--467
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+[8]
+[9]
+[10]
+Overfull \hbox (60.78088pt too wide) in paragraph at lines 615--615
+ []\T1/pcr/m/n/10 get_ctable_from_matrix(data, max_spacing = 200L, ncpu = 1L, verbose = FALSE) 
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 667--670
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[11]
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 683--685
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (48.05064pt too wide) in paragraph at lines 712--717
+\T1/ptm/m/n/10 (from []\T1/pcr/m/n/10 infer_footprints_vb[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 infer_footprints_sampling[]\T1/ptm/m/n/10 , or []\T1/pcr/m/n/10 infer_footprints_optim[]\T1/ptm/m/n/10 )
+
+Overfull \hbox (24.18796pt too wide) in paragraph at lines 712--717
+\T1/ptm/m/n/10 and, op-tion-ally, de-tect po-ten-tial foot-prints from the abun-dance spec-trum us-ing [][][]\T1/pcr/m/n/10 suggest_footprints[][][][]\T1/ptm/m/n/10 . 
+
+[12]
+Overfull \hbox (87.15973pt too wide) in paragraph at lines 738--741
+[]\T1/ptm/m/n/10 A [][][]\T1/pcr/m/n/10 stanfit[][][] []\T1/ptm/m/n/10 ob-ject re-turned by [][][]\T1/pcr/m/n/10 infer_footprints_vb[][][] []\T1/ptm/m/n/10 or [][][]\T1/pcr/m/n/10 infer_footprints_sampling[][][][]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (31.33897pt too wide) in paragraph at lines 796--798
+[]\T1/pcr/m/n/10 matrix []\T1/ptm/m/n/10 with co-or-di-nates of sug-gested foot-prints re-turned by [][][]\T1/pcr/m/n/10 suggest_footprints[][][][]\T1/ptm/m/n/10 . 
+
+[13]
+Underfull \hbox (badness 10000) in paragraph at lines 854--854
+[]\T1/ptm/m/it/10 Create pa-ram-e-ters for [][][]\T1/pcr/m/n/10 predict_footprints[][][] []\T1/ptm/m/it/10 and
+
+Underfull \hbox (badness 4156) in paragraph at lines 854--854
+[][][]\T1/pcr/m/n/10 predict_footprints_SE[][][] []\T1/ptm/m/it/10 from a foot-print in-fer-ence sum-
+
+Overfull \hbox (83.19826pt too wide) in paragraph at lines 857--862
+[]\T1/ptm/m/n/10 Utility func-tion to gen-er-ate a list of pa-ram-e-ters re-quired by [][][]\T1/pcr/m/n/10 predict_footprints[][][] []\T1/ptm/m/n/10 or [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+
+[14]
+Overfull \hbox (60.19891pt too wide) in paragraph at lines 884--886
+[]\T1/ptm/m/n/10 Footprint mod-els suit-able for the []\T1/pcr/m/n/10 footprint_models []\T1/ptm/m/n/10 pa-ram-e-ter in [][][]\T1/pcr/m/n/10 predict_footprints[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (58.43864pt too wide) in paragraph at lines 886--889
+[]\T1/ptm/m/n/10 Numeric value of back-ground pro-tec-tion prob-a-bil-ity, cor-re-spond-ing to the []\T1/pcr/m/n/10 bgprotectprob
+
+Overfull \hbox (17.47937pt too wide) in paragraph at lines 889--892
+[]\T1/ptm/m/n/10 Numeric value of back-ground cov-er-age prior, cor-re-spond-ing to the []\T1/pcr/m/n/10 bgcoverprior
+
+[15]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 969--972
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[16]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1014--1014
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1015--1015
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1016--1016
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1017--1017
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1018--1018
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1026--1033
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1026--1033
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1038--1043
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1038--1043
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1038--1043
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+[17]
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1058--1059
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1061--1064
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1066--1069
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1077--1079
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1079--1081
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1081--1083
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1097--1099
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (6.35722pt too wide) in paragraph at lines 1112--1117
+[]\T1/ptm/m/n/10 A list re-turned by [][][]\T1/pcr/m/n/10 optimizing[][][][]\T1/ptm/m/n/10 , con-tain-ing the op-ti-miza-tion re-sults. The at-tribute []\T1/pcr/m/n/10 attr(<list>,
+
+[18]
+[19]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1191--1191
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1192--1192
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1193--1193
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1194--1194
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1195--1195
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1206--1213
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1206--1213
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1218--1223
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1218--1223
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1218--1223
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1238--1239
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1241--1244
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+[20]
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1246--1249
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1257--1259
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1259--1261
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1261--1263
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1277--1279
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (5.09906pt too wide) in paragraph at lines 1298--1303
+\T1/ptm/m/n/10 tribute []\T1/pcr/m/n/10 attr(<stanfit_object>, "ftp_lengths") []\T1/ptm/m/n/10 con-tains the vec-tor of foot-print lengths
+
+[21]
+[22]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1374--1374
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1375--1375
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1376--1376
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1377--1377
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1378--1378
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1393--1400
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1393--1400
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1405--1410
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1405--1410
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1405--1410
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1425--1426
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1428--1431
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1433--1436
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1444--1446
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1446--1448
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1448--1450
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+[23]
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1464--1466
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (54.5272pt too wide) in paragraph at lines 1486--1489
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 stanfit []\T1/ptm/m/n/10 ob-ject con-tain-ing the ADVI pos-te-rior ap-prox-i-ma-tion. The at-tribute []\T1/pcr/m/n/10 attr(<stanfit_object>,
+
+Overfull \hbox (12.41827pt too wide) in paragraph at lines 1486--1489
+\T1/pcr/m/n/10 "ftp_lengths") []\T1/ptm/m/n/10 stores the foot-print lengths used for in-fer-ence (i.e., the sup-plied []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 ). 
+
+[24]
+Overfull \hbox (42.9796pt too wide) in paragraph at lines 1545--1548
+[][][]\T1/pcr/m/n/10 ftp_spectral_analysis_SE[][][][]\T1/ptm/m/n/10 . The in-put []\T1/pcr/m/n/10 DataFrame []\T1/ptm/m/n/10 must con-tain a col-umn named []\T1/pcr/m/n/10 ftp_spectrum[]\T1/ptm/m/n/10 . 
+
+[25]
+[26]
+Overfull \hbox (32.06818pt too wide) in paragraph at lines 1653--1655
+[]\T1/ptm/m/n/10 Unique name of the model (char-ac-ter), e.g., "Nucleosome--149", "Nucleosome--
+
+Overfull \hbox (5.55875pt too wide) in paragraph at lines 1655--1659
+[]\T1/ptm/m/n/10 Optional non-unique group name (char-ac-ter) used for ag-gre-gat-ing prob-
+
+Overfull \hbox (45.08794pt too wide) in paragraph at lines 1674--1678
+[]\T1/ptm/m/n/10 Logical. If []\T1/pcr/m/n/10 TRUE[]\T1/ptm/m/n/10 , prob-a-bil-i-ties are ag-gre-gated by the []\T1/pcr/m/n/10 GROUP []\T1/ptm/m/n/10 ID in []\T1/pcr/m/n/10 footprint_models[]\T1/ptm/m/n/10 .
+
+[27]
+Overfull \hbox (5.32819pt too wide) in paragraph at lines 1727--1731
+[]\T1/ptm/m/n/10 Contains start prob-a-bil-i-ties for each SMF
+
+[28]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 1799--1802
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 1815--1817
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+
+[29]
+Overfull \hbox (32.06818pt too wide) in paragraph at lines 1826--1828
+[]\T1/ptm/m/n/10 Unique name of the model (char-ac-ter), e.g., "Nucleosome--149", "Nucleosome--
+
+Overfull \hbox (5.55875pt too wide) in paragraph at lines 1828--1832
+[]\T1/ptm/m/n/10 Optional non-unique group name (char-ac-ter) used for ag-gre-gat-ing prob-
+
+Overfull \hbox (45.08794pt too wide) in paragraph at lines 1847--1851
+[]\T1/ptm/m/n/10 Logical. If []\T1/pcr/m/n/10 TRUE[]\T1/ptm/m/n/10 , prob-a-bil-i-ties are ag-gre-gated by the []\T1/pcr/m/n/10 GROUP []\T1/ptm/m/n/10 ID in []\T1/pcr/m/n/10 footprint_models[]\T1/ptm/m/n/10 .
+
+[30]
+Overfull \hbox (5.32819pt too wide) in paragraph at lines 1919--1922
+[]\T1/ptm/m/n/10 Contains start prob-a-bil-i-ties for each SMF
+
+Overfull \hbox (0.81802pt too wide) in paragraph at lines 1937--1943
+\T1/ptm/m/n/10 po-ten-tial foot-prints, and peaks are ex-tended un-til the sig-nal de-creases by []\T1/pcr/m/n/10 max_abund_log2drop[]\T1/ptm/m/n/10 ,
+
+[31]
+Overfull \hbox (62.18857pt too wide) in paragraph at lines 2011--2013
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 data.table []\T1/ptm/m/n/10 with foot-print de-cod-ing re-sults, as re-turned by [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+No file Rd2.ind.
+
+[32] (./Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{Rfn.fwrite} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.sampling} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.optimizing} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.smooth.spline} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.summary\\unhbox\040\\voidb@x\040\\kern\040\\z@\040\\char\040`\\protect\040\\protect\040\\leavevmode@ifvmode\040\\kern\040+.1667em\\relax\040stanfit.Rdash.method} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stanfit} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.vb} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.p.adjust} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.binom.test} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.SummarizedExperiment} has been referenced but does not exist, replaced by a fixed one
+
+</tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (32 pages, 148000 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.17 [TeX Live 2025] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (86 entries accepted, 1 rejected).
+Sorting entries....done (617 comparisons).
+Generating output file Rd2.ind....done (94 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-09-02>
+
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/bk10.clo)) (/tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.2-foss-2024.05/lib64/R/share/texmf/tex/latex/Rd.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/ifthen.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/iftex/iftex.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/longtable.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/bm.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/alltt.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/verbatim.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/url/url.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/textcomp.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amstext.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsgen.sty)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsbsy.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsopn.sty)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/amsfonts.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/amssymb.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/jknapltx/mathrsfs.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/fontenc.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/times.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/color.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics-cfg/color.cfg) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics-def/pdftex.def) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/hyperref.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/keyval.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/pdfescape/pdfescape.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/infwarerr/infwarerr.sty))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hycolor/hycolor.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/nameref.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/refcount/refcount.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/kvoptions/kvoptions.sty))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/etoolbox/etoolbox.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/stringenc/stringenc.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/pd1enc.def) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/intcalc/intcalc.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/puenc.def) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/bitset/bitset.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/hpdftex.def (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/makeidx.sty)
+Writing index file Rd2.idx
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/t1ptm.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def) (./Rd2.aux) (./Rd2.out) (./Rd2.out) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/t1pcr.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/umsa.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/umsb.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/jknapltx/ursfs.fd) (./Rd2.toc
+[1{/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/enc/dvips/base/8r.enc}])
+[2] (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 147--150
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[3]
+Overfull \hbox (49.339pt too wide) in paragraph at lines 196--198
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 data.table []\T1/ptm/m/n/10 con-tain-ing pos-te-rior cov-er-ages re-turned by [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+
+[4]
+Overfull \hbox (19.53664pt too wide) in paragraph at lines 226--227
+[]\T1/ptm/m/n/10 Number of in-for-ma-tive po-si-tions with mod-i-fi-ca-tion data ag-gre-gated across all molecules. 
+
+Overfull \hbox (4.08836pt too wide) in paragraph at lines 230--231
+[]\T1/ptm/m/n/10 Log2 ra-tios of ob-served over ex-pected counts for ac-ces-si-ble and TF-covered
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 264--267
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[5]
+Overfull \hbox (130.58879pt too wide) in paragraph at lines 275--278
+\T1/ptm/m/n/10 con-trol ex-per-i-ment (no MTase treat-ment), as re-turned by [][][]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (177.68861pt too wide) in paragraph at lines 279--282
+\T1/ptm/m/n/10 con-trol ex-per-i-ment (MTase treat-ment of naked DNA), as re-turned by [][][]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (18.78088pt too wide) in paragraph at lines 303--303
+ []\T1/pcr/m/n/10 extract_assay_datatable(se, sampleName, assayName, datColName = NULL) 
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 309--312
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[6]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 358--358
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 359--359
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 360--360
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 361--361
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 362--362
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 379--382
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[7]
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 395--397
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 406--411
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 406--411
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 406--411
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 426--427
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 429--432
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 434--437
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 445--447
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 447--449
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 449--451
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+[8]
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 465--467
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+[9]
+[10]
+Overfull \hbox (60.78088pt too wide) in paragraph at lines 615--615
+ []\T1/pcr/m/n/10 get_ctable_from_matrix(data, max_spacing = 200L, ncpu = 1L, verbose = FALSE) 
+
+[11]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 667--670
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 683--685
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+
+[12]
+Overfull \hbox (48.05064pt too wide) in paragraph at lines 712--717
+\T1/ptm/m/n/10 (from []\T1/pcr/m/n/10 infer_footprints_vb[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 infer_footprints_sampling[]\T1/ptm/m/n/10 , or []\T1/pcr/m/n/10 infer_footprints_optim[]\T1/ptm/m/n/10 )
+
+Overfull \hbox (24.18796pt too wide) in paragraph at lines 712--717
+\T1/ptm/m/n/10 and, op-tion-ally, de-tect po-ten-tial foot-prints from the abun-dance spec-trum us-ing [][][]\T1/pcr/m/n/10 suggest_footprints[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (87.15973pt too wide) in paragraph at lines 738--741
+[]\T1/ptm/m/n/10 A [][][]\T1/pcr/m/n/10 stanfit[][][] []\T1/ptm/m/n/10 ob-ject re-turned by [][][]\T1/pcr/m/n/10 infer_footprints_vb[][][] []\T1/ptm/m/n/10 or [][][]\T1/pcr/m/n/10 infer_footprints_sampling[][][][]\T1/ptm/m/n/10 ,
+
+[13]
+Overfull \hbox (31.33897pt too wide) in paragraph at lines 796--798
+[]\T1/pcr/m/n/10 matrix []\T1/ptm/m/n/10 with co-or-di-nates of sug-gested foot-prints re-turned by [][][]\T1/pcr/m/n/10 suggest_footprints[][][][]\T1/ptm/m/n/10 . 
+
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 854--854
+[]\T1/ptm/m/it/10 Create pa-ram-e-ters for [][][]\T1/pcr/m/n/10 predict_footprints[][][] []\T1/ptm/m/it/10 and
+
+Underfull \hbox (badness 4156) in paragraph at lines 854--854
+[][][]\T1/pcr/m/n/10 predict_footprints_SE[][][] []\T1/ptm/m/it/10 from a foot-print in-fer-ence sum-
+
+Overfull \hbox (83.19826pt too wide) in paragraph at lines 857--862
+[]\T1/ptm/m/n/10 Utility func-tion to gen-er-ate a list of pa-ram-e-ters re-quired by [][][]\T1/pcr/m/n/10 predict_footprints[][][] []\T1/ptm/m/n/10 or [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+
+Overfull \hbox (60.19891pt too wide) in paragraph at lines 884--886
+[]\T1/ptm/m/n/10 Footprint mod-els suit-able for the []\T1/pcr/m/n/10 footprint_models []\T1/ptm/m/n/10 pa-ram-e-ter in [][][]\T1/pcr/m/n/10 predict_footprints[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (58.43864pt too wide) in paragraph at lines 886--889
+[]\T1/ptm/m/n/10 Numeric value of back-ground pro-tec-tion prob-a-bil-ity, cor-re-spond-ing to the []\T1/pcr/m/n/10 bgprotectprob
+
+Overfull \hbox (17.47937pt too wide) in paragraph at lines 889--892
+[]\T1/ptm/m/n/10 Numeric value of back-ground cov-er-age prior, cor-re-spond-ing to the []\T1/pcr/m/n/10 bgcoverprior
+
+[15]
+[16]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 969--972
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[17]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1014--1014
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1015--1015
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1016--1016
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1017--1017
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1018--1018
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1026--1033
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1026--1033
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1038--1043
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1038--1043
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1038--1043
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1058--1059
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1061--1064
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1066--1069
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1077--1079
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1079--1081
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1081--1083
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+[18]
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1097--1099
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (6.35722pt too wide) in paragraph at lines 1112--1117
+[]\T1/ptm/m/n/10 A list re-turned by [][][]\T1/pcr/m/n/10 optimizing[][][][]\T1/ptm/m/n/10 , con-tain-ing the op-ti-miza-tion re-sults. The at-tribute []\T1/pcr/m/n/10 attr(<list>,
+
+[19]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1191--1191
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1192--1192
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1193--1193
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1194--1194
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1195--1195
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1206--1213
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1206--1213
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+
+[20]
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1218--1223
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1218--1223
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1218--1223
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1238--1239
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1241--1244
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1246--1249
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1257--1259
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1259--1261
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1261--1263
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1277--1279
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+[21]
+Overfull \hbox (5.09906pt too wide) in paragraph at lines 1298--1303
+\T1/ptm/m/n/10 tribute []\T1/pcr/m/n/10 attr(<stanfit_object>, "ftp_lengths") []\T1/ptm/m/n/10 con-tains the vec-tor of foot-print lengths
+
+[22]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1374--1374
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1375--1375
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1376--1376
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1377--1377
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1378--1378
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1393--1400
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1393--1400
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1405--1410
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1405--1410
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1405--1410
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+[23]
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1425--1426
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1428--1431
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1433--1436
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1444--1446
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1446--1448
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1448--1450
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1464--1466
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (54.5272pt too wide) in paragraph at lines 1486--1489
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 stanfit []\T1/ptm/m/n/10 ob-ject con-tain-ing the ADVI pos-te-rior ap-prox-i-ma-tion. The at-tribute []\T1/pcr/m/n/10 attr(<stanfit_object>,
+
+Overfull \hbox (12.41827pt too wide) in paragraph at lines 1486--1489
+\T1/pcr/m/n/10 "ftp_lengths") []\T1/ptm/m/n/10 stores the foot-print lengths used for in-fer-ence (i.e., the sup-plied []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 ). 
+
+[24]
+[25]
+Overfull \hbox (42.9796pt too wide) in paragraph at lines 1545--1548
+[][][]\T1/pcr/m/n/10 ftp_spectral_analysis_SE[][][][]\T1/ptm/m/n/10 . The in-put []\T1/pcr/m/n/10 DataFrame []\T1/ptm/m/n/10 must con-tain a col-umn named []\T1/pcr/m/n/10 ftp_spectrum[]\T1/ptm/m/n/10 . 
+
+[26]
+Overfull \hbox (32.06818pt too wide) in paragraph at lines 1653--1655
+[]\T1/ptm/m/n/10 Unique name of the model (char-ac-ter), e.g., "Nucleosome--149", "Nucleosome--
+
+Overfull \hbox (5.55875pt too wide) in paragraph at lines 1655--1659
+[]\T1/ptm/m/n/10 Optional non-unique group name (char-ac-ter) used for ag-gre-gat-ing prob-
+
+[27]
+Overfull \hbox (45.08794pt too wide) in paragraph at lines 1674--1678
+[]\T1/ptm/m/n/10 Logical. If []\T1/pcr/m/n/10 TRUE[]\T1/ptm/m/n/10 , prob-a-bil-i-ties are ag-gre-gated by the []\T1/pcr/m/n/10 GROUP []\T1/ptm/m/n/10 ID in []\T1/pcr/m/n/10 footprint_models[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (5.32819pt too wide) in paragraph at lines 1727--1731
+[]\T1/ptm/m/n/10 Contains start prob-a-bil-i-ties for each SMF
+
+[28]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 1799--1802
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[29]
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 1815--1817
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (32.06818pt too wide) in paragraph at lines 1826--1828
+[]\T1/ptm/m/n/10 Unique name of the model (char-ac-ter), e.g., "Nucleosome--149", "Nucleosome--
+
+Overfull \hbox (5.55875pt too wide) in paragraph at lines 1828--1832
+[]\T1/ptm/m/n/10 Optional non-unique group name (char-ac-ter) used for ag-gre-gat-ing prob-
+
+Overfull \hbox (45.08794pt too wide) in paragraph at lines 1847--1851
+[]\T1/ptm/m/n/10 Logical. If []\T1/pcr/m/n/10 TRUE[]\T1/ptm/m/n/10 , prob-a-bil-i-ties are ag-gre-gated by the []\T1/pcr/m/n/10 GROUP []\T1/ptm/m/n/10 ID in []\T1/pcr/m/n/10 footprint_models[]\T1/ptm/m/n/10 .
+
+[30]
+Overfull \hbox (5.32819pt too wide) in paragraph at lines 1919--1922
+[]\T1/ptm/m/n/10 Contains start prob-a-bil-i-ties for each SMF
+
+Overfull \hbox (0.81802pt too wide) in paragraph at lines 1937--1943
+\T1/ptm/m/n/10 po-ten-tial foot-prints, and peaks are ex-tended un-til the sig-nal de-creases by []\T1/pcr/m/n/10 max_abund_log2drop[]\T1/ptm/m/n/10 ,
+
+[31]
+[32]
+Overfull \hbox (62.18857pt too wide) in paragraph at lines 2011--2013
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 data.table []\T1/ptm/m/n/10 with foot-print de-cod-ing re-sults, as re-turned by [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+(./Rd2.ind
+[33]
+Overfull \hbox (5.3567pt too wide) in paragraph at lines 12--13
+[]\T1/pcr/m/n/10 calculate_tile_BG_TF_enrichments\T1/ptm/m/n/10 , 
+
+Overfull \hbox (35.3567pt too wide) in paragraph at lines 35--37
+[]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE\T1/ptm/m/n/10 , 
+
+
+[34]) (./Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{Rfn.fwrite} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.sampling} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.optimizing} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.smooth.spline} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.summary\\unhbox\040\\voidb@x\040\\kern\040\\z@\040\\char\040`\\protect\040\\protect\040\\leavevmode@ifvmode\040\\kern\040+.1667em\\relax\040stanfit.Rdash.method} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stanfit} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.vb} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.p.adjust} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.binom.test} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.SummarizedExperiment} has been referenced but does not exist, replaced by a fixed one
+
+</tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (34 pages, 163487 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.17 [TeX Live 2025] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (86 entries accepted, 1 rejected).
+Sorting entries....done (605 comparisons).
+Generating output file Rd2.ind....done (95 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-09-02>
+
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/bk10.clo)) (/tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.2-foss-2024.05/lib64/R/share/texmf/tex/latex/Rd.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/ifthen.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/iftex/iftex.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/longtable.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/bm.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/alltt.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/tools/verbatim.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/url/url.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/textcomp.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amstext.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsgen.sty)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsbsy.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsmath/amsopn.sty)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/amsfonts.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/amssymb.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/jknapltx/mathrsfs.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/fontenc.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/times.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/color.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics-cfg/color.cfg) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics-def/pdftex.def) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/hyperref.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/graphics/keyval.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/pdfescape/pdfescape.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/infwarerr/infwarerr.sty))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hycolor/hycolor.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/nameref.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/refcount/refcount.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/kvoptions/kvoptions.sty))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/etoolbox/etoolbox.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/stringenc/stringenc.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/pd1enc.def) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/intcalc/intcalc.sty) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/puenc.def) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/bitset/bitset.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/hyperref/hpdftex.def (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/base/makeidx.sty)
+Writing index file Rd2.idx
+(/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/t1ptm.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def) (./Rd2.aux) (./Rd2.out) (./Rd2.out) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/t1pcr.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/umsa.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/amsfonts/umsb.fd) (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/jknapltx/ursfs.fd) (./Rd2.toc
+[1{/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/enc/dvips/base/8r.enc}])
+[2] (/tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 147--150
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[3]
+Overfull \hbox (49.339pt too wide) in paragraph at lines 196--198
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 data.table []\T1/ptm/m/n/10 con-tain-ing pos-te-rior cov-er-ages re-turned by [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+
+[4]
+Overfull \hbox (19.53664pt too wide) in paragraph at lines 226--227
+[]\T1/ptm/m/n/10 Number of in-for-ma-tive po-si-tions with mod-i-fi-ca-tion data ag-gre-gated across all molecules. 
+
+Overfull \hbox (4.08836pt too wide) in paragraph at lines 230--231
+[]\T1/ptm/m/n/10 Log2 ra-tios of ob-served over ex-pected counts for ac-ces-si-ble and TF-covered
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 264--267
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[5]
+Overfull \hbox (130.58879pt too wide) in paragraph at lines 275--278
+\T1/ptm/m/n/10 con-trol ex-per-i-ment (no MTase treat-ment), as re-turned by [][][]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (177.68861pt too wide) in paragraph at lines 279--282
+\T1/ptm/m/n/10 con-trol ex-per-i-ment (MTase treat-ment of naked DNA), as re-turned by [][][]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (18.78088pt too wide) in paragraph at lines 303--303
+ []\T1/pcr/m/n/10 extract_assay_datatable(se, sampleName, assayName, datColName = NULL) 
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 309--312
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[6]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 358--358
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 359--359
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 360--360
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 361--361
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 362--362
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 379--382
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[7]
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 395--397
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 406--411
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 406--411
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 406--411
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 426--427
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 429--432
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 434--437
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 445--447
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 447--449
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 449--451
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+[8]
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 465--467
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+[9]
+[10]
+Overfull \hbox (60.78088pt too wide) in paragraph at lines 615--615
+ []\T1/pcr/m/n/10 get_ctable_from_matrix(data, max_spacing = 200L, ncpu = 1L, verbose = FALSE) 
+
+[11]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 667--670
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 683--685
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+
+[12]
+Overfull \hbox (48.05064pt too wide) in paragraph at lines 712--717
+\T1/ptm/m/n/10 (from []\T1/pcr/m/n/10 infer_footprints_vb[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 infer_footprints_sampling[]\T1/ptm/m/n/10 , or []\T1/pcr/m/n/10 infer_footprints_optim[]\T1/ptm/m/n/10 )
+
+Overfull \hbox (24.18796pt too wide) in paragraph at lines 712--717
+\T1/ptm/m/n/10 and, op-tion-ally, de-tect po-ten-tial foot-prints from the abun-dance spec-trum us-ing [][][]\T1/pcr/m/n/10 suggest_footprints[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (87.15973pt too wide) in paragraph at lines 738--741
+[]\T1/ptm/m/n/10 A [][][]\T1/pcr/m/n/10 stanfit[][][] []\T1/ptm/m/n/10 ob-ject re-turned by [][][]\T1/pcr/m/n/10 infer_footprints_vb[][][] []\T1/ptm/m/n/10 or [][][]\T1/pcr/m/n/10 infer_footprints_sampling[][][][]\T1/ptm/m/n/10 ,
+
+[13]
+Overfull \hbox (31.33897pt too wide) in paragraph at lines 796--798
+[]\T1/pcr/m/n/10 matrix []\T1/ptm/m/n/10 with co-or-di-nates of sug-gested foot-prints re-turned by [][][]\T1/pcr/m/n/10 suggest_footprints[][][][]\T1/ptm/m/n/10 . 
+
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 854--854
+[]\T1/ptm/m/it/10 Create pa-ram-e-ters for [][][]\T1/pcr/m/n/10 predict_footprints[][][] []\T1/ptm/m/it/10 and
+
+Underfull \hbox (badness 4156) in paragraph at lines 854--854
+[][][]\T1/pcr/m/n/10 predict_footprints_SE[][][] []\T1/ptm/m/it/10 from a foot-print in-fer-ence sum-
+
+Overfull \hbox (83.19826pt too wide) in paragraph at lines 857--862
+[]\T1/ptm/m/n/10 Utility func-tion to gen-er-ate a list of pa-ram-e-ters re-quired by [][][]\T1/pcr/m/n/10 predict_footprints[][][] []\T1/ptm/m/n/10 or [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+
+Overfull \hbox (60.19891pt too wide) in paragraph at lines 884--886
+[]\T1/ptm/m/n/10 Footprint mod-els suit-able for the []\T1/pcr/m/n/10 footprint_models []\T1/ptm/m/n/10 pa-ram-e-ter in [][][]\T1/pcr/m/n/10 predict_footprints[][][][]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (58.43864pt too wide) in paragraph at lines 886--889
+[]\T1/ptm/m/n/10 Numeric value of back-ground pro-tec-tion prob-a-bil-ity, cor-re-spond-ing to the []\T1/pcr/m/n/10 bgprotectprob
+
+Overfull \hbox (17.47937pt too wide) in paragraph at lines 889--892
+[]\T1/ptm/m/n/10 Numeric value of back-ground cov-er-age prior, cor-re-spond-ing to the []\T1/pcr/m/n/10 bgcoverprior
+
+[15]
+[16]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 969--972
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[17]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1014--1014
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1015--1015
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1016--1016
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1017--1017
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1018--1018
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1026--1033
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1026--1033
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1038--1043
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1038--1043
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1038--1043
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1058--1059
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1061--1064
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1066--1069
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1077--1079
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1079--1081
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1081--1083
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+[18]
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1097--1099
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (6.35722pt too wide) in paragraph at lines 1112--1117
+[]\T1/ptm/m/n/10 A list re-turned by [][][]\T1/pcr/m/n/10 optimizing[][][][]\T1/ptm/m/n/10 , con-tain-ing the op-ti-miza-tion re-sults. The at-tribute []\T1/pcr/m/n/10 attr(<list>,
+
+[19]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1191--1191
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1192--1192
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1193--1193
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1194--1194
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1195--1195
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1206--1213
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1206--1213
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+
+[20]
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1218--1223
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1218--1223
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1218--1223
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1238--1239
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1241--1244
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1246--1249
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1257--1259
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1259--1261
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1261--1263
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1277--1279
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+[21]
+Overfull \hbox (5.09906pt too wide) in paragraph at lines 1298--1303
+\T1/ptm/m/n/10 tribute []\T1/pcr/m/n/10 attr(<stanfit_object>, "ftp_lengths") []\T1/ptm/m/n/10 con-tains the vec-tor of foot-print lengths
+
+[22]
+Overfull \hbox (12.78088pt too wide) in paragraph at lines 1374--1374
+ []  \T1/pcr/m/n/10 ftp_bg_model = c("informative_prior", "bg_fixed", "ftp_bg_fixed"),[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1375--1375
+ []  \T1/pcr/m/n/10 bg_model_params = list(bg_protect_prob_fixed = 0.05, bg_protect_min = 0.01,[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 1376--1376
+ []    \T1/pcr/m/n/10 bg_protect_max = 0.2, bg_protect_mean = 0.05, bg_protect_totcount = 100),[] 
+
+Overfull \hbox (78.78088pt too wide) in paragraph at lines 1377--1377
+ []  \T1/pcr/m/n/10 ftp_model_params = list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.8,[] 
+
+Overfull \hbox (90.78088pt too wide) in paragraph at lines 1378--1378
+ []    \T1/pcr/m/n/10 ftp_protect_max = 0.99, ftp_protect_mean = 0.95, ftp_protect_totcount = 100),[] 
+
+Overfull \hbox (71.55914pt too wide) in paragraph at lines 1393--1400
+\T1/ptm/m/n/10 at that spac-ing. Such ta-bles can be pro-duced with []\T1/pcr/m/n/10 nomeR::count_joint_frequencies()[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (134.68088pt too wide) in paragraph at lines 1393--1400
+[]\T1/pcr/m/n/10 fetchNOMe::get_cooccurrence_ctable_from_bams() []\T1/ptm/m/n/10 or []\T1/pcr/m/n/10 footprintR::countStatePairs[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (36.32864pt too wide) in paragraph at lines 1405--1410
+[]\T1/ptm/m/n/10 Numeric vec-tor of ex-pected (prior) cov-er-ages for the foot-print lengths in []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (34.36774pt too wide) in paragraph at lines 1405--1410
+\T1/ptm/m/n/10 These val-ues de-fine the prior mean of the Dirich-let dis-tri-bu-tion over foot-print/background
+
+Overfull \hbox (9.67892pt too wide) in paragraph at lines 1405--1410
+\T1/ptm/m/n/10 abun-dances. All el-e-ments must be in []\T1/pcr/m/n/10 [0, 1][]\T1/ptm/m/n/10 . To-gether with []\T1/pcr/m/n/10 bg_prior_cover[]\T1/ptm/m/n/10 ,
+
+[23]
+Overfull \hbox (15.40073pt too wide) in paragraph at lines 1425--1426
+[]\T1/ptm/m/n/10 Infer []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 , []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (162.98024pt too wide) in paragraph at lines 1428--1431
+[]\T1/ptm/m/n/10 Fix []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 to the value in []\T1/pcr/m/n/10 bg_model_params[["bg_protect_prob_fixed"]]
+
+Overfull \hbox (10.21063pt too wide) in paragraph at lines 1433--1436
+[]\T1/ptm/m/n/10 Fix both []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 and []\T1/pcr/m/n/10 ftp_protect_prob
+
+Overfull \hbox (27.11967pt too wide) in paragraph at lines 1444--1446
+[]\T1/ptm/m/n/10 Fixed value for []\T1/pcr/m/n/10 bg_protect_prob []\T1/ptm/m/n/10 used in []\T1/pcr/m/n/10 "bg_fixed"
+
+Overfull \hbox (31.99959pt too wide) in paragraph at lines 1446--1448
+[]\T1/ptm/m/n/10 Lower and up-per bounds for []\T1/pcr/m/n/10 bg_protect_prob
+
+Overfull \hbox (5.76889pt too wide) in paragraph at lines 1448--1450
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 bg_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (13.4288pt too wide) in paragraph at lines 1464--1466
+[]\T1/ptm/m/n/10 Mean of the prior Beta dis-tri-bu-tion for []\T1/pcr/m/n/10 ftp_protect_prob[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (54.5272pt too wide) in paragraph at lines 1486--1489
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 stanfit []\T1/ptm/m/n/10 ob-ject con-tain-ing the ADVI pos-te-rior ap-prox-i-ma-tion. The at-tribute []\T1/pcr/m/n/10 attr(<stanfit_object>,
+
+Overfull \hbox (12.41827pt too wide) in paragraph at lines 1486--1489
+\T1/pcr/m/n/10 "ftp_lengths") []\T1/ptm/m/n/10 stores the foot-print lengths used for in-fer-ence (i.e., the sup-plied []\T1/pcr/m/n/10 ftp_lengths[]\T1/ptm/m/n/10 ). 
+
+[24]
+[25]
+Overfull \hbox (42.9796pt too wide) in paragraph at lines 1545--1548
+[][][]\T1/pcr/m/n/10 ftp_spectral_analysis_SE[][][][]\T1/ptm/m/n/10 . The in-put []\T1/pcr/m/n/10 DataFrame []\T1/ptm/m/n/10 must con-tain a col-umn named []\T1/pcr/m/n/10 ftp_spectrum[]\T1/ptm/m/n/10 . 
+
+[26]
+Overfull \hbox (32.06818pt too wide) in paragraph at lines 1653--1655
+[]\T1/ptm/m/n/10 Unique name of the model (char-ac-ter), e.g., "Nucleosome--149", "Nucleosome--
+
+Overfull \hbox (5.55875pt too wide) in paragraph at lines 1655--1659
+[]\T1/ptm/m/n/10 Optional non-unique group name (char-ac-ter) used for ag-gre-gat-ing prob-
+
+[27]
+Overfull \hbox (45.08794pt too wide) in paragraph at lines 1674--1678
+[]\T1/ptm/m/n/10 Logical. If []\T1/pcr/m/n/10 TRUE[]\T1/ptm/m/n/10 , prob-a-bil-i-ties are ag-gre-gated by the []\T1/pcr/m/n/10 GROUP []\T1/ptm/m/n/10 ID in []\T1/pcr/m/n/10 footprint_models[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (5.32819pt too wide) in paragraph at lines 1727--1731
+[]\T1/ptm/m/n/10 Contains start prob-a-bil-i-ties for each SMF
+
+[28]
+Overfull \hbox (10.48012pt too wide) in paragraph at lines 1799--1802
+\T1/ptm/m/n/10 re-turned by []\T1/pcr/m/n/10 SingleMoleculeGenomicsIO::readModBam[]\T1/ptm/m/n/10 , in-clud-ing mod-
+
+[29]
+Overfull \hbox (80.63771pt too wide) in paragraph at lines 1815--1817
+[]\T1/ptm/m/n/10 Ignore frag-ments with a den-sity of in-for-ma-tive (non-[]\T1/pcr/m/n/10 NA[]\T1/ptm/m/n/10 ) po-si-tions be-low []\T1/pcr/m/n/10 min_frag_data_dens[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (32.06818pt too wide) in paragraph at lines 1826--1828
+[]\T1/ptm/m/n/10 Unique name of the model (char-ac-ter), e.g., "Nucleosome--149", "Nucleosome--
+
+Overfull \hbox (5.55875pt too wide) in paragraph at lines 1828--1832
+[]\T1/ptm/m/n/10 Optional non-unique group name (char-ac-ter) used for ag-gre-gat-ing prob-
+
+Overfull \hbox (45.08794pt too wide) in paragraph at lines 1847--1851
+[]\T1/ptm/m/n/10 Logical. If []\T1/pcr/m/n/10 TRUE[]\T1/ptm/m/n/10 , prob-a-bil-i-ties are ag-gre-gated by the []\T1/pcr/m/n/10 GROUP []\T1/ptm/m/n/10 ID in []\T1/pcr/m/n/10 footprint_models[]\T1/ptm/m/n/10 .
+
+[30]
+Overfull \hbox (5.32819pt too wide) in paragraph at lines 1919--1922
+[]\T1/ptm/m/n/10 Contains start prob-a-bil-i-ties for each SMF
+
+Overfull \hbox (0.81802pt too wide) in paragraph at lines 1937--1943
+\T1/ptm/m/n/10 po-ten-tial foot-prints, and peaks are ex-tended un-til the sig-nal de-creases by []\T1/pcr/m/n/10 max_abund_log2drop[]\T1/ptm/m/n/10 ,
+
+[31]
+[32]
+Overfull \hbox (62.18857pt too wide) in paragraph at lines 2011--2013
+[]\T1/ptm/m/n/10 A []\T1/pcr/m/n/10 data.table []\T1/ptm/m/n/10 with foot-print de-cod-ing re-sults, as re-turned by [][][]\T1/pcr/m/n/10 predict_footprints_SE[][][]
+(./Rd2.ind
+[33]
+Overfull \hbox (5.3567pt too wide) in paragraph at lines 12--13
+[]\T1/pcr/m/n/10 calculate_tile_BG_TF_enrichments\T1/ptm/m/n/10 , 
+
+Overfull \hbox (35.3567pt too wide) in paragraph at lines 35--37
+[]\T1/pcr/m/n/10 get_SeqContext_control_beta_shapes_SE\T1/ptm/m/n/10 , 
+
+
+[34]) (./Rd2.aux) )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{Rfn.fwrite} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.sampling} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.optimizing} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.smooth.spline} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.summary\\unhbox\040\\voidb@x\040\\kern\040\\z@\040\\char\040`\\protect\040\\protect\040\\leavevmode@ifvmode\040\\kern\040+.1667em\\relax\040stanfit.Rdash.method} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stanfit} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.vb} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.p.adjust} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.binom.test} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.SummarizedExperiment} has been referenced but does not exist, replaced by a fixed one
+
+</tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></tachyon/groups/gbioinfo/Appz/TinyTeX/TinyTeX_v2025.10/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (34 pages, 163584 bytes).
+Transcript written on Rd2.log.
+Saving output to ‘nomeR-manual.pdf’ ...
+Done
+You may want to clean up by 'rm -Rf /scratch/ozonevge/RtmpORyKVa/Rd2pdf2a57fb5d61927c'

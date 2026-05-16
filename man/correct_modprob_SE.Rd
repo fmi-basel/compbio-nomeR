@@ -2,7 +2,7 @@
 % Please edit documentation in R/correct_modprob_SE.R
 \name{correct_modprob_SE}
 \alias{correct_modprob_SE}
-\title{Correct modification probabilities}
+\title{Correct modification probabilities for sequence-context bias}
 \usage{
 correct_modprob_SE(
   se,
@@ -17,25 +17,40 @@ correct_modprob_SE(
 }
 \arguments{
 \item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-containing read-level data returned by
+containing read-level data, such as that returned by
 \code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.}
 
 \item{assayName}{Character scalar specifying the name of the assay in
 \code{se} that contains read-level modification probabilities.}
 
-\item{corrected_assayName}{Character scalar specifying the name of the additional
-assay in returned \code{se} that will contain read-level corrected modification probabilities.}
+\item{corrected_assayName}{Character scalar. Name of the additional assay
+added to the returned \code{se} that will contain the corrected
+read-level modification probabilities.}
 
-\item{neg_control_shapes}{\code{data.table}'s containing shapes of Beta distributions
-for negative control experiments. Can be obtained using \code{\link{get_SeqContext_control_beta_shapes_SE}}.}
+\item{neg_control_shapes}{A \code{data.table} containing Beta distribution
+shape parameters for the negative control experiment (no MTase treatment),
+as returned by \code{\link{get_SeqContext_control_beta_shapes_SE}}.}
 
-\item{pos_control_shapes}{\code{data.table}'s containing shapes of Beta distributions
-for positive control experiments. Can be obtained using \code{\link{get_SeqContext_control_beta_shapes_SE}}.}
+\item{pos_control_shapes}{A \code{data.table} containing Beta distribution
+shape parameters for the positive control experiment (MTase treatment of
+naked DNA), as returned by \code{\link{get_SeqContext_control_beta_shapes_SE}}.}
+
+\item{mod_prior}{Numeric. Prior probability of a modified base.}
+
+\item{eps}{Numeric. Small value used to clamp modification probabilities away
+from the exact boundaries 0 and 1 before evaluating the Beta log-densities.
+Defaults to \code{.Machine$double.eps}.}
+
+\item{qnorm_to_raw}{Logical. If \code{TRUE}, perform quantile normalisation of
+the corrected probabilities to match the distribution of the raw probabilities.}
 }
 \value{
-\code{se} with additional assay (with name defined by \code{corrected_assayName}) containing
-corrected modification probabilities.
+The input \code{se} with an additional assay (named by
+\code{corrected_assayName}) containing the corrected modification
+probabilities.
 }
 \description{
-Correct modification probabilities
+Applies a per-position Bayesian correction to raw modification probabilities
+using Beta distributions fitted to negative-control (unmodified) and
+positive-control (fully modified) samples, stratified by sequence context.
 }

@@ -4,5 +4,7 @@ utils::globalVariables(c(
     "maxPosIdx_ref", "minPosIdx_ref", "refEnd", "refStart",
     "sd", "sidx", "zscore", "zscore_scaled",
     "protect", "mod_prob", "fidx_sample", "posidx_ref", "refpos",
-    "fidx_glob", "ftp_group" # due to NSE notes in R CMD check
+    "fidx_glob", "ftp_group",
+    "i.start", "bg_score_mean_Ztest_pval", "tf_score_mean_Ztest_pval",
+    "width" # due to NSE notes in R CMD check
 ))

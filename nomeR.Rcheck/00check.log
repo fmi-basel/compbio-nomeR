@@ -1,0 +1,92 @@
+* using log directory ‘/tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/nomeR.Rcheck’
+* using R version 4.5.2 (2025-10-31)
+* using platform: x86_64-pc-linux-gnu
+* R was compiled by
+    gcc (GCC) 13.3.0
+    GNU Fortran (GCC) 13.3.0
+* running under: Rocky Linux 8.10 (Green Obsidian)
+* using session charset: UTF-8
+* using option ‘--no-build-vignettes’
+* checking for file ‘nomeR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘nomeR’ version ‘0.9.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘nomeR’ can be installed ... OK
+* used C++ compiler: ‘g++ (GCC) 13.3.0’
+* checking C++ specification ... NOTE
+  Specified C++14: please drop specification unless essential
+* checking installed package size ... INFO
+  installed size is  5.9Mb
+  sub-directories of 1Mb or more:
+    help   1.8Mb
+    libs   3.7Mb
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking code files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking loading without being on the library search path ... OK
+* checking dependencies in R code ... NOTE
+Namespace in Imports field not imported from: ‘GenomeInfoDb’
+  All declared Imports should be used.
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+calculate_tile_BG_TF_enrichments: no visible binding for global
+  variable ‘i.start’
+calculate_tile_BG_TF_enrichments: no visible binding for global
+  variable ‘bg_score_mean_Ztest_pval’
+calculate_tile_BG_TF_enrichments: no visible binding for global
+  variable ‘tf_score_mean_Ztest_pval’
+write_ftp_decoding_bed: no visible binding for global variable ‘width’
+Undefined global functions or variables:
+  bg_score_mean_Ztest_pval i.start tf_score_mean_Ztest_pval width
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... WARNING
+Undocumented arguments in Rd file 'correct_modprob_SE.Rd'
+  ‘eps’
+
+Functions with \usage entries need to have the appropriate \alias
+entries, and all their arguments documented.
+The \usage entries must correspond to syntactically valid R code.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking line endings in shell scripts ... OK
+* checking line endings in C/C++/Fortran sources/headers ... OK
+* checking line endings in Makefiles ... OK
+* checking compilation flags in Makevars ... OK
+* checking for GNU extensions in Makefiles ... INFO
+GNU make is a SystemRequirements.
+* checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... OK
+* checking use of PKG_*FLAGS in Makefiles ... OK
+* checking compiled code ... OK
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking PDF version of manual ... OK
+* DONE
+Status: 1 WARNING, 3 NOTEs

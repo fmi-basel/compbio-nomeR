@@ -1,0 +1,834 @@
+
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "nomeR"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> library('nomeR')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("generate_insilico_SMF_data")
+> ### * generate_insilico_SMF_data
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: generate_insilico_SMF_data
+> ### Title: Generate an in-silico single-molecule footprinting dataset
+> ### Aliases: generate_insilico_SMF_data
+> 
+> ### ** Examples
+> 
+> ## length of a chromosome
+> chr_len <- 1000
+> 
+> ftp_cover_c2 <- c(0.05, 0.5)
+> ftp_len_c2 <- c(50, 150)
+> case2_pos_mat <- rbind(matrix(c(rep(0, 515), 1, rep(0, 484)),
++                               nrow = 1,
++                               ncol = chr_len),
++                        matrix(1 / chr_len,
++                               nrow = 1,
++                               ncol = chr_len))
+> 
+> ## sequencing depths
+> max_nreads <- 30
+> ## footprint model
+> case2_ftp_models <- list(
++ "ftp50" = list("PROTECT_PROB" = rep(1,ftp_len_c2[1]),
++                "COVER_PRIOR" = ftp_cover_c2[1],
++                "NAME" = "ftp50"),
++ "ftp150" = list("PROTECT_PROB" = rep(1,ftp_len_c2[2]),
++                 "COVER_PRIOR" = ftp_cover_c2[2],
++                 "NAME" = "ftp150"))
+> 
+> smf_data <-
++   generate_insilico_SMF_data(region_len = chr_len,
++                              n_reads = max_nreads,
++                              footprint_models = case2_ftp_models,
++                              ftp_emission_posprob = case2_pos_mat,
++                              bgprotectprob = 0,
++                              infposdens = 1
++                              )
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("get_ftp_inference_summary")
+> ### * get_ftp_inference_summary
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: get_ftp_inference_summary
+> ### Title: Extract and/or plot estimates from footprint inference and
+> ###   optionally suggest footprints
+> ### Aliases: get_ftp_inference_summary
+> 
+> ### ** Examples
+> 
+> 
+> ## Simple data with two footprints of lengths 5 and 10 bp.
+> ## The table below is a count table of observed occurrences of
+> ## 00, 01, 10, and 11 at spacings from 1 to 15.
+> 
+> ftp_5_10_data <- data.frame("S" = 1:15,
++                             "N00" = c(1626964, 1508381,
++                                       1420066, 1336897,
++                                       1258679, 1185045,
++                                       1136784, 1090029,
++                                       1045066, 1001670,
++                                       959927, 983020,
++                                       1000410, 1012326,
++                                       1019633),
++                             "N01" = c(0, 113856,
++                                       197657, 276539,
++                                       350664, 420399,
++                                       464873, 507988,
++                                       549466, 589487,
++                                       627997, 601629,
++                                       580965, 565776,
++                                       555217),
++                             "N10" = c(0, 113921,
++                                       197854, 276862,
++                                       351147, 421042,
++                                       465716, 509005,
++                                       550645, 590837,
++                                       629533, 603328,
++                                       582814, 567737,
++                                       557220),
++                             "N11" = c(873036, 758842,
++                                       674423, 594702,
++                                       519510, 448514,
++                                       402627, 357978,
++                                       314823, 273006,
++                                       232543, 257023,
++                                       275811, 289161,
++                                       297930))
+> 
+> ## variational inference for footprints in the data
+> inf <- infer_footprints_vb(cooc_ctable = ftp_5_10_data,
++                            ftp_lengths = 2:15)
+Chain 1: ------------------------------------------------------------
+Chain 1: EXPERIMENTAL ALGORITHM:
+Chain 1:   This procedure has not been thoroughly tested and may be unstable
+Chain 1:   or buggy. The interface is subject to change.
+Chain 1: ------------------------------------------------------------
+Chain 1: 
+Chain 1: 
+Chain 1: 
+Chain 1: Gradient evaluation took 0.000135 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.35 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Begin eta adaptation.
+Chain 1: Iteration:   1 / 250 [  0%]  (Adaptation)
+Chain 1: Iteration:  50 / 250 [ 20%]  (Adaptation)
+Chain 1: Iteration: 100 / 250 [ 40%]  (Adaptation)
+Chain 1: Iteration: 150 / 250 [ 60%]  (Adaptation)
+Chain 1: Iteration: 200 / 250 [ 80%]  (Adaptation)
+Chain 1: Success! Found best value [eta = 1] earlier than expected.
+Chain 1: 
+Chain 1: Begin stochastic gradient ascent.
+Chain 1:   iter             ELBO   delta_ELBO_mean   delta_ELBO_med   notes 
+Chain 1:    100    -42629449.673             1.000            1.000
+Chain 1:    200    -42623116.944             0.500            1.000
+Chain 1:    300    -42623781.580             0.333            0.000
+Chain 1:    400    -42622823.194             0.250            0.000
+Chain 1:    500    -42621524.469             0.200            0.000
+Chain 1:    600    -42619289.364             0.167            0.000
+Chain 1:    700    -42619968.367             0.143            0.000
+Chain 1:    800    -42620722.151             0.125            0.000
+Chain 1:    900    -42619812.775             0.111            0.000
+Chain 1:   1000    -42620833.498             0.100            0.000
+Chain 1:   1100    -42621211.663             0.091            0.000
+Chain 1:   1200    -42619529.653             0.083            0.000
+Chain 1:   1300    -42619252.184             0.077            0.000
+Chain 1:   1400    -42619347.653             0.071            0.000
+Chain 1:   1500    -42619746.588             0.067            0.000
+Chain 1:   1600    -42619797.159             0.000            0.000
+Chain 1:   1700    -42619888.960             0.000            0.000
+Chain 1:   1800    -42620093.923             0.000            0.000
+Chain 1:   1900    -42619099.197             0.000            0.000
+Chain 1:   2000    -42618748.473             0.000            0.000
+Chain 1:   2100    -42619316.207             0.000            0.000
+Chain 1:   2200    -42619971.170             0.000            0.000
+Chain 1:   2300    -42618995.900             0.000            0.000
+Chain 1:   2400    -42618901.013             0.000            0.000
+Chain 1:   2500    -42618792.206             0.000            0.000
+Chain 1:   2600    -42618938.922             0.000            0.000
+Chain 1:   2700    -42618700.170             0.000            0.000
+Chain 1:   2800    -42619599.299             0.000            0.000
+Chain 1:   2900    -42618896.913             0.000            0.000
+Chain 1:   3000    -42618800.618             0.000            0.000
+Chain 1:   3100    -42618724.667             0.000            0.000
+Chain 1:   3200    -42618733.560             0.000            0.000
+Chain 1:   3300    -42619061.689             0.000            0.000
+Chain 1:   3400    -42618757.740             0.000            0.000
+Chain 1:   3500    -42618812.824             0.000            0.000
+Chain 1:   3600    -42618741.846             0.000            0.000
+Chain 1:   3700    -42618780.094             0.000            0.000
+Chain 1:   3800    -42618666.865             0.000            0.000
+Chain 1:   3900    -42618749.371             0.000            0.000
+Chain 1:   4000    -42618675.029             0.000            0.000
+Chain 1:   4100    -42618698.037             0.000            0.000
+Chain 1:   4200    -42618977.806             0.000            0.000
+Chain 1:   4300    -42618938.285             0.000            0.000
+Chain 1:   4400    -42619010.495             0.000            0.000
+Chain 1:   4500    -42618496.278             0.000            0.000
+Chain 1:   4600    -42619148.310             0.000            0.000
+Chain 1:   4700    -42618597.206             0.000            0.000
+Chain 1:   4800    -42619033.859             0.000            0.000
+Chain 1:   4900    -42618531.458             0.000            0.000
+Chain 1:   5000    -42618653.698             0.000            0.000
+Chain 1:   5100    -42618595.715             0.000            0.000
+Chain 1:   5200    -42618566.643             0.000            0.000
+Chain 1:   5300    -42618643.830             0.000            0.000
+Chain 1:   5400    -42618729.125             0.000            0.000
+Chain 1:   5500    -42618455.387             0.000            0.000
+Chain 1:   5600    -42618468.015             0.000            0.000
+Chain 1:   5700    -42618616.549             0.000            0.000
+Chain 1:   5800    -42618698.270             0.000            0.000
+Chain 1:   5900    -42619691.610             0.000            0.000
+Chain 1:   6000    -42619019.286             0.000            0.000
+Chain 1:   6100    -42619161.897             0.000            0.000
+Chain 1:   6200    -42618549.391             0.000            0.000
+Chain 1:   6300    -42618554.465             0.000            0.000
+Chain 1:   6400    -42618717.368             0.000            0.000
+Chain 1:   6500    -42618791.808             0.000            0.000
+Chain 1:   6600    -42618757.268             0.000            0.000
+Chain 1:   6700    -42618517.299             0.000            0.000
+Chain 1:   6800    -42618631.893             0.000            0.000
+Chain 1:   6900    -42618887.396             0.000            0.000
+Chain 1:   7000    -42618672.883             0.000            0.000
+Chain 1:   7100    -42618919.909             0.000            0.000
+Chain 1:   7200    -42618587.492             0.000            0.000
+Chain 1:   7300    -42618602.282             0.000            0.000
+Chain 1:   7400    -42618556.898             0.000            0.000
+Chain 1:   7500    -42618636.612             0.000            0.000
+Chain 1:   7600    -42618774.808             0.000            0.000
+Chain 1:   7700    -42618686.688             0.000            0.000
+Chain 1:   7800    -42618501.136             0.000            0.000
+Chain 1:   7900    -42618541.617             0.000            0.000
+Chain 1:   8000    -42618709.156             0.000            0.000
+Chain 1:   8100    -42618675.944             0.000            0.000
+Chain 1:   8200    -42618581.610             0.000            0.000
+Chain 1:   8300    -42618684.395             0.000            0.000
+Chain 1:   8400    -42618513.354             0.000            0.000
+Chain 1:   8500    -42618714.594             0.000            0.000
+Chain 1:   8600    -42618766.547             0.000            0.000
+Chain 1:   8700    -42618729.964             0.000            0.000
+Chain 1:   8800    -42618762.387             0.000            0.000
+Chain 1:   8900    -42618442.977             0.000            0.000
+Chain 1:   9000    -42618596.402             0.000            0.000
+Chain 1:   9100    -42618456.690             0.000            0.000
+Chain 1:   9200    -42618499.147             0.000            0.000
+Chain 1:   9300    -42618470.694             0.000            0.000
+Chain 1:   9400    -42618705.032             0.000            0.000
+Chain 1:   9500    -42618827.961             0.000            0.000
+Chain 1:   9600    -42618568.545             0.000            0.000
+Chain 1:   9700    -42618541.410             0.000            0.000
+Chain 1:   9800    -42618501.129             0.000            0.000
+Chain 1:   9900    -42618710.622             0.000            0.000
+Chain 1:   10000    -42618446.376             0.000            0.000
+Chain 1:   10100    -42618535.201             0.000            0.000
+Chain 1:   10200    -42618644.837             0.000            0.000
+Chain 1:   10300    -42618818.485             0.000            0.000
+Chain 1:   10400    -42618557.381             0.000            0.000
+Chain 1:   10500    -42618500.963             0.000            0.000
+Chain 1:   10600    -42618473.455             0.000            0.000
+Chain 1:   10700    -42618560.912             0.000            0.000
+Chain 1:   10800    -42618630.551             0.000            0.000
+Chain 1:   10900    -42618530.079             0.000            0.000
+Chain 1:   11000    -42618542.339             0.000            0.000
+Chain 1:   11100    -42618478.369             0.000            0.000
+Chain 1:   11200    -42618553.147             0.000            0.000
+Chain 1:   11300    -42618648.839             0.000            0.000
+Chain 1:   11400    -42618942.966             0.000            0.000
+Chain 1:   11500    -42618458.133             0.000            0.000
+Chain 1:   11600    -42618504.441             0.000            0.000
+Chain 1:   11700    -42618458.897             0.000            0.000
+Chain 1:   11800    -42618552.720             0.000            0.000
+Chain 1:   11900    -42618520.533             0.000            0.000
+Chain 1:   12000    -42618629.601             0.000            0.000
+Chain 1:   12100    -42618885.982             0.000            0.000
+Chain 1:   12200    -42618703.675             0.000            0.000
+Chain 1:   12300    -42618654.444             0.000            0.000
+Chain 1:   12400    -42618512.561             0.000            0.000
+Chain 1:   12500    -42618503.771             0.000            0.000
+Chain 1:   12600    -42618470.308             0.000            0.000
+Chain 1:   12700    -42618580.651             0.000            0.000
+Chain 1:   12800    -42618650.047             0.000            0.000
+Chain 1:   12900    -42618484.390             0.000            0.000
+Chain 1:   13000    -42618756.311             0.000            0.000
+Chain 1:   13100    -42618644.083             0.000            0.000
+Chain 1:   13200    -42618553.600             0.000            0.000
+Chain 1:   13300    -42618458.208             0.000            0.000
+Chain 1:   13400    -42618539.429             0.000            0.000
+Chain 1:   13500    -42618456.900             0.000            0.000
+Chain 1:   13600    -42618574.179             0.000            0.000
+Chain 1:   13700    -42618800.049             0.000            0.000
+Chain 1:   13800    -42618641.909             0.000            0.000
+Chain 1:   13900    -42618514.929             0.000            0.000
+Chain 1:   14000    -42618459.886             0.000            0.000
+Chain 1:   14100    -42618590.240             0.000            0.000
+Chain 1:   14200    -42618543.391             0.000            0.000
+Chain 1:   14300    -42618549.857             0.000            0.000
+Chain 1:   14400    -42618598.502             0.000            0.000
+Chain 1:   14500    -42618761.707             0.000            0.000
+Chain 1:   14600    -42618571.128             0.000            0.000
+Chain 1:   14700    -42618965.530             0.000            0.000
+Chain 1:   14800    -42618508.846             0.000            0.000
+Chain 1:   14900    -42618525.957             0.000            0.000
+Chain 1:   15000    -42618535.332             0.000            0.000
+Chain 1: Informational Message: The maximum number of iterations is reached! The algorithm may not have converged.
+Chain 1: This variational approximation is not guaranteed to be meaningful.
+Chain 1: 
+Chain 1: Drawing a sample of size 2000 from the approximate posterior... 
+Chain 1: COMPLETED.
+Warning: Pareto k diagnostic value is 1.53. Resampling is disabled. Decreasing tol_rel_obj may help if variational algorithm has terminated prematurely. Otherwise consider using sampling instead.
+> 
+> ## get estimates and plot footprint spectrum
+> inference_summary_list <- get_ftp_inference_summary(inf, plot = TRUE)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("infer_footprints_optim")
+> ### * infer_footprints_optim
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: infer_footprints_optim
+> ### Title: Find point estimates for footprint abundance using Stan
+> ###   optimization
+> ### Aliases: infer_footprints_optim
+> 
+> ### ** Examples
+> 
+> 
+> ## Simple data with two footprints of lengths 5 and 10 bps.
+> ## The table below is a count table of observed occurrences of
+> ## 00, 01, 10, and 11 at spacings from 1 until 15.
+> 
+> ftp_5_10_data <- data.frame("S" = 1:15,
++                             "N00" = c(1626964, 1508381,
++                                       1420066, 1336897,
++                                       1258679, 1185045,
++                                       1136784, 1090029,
++                                       1045066, 1001670,
++                                       959927, 983020,
++                                       1000410, 1012326,
++                                       1019633),
++                             "N01" = c(0, 113856,
++                                       197657, 276539,
++                                       350664, 420399,
++                                       464873, 507988,
++                                       549466, 589487,
++                                       627997, 601629,
++                                       580965, 565776,
++                                       555217),
++                             "N10" = c(0, 113921,
++                                       197854, 276862,
++                                       351147, 421042,
++                                       465716, 509005,
++                                       550645, 590837,
++                                       629533, 603328,
++                                       582814, 567737,
++                                       557220),
++                             "N11" = c(873036, 758842,
++                                       674423, 594702,
++                                       519510, 448514,
++                                       402627, 357978,
++                                       314823, 273006,
++                                       232543, 257023,
++                                       275811, 289161,
++                                       297930))
+> 
+> 
+> ## finding MAP estimate
+> inf_output <- infer_footprints_optim(cooc_ctable = ftp_5_10_data,
++                                      ftp_lengths = 2:15)
+> 
+> ## plot footprint spectrum
+> get_ftp_inference_summary(inf_output, plot = TRUE)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("infer_footprints_sampling")
+> ### * infer_footprints_sampling
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: infer_footprints_sampling
+> ### Title: Footprint spectral analysis using the No-U-Turn Sampler (NUTS)
+> ###   implemented in Stan
+> ### Aliases: infer_footprints_sampling
+> 
+> ### ** Examples
+> 
+> 
+> ## Simple data with two footprints of lengths 5 and 10 bps.
+> ## The table below is a count table of observed occurrences of
+> ## 00, 01, 10, and 11 at spacings from 1 until 15.
+> 
+> ftp_5_10_data <- data.frame("S" = 1:15,
++                             "N00" = c(1626964, 1508381,
++                                       1420066, 1336897,
++                                       1258679, 1185045,
++                                       1136784, 1090029,
++                                       1045066, 1001670,
++                                       959927, 983020,
++                                       1000410, 1012326,
++                                       1019633),
++                             "N01" = c(0, 113856,
++                                       197657, 276539,
++                                       350664, 420399,
++                                       464873, 507988,
++                                       549466, 589487,
++                                       627997, 601629,
++                                       580965, 565776,
++                                       555217),
++                             "N10" = c(0, 113921,
++                                       197854, 276862,
++                                       351147, 421042,
++                                       465716, 509005,
++                                       550645, 590837,
++                                       629533, 603328,
++                                       582814, 567737,
++                                       557220),
++                             "N11" = c(873036, 758842,
++                                       674423, 594702,
++                                       519510, 448514,
++                                       402627, 357978,
++                                       314823, 273006,
++                                       232543, 257023,
++                                       275811, 289161,
++                                       297930))
+> 
+> 
+> ## HMC inference for footprints in the data
+> inf_output <- infer_footprints_sampling(cooc_ctable = ftp_5_10_data,
++                                         ftp_lengths = 2:15, ncpu = 2)
+
+SAMPLING FOR MODEL 'ftp_inference_informative_prior' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 0.00011 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.1 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
+
+SAMPLING FOR MODEL 'ftp_inference_informative_prior' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 0.0001 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 1 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 6.687 seconds (Warm-up)
+Chain 1:                1.475 seconds (Sampling)
+Chain 1:                8.162 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'ftp_inference_informative_prior' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 0.000106 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 1.06 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 10.483 seconds (Warm-up)
+Chain 2:                1.519 seconds (Sampling)
+Chain 2:                12.002 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'ftp_inference_informative_prior' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 0.000116 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 1.16 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 14.235 seconds (Warm-up)
+Chain 3:                1.262 seconds (Sampling)
+Chain 3:                15.497 seconds (Total)
+Chain 3: 
+Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 11.357 seconds (Warm-up)
+Chain 4:                1.502 seconds (Sampling)
+Chain 4:                12.859 seconds (Total)
+Chain 4: 
+> 
+> ## plot footprint spectrum
+> get_ftp_inference_summary(inf_output, plot = TRUE)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("infer_footprints_vb")
+> ### * infer_footprints_vb
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: infer_footprints_vb
+> ### Title: Footprint spectral analysis by Variational Bayes inference using
+> ###   Stan Automatic Differentiation Variational Inference (ADVI)
+> ### Aliases: infer_footprints_vb
+> 
+> ### ** Examples
+> 
+> 
+> ## Simple data with two footprints of lengths 5 and 10 bps.
+> ## The table below is a count table of observed occurrences of
+> ## 00, 01, 10, and 11 at spacings from 1 until 15.
+> 
+> ftp_5_10_data <- data.frame("S" = 1:15,
++                             "N00" = c(1626964, 1508381,
++                                       1420066, 1336897,
++                                       1258679, 1185045,
++                                       1136784, 1090029,
++                                       1045066, 1001670,
++                                       959927, 983020,
++                                       1000410, 1012326,
++                                       1019633),
++                             "N01" = c(0, 113856,
++                                       197657, 276539,
++                                       350664, 420399,
++                                       464873, 507988,
++                                       549466, 589487,
++                                       627997, 601629,
++                                       580965, 565776,
++                                       555217),
++                             "N10" = c(0, 113921,
++                                       197854, 276862,
++                                       351147, 421042,
++                                       465716, 509005,
++                                       550645, 590837,
++                                       629533, 603328,
++                                       582814, 567737,
++                                       557220),
++                             "N11" = c(873036, 758842,
++                                       674423, 594702,
++                                       519510, 448514,
++                                       402627, 357978,
++                                       314823, 273006,
++                                       232543, 257023,
++                                       275811, 289161,
++                                       297930))
+> 
+> 
+> ## VB inference for footprints in the data
+> inf_output <- infer_footprints_vb(cooc_ctable = ftp_5_10_data,
++                                   ftp_lengths = 2:15)
+Chain 1: ------------------------------------------------------------
+Chain 1: EXPERIMENTAL ALGORITHM:
+Chain 1:   This procedure has not been thoroughly tested and may be unstable
+Chain 1:   or buggy. The interface is subject to change.
+Chain 1: ------------------------------------------------------------
+Chain 1: 
+Chain 1: 
+Chain 1: 
+Chain 1: Gradient evaluation took 0.000175 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.75 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Begin eta adaptation.
+Chain 1: Iteration:   1 / 250 [  0%]  (Adaptation)
+Chain 1: Iteration:  50 / 250 [ 20%]  (Adaptation)
+Chain 1: Iteration: 100 / 250 [ 40%]  (Adaptation)
+Chain 1: Iteration: 150 / 250 [ 60%]  (Adaptation)
+Chain 1: Iteration: 200 / 250 [ 80%]  (Adaptation)
+Chain 1: Success! Found best value [eta = 1] earlier than expected.
+Chain 1: 
+Chain 1: Begin stochastic gradient ascent.
+Chain 1:   iter             ELBO   delta_ELBO_mean   delta_ELBO_med   notes 
+Chain 1:    100    -42629449.673             1.000            1.000
+Chain 1:    200    -42623116.944             0.500            1.000
+Chain 1:    300    -42623781.580             0.333            0.000
+Chain 1:    400    -42622823.194             0.250            0.000
+Chain 1:    500    -42621524.469             0.200            0.000
+Chain 1:    600    -42619289.364             0.167            0.000
+Chain 1:    700    -42619968.367             0.143            0.000
+Chain 1:    800    -42620722.151             0.125            0.000
+Chain 1:    900    -42619812.775             0.111            0.000
+Chain 1:   1000    -42620833.498             0.100            0.000
+Chain 1:   1100    -42621211.663             0.091            0.000
+Chain 1:   1200    -42619529.653             0.083            0.000
+Chain 1:   1300    -42619252.184             0.077            0.000
+Chain 1:   1400    -42619347.653             0.071            0.000
+Chain 1:   1500    -42619746.588             0.067            0.000
+Chain 1:   1600    -42619797.159             0.000            0.000
+Chain 1:   1700    -42619888.960             0.000            0.000
+Chain 1:   1800    -42620093.923             0.000            0.000
+Chain 1:   1900    -42619099.197             0.000            0.000
+Chain 1:   2000    -42618748.473             0.000            0.000
+Chain 1:   2100    -42619316.207             0.000            0.000
+Chain 1:   2200    -42619971.170             0.000            0.000
+Chain 1:   2300    -42618995.900             0.000            0.000
+Chain 1:   2400    -42618901.013             0.000            0.000
+Chain 1:   2500    -42618792.206             0.000            0.000
+Chain 1:   2600    -42618938.922             0.000            0.000
+Chain 1:   2700    -42618700.170             0.000            0.000
+Chain 1:   2800    -42619599.299             0.000            0.000
+Chain 1:   2900    -42618896.913             0.000            0.000
+Chain 1:   3000    -42618800.618             0.000            0.000
+Chain 1:   3100    -42618724.667             0.000            0.000
+Chain 1:   3200    -42618733.560             0.000            0.000
+Chain 1:   3300    -42619061.689             0.000            0.000
+Chain 1:   3400    -42618757.740             0.000            0.000
+Chain 1:   3500    -42618812.824             0.000            0.000
+Chain 1:   3600    -42618741.846             0.000            0.000
+Chain 1:   3700    -42618780.094             0.000            0.000
+Chain 1:   3800    -42618666.865             0.000            0.000
+Chain 1:   3900    -42618749.371             0.000            0.000
+Chain 1:   4000    -42618675.029             0.000            0.000
+Chain 1:   4100    -42618698.037             0.000            0.000
+Chain 1:   4200    -42618977.806             0.000            0.000
+Chain 1:   4300    -42618938.285             0.000            0.000
+Chain 1:   4400    -42619010.495             0.000            0.000
+Chain 1:   4500    -42618496.278             0.000            0.000
+Chain 1:   4600    -42619148.310             0.000            0.000
+Chain 1:   4700    -42618597.206             0.000            0.000
+Chain 1:   4800    -42619033.859             0.000            0.000
+Chain 1:   4900    -42618531.458             0.000            0.000
+Chain 1:   5000    -42618653.698             0.000            0.000
+Chain 1:   5100    -42618595.715             0.000            0.000
+Chain 1:   5200    -42618566.643             0.000            0.000
+Chain 1:   5300    -42618643.830             0.000            0.000
+Chain 1:   5400    -42618729.125             0.000            0.000
+Chain 1:   5500    -42618455.387             0.000            0.000
+Chain 1:   5600    -42618468.015             0.000            0.000
+Chain 1:   5700    -42618616.549             0.000            0.000
+Chain 1:   5800    -42618698.270             0.000            0.000
+Chain 1:   5900    -42619691.610             0.000            0.000
+Chain 1:   6000    -42619019.286             0.000            0.000
+Chain 1:   6100    -42619161.897             0.000            0.000
+Chain 1:   6200    -42618549.391             0.000            0.000
+Chain 1:   6300    -42618554.465             0.000            0.000
+Chain 1:   6400    -42618717.368             0.000            0.000
+Chain 1:   6500    -42618791.808             0.000            0.000
+Chain 1:   6600    -42618757.268             0.000            0.000
+Chain 1:   6700    -42618517.299             0.000            0.000
+Chain 1:   6800    -42618631.893             0.000            0.000
+Chain 1:   6900    -42618887.396             0.000            0.000
+Chain 1:   7000    -42618672.883             0.000            0.000
+Chain 1:   7100    -42618919.909             0.000            0.000
+Chain 1:   7200    -42618587.492             0.000            0.000
+Chain 1:   7300    -42618602.282             0.000            0.000
+Chain 1:   7400    -42618556.898             0.000            0.000
+Chain 1:   7500    -42618636.612             0.000            0.000
+Chain 1:   7600    -42618774.808             0.000            0.000
+Chain 1:   7700    -42618686.688             0.000            0.000
+Chain 1:   7800    -42618501.136             0.000            0.000
+Chain 1:   7900    -42618541.617             0.000            0.000
+Chain 1:   8000    -42618709.156             0.000            0.000
+Chain 1:   8100    -42618675.944             0.000            0.000
+Chain 1:   8200    -42618581.610             0.000            0.000
+Chain 1:   8300    -42618684.395             0.000            0.000
+Chain 1:   8400    -42618513.354             0.000            0.000
+Chain 1:   8500    -42618714.594             0.000            0.000
+Chain 1:   8600    -42618766.547             0.000            0.000
+Chain 1:   8700    -42618729.964             0.000            0.000
+Chain 1:   8800    -42618762.387             0.000            0.000
+Chain 1:   8900    -42618442.977             0.000            0.000
+Chain 1:   9000    -42618596.402             0.000            0.000
+Chain 1:   9100    -42618456.690             0.000            0.000
+Chain 1:   9200    -42618499.147             0.000            0.000
+Chain 1:   9300    -42618470.694             0.000            0.000
+Chain 1:   9400    -42618705.032             0.000            0.000
+Chain 1:   9500    -42618827.961             0.000            0.000
+Chain 1:   9600    -42618568.545             0.000            0.000
+Chain 1:   9700    -42618541.410             0.000            0.000
+Chain 1:   9800    -42618501.129             0.000            0.000
+Chain 1:   9900    -42618710.622             0.000            0.000
+Chain 1:   10000    -42618446.376             0.000            0.000
+Chain 1:   10100    -42618535.201             0.000            0.000
+Chain 1:   10200    -42618644.837             0.000            0.000
+Chain 1:   10300    -42618818.485             0.000            0.000
+Chain 1:   10400    -42618557.381             0.000            0.000
+Chain 1:   10500    -42618500.963             0.000            0.000
+Chain 1:   10600    -42618473.455             0.000            0.000
+Chain 1:   10700    -42618560.912             0.000            0.000
+Chain 1:   10800    -42618630.551             0.000            0.000
+Chain 1:   10900    -42618530.079             0.000            0.000
+Chain 1:   11000    -42618542.339             0.000            0.000
+Chain 1:   11100    -42618478.369             0.000            0.000
+Chain 1:   11200    -42618553.147             0.000            0.000
+Chain 1:   11300    -42618648.839             0.000            0.000
+Chain 1:   11400    -42618942.966             0.000            0.000
+Chain 1:   11500    -42618458.133             0.000            0.000
+Chain 1:   11600    -42618504.441             0.000            0.000
+Chain 1:   11700    -42618458.897             0.000            0.000
+Chain 1:   11800    -42618552.720             0.000            0.000
+Chain 1:   11900    -42618520.533             0.000            0.000
+Chain 1:   12000    -42618629.601             0.000            0.000
+Chain 1:   12100    -42618885.982             0.000            0.000
+Chain 1:   12200    -42618703.675             0.000            0.000
+Chain 1:   12300    -42618654.444             0.000            0.000
+Chain 1:   12400    -42618512.561             0.000            0.000
+Chain 1:   12500    -42618503.771             0.000            0.000
+Chain 1:   12600    -42618470.308             0.000            0.000
+Chain 1:   12700    -42618580.651             0.000            0.000
+Chain 1:   12800    -42618650.047             0.000            0.000
+Chain 1:   12900    -42618484.390             0.000            0.000
+Chain 1:   13000    -42618756.311             0.000            0.000
+Chain 1:   13100    -42618644.083             0.000            0.000
+Chain 1:   13200    -42618553.600             0.000            0.000
+Chain 1:   13300    -42618458.208             0.000            0.000
+Chain 1:   13400    -42618539.429             0.000            0.000
+Chain 1:   13500    -42618456.900             0.000            0.000
+Chain 1:   13600    -42618574.179             0.000            0.000
+Chain 1:   13700    -42618800.049             0.000            0.000
+Chain 1:   13800    -42618641.909             0.000            0.000
+Chain 1:   13900    -42618514.929             0.000            0.000
+Chain 1:   14000    -42618459.886             0.000            0.000
+Chain 1:   14100    -42618590.240             0.000            0.000
+Chain 1:   14200    -42618543.391             0.000            0.000
+Chain 1:   14300    -42618549.857             0.000            0.000
+Chain 1:   14400    -42618598.502             0.000            0.000
+Chain 1:   14500    -42618761.707             0.000            0.000
+Chain 1:   14600    -42618571.128             0.000            0.000
+Chain 1:   14700    -42618965.530             0.000            0.000
+Chain 1:   14800    -42618508.846             0.000            0.000
+Chain 1:   14900    -42618525.957             0.000            0.000
+Chain 1:   15000    -42618535.332             0.000            0.000
+Chain 1: Informational Message: The maximum number of iterations is reached! The algorithm may not have converged.
+Chain 1: This variational approximation is not guaranteed to be meaningful.
+Chain 1: 
+Chain 1: Drawing a sample of size 2000 from the approximate posterior... 
+Chain 1: COMPLETED.
+Warning: Pareto k diagnostic value is 1.53. Resampling is disabled. Decreasing tol_rel_obj may help if variational algorithm has terminated prematurely. Otherwise consider using sampling instead.
+> 
+> ## plot footprint spectrum
+> get_ftp_inference_summary(inf_output, plot = TRUE)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("predict_footprints")
+> ### * predict_footprints
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: predict_footprints
+> ### Title: Calculate posterior probabilities and predict footprints in
+> ###   single-molecule footprinting (SMF) data
+> ### Aliases: predict_footprints
+> 
+> ### ** Examples
+> 
+> set.seed(3346)
+> nc <- 50
+> nr <- 50
+> rmatr <- matrix(data = as.integer(rnorm(nc * nr) >= 0.5),
++                 ncol = nc,nrow=nr)
+> 
+> ## create dummy footprints
+> bg.pr <- 0.5
+> ft.pr <- 1-bg.pr
+> ft.len <- 15
+> 
+> ## creating a list of binding models for nomeR
+> ftp.models <- list(list("PROTECT_PROB" = rep(0.99,ft.len),
++                         "COVER_PRIOR" = ft.pr,
++                         "NAME" = "FOOTPRINT"))
+> 
+> nomeR.out <- predict_footprints(data=rmatr,
++                                 footprint_models = ftp.models,
++                                 bgprotectprob = 0.05,
++                                 bgcoverprior = bg.pr)
+> 
+> 
+> 
+> 
+> ### * <FOOTER>
+> ###
+> cleanEx()
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  11.257 0.84 37.317 48.551 0.696 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

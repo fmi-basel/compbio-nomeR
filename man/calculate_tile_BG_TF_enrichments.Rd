@@ -11,8 +11,6 @@ calculate_tile_BG_TF_enrichments(
   bg_colname = "background",
   tf_colname = "TF",
   nucl_colname = "Nucl",
-  bg_score_thresh = 0.1,
-  tf_score_thresh = bg_score_thresh,
   psc = 0.1,
   threads = NULL
 )
@@ -31,17 +29,17 @@ calculate_tile_BG_TF_enrichments(
 
 \item{nucl_colname}{Name of the column containing posterior coverage for nucleosome footprints.}
 
-\item{bg_score_thresh}{Threshold for background (accessible) scores.}
-
-\item{tf_score_thresh}{Threshold for TF footprint scores.}
-
 \item{psc}{Pseudo-count added when calculating background and TF scores.}
 
-\item{threads}{Number or threads used by \code{data.table}.
-NULL (default) rereads environment variables. 0 means to use all logical CPUs available. Otherwise a number >= 1}
+\item{threads}{Number of threads used by \code{data.table}.
+\code{NULL} (default) re-reads environment variables. \code{0} uses all
+available logical CPUs. Otherwise a positive integer.}
 }
 \value{
-A \code{data.table} with enrichment values and statistical significance calculated using a binomial test.
+A \code{data.table} with enrichment values and statistical
+significance calculated using a Z-test on BG and TF scores.
+The null hypothesis is that the mean BG/TF score for each tile equals the
+mean across all tiles.
 The table contains the following columns:
 \describe{
 \item{seqnames, start, end, tileID}{Genomic coordinates of sliding windows (tiles).}
