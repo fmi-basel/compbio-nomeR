@@ -31,6 +31,7 @@ class DNAbinding_object{
                            int position) const = 0;
   // virtual method to pre-calculate footprint scores for a given molecule
   virtual vector<double > get_seq_scores_vec(const fragProtectData& fragData) const = 0;
+  virtual void get_seq_scores_vec(const fragProtectData& fragData, vector<double>& out) const = 0;
   virtual void print() const = 0;
   virtual void print_normalized() const=0;
 };

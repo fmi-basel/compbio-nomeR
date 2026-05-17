@@ -103,6 +103,19 @@ vector<double > binding_object_model::get_seq_scores_vec(const fragProtectData& 
 	return scoresVec;
 }
 
+void binding_object_model::get_seq_scores_vec(const fragProtectData& fragData, vector<double>& out) const{
+	out.assign(fragData.Size(), prior);
+	double score = 1;
+	for(int i = 0; i < len; ++i){
+		if(i < fragData.Size())
+			score *= normmat[i][fragData[i]];
+	}
+	out[0] = prior * score;
+	for(int pos = 1; pos <= fragData.Size() - len; ++pos){
+		out[pos] = out[pos - 1] * firstLastRatios[fragData[pos + len - 1]][fragData[pos - 1]];
+	}
+}
+
 void binding_object_model::normalize(){
   double pseudocount = 0.0;
   vector<double > tmp(mat[0].size(),1);

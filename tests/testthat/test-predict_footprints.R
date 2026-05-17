@@ -91,6 +91,7 @@ test_that("predict_footprints returns expected probabilities and ftp configurati
     ## load data
     dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))
 
+
     ## calculate for all footprints aggregated by group
     testinsil <- predict_footprints(data=dlist$test_dat_mat,
                                     footprint_models = dlist$ftp_models,

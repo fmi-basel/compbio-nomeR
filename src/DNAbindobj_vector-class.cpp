@@ -128,6 +128,13 @@ vector<vector<double >> DNAbind_obj_vector::getFtpModelScores(const fragProtectD
     return ftpScoresMatrix;
 }
 
+void DNAbind_obj_vector::getFtpModelScores(const fragProtectData& fragData, vector<vector<double>>& out) const{
+    out.resize(size);
+    for(int wm = 0; wm < size; ++wm){
+        objvector[wm]->get_seq_scores_vec(fragData, out[wm]);
+    }
+}
+
 
 
 void DNAbind_obj_vector::clear(){

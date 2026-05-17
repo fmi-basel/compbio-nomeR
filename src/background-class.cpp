@@ -59,4 +59,11 @@ vector<double > Background::get_seq_scores_vec(const fragProtectData& fragData) 
 	return scoresVec;
 }
 
+void Background::get_seq_scores_vec(const fragProtectData& fragData, vector<double>& out) const{
+	out.assign(fragData.Size(), prior);
+	for(int pos = 0; pos < fragData.Size(); ++pos){
+		out[pos] = prior * bgmodel[fragData[pos]];
+	}
+}
+
 

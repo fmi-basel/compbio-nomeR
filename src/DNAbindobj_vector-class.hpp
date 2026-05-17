@@ -58,6 +58,7 @@ public:
 
 	// method to calculate scores for all footprints, including background given a sequence
 	vector<vector<double >> getFtpModelScores(const fragProtectData& fragData) const;
+	void getFtpModelScores(const fragProtectData& fragData, vector<vector<double>>& out) const;
 
 
 };

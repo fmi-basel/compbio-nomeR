@@ -420,7 +420,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
 {
     // Thread-local buffers — reused across loop iterations to avoid per-fragment heap allocation.
     vector<double> F, R, logPrefF, logPrefR, pf, pb;
-    vector<vector<double>> Prob, coverProb;
+    vector<vector<double>> Prob, coverProb, ftpModelsScores;
 
 #pragma omp for schedule(dynamic)
     for(seq = 0; seq < smfData.Size(); ++seq){
@@ -430,7 +430,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
             int seqlength = smfData[seq].Size();
 
             // calculate footprint model scores for the current fragment
-            vector<vector<double >> ftpModelsScores = ftpModels.getFtpModelScores(smfData[seq]);
+            ftpModels.getFtpModelScores(smfData[seq], ftpModelsScores);
 
 
             // allocate memory for:
