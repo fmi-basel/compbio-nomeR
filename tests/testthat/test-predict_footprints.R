@@ -1,3 +1,14 @@
+## shared test fixtures -------------------------------------------------------
+.make_rmatr <- function(nr = 50, nc = 50, seed = 3346) {
+    set.seed(seed)
+    matrix(data = as.integer(rnorm(nc * nr) >= 0.5), ncol = nc, nrow = nr)
+}
+.make_single_ftp_models <- function(ft.len = 15, ft.pr = 0.5) {
+    list(list("PROTECT_PROB" = rep(0.99, ft.len),
+              "COVER_PRIOR"  = ft.pr,
+              "NAME"         = "FOOTPRINT"))
+}
+
 test_that("wrong parameters for predict_footprints are handled correctly",{
     expect_error(predict_footprints(data = "aaa"))
     expect_error(predict_footprints(data = matrix()))
@@ -139,3 +150,144 @@ test_that("predict_footprints returns expected probabilities and ftp configurati
 })
 
 
+test_that("predict_footprints PosteriorDecoding method returns valid output", {
+    rmatr <- .make_rmatr()
+    ftp.models <- .make_single_ftp_models()
+
+    out <- predict_footprints(data            = rmatr,
+                              footprint_models = ftp.models,
+                              bgprotectprob    = 0.05,
+                              bgcoverprior     = 0.5,
+                              ftpConfigMethod  = "PosteriorDecoding",
+                              ncpu             = 1L)
+
+    expect_named(out, c("COVER_PROB", "FOOTPRINT_CONF"))
+    expect_true(all(c("FOOTPRINT", "background") %in% colnames(out$COVER_PROB)))
+
+    conf <- out$FOOTPRINT_CONF
+    expect_true(all(c("seq", "start", "width", "ftp_name", "ftp_group", "score") %in%
+                        colnames(conf)))
+    expect_true(all(conf$score >= 0 - .Machine$double.eps^0.5 &
+                        conf$score <= 1 + .Machine$double.eps^0.5))
+
+    ## cover probs still sum to 1 with PD
+    cover_sum <- rowSums(out$COVER_PROB[, c("FOOTPRINT", "background")])
+    expect_true(all(abs(cover_sum - 1) < 1e-8))
+})
+
+
+test_that("predict_footprints ncpu=1 and ncpu=2 produce identical results", {
+    dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))
+
+    run <- function(ncpu)
+        predict_footprints(data             = dlist$test_dat_mat,
+                           footprint_models  = dlist$ftp_models,
+                           bgprotectprob     = 0.05304034,
+                           bgcoverprior      = 0.4822005,
+                           aggrByGroup       = TRUE,
+                           ftpConfigMethod   = "PV",
+                           keepStartProb     = TRUE,
+                           ncpu              = ncpu)
+
+    out1 <- run(1L)
+    out2 <- run(2L)
+
+    expect_equal(out1$START_PROB,     out2$START_PROB)
+    expect_equal(out1$COVER_PROB,     out2$COVER_PROB)
+    expect_equal(out1$FOOTPRINT_CONF, out2$FOOTPRINT_CONF)
+})
+
+
+test_that("predict_footprints keepStartProb=FALSE omits START_PROB", {
+    rmatr <- .make_rmatr()
+    ftp.models <- .make_single_ftp_models()
+
+    out <- predict_footprints(data             = rmatr,
+                              footprint_models  = ftp.models,
+                              bgprotectprob     = 0.05,
+                              bgcoverprior      = 0.5,
+                              keepStartProb     = FALSE,
+                              ncpu              = 1L)
+
+    expect_named(out, c("COVER_PROB", "FOOTPRINT_CONF"))
+    expect_false("START_PROB" %in% names(out))
+})
+
+
+test_that("predict_footprints accepts list input and matches matrix input", {
+    rmatr <- .make_rmatr()
+    ftp.models <- .make_single_ftp_models()
+
+    lst <- lapply(seq_len(nrow(rmatr)), function(i) rmatr[i, ])
+
+    out_mat <- predict_footprints(data             = rmatr,
+                                  footprint_models  = ftp.models,
+                                  bgprotectprob     = 0.05,
+                                  bgcoverprior      = 0.5,
+                                  keepStartProb     = TRUE,
+                                  ncpu              = 1L)
+    out_lst <- predict_footprints(data             = lst,
+                                  footprint_models  = ftp.models,
+                                  bgprotectprob     = 0.05,
+                                  bgcoverprior      = 0.5,
+                                  keepStartProb     = TRUE,
+                                  ncpu              = 1L)
+
+    expect_equal(out_lst$COVER_PROB,     out_mat$COVER_PROB)
+    expect_equal(out_lst$START_PROB,     out_mat$START_PROB)
+    expect_equal(out_lst$FOOTPRINT_CONF, out_mat$FOOTPRINT_CONF)
+})
+
+
+test_that("predict_footprints aggrByGroup=FALSE reports per-name columns", {
+    dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))
+    model_names <- vapply(dlist$ftp_models, `[[`, character(1), "NAME")
+
+    out <- predict_footprints(data             = dlist$test_dat_mat,
+                              footprint_models  = dlist$ftp_models,
+                              bgprotectprob     = 0.05304034,
+                              bgcoverprior      = 0.4822005,
+                              aggrByGroup       = FALSE,
+                              keepStartProb     = TRUE,
+                              ncpu              = 1L)
+
+    ## output columns are footprint NAMEs, not GROUPs
+    expect_true(all(model_names %in% colnames(out$COVER_PROB)))
+    expect_true(all(model_names %in% colnames(out$START_PROB)))
+
+    ## cover probs still sum to 1
+    cover_sum <- rowSums(out$COVER_PROB[, c(model_names, "background")])
+    expect_true(all(abs(cover_sum - 1) < 1e-8))
+})
+
+
+test_that("predict_footprints works for a single-fragment input", {
+    set.seed(42)
+    single_row <- matrix(as.integer(rnorm(60) >= 0.5), nrow = 1)
+    ftp.models <- .make_single_ftp_models(ft.len = 15)
+
+    out <- predict_footprints(data             = single_row,
+                              footprint_models  = ftp.models,
+                              bgprotectprob     = 0.05,
+                              bgcoverprior      = 0.5,
+                              ncpu              = 1L)
+
+    expect_equal(nrow(out$COVER_PROB), ncol(single_row))
+    cover_sum <- rowSums(out$COVER_PROB[, c("FOOTPRINT", "background")])
+    expect_true(all(abs(cover_sum - 1) < 1e-8))
+})
+
+
+test_that("predict_footprints verbose=TRUE runs without error", {
+    rmatr <- .make_rmatr(nr = 5)
+    ftp.models <- .make_single_ftp_models()
+
+    expect_no_error(
+        predict_footprints(data             = rmatr,
+                           footprint_models  = ftp.models,
+                           bgprotectprob     = 0.05,
+                           bgcoverprior      = 0.5,
+                           verbose           = TRUE,
+                           ncpu              = 1L)
+    )
+})
