@@ -66,18 +66,16 @@ void Predict::getCoverPosteriors(const vector<vector<double > >& startProb,
     size_t nFtps = ftpModels.Size();
     size_t problen = startProb[0].size();
 
+    coverProb.resize(nFtps); // no-op when already the right size
     for(int iFtp = 0; iFtp < nFtps; ++iFtp){
-        vector<double > cFtpCoverProb(problen,0);
-        cFtpCoverProb[0] = startProb[iFtp][0];
+        coverProb[iFtp].assign(problen, 0.0); // no realloc once capacity >= problen
+        coverProb[iFtp][0] = startProb[iFtp][0];
         int objlen = ftpModels[iFtp]->len;
         for(int pos = 1; pos < problen; ++pos){
-            // add the next start prob to the value at the preceding position
-            cFtpCoverProb[pos] = cFtpCoverProb[pos - 1] + startProb[iFtp][pos];
-            // subtract start probability at position pos - objlen
+            coverProb[iFtp][pos] = coverProb[iFtp][pos - 1] + startProb[iFtp][pos];
             if(pos - objlen >= 0)
-                cFtpCoverProb[pos] -= startProb[iFtp][pos - objlen];
+                coverProb[iFtp][pos] -= startProb[iFtp][pos - objlen];
         }
-        coverProb.push_back(cFtpCoverProb);
     }
 }
 
@@ -420,6 +418,9 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
     Progress prgbar(smfData.Size(), _VERBOSE_);
 #pragma omp parallel private(seq)
 {
+    // Thread-local buffers — reused across loop iterations to avoid per-fragment heap allocation.
+    vector<double> F, R, logPrefF, logPrefR, pf, pb;
+    vector<vector<double>> Prob, coverProb;
 
 #pragma omp for schedule(dynamic)
     for(seq = 0; seq < smfData.Size(); ++seq){
@@ -437,14 +438,20 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
             // R - backward partition sum
             // Prob - probability of footprint ends at position pos
 
-            vector<double > F(seqlength + maxwmlen + 1,1); // allocate memory for forward parition sum
-            vector<double > R(seqlength + 2,1); // allocate memory for backward partition sum. it is shorter than F
-            vector<double > probPerFtp(seqlength + 1, 0);
-            vector<vector<double > > Prob(nFtpModels, probPerFtp);
+            F.assign(seqlength + maxwmlen + 1, 1.0);
+            R.assign(seqlength + 2, 1.0);
+            // logPrefF[i] = log(F[1]) + ... + log(F[i]),  logPrefF[0] = 0
+            // Replaces the O(objlen) inner product loop in the forward pass with an O(1) range lookup.
+            logPrefF.assign(seqlength + maxwmlen + 2, 0.0);
+            // logPrefR[i] = log(R[i]) + log(R[i+1]) + ... (right-to-left suffix),  logPrefR[seqlength+2] = 0
+            logPrefR.assign(seqlength + 3, 0.0);
+            Prob.resize(nFtpModels);
+            for(int wm = 0; wm < nFtpModels; ++wm)
+                Prob[wm].assign(seqlength + 1, 0.0);
 
             // calculate forward partition summ
             F[0] = part_init;
-            vector<double > pf(nFtpModels,1);
+            pf.assign(nFtpModels, 1.0);
             for(int pos = 1; pos <= seqlength + ftpModels.maxwmlen; ++pos){
                 double summ=0;
                 for(int wm = 0; wm < nFtpModels; ++wm){
@@ -457,12 +464,11 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                             pf[wm] = ftpModelsScores[wm][pos - objlen];
                         else
                             pf[wm] = ftpModels[wm]->prior;
-                        for(int i = pos - objlen + 1; i <= pos - 1; ++i){
-                            if(i>=0){
-                                pf[wm] *= F[i];
-                            } else {
-                                pf[wm] *= part_init;
-                            }
+                        // O(1) range product via log-prefix: replaces former O(objlen) inner loop.
+                        // Product of F[lo+1 .. pos-1]; indices < 1 contribute log(1)=0 by construction.
+                        if(objlen > 1){
+                            int lo = pos - objlen > 0 ? pos - objlen : 0;
+                            pf[wm] *= exp(logPrefF[pos - 1] - logPrefF[lo]);
                         }
                     }
                     else{
@@ -472,6 +478,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                 }
 
                 F[pos] = 1/summ;
+                logPrefF[pos] = logPrefF[pos - 1] + log(F[pos]);
                 if(pos <= seqlength){
                     for(int wm = 0; wm < nFtpModels; ++wm){
                         Prob[wm][pos] = pf[wm];
@@ -480,8 +487,9 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
             }
 
             // calculate backward partition summ
-            vector<double > pb(nFtpModels, 1);
+            pb.assign(nFtpModels, 1.0);
             R[seqlength + 1] = part_init;
+            logPrefR[seqlength + 1] = log(R[seqlength + 1]); // log(1) = 0; logPrefR[seqlength+2] = 0 by init
             for(int pos = seqlength; pos >= 1; --pos){
                 double summ = 0;
                 for(int wm = 0; wm < nFtpModels; ++wm){
@@ -493,12 +501,11 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                             pb[wm] = ftpModelsScores[wm][pos - 1];
                         else
                             pb[wm] = ftpModels[wm]->prior;
-                        for(int i = pos+1; i <= pos+objlen-1; ++i){
-                            if(i<=seqlength + 1){
-                                pb[wm] *= R[i];
-                            } else{
-                                pb[wm] *= part_init;
-                            }
+                        // O(1) range product via log-suffix: replaces former O(objlen) inner loop.
+                        // Product of R[pos+1 .. hi]; indices > seqlength+1 contribute log(1)=0.
+                        if(objlen > 1){
+                            int hi = pos + objlen - 1 < seqlength + 1 ? pos + objlen - 1 : seqlength + 1;
+                            pb[wm] *= exp(logPrefR[pos + 1] - logPrefR[hi + 1]);
                         }
 
                     }
@@ -509,6 +516,7 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
                 }
 
                 R[pos] = 1/summ;
+                logPrefR[pos] = logPrefR[pos + 1] + log(R[pos]);
             }
             // сalculate Z = Fn/Rn
 
@@ -517,12 +525,10 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
             for(int wm = 0; wm < nFtpModels; ++wm){
                 int objlen = ftpModels[wm]->len;
                 double wmsumm = 0;
+                // pow(part_init, ...) = 1 always; inner product F[lo+1..seqlength] via prefix lookup.
                 for(int pos = seqlength; pos <= seqlength + objlen - 1; ++pos){
-                    double prod = 1;
-                    for(int j=pos - objlen + 1; j<=seqlength;++j){
-                        prod *= F[j];
-                    }
-                    wmsumm += pow(part_init,pos - seqlength) * prod;
+                    int lo = pos - objlen > 0 ? pos - objlen : 0;
+                    wmsumm += exp(logPrefF[seqlength] - logPrefF[lo]);
                 }
                 zsumm += ftpModels[wm]->prior * wmsumm;
             }
@@ -546,8 +552,6 @@ Rcpp::List Predict::calcStartCoverProbs(const SMFdataset& smfData,
             }
 
             // calculate cover posteriors
-            vector<vector<double >> coverProb;
-            coverProb.reserve(ftpModels.Size());
             getCoverPosteriors(Prob,
                                ftpModels,
                                coverProb);
