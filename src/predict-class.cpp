@@ -264,6 +264,15 @@ void Predict::getPosteriorDecodingFtpConf(const vector<vector<double >>& outCove
             curFtpCumLogScore = log(maxProb);
         }
     }
+
+    // flush the final segment (the loop only records on transitions, so the last run is always pending)
+    cPDFragPos.push_back(curFtpStart);
+    int32_t ftpWidth = outCoverFragPos[seqlength - 1] - curFtpStart + 1;
+    cPDFtpWidth.push_back(ftpWidth);
+    cPDFtpName.push_back(ftpNames[curFtpIdx]);
+    cPDFtpGroup.push_back(ftpGroupNames[curFtpIdx]);
+    double gMeanCover = (ftpWidth > 0) ? exp(curFtpCumLogScore / ftpWidth) : 0.0;
+    cPDFtpProb.push_back(gMeanCover);
 }
 
 

@@ -28,7 +28,7 @@
 extract_assay_datatable <- function(se,
                                   sampleName,
                                   assayName,
-                                  datColName = NULL){
+                                  datColName = assayName){
     if(!sampleName %in% colnames(se)){
         stop("Can't find ",sampleName," in samples of the input se.")
     }

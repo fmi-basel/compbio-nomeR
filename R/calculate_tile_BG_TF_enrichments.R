@@ -24,14 +24,14 @@
 #' \describe{
 #'   \item{seqnames, start, end, tileID}{Genomic coordinates of sliding windows (tiles).}
 #'   \item{n_data_points}{Number of informative positions with modification data aggregated across all molecules.}
+#'   \item{n_inf_pos}{Number of unique informative positions (with modification data) overlapping each tile.
+#'                  The read coverage is n_data_points/n_inf_pos.}
 #'   \item{bg_score_mean, tf_score_mean}{Mean background and TF scores across all molecules and informative positions overlapping each tile.}
-#'   \item{bg_pos_cnt, tf_pos_cnt}{Number of positions classified as "positive" for accessibility (background) or TF footprints,
-#'         after applying \code{bg_score_thresh} and \code{tf_score_thresh}, aggregated across all molecules overlapping the tile.}
-#'   \item{bg_log2enr, tf_log2enr}{Log2 ratios of observed over expected counts for accessible and TF-covered positions.}
-#'   \item{bg_binom_pval, tf_binom_pval, bg_FDR, tf_FDR}{P-values (and FDR-adjusted p-values) from one-tailed binomial tests
-#'         (\code{\link[stats]{binom.test}}) under the null hypothesis that the fraction of accessible or TF-covered positions
-#'         in each tile equals the genome-wide expected fraction. The alternative hypothesis is that the observed fraction
-#'         is greater than expected. Adjusted p-values are computed using \code{\link[stats]{p.adjust}} with \code{method="fdr"}.}
+#'   \item{bg_score_mean_Zstat, tf_score_mean_Zstat}{Z-statistics from one-sided Z-tests comparing mean BG/TF scores in each tile to the genome-wide mean.}
+#'   \item{bg_score_mean_Ztest_pval, tf_score_mean_Ztest_pval}{P-values from the Z-tests for BG and TF score means.}
+#'   \item{bg_score_mean_FDR, tf_score_mean_FDR}{FDR-adjusted p-values for the Z-tests on BG and TF score means.
+#'                  Computed using \code{\link[stats]{p.adjust}} with \code{method="fdr"}}
+#' 
 #' }
 
 #' @importFrom GenomicRanges GRanges reduce slidingWindows
@@ -95,10 +95,10 @@ calculate_tile_BG_TF_enrichments <- function(cover_dt,
 
     ## calculate mean BG/TF scores across all molecules and positions overlapping tiles
 
-    tile_aggr_stats <- smftile_ov[,.(n_data_points = .N, ## total number of data points
-                                     n_inf_pos = length(unique(i.start)),
-                                     bg_score_mean = mean(bg_score,na.rm=T),
-                                     tf_score_mean = mean(tf_score,na.rm=T)
+    tile_aggr_stats <- smftile_ov[,.(n_data_points = .N, ## total number of data points (positions with modification data) aggregated across all molecules overlapping the tile
+                                     n_inf_pos = length(unique(i.start)), ## number of unique positions with modification data (informative positions). the read coverage is n_data_points/n_inf_pos 
+                                     bg_score_mean = mean(bg_score,na.rm=T), ## average BG score across all molecules and informative positions overlapping the tile
+                                     tf_score_mean = mean(tf_score,na.rm=T) ## average TF score across all molecules and informative positions overlapping the tile
     ),
     .(seqnames,start,end,tile_ID)]
     ## get mean and SD across all positions
@@ -108,8 +108,7 @@ calculate_tile_BG_TF_enrichments <- function(cover_dt,
                               tf_score_mean_total = mean(tf_score,na.rm=T),
                               tf_score_sd_total = sd(tf_score) * sqrt((.N - 1) /.N))]
 
-    ## calculate enrichments and run binomial test
-
+    ## calculate enrichments and run Z-test for BG/TF score means in tiles vs. genome-wide mean
     tile_aggr_stats <- tile_aggr_stats[,(c(
         "bg_score_mean_Zstat",
         "bg_score_mean_Ztest_pval",

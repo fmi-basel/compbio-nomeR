@@ -44,9 +44,4 @@ Useful links:
 \author{
 \strong{Maintainer}: Evgeniy A. Ozonov \email{evgeniy.ozonov@fmi.ch}
 
-Authors:
-\itemize{
-  \item Evgeniy A. Ozonov \email{evgeniy.ozonov@fmi.ch}
-}
-
 }
