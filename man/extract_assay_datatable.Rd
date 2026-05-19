@@ -4,7 +4,7 @@
 \alias{extract_assay_datatable}
 \title{Extract assay data from a SummarizedExperiment as a \code{data.table}}
 \usage{
-extract_assay_datatable(se, sampleName, assayName, datColName = NULL)
+extract_assay_datatable(se, sampleName, assayName, datColName = assayName)
 }
 \arguments{
 \item{se}{A \code{\link[SummarizedExperiment]{SummarizedExperiment}} object

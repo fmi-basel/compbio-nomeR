@@ -44,14 +44,14 @@ The table contains the following columns:
 \describe{
 \item{seqnames, start, end, tileID}{Genomic coordinates of sliding windows (tiles).}
 \item{n_data_points}{Number of informative positions with modification data aggregated across all molecules.}
+\item{n_inf_pos}{Number of unique informative positions (with modification data) overlapping each tile.
+The read coverage is n_data_points/n_inf_pos.}
 \item{bg_score_mean, tf_score_mean}{Mean background and TF scores across all molecules and informative positions overlapping each tile.}
-\item{bg_pos_cnt, tf_pos_cnt}{Number of positions classified as "positive" for accessibility (background) or TF footprints,
-after applying \code{bg_score_thresh} and \code{tf_score_thresh}, aggregated across all molecules overlapping the tile.}
-\item{bg_log2enr, tf_log2enr}{Log2 ratios of observed over expected counts for accessible and TF-covered positions.}
-\item{bg_binom_pval, tf_binom_pval, bg_FDR, tf_FDR}{P-values (and FDR-adjusted p-values) from one-tailed binomial tests
-(\code{\link[stats]{binom.test}}) under the null hypothesis that the fraction of accessible or TF-covered positions
-in each tile equals the genome-wide expected fraction. The alternative hypothesis is that the observed fraction
-is greater than expected. Adjusted p-values are computed using \code{\link[stats]{p.adjust}} with \code{method="fdr"}.}
+\item{bg_score_mean_Zstat, tf_score_mean_Zstat}{Z-statistics from one-sided Z-tests comparing mean BG/TF scores in each tile to the genome-wide mean.}
+\item{bg_score_mean_Ztest_pval, tf_score_mean_Ztest_pval}{P-values from the Z-tests for BG and TF score means.}
+\item{bg_score_mean_FDR, tf_score_mean_FDR}{FDR-adjusted p-values for the Z-tests on BG and TF score means.
+Computed using \code{\link[stats]{p.adjust}} with \code{method="fdr"}}
+
 }
 }
 \description{
