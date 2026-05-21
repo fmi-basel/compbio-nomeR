@@ -104,7 +104,6 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
             "--ftpmodelyaml"   = "Pre-built footprint model YAML (alternative to --fsayaml; takes priority).",
             "--outputdir"      = "Output directory (created automatically; default: nomeR_output/).",
             "--overwrite"      = "Overwrite existing output directory.",
-            "--ftpmodeltype"   = "'fast' (default), 'medium', or 'slow' — footprint model resolution.",
             "--ftpdecoding"    = "'PosteriorDecoding' (default), 'PV', or 'Viterbi'.",
             "--chunksize"      = "Genome processed in chunks of this size in bp (default: 5,000,000).",
             "--tilewidthstep"  = "Sliding-window width and step for enrichment tracks, e.g. '500,250' (default).",

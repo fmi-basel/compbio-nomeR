@@ -61,6 +61,11 @@ option_list <- list(
                                       "SAMOSA_mESC_blacklist_kmer_7_cutoff_0.2.txt",
                                       package = "nomeR"),
                 help="path to TXT file containing k-mers to ignore due to their strong sequence biases. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) blacklist in %default]"),
+    make_option(c("--quantnorm"),
+                type="logical",
+                action="store_true",
+                default=FALSE,
+                help="Perform quantile normalization of modification probabilities to match distribution of uncorrected probabilities. [default: FALSE]"),
 
     ### output options
     make_option(c("-s", "--outfsayaml"),
@@ -256,7 +261,7 @@ if(opt$correctseqbias != "no_correction"){
         se <- nomeR::correct_modprob_SE(se,
                                  neg_control_shapes = negcontrol_shapes,
                                  pos_control_shapes = poscontrol_shapes,
-                                 qnorm_to_raw = TRUE)
+                                 qnorm_to_raw = opt$quantnorm)
 
     }
     if(!is.null(kmer_blacklist)){

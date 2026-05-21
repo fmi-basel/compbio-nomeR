@@ -36,11 +36,25 @@ option_list <- list(
                 help="[OPTIONAL] BED file with region of interest. If not provided the analysis will be performed genome-wide."),
 
     ### options specifying model
-    make_option(c("-l", "--ftpmodeltype"),
+    ##### options for footprint model type
+    make_option(c("--bgnoiselengths"),
                 type="character",
-                default="fast",
-                help="Type of footprint models to use for prediction {fast,medium,slow} [default %default].
-                If --ftpmodelyaml is set the --ftpmodeltype has no effect."),
+                default="2:5:1",
+                help="Length ranges and steps for background noise footprints (format: \"min:max:step\", e.g. \"2:5:1\" for lengths 2,3,4,5). [default %default]
+                Set to \"none\" to skip background noise model.
+                If --ftpmodelyaml is set the --bgnoiselengths has no effect."),
+    make_option(c("--tflengths"),
+                type="character",
+                default="20:50:10",
+                help="Length ranges and steps for transcription factor footprints (format: \"min:max:step\", e.g. \"20:50:10\" for lengths 20,30,40,50). [default %default]
+                Set to \"none\" to skip transcription factor model.
+                If --ftpmodelyaml is set the --bgnoiselengths has no effect."),
+    make_option(c("--nucllengths"),
+                type="character",
+                default="100:200:10",
+                help="Length ranges and steps for nucleosome footprints (format: \"min:max:step\", e.g. \"100:200:10\" for lengths 100,110,120,...,200). [default %default]
+                Set to \"none\" to skip nucleosome model.
+                If --ftpmodelyaml is set the --bgnoiselengths has no effect."),
     make_option(c("-d", "--ftpdecoding"),
                 type="character",
                 default="PosteriorDecoding",
@@ -88,6 +102,11 @@ option_list <- list(
                                       "SAMOSA_mESC_blacklist_kmer_7_cutoff_0.2.txt",
                                       package = "nomeR"),
                 help="path to TXT file containing k-mers to ignore due to their strong sequence biases. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) blacklist in %default]"),
+    make_option(c("--quantnorm"),
+                type="logical",
+                action="store_true",
+                default=FALSE,
+                help="Perform quantile normalization of modification probabilities to match distribution of uncorrected probabilities. [default: FALSE]"),
     ### output options
     make_option(c("-o", "--outputdir"),
                 default = "nomeR_output/",
@@ -199,11 +218,6 @@ if(!is.null(opt$ftpmodelyaml) && !file.exists(opt$ftpmodelyaml)){
     cli::cli_abort("Couldn't find file specified by --ftpmodelyaml {opt$ftpmodelyaml}")
 }
 
-##### check input model options #####
-if(!opt$ftpmodeltype %in% c("slow","medium","fast")){
-    cli::cli_abort("--ftpmodeltype must be one of the following: \"slow\",\"medium\",\"fast\"")
-}
-
 if(!opt$ftpdecoding %in% c("PV","PosteriorDecoding","Viterbi")){
     cli::cli_abort("ftpdecoding must be one of the following: \"PV\",\"PosteriorDecoding\",\"Viterbi\"")
 }
@@ -269,27 +283,48 @@ cli::cli_h1("")
 
 
 
-#### DEFINE FOOTPRINT MODELS ####
-if(opt$ftpmodeltype == "slow"){
-    ## create footprint models
-    ftp_len_mat <- rbind(c(2,5,1),
-                         c(20,50,1),
-                         c(100,150,1))
-
-} else if(opt$ftpmodeltype == "medium"){
-    ftp_len_mat <- rbind(c(2,5,1),
-                         c(20,50,5),
-                         c(100,150,5))
+#### DEFINE BACKGROUND NOISE MODEL LENGTHS ####
+if(!is.null(opt$bgnoiselengths) && opt$bgnoiselengths != "none"){
+    bg_len_strs <- str_split_fixed(opt$bgnoiselengths,pattern = ":",n=3)
+    bg_len_mat <- matrix(as.numeric(bg_len_strs),nrow=1)
+    if(any(is.na(bg_len_mat))){
+        cli::cli_abort("Couldn't parse --bgnoiselengths. --bgnoiselengths must be of format \"min:max:step\", e.g. \"2:5:1\" for lengths 2,3,4,5. Provided --bgnoiselengths {opt$bgnoiselengths}")
+    }
+    colnames(bg_len_mat) <- c("min_ftp_len","max_ftp_len","by")
+    row.names(bg_len_mat) <- "background"
 } else{
-    ftp_len_mat <- rbind(c(2,5,1),
-                         c(20,50,10),
-                         c(100,150,10))
-
+    bg_len_mat <- NULL
+}
+#### DEFINE TRANSCRIPTION FACTOR MODEL LENGTHS ####
+if(!is.null(opt$tflengths) && opt$tflengths != "none"){
+    tf_len_strs <- str_split_fixed(opt$tflengths,pattern = ":",n=3)
+    tf_len_mat <- matrix(as.numeric(tf_len_strs),nrow=1)
+    if(any(is.na(tf_len_mat))){
+        cli::cli_abort("Couldn't parse --tflengths. --tflengths must be of format \"min:max:step\", e.g. \"20:50:10\" for lengths 20,30,40,50. Provided --tflengths {opt$tflengths}")
+    }
+    colnames(tf_len_mat) <- c("min_ftp_len","max_ftp_len","by")
+    row.names(tf_len_mat) <- "TF"
+} else{
+    tf_len_mat <- NULL
+}
+#### DEFINE NUCLEOSOME MODEL LENGTHS ####
+if(!is.null(opt$nucllengths) && opt$nucllengths != "none"){
+    nucl_len_strs <- str_split_fixed(opt$nucllengths,pattern = ":",n=3)
+    nucl_len_mat <- matrix(as.numeric(nucl_len_strs),nrow=1)
+    if(any(is.na(nucl_len_mat))){
+        cli::cli_abort("Couldn't parse --nucllengths. --nucllengths must be of format \"min:max:step\", e.g. \"100:200:10\" for lengths 100,110,120,...,200. Provided --nucllengths {opt$nucllengths}")
+    }
+    colnames(nucl_len_mat) <- c("min_ftp_len","max_ftp_len","by")
+    row.names(nucl_len_mat) <- "Nucl"
+} else{
+    nucl_len_mat <- NULL
 }
 
-colnames(ftp_len_mat) <- c("min_ftp_len","max_ftp_len","by")
-row.names(ftp_len_mat) <- c("background","TF","Nucl")
+if(all(is.null(c(bg_len_mat,tf_len_mat,nucl_len_mat)) && is.null(opt$ftpmodelyaml))){
+    cli::cli_abort("At least one of the models (background noise, TF or nucleosome) must be defined. Please provide at least one of the following parameters: --bgnoiselengths, --tflengths, --nucllengths or --ftpmodelyaml.")
+}
 
+ftp_len_mat <- rbind(bg_len_mat,tf_len_mat,nucl_len_mat)
 
 #### LOAD FOOTPRINT MODELS OR RESULTS OF FOOTPRINT SPECTRUM ANALYSIS ####
 ##### construct seqinfo object from bam header ######
@@ -474,7 +509,7 @@ format_index <- function(i, max_i) {
 
 
 ### load data for correction of sequence bias ###
-if(opt$correctseqbias != "no_correction"){
+if(opt$correctseqbias == "BC_KMF"){
     if(!is.null(opt$negbetas) && !is.null(opt$posbetas)){
         negcontrol_shapes <- data.table(read.table(opt$negbetas,
                                                    header = F,
@@ -553,13 +588,13 @@ pred_out <- mcprogress::pmclapply(
         rownames(se) <- seq_along(se)
 
         # ----- 2.1 (optional) correction of sequence bias ------
-        if(opt$correctseqbias != "no_correction"){
+        if(opt$correctseqbias == "BC_KMF"){
             if(!is.null(negcontrol_shapes) && !is.null(poscontrol_shapes)){
                 cli::cli_inform("Bayesian beta correction of sequence biases")
                 se <- nomeR::correct_modprob_SE(se,
                                          neg_control_shapes = negcontrol_shapes,
                                          pos_control_shapes = poscontrol_shapes,
-                                         qnorm_to_raw = TRUE)
+                                         qnorm_to_raw = opt$quantnorm)
 
             }
             if(!is.null(kmer_blacklist)){
