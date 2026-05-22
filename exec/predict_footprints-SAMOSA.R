@@ -59,11 +59,6 @@ option_list <- list(
                 type="character",
                 default="PosteriorDecoding",
                 help="Method for footprint decoding. Can be 'PV' - Posterior Viterbi; 'PosteriorDecoding' or 'Viterbi' [default %default]"),
-    make_option(c("-m", "--thresholdmod"),
-                type="numeric",
-                default = 0.5,
-                help="Threshold for modification probability to binarize the data into accessible and protected positions.
-                Probabilities equal or higher will be considered accessible, otherwise protected. [default %default]"),
     make_option(c("-a", "--tilewidthstep"),
                 type="character",
                 default = "500,250",
@@ -220,10 +215,6 @@ if(!is.null(opt$ftpmodelyaml) && !file.exists(opt$ftpmodelyaml)){
 
 if(!opt$ftpdecoding %in% c("PV","PosteriorDecoding","Viterbi")){
     cli::cli_abort("ftpdecoding must be one of the following: \"PV\",\"PosteriorDecoding\",\"Viterbi\"")
-}
-
-if(opt$thresholdmod <= 0 || opt$thresholdmod >= 1){
-    cli::cli_abort("--thresholdmod must be within (0,1). Provided --thresholdmod {.val opt$thresholdmod}")
 }
 
 ##### check input tile width options #####
@@ -434,7 +425,7 @@ write_dt_wig <- function(dt,
 #### PREDICT FOOTPRINTS ####
 options(cli.width = 500)
 
-cli::cli_progress_step("Footprint prediction using mode {opt$ftpmodeltype}. Output will be stored in {opt$outputdir}")
+cli::cli_progress_step("Footprint prediction using mode {opt$ftpdecoding}. Output will be stored in {opt$outputdir}")
 ##### define temporary filenames and files for final output #####
 ## all temporary files for each genomic chunk will be stored into a separate folder
 dir.create(opt$tempdir,recursive = TRUE,showWarnings = FALSE)
@@ -608,8 +599,6 @@ pred_out <- mcprogress::pmclapply(
         cli::cli_inform("Running prediction on assay {assayName} for {se$n_reads} fragments in the region {as.character(reg)} [{i} out of {n_chunks}]")
         pred_list_dt <- footBayes::predict_footprints_SE(se = se,
                                                      assayName = assayName,
-                                                     threshMod = opt$thresholdmod,
-                                                     threshUnmod = opt$thresholdmod,
                                                      footprint_models = ftp_models$ftp_models,
                                                      bgprotectprob = ftp_models$bgprotectprob,
                                                      bgcoverprior = ftp_models$bgcoverprior,

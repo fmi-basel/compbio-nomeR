@@ -22,12 +22,6 @@ option_list <- list(
     make_option(c("-b", "--bamfile"),
                 type="character",
                 help="BAM file containing 6mA modification probabilities for SAMOSA/FiberSeq data"),
-    make_option(c("-m", "--thresholdmod"),
-                type="numeric",
-                default = 0.5,
-                help="Threshold for modification probability to binarize the data into accessible and protected positions.
-                Probabilities equal or higher will be considered accessible, otherwise protected. [default %default]"),
-
     ### options for correction of sequence bias
     make_option(c("--correctseqbias"),
                 type="character",
@@ -146,11 +140,6 @@ if (is.null(opt$bamfile)) {
 }
 
 ##### check input model options #####
-
-if(opt$thresholdmod <= 0 || opt$thresholdmod >= 1){
-    cli::cli_abort("--thresholdmod must be within (0,1). Provided --thresholdmod {.val opt$thresholdmod}")
-}
-
 
 ##### check parameters for sequence bias correction #####
 if(!opt$correctseqbias %in% c("no_correction","BC_KMF")){
@@ -285,7 +274,6 @@ ftp_model_params <- list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.51,
 
 fsa_data <- footBayes::ftp_spectral_analysis_SE(se = se,
                                             assayName = assayName,
-                                            threshMod = opt$thresholdmod,
                                             ftp_lengths = 2:200,
                                             ftp_bg_model = ftp_bg_model,
                                             bg_model_params = bg_model_params,
