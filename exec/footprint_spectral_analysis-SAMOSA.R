@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
 ## R script (v6) for footprint spectral analysis in SAMOSA/FiberSeq generated BAM file
 
-## Resolve the lib directory this script was installed into so that the nomeR
+## Resolve the lib directory this script was installed into so that the footBayes
 ## version loaded is always the one bundled with this script.
-## Installed layout: <lib>/nomeR/exec/<this-script>.R
-## Three dirname() calls climb: script -> exec/ -> nomeR/ -> <lib>/
+## Installed layout: <lib>/footBayes/exec/<this-script>.R
+## Three dirname() calls climb: script -> exec/ -> footBayes/ -> <lib>/
 local({
     argv <- commandArgs(trailingOnly = FALSE)
     f    <- sub("--file=", "", grep("--file=", argv, value = TRUE))
@@ -37,14 +37,14 @@ option_list <- list(
                 type="character",
                 default = system.file("extdata",
                                       "SAMOSA_mESC_negativeControl_betaShapes_kmer_7.txt",
-                                      package = "nomeR"),
+                                      package = "footBayes"),
                 help="path to TXT file containing shapes for beta distribution inferred from negative controls.
 							Used for correction of modification probabilities. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) shapes in %default]"),
     make_option(c("--posbetas"),
                 type="character",
                 default = system.file("extdata",
                                       "SAMOSA_mESC_positiveControl_betaShapes_kmer_7.txt",
-                                      package = "nomeR"),
+                                      package = "footBayes"),
                 help="path to TXT file containing shapes for beta distribution inferred from positive controls.
 							Used for correction of modification probabilities. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) shapes in %default]"),
     make_option(c("--refseq"),
@@ -59,7 +59,7 @@ option_list <- list(
                 type="character",
                 default = system.file("extdata",
                                       "SAMOSA_mESC_blacklist_kmer_7_cutoff_0.2.txt",
-                                      package = "nomeR"),
+                                      package = "footBayes"),
                 help="path to TXT file containing k-mers to ignore due to their strong sequence biases. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) blacklist in %default]"),
     make_option(c("--quantnorm"),
                 type="logical",
@@ -130,7 +130,7 @@ suppressPackageStartupMessages({
     library(Rsamtools)
     library(ggplot2)
     library(parallel)
-    library(nomeR)    
+    library(footBayes)    
     library(Biostrings)
 })
 
@@ -258,7 +258,7 @@ if(opt$correctseqbias != "no_correction"){
     cli::cli_progress_step("Correction of sequence biases")
     if(!is.null(negcontrol_shapes) && !is.null(poscontrol_shapes)){
         cli::cli_inform("Bayesian correction of sequence biases")
-        se <- nomeR::correct_modprob_SE(se,
+        se <- footBayes::correct_modprob_SE(se,
                                  neg_control_shapes = negcontrol_shapes,
                                  pos_control_shapes = poscontrol_shapes,
                                  qnorm_to_raw = opt$quantnorm)
@@ -283,7 +283,7 @@ ftp_model_params <- list(ftp_protect_prob_fixed = 0.95, ftp_protect_min = 0.51,
                          ftp_protect_max = 0.99, ftp_protect_mean = 0.9, ftp_protect_totcount = 1000)
 
 
-fsa_data <- nomeR::ftp_spectral_analysis_SE(se = se,
+fsa_data <- footBayes::ftp_spectral_analysis_SE(se = se,
                                             assayName = assayName,
                                             threshMod = opt$thresholdmod,
                                             ftp_lengths = 2:200,
@@ -302,7 +302,7 @@ if(!is.null(opt$outrds)){
 if(!is.null(opt$outpdf)){
     ## save plot for ftp spectrum
     cli::cli_progress_step("Saving footprint spectrum in {.file {opt$outpdf}}")
-    ftp_spec_plot <- nomeR::plot_ftp_spectra_DF(fsa_data)
+    ftp_spec_plot <- footBayes::plot_ftp_spectra_DF(fsa_data)
 
     ggplot2::ggsave(filename = opt$outpdf,
                     plot = ftp_spec_plot,

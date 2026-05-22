@@ -1,7 +1,7 @@
 
 
 .is_profiling_enabled <- function(profile) {
-    isTRUE(profile) || isTRUE(getOption("nomeR.profile", FALSE))
+    isTRUE(profile) || isTRUE(getOption("footBayes.profile", FALSE))
 }
 
 
@@ -53,7 +53,7 @@
 }
 
 .onUnload <- function(libpath) {
-    library.dynam.unload("nomeR", libpath)
+    library.dynam.unload("footBayes", libpath)
 }
 
 .get_ftp_annotation <- function(ftp_len_mat,

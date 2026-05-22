@@ -35,7 +35,7 @@
 
         ## check if anything left
         assert_data_frame(x = cooc_ctable,
-                          types = "integerish",
+                          types = "numeric",
                           min.rows = 1,
                           any.missing = FALSE,
                           add = coll)

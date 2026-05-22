@@ -26,18 +26,18 @@ public:
 	~SMFdataset();
 	SMFdataset(const Rcpp::IntegerVector& fragIDs,
             const Rcpp::IntegerVector& fragPos,
-            const Rcpp::IntegerVector& protectVec,
+            const Rcpp::NumericVector& modProbVec,
             int maxWMlen);
 
 	bool create(const Rcpp::IntegerVector& fragIDs,
              const Rcpp::IntegerVector& fragPos,
-             const Rcpp::IntegerVector& protectVec,
+             const Rcpp::NumericVector& modProbVec,
              int maxWMlen);
 
 
 	void Add(const uint32_t fragID,
           const vector<uint32_t>& fragPosVec, // input positions fragPosVec must be 1-based
-          const vector<uint8_t>& protectVec,
+          const vector<double>& modProbVec,
           int maxWMlen);
 	void Add(fragProtectData & frag);
 
@@ -47,9 +47,9 @@ public:
 	int TotalLength() const;
 	void clear();
 
-	// function for counting occurrences of 0,0; 0,1 etc at spacing S
-	vector<vector<uint64_t > > count_freq_for_spacings(int maxSpacing,
-                                                    int ncpu) const;
+	// function for counting expected co-occurrences at spacing S using continuous mod_prob
+	vector<vector<double > > count_freq_for_spacings(int maxSpacing,
+                                                  int ncpu) const;
 
 };
 

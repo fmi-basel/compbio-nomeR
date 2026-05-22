@@ -1,8 +1,8 @@
-#' Locate and Describe the nomeR Command-Line Scripts
+#' Locate and Describe the footBayes Command-Line Scripts
 #'
 #' @description
 #' Returns the full paths to the two independent Rscript-based workflows
-#' bundled with nomeR and prints a short usage guide.
+#' bundled with footBayes and prints a short usage guide.
 #'
 #' The two scripts implement separate statistical models and can be used
 #' independently or in combination:
@@ -33,16 +33,16 @@
 #'   cannot be found in the current installation.
 #'
 #' @examples
-#' paths <- get_nomeR_scripts(print_usage = FALSE)
+#' paths <- get_footBayes_scripts(print_usage = FALSE)
 #' paths
 #'
 #' @export
-get_nomeR_scripts <- function(print_usage = TRUE) {
+get_footBayes_scripts <- function(print_usage = TRUE) {
 
     fsa_script  <- system.file("exec", "footprint_spectral_analysis-SAMOSA.R",
-                               package = "nomeR")
+                               package = "footBayes")
     pred_script <- system.file("exec", "predict_footprints-SAMOSA.R",
-                               package = "nomeR")
+                               package = "footBayes")
 
     paths <- c(
         footprint_spectral_analysis = if (nzchar(fsa_script))  fsa_script  else NA_character_,
@@ -50,12 +50,12 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
     )
 
     if (print_usage) {
-        cli::cli_h1("nomeR command-line scripts")
+        cli::cli_h1("footBayes command-line scripts")
 
         cli::cli_h2("Footprint Spectral Analysis")
         cli::cli_text(
-            "Statistical model that estimates the footprint length
-            spectrum and emission probabilities from a sample of reads.
+            "Bayesian model that estimates the footprint length spectrum and
+            emission probabilities from a sample of single molecules.
             Results are saved as a YAML file and can be used to derive
             footprint models for the prediction script, or analysed on their own."
         )
@@ -82,7 +82,7 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
 
         cli::cli_h2("Genome-wide Footprint Prediction")
         cli::cli_text(
-            "Statistical model for per-molecule footprint prediction
+            "HMM-based statistical model for per-molecule footprint prediction
             and per-tile enrichment scoring across the whole genome.
             Footprint models can be supplied as an FSA YAML (--fsayaml) or
             as a pre-built model YAML (--ftpmodelyaml); neither is mandatory
@@ -102,7 +102,7 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
             "--bamfile"        = "Input BAM file with 6mA modification probabilities (SAMOSA / Fiber-seq).",
             "--fsayaml"        = "FSA YAML used to derive footprint models (alternative to --ftpmodelyaml).",
             "--ftpmodelyaml"   = "Pre-built footprint model YAML (alternative to --fsayaml; takes priority).",
-            "--outputdir"      = "Output directory (created automatically; default: nomeR_output/).",
+            "--outputdir"      = "Output directory (created automatically; default: footBayes_output/).",
             "--overwrite"      = "Overwrite existing output directory.",
             "--ftpdecoding"    = "'PosteriorDecoding' (default), 'PV', or 'Viterbi'.",
             "--chunksize"      = "Genome processed in chunks of this size in bp (default: 5,000,000).",

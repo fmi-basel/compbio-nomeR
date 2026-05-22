@@ -106,12 +106,12 @@
 #' ft.pr <- 1-bg.pr
 #' ft.len <- 15
 #'
-#' ## creating a list of binding models for nomeR
+#' ## creating a list of binding models for footBayes
 #' ftp.models <- list(list("PROTECT_PROB" = rep(0.99,ft.len),
 #'                         "COVER_PRIOR" = ft.pr,
 #'                         "NAME" = "FOOTPRINT"))
 #'
-#' nomeR.out <- predict_footprints(data=rmatr,
+#' footBayes.out <- predict_footprints(data=rmatr,
 #'                                 footprint_models = ftp.models,
 #'                                 bgprotectprob = 0.05,
 #'                                 bgcoverprior = bg.pr)
@@ -161,13 +161,13 @@ predict_footprints <- function(data,
     reportAssertions(coll)
 
     if (verbose) {
-        .message_timestamp("Calling run_cpp_nomeR...")
+        .message_timestamp("Calling run_cpp_footBayes...")
     }
-    ## the C++ needs only fidx_glob, fragpos, protect
+    ## the C++ needs only fidx_glob, fragpos, mod_prob
     predict_res_list <- calcStartCoverProbs_cpp(
         data[["nonNA_data"]][,"fidx_glob"], ## unique fragment ID or index
         data[["nonNA_data"]][,"fragpos"],   ## position within fragment, 1 - based
-        data[["nonNA_data"]][,"protect"],   ## binary protection data, 0 - accessible, 1 - protected
+        data[["nonNA_data"]][,"mod_prob"],  ## modification probability in [0,1]
         footprint_models,
         bgprotectprob,
         start_priors["BG"],
@@ -181,7 +181,7 @@ predict_footprints <- function(data,
               !is.null(predict_res_list[["COVER_PROB"]]),
               !is.null(predict_res_list[["FOOTPRINT_CONF"]])))) {
         if (verbose) {
-            .message_timestamp("convert cpp_nomeR output to data.frame...")
+            .message_timestamp("convert cpp_footBayes output to data.frame...")
         }
 
         if(!keepStartProb){

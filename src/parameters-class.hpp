@@ -19,7 +19,7 @@ class parameters
     public:
       string printoutonly;// will be always "All" in R wrapper
 
-      double bgcoverprob; // emission probability of 1 for background (accessible position)
+      double bgcoverprob; // emission probability of a protected position in background (open/accessible) chromatin
       double bgprior; // prior probability of background
       parameters();
       ~parameters();

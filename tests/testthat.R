@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(nomeR)
+library(footBayes)
 
-test_check("nomeR")
+test_check("footBayes")

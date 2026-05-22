@@ -15,7 +15,7 @@ typename boost::math::tools::promote_args<T0__, T2__, T3__>::type
                   const std::vector<int>& spacings, // vector of spacings
                   const int& n_spac, // length of the vector of spacings
                   const int& max_spacing, // maximum spacing in spacings
-                  const std::vector<std::vector<int> >& emp_joint_counts, std::ostream* pstream__)
+                  const std::vector<std::vector<double> >& emp_joint_counts, std::ostream* pstream__)
   {
 
 

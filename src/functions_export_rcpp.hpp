@@ -26,9 +26,9 @@ bool _VERBOSE_ = 0;
 
 
 // [[Rcpp::export]]
-Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
-                                   const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 1 - based!
-                                   const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
+Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,    // vector with unique fragment IDs
+                                   const Rcpp::IntegerVector& fragPos,    // vector with positions within each fragment, 1 - based!
+                                   const Rcpp::NumericVector& modProbVec, // mod prob in [0,1]; high = accessible; NA encoded as -1.0
                                    const Rcpp::List& binding_models,
                                    const Rcpp::NumericVector& bgprotectprob,
                                    const Rcpp::NumericVector& bgprior,
@@ -40,9 +40,9 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
-                                  const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 1 - based!
-                                  const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
+Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,    // vector with unique fragment IDs
+                                  const Rcpp::IntegerVector& fragPos,    // vector with positions within each fragment, 1 - based!
+                                  const Rcpp::NumericVector& modProbVec, // mod prob in [0,1]; high = accessible; NA encoded as -1.0
                                   const Rcpp::IntegerVector& maxspacing,
                                   const Rcpp::NumericVector& Ncpu,
                                   const Rcpp::LogicalVector& verbose);

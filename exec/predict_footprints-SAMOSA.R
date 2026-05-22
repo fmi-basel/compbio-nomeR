@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
 ## R script (v6) for predicting footprints in SAMOSA/FiberSeq generated BAM file
 
-## Resolve the lib directory this script was installed into so that the nomeR
+## Resolve the lib directory this script was installed into so that the footBayes
 ## version loaded is always the one bundled with this script.
-## Installed layout: <lib>/nomeR/exec/<this-script>.R
-## Three dirname() calls climb: script -> exec/ -> nomeR/ -> <lib>/
+## Installed layout: <lib>/footBayes/exec/<this-script>.R
+## Three dirname() calls climb: script -> exec/ -> footBayes/ -> <lib>/
 local({
     argv <- commandArgs(trailingOnly = FALSE)
     f    <- sub("--file=", "", grep("--file=", argv, value = TRUE))
@@ -78,14 +78,14 @@ option_list <- list(
                 type="character",
                 default = system.file("extdata",
                                       "SAMOSA_mESC_negativeControl_betaShapes_kmer_7.txt",
-                                      package = "nomeR"),
+                                      package = "footBayes"),
                 help="path to TXT file containing shapes for beta distribution inferred from negative controls.
 							Used for correction of modification probabilities. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) shapes in %default]"),
     make_option(c("--posbetas"),
                 type="character",
                 default = system.file("extdata",
                                       "SAMOSA_mESC_positiveControl_betaShapes_kmer_7.txt",
-                                      package = "nomeR"),
+                                      package = "footBayes"),
                 help="path to TXT file containing shapes for beta distribution inferred from positive controls.
 							Used for correction of modification probabilities. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) shapes in %default]"),
     make_option(c("--refseq"),
@@ -100,7 +100,7 @@ option_list <- list(
                 type="character",
                 default = system.file("extdata",
                                       "SAMOSA_mESC_blacklist_kmer_7_cutoff_0.2.txt",
-                                      package = "nomeR"),
+                                      package = "footBayes"),
                 help="path to TXT file containing k-mers to ignore due to their strong sequence biases. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) blacklist in %default]"),
     make_option(c("--quantnorm"),
                 type="logical",
@@ -109,11 +109,11 @@ option_list <- list(
                 help="Perform quantile normalization of modification probabilities to match distribution of uncorrected probabilities. [default: FALSE]"),
     ### output options
     make_option(c("-o", "--outputdir"),
-                default = "nomeR_output/",
+                default = "footBayes_output/",
                 type="character",
                 help="Folder to store output files. [default %default]"),
     make_option(c("-z", "--tempdir"),
-                #default = "nomeR_output/tempfolder",
+                #default = "footBayes_output/tempfolder",
                 type="character",
                 help="Folder to store temporary files. [default <output_dir>/tempfolder]"),
     make_option(c("-w", "--noenrich"),
@@ -186,7 +186,7 @@ suppressPackageStartupMessages({
     library(Rsamtools)
     library(ggplot2)
     library(parallel)
-    library(nomeR)
+    library(footBayes)
     library(mcprogress)
     library(Biostrings)
 })
@@ -351,7 +351,7 @@ if(!is.null(opt$ftpmodelyaml)){
     ftplen_range <- range(fsa_data$ftp_spectrum$ftp_length)
     ftp_len_mat[which(ftp_len_mat[,1] < ftplen_range[1]),1] <- ftplen_range[1]
     ftp_len_mat[which(ftp_len_mat[,2] > ftplen_range[2]),2] <- ftplen_range[2]
-    ftp_models <- nomeR::get_ftp_PWMs_for_prediction(ftp_spectrum = as.data.frame(fsa_data$ftp_spectrum),
+    ftp_models <- footBayes::get_ftp_PWMs_for_prediction(ftp_spectrum = as.data.frame(fsa_data$ftp_spectrum),
                                               ftp_len_mat = ftp_len_mat,
                                               bg_cover = fsa_data$bgcoverprior,
                                               ftp_protect_prob = fsa_data$ftpprotectprob)
@@ -591,7 +591,7 @@ pred_out <- mcprogress::pmclapply(
         if(opt$correctseqbias == "BC_KMF"){
             if(!is.null(negcontrol_shapes) && !is.null(poscontrol_shapes)){
                 cli::cli_inform("Bayesian beta correction of sequence biases")
-                se <- nomeR::correct_modprob_SE(se,
+                se <- footBayes::correct_modprob_SE(se,
                                          neg_control_shapes = negcontrol_shapes,
                                          pos_control_shapes = poscontrol_shapes,
                                          qnorm_to_raw = opt$quantnorm)
@@ -604,9 +604,9 @@ pred_out <- mcprogress::pmclapply(
                 se <- se[keep_rows, ]
             }
         }
-        #cli::cli_progress_step("Running nomeR::predict_footprints_SE for {se$n_reads} fragments in the region {as.character(reg)} [{i} out of {n_chunks}]")
+        #cli::cli_progress_step("Running footBayes::predict_footprints_SE for {se$n_reads} fragments in the region {as.character(reg)} [{i} out of {n_chunks}]")
         cli::cli_inform("Running prediction on assay {assayName} for {se$n_reads} fragments in the region {as.character(reg)} [{i} out of {n_chunks}]")
-        pred_list_dt <- nomeR::predict_footprints_SE(se = se,
+        pred_list_dt <- footBayes::predict_footprints_SE(se = se,
                                                      assayName = assayName,
                                                      threshMod = opt$thresholdmod,
                                                      threshUnmod = opt$thresholdmod,
@@ -636,11 +636,11 @@ pred_out <- mcprogress::pmclapply(
             linkers_temp_bed <- file.path(chunk_dir,"linkers_ftps.bed")
 
             ## write nucleosome ftp BED12
-            nomeR::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "Nucl"],
+            footBayes::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "Nucl"],
                                           file = nucl_temp_bed,
                                           append=FALSE)
             ## write TF ftp BED12
-            nomeR::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "TF"],
+            footBayes::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "TF"],
                                           file = tf_temp_bed,
                                           append=FALSE)
             ## reduce background footprints to get linkers
@@ -656,7 +656,7 @@ pred_out <- mcprogress::pmclapply(
             linkers$fragID <- names(linkers)
             linkers <- data.table::as.data.table(linkers)
             ## write linkers BED12
-            nomeR::write_ftp_decoding_bed(ftp_decode_dt = linkers,
+            footBayes::write_ftp_decoding_bed(ftp_decode_dt = linkers,
                                           file = linkers_temp_bed,
                                           append=FALSE)
         }
@@ -678,7 +678,7 @@ pred_out <- mcprogress::pmclapply(
             tf_score_Zstat_temp_wig <- file.path(chunk_dir,"tf_score_mean_Zstat.wig")
             tf_pval_temp_wig <- file.path(chunk_dir,"tf_pval.wig")
             tf_fdr_temp_wig <- file.path(chunk_dir,"tf_fdr.wig")            
-            enr_dt <- nomeR::calculate_tile_BG_TF_enrichments(cover_dt = pred_list_dt$COVER_PROB,
+            enr_dt <- footBayes::calculate_tile_BG_TF_enrichments(cover_dt = pred_list_dt$COVER_PROB,
                                                         tile_width = tile_width,
                                                         tile_step = tile_step,
                                                         threads = threads_predict

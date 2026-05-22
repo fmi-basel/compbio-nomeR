@@ -1,22 +1,24 @@
-#' Create count tables of `00`, `01`, `10`, and `11` co-occurrences in a
+#' Create expected co-occurrence count tables (N00, N01, N10, N11) from a
 #' SummarizedExperiment object containing SMF modification probabilities
 #'
 #' @description
-#' Computes co-occurrence frequencies of binary accessibility states
-#' (`00`, `01`, `10`, `11`) at varying spacings within a
+#' Computes expected co-occurrence counts for accessibility state pairs
+#' (\code{N00}, \code{N01}, \code{N10}, \code{N11}) at varying spacings within a
 #' \code{SummarizedExperiment} object containing single-molecule
-#' footprinting (SMF) modification probabilities. Frequencies are calculated
+#' footprinting (SMF) modification probabilities. Counts are calculated
 #' for distances up to \code{max_spacing}, either per sample or aggregated
-#' across all samples.
+#' across all samples. Expected counts are computed as sums of products of
+#' modification probabilities: e.g. \code{N00 += p_i * p_j} for each valid
+#' position pair at spacing \code{s}, where high \code{p} = accessible.
 #'
 #' @inheritParams ftp_spectral_analysis_SE
 #' @inheritParams predict_footprints_SE
 #'
 #' @param max_spacing Integer specifying the maximum spacing (in bases)
-#'     between positions when counting co-occurrences of state pairs
-#'     (`00`, `01`, `10`, `11`) across the SMF dataset.
-#' @param aggrSamples Logical. If \code{TRUE}, co-occurrence frequencies
-#'     are aggregated across all samples. If \code{FALSE}, a separate frequency
+#'     between positions when computing expected co-occurrence counts for state
+#'     pairs (\code{N00}, \code{N01}, \code{N10}, \code{N11}) across the SMF dataset.
+#' @param aggrSamples Logical. If \code{TRUE}, expected co-occurrence counts
+#'     are aggregated across all samples. If \code{FALSE}, a separate count
 #'     matrix is returned for each sample.
 #' @param ncpu Number of CPU cores to use for parallel processing.
 #' @param verbose Logical. If \code{TRUE}, prints additional progress messages
@@ -24,18 +26,16 @@
 #'
 #' @return
 #' If \code{aggrSamples = TRUE}, a \code{matrix} containing aggregated
-#' co-occurrence frequencies for `00`, `01`, `10`, and `11` at spacings
-#' from 1 to \code{max_spacing}.
+#' expected co-occurrence counts for \code{N00}, \code{N01}, \code{N10},
+#' and \code{N11} at spacings from 1 to \code{max_spacing}.
 #'
 #' If \code{aggrSamples = FALSE}, a \code{list} of matrices, one per sample,
-#' where each matrix contains the corresponding co-occurrence frequencies.
+#' where each matrix contains the corresponding expected co-occurrence counts.
 #'
 #' @export
 
 get_ctable_from_SE <- function(se,
                                assayName = "mod_prob",
-                               threshMod = 0.5,
-                               threshUnmod = threshMod,
                                min_frag_data_len = 50L,
                                min_frag_data_dens = 0.05,
                                max_spacing = 200L,
@@ -43,14 +43,12 @@ get_ctable_from_SE <- function(se,
                                ncpu = 1L,
                                verbose = FALSE) {
 
-    ### validate se object and prepare data for nomeR prediction
+    ### validate se object and prepare data for footBayes prediction
     dataList <- validate_prepare_SE(se = se,
                                     assayName = assayName,
-                                    threshMod = threshMod,
-                                    threshUnmod = threshUnmod,
                                     min_frag_data_len = min_frag_data_len,
                                     min_frag_data_dens = min_frag_data_dens)
-    protect_data <- dataList[["bin_protect_data"]]
+    mod_prob_data <- dataList[["mod_prob_data"]]
 
     ## collect pair stats for each sample
     ctable_list <- lapply(
@@ -58,9 +56,9 @@ get_ctable_from_SE <- function(se,
         function(csidx) {
 
             count_spacing_freq_cpp(
-                protect_data[sidx == csidx][["fidx_glob"]], ## unique fragment ID or index
-                protect_data[sidx == csidx][["fragpos"]],   ## position within fragment, 1 - based
-                protect_data[sidx == csidx][["protect"]],   ## binary protection data, 0 - accessible, 1 - protected
+                mod_prob_data[sidx == csidx][["fidx_glob"]], ## unique fragment ID or index
+                mod_prob_data[sidx == csidx][["fragpos"]],   ## position within fragment, 1 - based
+                mod_prob_data[sidx == csidx][["mod_prob"]], ## modification probability in [0,1]
                 max_spacing,
                 ncpu,
                 verbose)

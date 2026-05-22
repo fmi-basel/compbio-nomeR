@@ -22,7 +22,8 @@
 #'
 #' @return A \code{list} containing:
 #' \describe{
-#' \item{\code{DATA}}{A \code{matrix} with the simulated SMF data.}
+#' \item{\code{DATA}}{A \code{matrix} with simulated SMF modification
+#'     probabilities (0 = fully protected, 1 = fully accessible).}
 #' \item{\code{TRUE_CONF}}{A \code{data.frame} with the true footprint positions for each molecule.}
 #' \item{\code{ftp_pos_prob}}{Normalized positional start probabilities used for footprint placement.}
 #' }
@@ -250,9 +251,10 @@ generate_insilico_SMF_data <- function(region_len, # length of the amplicon
             model_len <- model_lengths[emit_model]
             model_prot_prob <- footprint_models[[emit_model]][["PROTECT_PROB"]]
             
-            ## draw random data using binomial distribution
-            model_synth_data <- rbinom(n = model_len, size = 1, 
-                                       prob = model_prot_prob)
+            ## draw modification probability data:
+            ## rbinom gives 1 (accessible) with prob = 1 - PROTECT_PROB
+            model_synth_data <- rbinom(n = model_len, size = 1,
+                                       prob = 1 - model_prot_prob)
             fill.idx <- seq(pos, min(pos + model_len - 1, reglen_ext))
             dat[1, fill.idx] <- model_synth_data[seq_len(length(fill.idx))]
             pos <- pos + model_len

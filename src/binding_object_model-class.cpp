@@ -11,24 +11,14 @@ binding_object_model::binding_object_model(const vector<double > &_protect_prob,
   name = _name;
   group = _group;
 
-  for(int pos=0;pos < _protect_prob.size();++pos){
+  for(int pos = 0; pos < (int)_protect_prob.size(); ++pos){
     vector<double > tmp;
-    tmp.push_back(1-_protect_prob[pos]); // prob of unprotected
-    tmp.push_back(_protect_prob[pos]);  // prob of protected
-    tmp.push_back(1); //add 1 at the end to treat NAs in NOMe data
+    tmp.push_back(1 - _protect_prob[pos]); // emit for fully accessible position (mod_prob = 1)
+    tmp.push_back(_protect_prob[pos]);     // emit for fully protected position  (mod_prob = 0)
     mat.push_back(tmp);
   }
   len = mat.size();
   normalize();
-
-  // calculate first last ratios firstLastRatios
-  for(int llet = 0; llet <= 2; ++llet){
-  	vector<double > curFlet;
-  	for(int flet = 0; flet <= 2; ++flet){
-  		curFlet.push_back(normmat[len - 1][llet] / normmat[0][flet]);
-  	}
-  	firstLastRatios.push_back(curFlet);
-  }
 
 }
 
@@ -42,7 +32,7 @@ void binding_object_model::print() const{
   Rcpp::Rcout <<"GROUP\t"<< group <<"\n";
 
   Rcpp::Rcout <<"PRIOR\t"<< prior <<"\n";
-  Rcpp::Rcout <<"POS\tPROT\tUNPROT\tNAs\n";
+  Rcpp::Rcout <<"POS\tUNPROT\tPROT\n";
   for(int i=0;i<mat.size();i++){
     Rcpp::Rcout <<i+1;
     for(int j=0;j<mat[i].size();j++)
@@ -59,7 +49,7 @@ void binding_object_model::print_normalized() const{
   Rcpp::Rcout <<"GROUP\t"<< group <<"\n";
   //Rcpp::Rcout <<"Orientation\t"<<orientation<<endl;
   Rcpp::Rcout <<"PRIOR\t"<< prior <<"\n";
-  Rcpp::Rcout <<"POS\tPROT\tUNPROT\tNAs\n";
+  Rcpp::Rcout <<"POS\tUNPROT\tPROT\n";
   for(int i=0;i<normmat.size();i++){
     Rcpp::Rcout <<i+1;
     for(int j=0;j<normmat[i].size();j++)
@@ -80,39 +70,55 @@ double binding_object_model::get_score(const SMFdataset& SEQUENCES,
 	}
 
   double score = 1;
-  for(int i = position;i < position + len;++i){
-    if(i >= 0 && i < SEQUENCES[seq].Size())
-      score *= normmat[i - position][SEQUENCES[seq][i]];
+  for(int i = position; i < position + len; ++i){
+    if(i >= 0 && i < SEQUENCES[seq].Size()){
+      double p = SEQUENCES[seq][i];
+      int mpos = i - position;
+      score *= (p < 0.0) ? 1.0 : (p * normmat[mpos][0] + (1.0 - p) * normmat[mpos][1]);
+    }
   }
   return prior * score;
 }
 
 vector<double > binding_object_model::get_seq_scores_vec(const fragProtectData& fragData) const{
 	vector<double > scoresVec(fragData.Size(), prior);
-	// calculate score at position 0;
-	double score = 1;
+	// score at position 0: full product over all model positions
+	double score = 1.0;
 	for(int i = 0; i < len; ++i){
-		if(i < fragData.Size())
-			score *= normmat[i][fragData[i]];
+		if(i < (int)fragData.Size()){
+			double p = fragData[i];
+			score *= (p < 0.0) ? 1.0 : (p * normmat[i][0] + (1.0 - p) * normmat[i][1]);
+		}
 	}
 	scoresVec[0] = prior * score;
-	// calculate scores for for all other positions using recursive P(S|n+1) = P(S|n) * firstLastRatios[next letter][letter behind]
-	for(int pos = 1; pos <= fragData.Size() - len; ++pos){
-		scoresVec[pos] = scoresVec[pos - 1] * firstLastRatios[fragData[pos + len - 1]][fragData[pos - 1]];
+	// sliding window O(n): score(pos) = score(pos-1) * emit(new_last) / emit(old_first)
+	// exact for uniform models (normmat[0] == normmat[len-1]), which is standard in SMF
+	for(int pos = 1; pos <= (int)fragData.Size() - len; ++pos){
+		double p_new = fragData[pos + len - 1];
+		double e_new = (p_new < 0.0) ? 1.0 : (p_new * normmat[len-1][0] + (1.0 - p_new) * normmat[len-1][1]);
+		double p_old = fragData[pos - 1];
+		double e_old = (p_old < 0.0) ? 1.0 : (p_old * normmat[0][0] + (1.0 - p_old) * normmat[0][1]);
+		scoresVec[pos] = scoresVec[pos - 1] * e_new / e_old;
 	}
 	return scoresVec;
 }
 
 void binding_object_model::get_seq_scores_vec(const fragProtectData& fragData, vector<double>& out) const{
 	out.assign(fragData.Size(), prior);
-	double score = 1;
+	double score = 1.0;
 	for(int i = 0; i < len; ++i){
-		if(i < fragData.Size())
-			score *= normmat[i][fragData[i]];
+		if(i < (int)fragData.Size()){
+			double p = fragData[i];
+			score *= (p < 0.0) ? 1.0 : (p * normmat[i][0] + (1.0 - p) * normmat[i][1]);
+		}
 	}
 	out[0] = prior * score;
-	for(int pos = 1; pos <= fragData.Size() - len; ++pos){
-		out[pos] = out[pos - 1] * firstLastRatios[fragData[pos + len - 1]][fragData[pos - 1]];
+	for(int pos = 1; pos <= (int)fragData.Size() - len; ++pos){
+		double p_new = fragData[pos + len - 1];
+		double e_new = (p_new < 0.0) ? 1.0 : (p_new * normmat[len-1][0] + (1.0 - p_new) * normmat[len-1][1]);
+		double p_old = fragData[pos - 1];
+		double e_old = (p_old < 0.0) ? 1.0 : (p_old * normmat[0][0] + (1.0 - p_old) * normmat[0][1]);
+		out[pos] = out[pos - 1] * e_new / e_old;
 	}
 }
 

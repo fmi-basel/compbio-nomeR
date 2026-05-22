@@ -26,12 +26,12 @@ test_that("wrong parameters for predict_footprints are handled correctly",{
     ft.pr <- 1 - bg.pr
     ft.len <- 15
 
-    ## creating a list of binding models for nomeR
+    ## creating a list of binding models for footBayes
     ftp.models <- list(list("PROTECT_PROB" = rep(0.99, ft.len),
                             "COVER_PRIOR" = ft.pr,
                             "NAME" = "FOOTPRINT"))
 
-    expect_error(nomeR.out <- predict_footprints(data = rmatr,
+    expect_error(footBayes.out <- predict_footprints(data = rmatr,
                                                  footprint_models = ftp.models,
                                                  bgprotectprob = 0.05,
                                                  bgcoverprior = bg.pr,
@@ -53,12 +53,12 @@ test_that("predict_footprints returns correct object",{
     ft.pr <- 1 - bg.pr
     ft.len <- 15
 
-    ## creating a list of binding models for nomeR
+    ## creating a list of binding models for footBayes
     ftp.models <- list(list("PROTECT_PROB" = rep(0.99, ft.len),
                             "COVER_PRIOR" = ft.pr,
                             "NAME" = "FOOTPRINT"))
 
-    nomeR.out <- predict_footprints(data = rmatr,
+    footBayes.out <- predict_footprints(data = rmatr,
                                     footprint_models = ftp.models,
                                     bgprotectprob = 0.05,
                                     bgcoverprior = bg.pr,
@@ -66,32 +66,32 @@ test_that("predict_footprints returns correct object",{
                                     ncpu = 1L)
 
     ## check whether slots exist
-    expect_true(all(c("START_PROB", "COVER_PROB", "FOOTPRINT_CONF") %in% names(nomeR.out)))
+    expect_true(all(c("START_PROB", "COVER_PROB", "FOOTPRINT_CONF") %in% names(footBayes.out)))
 
     ## check whether all required seq exist
-    expect_true(all(as.character(seq_len(nr)) %in% nomeR.out[["START_PROB"]][["seq"]]) &
-                    all(as.character(seq_len(nr)) %in% nomeR.out[["COVER_PROB"]][["seq"]])
+    expect_true(all(as.character(seq_len(nr)) %in% footBayes.out[["START_PROB"]][["seq"]]) &
+                    all(as.character(seq_len(nr)) %in% footBayes.out[["COVER_PROB"]][["seq"]])
     )
 
     ## check all pos exist
-    expect_true(all(1:nc %in% nomeR.out[["START_PROB"]][["pos"]]) &
-                    all(1:nc %in% nomeR.out[["COVER_PROB"]][["pos"]])
+    expect_true(all(1:nc %in% footBayes.out[["START_PROB"]][["pos"]]) &
+                    all(1:nc %in% footBayes.out[["COVER_PROB"]][["pos"]])
     )
 
     ## check whether FOOTPRINT and background exist
-    expect_true(all(c("FOOTPRINT", "background") %in% colnames(nomeR.out[["START_PROB"]])) &
-                    all(c("FOOTPRINT", "background") %in% colnames(nomeR.out[["COVER_PROB"]]))
+    expect_true(all(c("FOOTPRINT", "background") %in% colnames(footBayes.out[["START_PROB"]])) &
+                    all(c("FOOTPRINT", "background") %in% colnames(footBayes.out[["COVER_PROB"]]))
     )
 
     ## check that we do not have incorrect probs
-    expect_false(any(nomeR.out[["START_PROB"]][, c("FOOTPRINT", "background")] < 0 - .Machine$double.eps ^ 0.5) | any(nomeR.out[["START_PROB"]][, c("FOOTPRINT", "background")] > 1 + .Machine$double.eps ^ 0.5) |
-                     any(nomeR.out[["COVER_PROB"]][, c("FOOTPRINT", "background")] < 0 - .Machine$double.eps ^ 0.5) | any(nomeR.out[["COVER_PROB"]][, c("FOOTPRINT", "background")] > 1 + .Machine$double.eps ^ 0.5))
+    expect_false(any(footBayes.out[["START_PROB"]][, c("FOOTPRINT", "background")] < 0 - .Machine$double.eps ^ 0.5) | any(footBayes.out[["START_PROB"]][, c("FOOTPRINT", "background")] > 1 + .Machine$double.eps ^ 0.5) |
+                     any(footBayes.out[["COVER_PROB"]][, c("FOOTPRINT", "background")] < 0 - .Machine$double.eps ^ 0.5) | any(footBayes.out[["COVER_PROB"]][, c("FOOTPRINT", "background")] > 1 + .Machine$double.eps ^ 0.5))
 
     ## check whether sum of start probs does not exceed 1
-    expect_false(any(rowSums(nomeR.out[["START_PROB"]][, c("FOOTPRINT", "background")]) > 1 + .Machine$double.eps ^ 0.5))
+    expect_false(any(rowSums(footBayes.out[["START_PROB"]][, c("FOOTPRINT", "background")]) > 1 + .Machine$double.eps ^ 0.5))
 
     ## check if sum of cover probs sum up to 1
-    cover.prob.rowsum <- rowSums(nomeR.out[["COVER_PROB"]][, c("FOOTPRINT", "background")])
+    cover.prob.rowsum <- rowSums(footBayes.out[["COVER_PROB"]][, c("FOOTPRINT", "background")])
     expect_true(all(abs(cover.prob.rowsum - 1) < 1.0e-8))
 
 })

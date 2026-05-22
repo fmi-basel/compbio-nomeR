@@ -33,7 +33,7 @@ make_shapes <- function(shape1, shape2,
 ## ---- .calc_beta_corrected_mod_prob_dbeta ------------------------------------
 
 test_that(".calc_beta_corrected_mod_prob_dbeta: boundary inputs produce no NaN", {
-    res <- nomeR:::.calc_beta_corrected_mod_prob_dbeta(
+    res <- footBayes:::.calc_beta_corrected_mod_prob_dbeta(
         mod_prob   = c(0, 1, 0.5),
         neg_shape1 = 2, neg_shape2 = 50,
         pos_shape1 = 50, pos_shape2 = 2)
@@ -42,7 +42,7 @@ test_that(".calc_beta_corrected_mod_prob_dbeta: boundary inputs produce no NaN",
 })
 
 test_that(".calc_beta_corrected_mod_prob_dbeta: corrects in the right direction", {
-    res <- nomeR:::.calc_beta_corrected_mod_prob_dbeta(
+    res <- footBayes:::.calc_beta_corrected_mod_prob_dbeta(
         mod_prob   = c(0.05, 0.95),
         neg_shape1 = 2, neg_shape2 = 50,
         pos_shape1 = 50, pos_shape2 = 2)
@@ -53,7 +53,7 @@ test_that(".calc_beta_corrected_mod_prob_dbeta: corrects in the right direction"
 
 test_that(".calc_beta_corrected_mod_prob_dbeta: monotone in mod_prob", {
     probs <- seq(0.05, 0.95, by = 0.1)
-    res <- nomeR:::.calc_beta_corrected_mod_prob_dbeta(
+    res <- footBayes:::.calc_beta_corrected_mod_prob_dbeta(
         mod_prob   = probs,
         neg_shape1 = 2, neg_shape2 = 50,
         pos_shape1 = 50, pos_shape2 = 2)
@@ -66,9 +66,9 @@ test_that(".calc_beta_corrected_mod_prob_dbeta: mod_prior shifts output", {
     args <- list(mod_prob   = 0.5,
                  neg_shape1 = 5, neg_shape2 = 5,
                  pos_shape1 = 5, pos_shape2 = 5)
-    res_low  <- do.call(nomeR:::.calc_beta_corrected_mod_prob_dbeta,
+    res_low  <- do.call(footBayes:::.calc_beta_corrected_mod_prob_dbeta,
                         c(args, mod_prior = 0.1))
-    res_high <- do.call(nomeR:::.calc_beta_corrected_mod_prob_dbeta,
+    res_high <- do.call(footBayes:::.calc_beta_corrected_mod_prob_dbeta,
                         c(args, mod_prior = 0.9))
     expect_lt(res_low, res_high)
 })
@@ -77,7 +77,7 @@ test_that(".calc_beta_corrected_mod_prob_dbeta: simultaneous underflow falls bac
     mod_prior <- 0.3
     # Beta(500, 0.1) concentrates all mass so near 1 that dbeta(0.5, ...) underflows
     # for both pos and neg shapes → NaN path → output should equal plogis(log-prior-odds)
-    res <- nomeR:::.calc_beta_corrected_mod_prob_dbeta(
+    res <- footBayes:::.calc_beta_corrected_mod_prob_dbeta(
         mod_prob   = 0.5,
         neg_shape1 = 500, neg_shape2 = 0.1,
         pos_shape1 = 500, pos_shape2 = 0.1,

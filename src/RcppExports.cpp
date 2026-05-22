@@ -12,14 +12,14 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // calcStartCoverProbs_cpp
-Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::CharacterVector& ftpConfigMethod, const Rcpp::LogicalVector& aggrByGroup, const Rcpp::LogicalVector& keepStartProb, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
-RcppExport SEXP _nomeR_calcStartCoverProbs_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP ftpConfigMethodSEXP, SEXP aggrByGroupSEXP, SEXP keepStartProbSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::NumericVector& modProbVec, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::CharacterVector& ftpConfigMethod, const Rcpp::LogicalVector& aggrByGroup, const Rcpp::LogicalVector& keepStartProb, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
+RcppExport SEXP _footBayes_calcStartCoverProbs_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP modProbVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP ftpConfigMethodSEXP, SEXP aggrByGroupSEXP, SEXP keepStartProbSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type fragIDs(fragIDsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type fragPos(fragPosSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type protectVec(protectVecSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type modProbVec(modProbVecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type binding_models(binding_modelsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprotectprob(bgprotectprobSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bgprior(bgpriorSEXP);
@@ -28,29 +28,29 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type keepStartProb(keepStartProbSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type Ncpu(NcpuSEXP);
     Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(calcStartCoverProbs_cpp(fragIDs, fragPos, protectVec, binding_models, bgprotectprob, bgprior, ftpConfigMethod, aggrByGroup, keepStartProb, Ncpu, verbose));
+    rcpp_result_gen = Rcpp::wrap(calcStartCoverProbs_cpp(fragIDs, fragPos, modProbVec, binding_models, bgprotectprob, bgprior, ftpConfigMethod, aggrByGroup, keepStartProb, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 // count_spacing_freq_cpp
-Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::IntegerVector& protectVec, const Rcpp::IntegerVector& maxspacing, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
-RcppExport SEXP _nomeR_count_spacing_freq_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP protectVecSEXP, SEXP maxspacingSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::NumericVector& modProbVec, const Rcpp::IntegerVector& maxspacing, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
+RcppExport SEXP _footBayes_count_spacing_freq_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP modProbVecSEXP, SEXP maxspacingSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type fragIDs(fragIDsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type fragPos(fragPosSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type protectVec(protectVecSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type modProbVec(modProbVecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type maxspacing(maxspacingSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type Ncpu(NcpuSEXP);
     Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(count_spacing_freq_cpp(fragIDs, fragPos, protectVec, maxspacing, Ncpu, verbose));
+    rcpp_result_gen = Rcpp::wrap(count_spacing_freq_cpp(fragIDs, fragPos, modProbVec, maxspacing, Ncpu, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
 // calculate_theor_joint_prob_cpp
 Rcpp::List calculate_theor_joint_prob_cpp(const Rcpp::NumericVector& ftp_cover_priors, const Rcpp::NumericVector& bg_protect_prob, const Rcpp::NumericVector& footprint_protect_prob, const Rcpp::IntegerVector& max_spacing);
-RcppExport SEXP _nomeR_calculate_theor_joint_prob_cpp(SEXP ftp_cover_priorsSEXP, SEXP bg_protect_probSEXP, SEXP footprint_protect_probSEXP, SEXP max_spacingSEXP) {
+RcppExport SEXP _footBayes_calculate_theor_joint_prob_cpp(SEXP ftp_cover_priorsSEXP, SEXP bg_protect_probSEXP, SEXP footprint_protect_probSEXP, SEXP max_spacingSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -68,16 +68,16 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nomeR_calcStartCoverProbs_cpp", (DL_FUNC) &_nomeR_calcStartCoverProbs_cpp, 11},
-    {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 6},
-    {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
+    {"_footBayes_calcStartCoverProbs_cpp", (DL_FUNC) &_footBayes_calcStartCoverProbs_cpp, 11},
+    {"_footBayes_count_spacing_freq_cpp", (DL_FUNC) &_footBayes_count_spacing_freq_cpp, 6},
+    {"_footBayes_calculate_theor_joint_prob_cpp", (DL_FUNC) &_footBayes_calculate_theor_joint_prob_cpp, 4},
     {"_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod, 0},
     {"_rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod, 0},
     {"_rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod, 0},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_nomeR(DllInfo *dll) {
+RcppExport void R_init_footBayes(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

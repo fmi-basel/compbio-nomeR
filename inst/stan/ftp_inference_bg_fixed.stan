@@ -33,7 +33,7 @@ functions {
   array[] int spacings, // vector of spacings
   int n_spac, // length of the vector of spacings
   int max_spacing, // maximum spacing in spacings
-  int[,] emp_joint_counts // coocurrence count table, this matrix must contain in the first row total number of 0 and 1, i.e. at S=1
+  real[,] emp_joint_counts // coocurrence count table, this matrix must contain in the first row total number of 0 and 1, i.e. at S=1
   );
 }
 
@@ -42,7 +42,7 @@ data {
   // input count coocurrnce table
   int n_spac;
   array[n_spac] int<lower=1> spacings;
-  array[n_spac,4] int<lower=0> spacing_counts;
+  array[n_spac,4] real<lower=0> spacing_counts;
 
   // footprint hyperparameters
   int n_ftp;

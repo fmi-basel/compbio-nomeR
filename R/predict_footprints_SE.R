@@ -10,10 +10,9 @@
 #'   \code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.
 #' @param assayName Character scalar specifying the name of the assay in
 #'   \code{se} that contains read-level modification probabilities.
-#' @param threshUnmod,threshMod Numeric thresholds used to binarize modification
-#'   probabilities into accessible (\code{0}; probability >= \code{threshMod}),
-#'   protected (\code{1}; probability < \code{threshUnmod}), or unknown
-#'   (\code{NA}) states.
+#' @param assayName Character scalar specifying the name of the assay in
+#'   \code{se} that contains read-level modification probabilities in
+#'   \code{[0, 1]}, where high values indicate accessible (methylated) positions.
 #' @param min_frag_data_len Ignore fragments whose genomic span (from the
 #'   leftmost to rightmost non-\code{NA} data point) is shorter than
 #'   \code{min_frag_data_len}.
@@ -29,9 +28,9 @@
 #'     \item the original \code{mod_prob} assay,
 #'     \item additional assays with calculated posterior coverage
 #'       probabilities (and start probabilities if \code{keepStartProb = TRUE})
-#'       (e.g. "Nucl_coverProb_nomeR"), and
+#'       (e.g. "Nucl_coverProb_footBayes"), and
 #'     \item predicted footprint configurations stored as \code{IntegerList}
-#'     objects in \code{colData} (e.g. column "Nucl_nomeR").
+#'     objects in \code{colData} (e.g. column "Nucl_footBayes").
 #'   }
 #'
 #'   If \code{returnAs="data.table"} - a list containing data.tables for:
@@ -76,8 +75,6 @@
 
 predict_footprints_SE <- function(se,
                                   assayName = "mod_prob",
-                                  threshMod = 0.5,
-                                  threshUnmod = threshMod,
                                   min_frag_data_len = 50L,
                                   min_frag_data_dens = 0.05,
                                   footprint_models,
@@ -97,15 +94,13 @@ predict_footprints_SE <- function(se,
 
     ftpConfigMethod <- match.arg(ftpConfigMethod)
     returnAs <- match.arg(returnAs)
-    ### validate se object and prepare data for nomeR prediction
+    ### validate se object and prepare data for footBayes prediction
     dataList <- validate_prepare_SE(se,
                                     assayName,
-                                    threshMod = threshMod,
-                                    threshUnmod = threshUnmod,
                                     min_frag_data_len,
                                     min_frag_data_dens)
 
-    protect_data <- dataList[["bin_protect_data"]]
+    mod_prob_data <- dataList[["mod_prob_data"]]
     fragAnno <- dataList[["fragAnno"]]
 
     ### validate footprint models
@@ -133,17 +128,17 @@ predict_footprints_SE <- function(se,
 
     ## restrict data.table to use only ncpu threads
     setDTthreads(threads = ncpu)
-    ## protect_data is a matrix returned by validate_prepare_SE
+    ## mod_prob_data is a data.table returned by validate_prepare_SE
     ## columns are:
     ## sidx - index of sample in SE
     ## fidx_glob - unique index of fragment across all samples, as if they were cbinded
     ## fidx_sample - index of fragment for the current sample
     ## posidx_ref - index of rows in SE, corresponds to reference position stored in rowRanges(se)
-    ## protect - binary protection data, 0 - accessible, 1 - protected
+    ## mod_prob - modification probability in [0,1]; high values indicate accessible positions
     ## refpos - genomic position within a reference
     ## fragpos - position within a frament, 1 - based
 
-    ## the calcStartCoverProbs_cpp needs only fidx_glob, fragpos, protect
+    ## the calcStartCoverProbs_cpp needs only fidx_glob, fragpos, mod_prob
     if (verbose) {
         .message_timestamp("Footprint prediction... ")
     }
@@ -156,9 +151,9 @@ predict_footprints_SE <- function(se,
 
     predict_res_list <- .time_block({
         calcStartCoverProbs_cpp(
-            protect_data[["fidx_glob"]], ## unique fragment ID or index
-            protect_data[["fragpos"]],      ## position within fragment, 1 - based
-            protect_data[["protect"]],   ## binary protection data, 0 - accessible, 1 - protected
+            mod_prob_data[["fidx_glob"]], ## unique fragment ID or index
+            mod_prob_data[["fragpos"]],   ## position within fragment, 1 - based
+            mod_prob_data[["mod_prob"]], ## modification probability in [0,1]
             footprint_models,
             bgprotectprob,
             start_priors["BG"],
@@ -219,7 +214,7 @@ predict_footprints_SE <- function(se,
 
             ## add modprob to COVER_PROB, as it runs from firstDatPos to lastDatPos
             predict_res[["COVER_PROB"]] <-
-                protect_data[, list(fidx_glob, fragpos,
+                mod_prob_data[, list(fidx_glob, fragpos,
                                     mod_prob)][predict_res[["COVER_PROB"]],
                                                on = list(fidx_glob = fidx_glob,
                                                          fragpos = fragpos)]
@@ -322,12 +317,12 @@ predict_footprints_SE <- function(se,
             ftpnames <- setdiff(colnames(predict_res[["COVER_PROB"]]),
                                 c(fcols, "mod_prob", "gpos_idx"))
 
-            nomeR_assayNames <- c("mod_prob", paste(rep(ftpnames, 2),
+            footBayes_assayNames <- c("mod_prob", paste(rep(ftpnames, 2),
                                                     rep(c("coverProb", "startProb"),
                                                         each = length(ftpnames)),
-                                                    "nomeR",
+                                                    "footBayes",
                                                     sep = "_"))
-            assayAnno <- data.frame(assayName = nomeR_assayNames,
+            assayAnno <- data.frame(assayName = footBayes_assayNames,
                                     ftpName = c("mod_prob", rep(ftpnames, 2)),
                                     probName = c("COVER_PROB",
                                                  rep(c("COVER_PROB", "START_PROB"),
@@ -338,7 +333,7 @@ predict_footprints_SE <- function(se,
             ## background_startProb and background_coverProb are identical.
             ## keep only coverProb
             assayAnno <- assayAnno[assayAnno$assayName !=
-                                       "background_startProb_nomeR", , drop = FALSE]
+                                       "background_startProb_footBayes", , drop = FALSE]
 
             ## create list of assays
             assayList <- lapply(
@@ -417,8 +412,8 @@ predict_footprints_SE <- function(se,
                         return(irL)
                     }, simplify = FALSE, USE.NAMES = TRUE)
 
-                ## remove "--" for colnames and add nomeR
-                ftp_colnm <- paste0(gsub("-", "_", ftp), "_nomeR")
+                ## remove "--" for colnames and add footBayes suffix
+                ftp_colnm <- paste0(gsub("-", "_", ftp), "_footBayes")
                 coldat[[ftp_colnm]] <- lIRl
             }
 
@@ -429,7 +424,7 @@ predict_footprints_SE <- function(se,
             ## add readLevelData assayNames
             mtdat$readLevelData$assayNames <- assayNames(seOut)
             mtdat$readLevelData$colDataColumns <- c(mtdat$readLevelData$colDataColumns,
-                                                    paste0(ftpConf_ftpnames, "_nomeR"))
+                                                    paste0(ftpConf_ftpnames, "_footBayes"))
 
             metadata(seOut) <- mtdat
             seOut

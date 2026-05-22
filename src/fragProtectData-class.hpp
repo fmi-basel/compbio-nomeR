@@ -27,7 +27,7 @@ public:
 	uint32_t _firstDatpos; // a position within the extended (by NAs) sequence with first actuall data point
 	uint32_t _lastDatpos;  // similarly this is the last position within extended (by NAs) sequence with data points
 
-	vector<uint8_t> _protectVec; // expanded vector with protection data, i.e. including NAs (2s)
+	vector<double> _modProbVec; // expanded vector with mod prob in [0,1]; NA positions encoded as -1.0
 
 	// public functions
 	// constructors/copying/destructors
@@ -35,7 +35,7 @@ public:
 	fragProtectData(const fragProtectData & s);
 	fragProtectData(const uint32_t fragID,
                  const vector<uint32_t>& fragPosVec, // input positions fragPosVec must be 1-based
-                 const vector<uint8_t>& protectVec,
+                 const vector<double>& modProbVec,
                  int maxWMlen);
 	~fragProtectData();
 
@@ -44,7 +44,7 @@ public:
 	uint32_t Name() const; // return fragment ID.
 	// int fragLength const;// return actual genomic size of the data, i.e. maximum position with protection value
 
-	const uint8_t operator [](uint32_t i) const;
+	const double operator [](uint32_t i) const;
 
 	//vector<uint8_t > subseq(int start,int end);
 	fragProtectData & operator = (const fragProtectData & other);

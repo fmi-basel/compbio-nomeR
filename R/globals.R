@@ -3,7 +3,7 @@ utils::globalVariables(c(
     "ftp_length", "keep", "log10mean", "log10mean_scaled",
     "maxPosIdx_ref", "minPosIdx_ref", "refEnd", "refStart",
     "sd", "sidx", "zscore", "zscore_scaled",
-    "protect", "mod_prob", "fidx_sample", "posidx_ref", "refpos",
+    "mod_prob", "fidx_sample", "posidx_ref", "refpos",
     "fidx_glob", "ftp_group",
     "i.start", "bg_score_mean_Ztest_pval", "tf_score_mean_Ztest_pval",
     "width" # due to NSE notes in R CMD check

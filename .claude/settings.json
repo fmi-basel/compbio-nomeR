@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Rscript -e \"devtools::test\\(filter='calculate_tile_BG_TF_enrichments'\\)\")",
+      "Bash(Rscript -e \"devtools::load_all\\(\\); nomeR_scripts\\(\\)\")",
+      "Bash(grep -v \"\\\\.Rcheck\\\\|compbio-nomeR\\\\.Rcheck\\\\|\\\\.o$\")",
+      "Bash(sed -i 's/prepare data for nomeR prediction/prepare data for footBayes prediction/g' /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/R/get_ctable_from_SE.R)",
+      "Bash(sed -i 's/## creating a list of binding models for nomeR/## creating a list of binding models for footBayes/g; *)",
+      "Bash(Rscript -e \"devtools::test\\('.', reporter = 'progress'\\)\")",
+      "Bash(Rscript -e \"pkgbuild::compile_dll\\('.'\\)\")"
+    ]
+  }
+}

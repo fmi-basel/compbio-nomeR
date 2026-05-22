@@ -36,7 +36,7 @@ static constexpr std::array<const char*, 25> locations_array__ =
   " (in 'ftp_inference_ftp_bg_fixed', line 35, column 8 to column 14)",
   " (in 'ftp_inference_ftp_bg_fixed', line 35, column 2 to column 38)",
   " (in 'ftp_inference_ftp_bg_fixed', line 36, column 8 to column 14)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 36, column 2 to column 46)",
+  " (in 'ftp_inference_ftp_bg_fixed', line 36, column 2 to column 47)",
   " (in 'ftp_inference_ftp_bg_fixed', line 38, column 2 to column 12)",
   " (in 'ftp_inference_ftp_bg_fixed', line 39, column 8 to column 13)",
   " (in 'ftp_inference_ftp_bg_fixed', line 39, column 2 to column 31)",
@@ -58,7 +58,7 @@ class model_ftp_inference_ftp_bg_fixed final : public model_base_crtp<model_ftp_
 private:
   int n_spac;
   std::vector<int> spacings;
-  std::vector<std::vector<int>> spacing_counts;
+  std::vector<std::vector<double>> spacing_counts;
   int n_ftp;
   std::vector<int> ftp_lengths;
   Eigen::Matrix<double,-1,1> ftp_prior_cover_data__;
@@ -115,15 +115,17 @@ public:
       stan::math::validate_non_negative_index("spacing_counts", "n_spac",
         n_spac);
       current_statement__ = 8;
-      context__.validate_dims("data initialization", "spacing_counts", "int",
+      context__.validate_dims("data initialization", "spacing_counts",
+        "double",
         std::vector<size_t>{static_cast<size_t>(n_spac),
           static_cast<size_t>(4)});
-      spacing_counts = std::vector<std::vector<int>>(n_spac,
-                         std::vector<int>(4, std::numeric_limits<int>::min()));
+      spacing_counts = std::vector<std::vector<double>>(n_spac,
+                         std::vector<double>(4,
+                           std::numeric_limits<double>::quiet_NaN()));
       {
-        std::vector<int> spacing_counts_flat__;
+        std::vector<local_scalar_t__> spacing_counts_flat__;
         current_statement__ = 8;
-        spacing_counts_flat__ = context__.vals_i("spacing_counts");
+        spacing_counts_flat__ = context__.vals_r("spacing_counts");
         current_statement__ = 8;
         pos__ = 1;
         current_statement__ = 8;

@@ -33,8 +33,6 @@
 ftp_spectral_analysis_SE <- function(
         se,
         assayName = "mod_prob",
-        threshMod = 0.5,
-        threshUnmod = threshMod,
         min_frag_data_len = 50L,
         min_frag_data_dens = 0.05,
         max_spacing = 200,
@@ -92,8 +90,6 @@ ftp_spectral_analysis_SE <- function(
     infDFout <- colData(se)
     ctables_list <- get_ctable_from_SE(se = se,
                                        assayName = assayName,
-                                       threshUnmod = threshUnmod,
-                                       threshMod = threshMod,
                                        min_frag_data_len = min_frag_data_len,
                                        min_frag_data_dens = min_frag_data_dens,
                                        max_spacing = max_spacing,

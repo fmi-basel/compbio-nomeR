@@ -18,15 +18,8 @@ using namespace std;
 class binding_object_model:public DNAbinding_object
 {
  public:
-  vector<vector<double> > mat;
-  vector<vector<double> > normmat;
-  vector<vector<double> > firstLastRatios; //  matrix containing ratios of first and last positions within WM
-                                           // for all combintations of letters
-                                           //                         letter at first WM position
-                                           //                               | 0 | 1 | 2 |
-                                           //  letter at last WM position 0 |...|...|...|
-                                           //                             1 |...|...|...|
-                                           //                             2 |...|...|...|
+  vector<vector<double> > mat;     // raw emission matrix: mat[pos] = {emit_accessible, emit_protected}
+  vector<vector<double> > normmat; // normalized emission matrix
   binding_object_model(const vector<double > &_protect_prob,
                        const double _prior,
                        const string _name,

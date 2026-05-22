@@ -2,9 +2,9 @@
 
 
 
-Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
-                                   const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 1 - based!
-                                   const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
+Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,    // vector with unique fragment IDs
+                                   const Rcpp::IntegerVector& fragPos,    // vector with positions within each fragment, 1 - based!
+                                   const Rcpp::NumericVector& modProbVec, // mod prob in [0,1]; high = accessible; NA encoded as -1.0
                                    const Rcpp::List& binding_models,
                                    const Rcpp::NumericVector& bgprotectprob,
                                    const Rcpp::NumericVector& bgprior,
@@ -41,7 +41,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 
     int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
-    Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have an effect.\n";
+    Rcpp::Rcout<<"footBayes was compiled without OpenMP. ncpu does not have an effect.\n";
 #endif
 
 
@@ -66,7 +66,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
     }
     SMFdataset SMFdata(fragIDs,
                        fragPos,
-                       protectVec,
+                       modProbVec,
                        ftp_models.maxwmlen);
 
     if(_VERBOSE_){
@@ -90,9 +90,9 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,     // ve
 }
 
 
-Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,     // vector with unique fragment IDs
-                                           const Rcpp::IntegerVector& fragPos,     // vector with positions within each fragment, 0 - based!
-                                           const Rcpp::IntegerVector& protectVec,  // vector with protection data, 0 - accessible; 1 - protected
+Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,    // vector with unique fragment IDs
+                                           const Rcpp::IntegerVector& fragPos,    // vector with positions within each fragment, 1 - based!
+                                           const Rcpp::NumericVector& modProbVec, // mod prob in [0,1]; high = accessible; NA encoded as -1.0
                                            const Rcpp::IntegerVector& maxspacing,
                                            const Rcpp::NumericVector& Ncpu,
                                            const Rcpp::LogicalVector& verbose){
@@ -103,7 +103,7 @@ Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,  
 
     int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
-    Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have effect.\n";
+    Rcpp::Rcout<<"footBayes was compiled without OpenMP. ncpu does not have effect.\n";
 #endif
 
 
@@ -111,10 +111,10 @@ Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,  
 
     SMFdataset SMFdata(fragIDs,
                        fragPos,
-                       protectVec,
+                       modProbVec,
                        0);
 
-    vector<vector<uint64_t> > freq_mat = SMFdata.count_freq_for_spacings(maxspacing_,
+    vector<vector<double> > freq_mat = SMFdata.count_freq_for_spacings(maxspacing_,
                                                                          Ncpu_);
     Rcpp::NumericMatrix ctable_out(maxspacing_,4);
     // Set row and column names

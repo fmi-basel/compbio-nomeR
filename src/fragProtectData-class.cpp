@@ -16,12 +16,12 @@ fragProtectData::fragProtectData(const fragProtectData & s){
 	_fragID = s._fragID;
 	_firstDatpos = s._firstDatpos;
 	_lastDatpos = s._lastDatpos;
-	_protectVec = s._protectVec;
+	_modProbVec = s._modProbVec;
 }
 
 fragProtectData::fragProtectData(const uint32_t fragID,
                                  const vector<uint32_t>& fragPosVec, // fragPosVec are 1 - based
-                                 const vector<uint8_t>& protectVec,
+                                 const vector<double>& modProbVec,
                                  int maxWMlen){
 	_fragID = fragID;
 	// here, we have to redefine positions within the fragment to take into account padding by NAs of size maxWMlen
@@ -38,10 +38,10 @@ fragProtectData::fragProtectData(const uint32_t fragID,
 	// define the _size taking into account extensions
 	_size = _lastDatpos + rightPadLen + 1;
 
-	// add protection data to _protectVec
-	_protectVec = std::vector<uint8_t>(_size, 2);
-	for(int i = 0; i < fragPosVec.size(); ++i){
-		_protectVec[_firstDatpos + fragPosVec[i] - 1] = protectVec[i]; // subtract 1 to make it 0-based
+	// fill with -1.0 as NA sentinel; positions with data are overwritten below
+	_modProbVec = std::vector<double>(_size, -1.0);
+	for(int i = 0; i < (int)fragPosVec.size(); ++i){
+		_modProbVec[_firstDatpos + fragPosVec[i] - 1] = modProbVec[i]; // subtract 1 to make it 0-based
 	}
 }
 
@@ -54,8 +54,8 @@ uint32_t fragProtectData::Name() const{
 }
 
 
-const uint8_t fragProtectData::operator [](uint32_t i) const{
-	return _protectVec[i];
+const double fragProtectData::operator [](uint32_t i) const{
+	return _modProbVec[i];
 }
 
 fragProtectData & fragProtectData::operator = (const fragProtectData & other){
@@ -66,7 +66,7 @@ fragProtectData & fragProtectData::operator = (const fragProtectData & other){
 		_firstDatpos = other._firstDatpos;
 		_lastDatpos = other._lastDatpos;
 
-		_protectVec = other._protectVec;
+		_modProbVec = other._modProbVec;
 	}
 	return *this;
 }
