@@ -68,19 +68,15 @@ option_list <- list(
     make_option(c("--correctseqbias"),
                 type="character",
                 default = "no_correction",
-                help="Method for correcting sequence biases. Can be 'no_correction', 'BC_KMF' - bayesian correction of modification probabilities followed by filtering of non-informative k-mers. [default %default]"),
+                help="Method for correcting sequence biases. Can be 'no_correction', 'BetaCorrect' - bayesian correction of modification probabilities. [default %default]"),
      make_option(c("--negbetas"),
                 type="character",
-                default = system.file("extdata",
-                                      "SAMOSA_mESC_negativeControl_betaShapes_kmer_7.txt",
-                                      package = "footBayes"),
+                default = NULL,
                 help="path to TXT file containing shapes for beta distribution inferred from negative controls.
 							Used for correction of modification probabilities. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) shapes in %default]"),
     make_option(c("--posbetas"),
                 type="character",
-                default = system.file("extdata",
-                                      "SAMOSA_mESC_positiveControl_betaShapes_kmer_7.txt",
-                                      package = "footBayes"),
+                default = NULL,
                 help="path to TXT file containing shapes for beta distribution inferred from positive controls.
 							Used for correction of modification probabilities. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) shapes in %default]"),
     make_option(c("--refseq"),
@@ -93,10 +89,12 @@ option_list <- list(
                 help="width of sequence context for correction. [default %default]"),
      make_option(c("--kmerblacklist"),
                 type="character",
-                default = system.file("extdata",
-                                      "SAMOSA_mESC_blacklist_kmer_7_cutoff_0.2.txt",
-                                      package = "footBayes"),
+                default = NULL,
                 help="path to TXT file containing k-mers to ignore due to their strong sequence biases. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) blacklist in %default]"),
+    make_option(c("--filterkmerblacklist"),
+                action="store_true",
+                default=FALSE,
+                help="Filter positions with blacklisted k-mer sequence contexts. Requires --kmerblacklist. Can be used independently of --correctseqbias. [default %default]"),
     make_option(c("--quantnorm"),
                 type="logical",
                 action="store_true",
@@ -227,8 +225,8 @@ if(!grepl(pattern = "\\d+,\\d+",opt$tilewidthstep)){
 }
 
 ##### check parameters for sequence bias correction #####
-if(!opt$correctseqbias %in% c("no_correction","BC_KMF")){
-    cli::cli_abort("--correctseqbias allowed to be only 'no_correction' or 'BC_KMF'.")
+if(!opt$correctseqbias %in% c("no_correction","BetaCorrect")){
+    cli::cli_abort("--correctseqbias allowed to be only 'no_correction' or 'BetaCorrect'.")
 }
 
 if(opt$correctseqbias != "no_correction"){
@@ -238,6 +236,15 @@ if(opt$correctseqbias != "no_correction"){
         cli::cli_abort("Couldn't find file specified by --posbetas {opt$posbetas}")
     if(!is.null(opt$refseq) && !file.exists(opt$refseq))
         cli::cli_abort("Couldn't find file specified by --refseq {opt$refseq}")
+    if(!is.null(opt$kmerblacklist) && !file.exists(opt$kmerblacklist))
+        cli::cli_abort("Couldn't find file specified by --kmerblacklist {opt$kmerblacklist}")
+    if(opt$kmer <= 0)
+        cli::cli_abort("Incorrect parameter --kmer: {opt$kmer}")
+}
+
+if(opt$filterkmerblacklist){
+    if(is.null(opt$kmerblacklist))
+        cli::cli_abort("--filterkmerblacklist requires --kmerblacklist to be specified.")
     if(!is.null(opt$kmerblacklist) && !file.exists(opt$kmerblacklist))
         cli::cli_abort("Couldn't find file specified by --kmerblacklist {opt$kmerblacklist}")
     if(opt$kmer <= 0)
@@ -500,7 +507,7 @@ format_index <- function(i, max_i) {
 
 
 ### load data for correction of sequence bias ###
-if(opt$correctseqbias == "BC_KMF"){
+if(opt$correctseqbias == "BetaCorrect"){
     if(!is.null(opt$negbetas) && !is.null(opt$posbetas)){
         negcontrol_shapes <- data.table(read.table(opt$negbetas,
                                                    header = F,
@@ -518,8 +525,10 @@ if(opt$correctseqbias == "BC_KMF"){
         cli::cli_abort("For sequence bias correction both --negbetas and --posbetas files must be provided. Please provide both files or set --correctseqbias to 'no_correction'.")
     }
 } else{
-    opt$kmer <- 0L
-    opt$refseq <- NULL
+    if(!opt$filterkmerblacklist){
+        opt$kmer <- 0L
+        opt$refseq <- NULL
+    }
     negcontrol_shapes <- NULL
     poscontrol_shapes <- NULL
 }
@@ -579,21 +588,19 @@ pred_out <- mcprogress::pmclapply(
         rownames(se) <- seq_along(se)
 
         # ----- 2.1 (optional) correction of sequence bias ------
-        if(opt$correctseqbias == "BC_KMF"){
+        if(opt$correctseqbias == "BetaCorrect"){
             if(!is.null(negcontrol_shapes) && !is.null(poscontrol_shapes)){
                 cli::cli_inform("Bayesian beta correction of sequence biases")
                 se <- footBayes::correct_modprob_SE(se,
                                          neg_control_shapes = negcontrol_shapes,
                                          pos_control_shapes = poscontrol_shapes,
                                          qnorm_to_raw = opt$quantnorm)
-
             }
-            if(!is.null(kmer_blacklist)){
-                cli::cli_inform("Filtering blacklisted kmers")                                
-                ## remove k-mers
-                keep_rows <- which(!(rowData(se)[,"sequenceContext"] %in% kmer_blacklist))
-                se <- se[keep_rows, ]
-            }
+        }
+        if(opt$filterkmerblacklist && !is.null(kmer_blacklist)){
+            cli::cli_inform("Filtering blacklisted k-mer sequence contexts")
+            keep_rows <- which(!(rowData(se)[,"sequenceContext"] %in% kmer_blacklist))
+            se <- se[keep_rows, ]
         }
         #cli::cli_progress_step("Running footBayes::predict_footprints_SE for {se$n_reads} fragments in the region {as.character(reg)} [{i} out of {n_chunks}]")
         cli::cli_inform("Running prediction on assay {assayName} for {se$n_reads} fragments in the region {as.character(reg)} [{i} out of {n_chunks}]")
