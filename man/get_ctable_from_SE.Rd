@@ -2,14 +2,12 @@
 % Please edit documentation in R/get_ctable_from_SE.R
 \name{get_ctable_from_SE}
 \alias{get_ctable_from_SE}
-\title{Create count tables of \code{00}, \code{01}, \code{10}, and \code{11} co-occurrences in a
+\title{Create expected co-occurrence count tables (N00, N01, N10, N11) from a
 SummarizedExperiment object containing SMF modification probabilities}
 \usage{
 get_ctable_from_SE(
   se,
   assayName = "mod_prob",
-  threshMod = 0.5,
-  threshUnmod = threshMod,
   min_frag_data_len = 50L,
   min_frag_data_dens = 0.05,
   max_spacing = 200L,
@@ -24,12 +22,8 @@ containing read-level data, such as that returned by
 \code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.}
 
 \item{assayName}{Character scalar specifying the name of the assay in
-\code{se} that contains read-level modification probabilities.}
-
-\item{threshUnmod, threshMod}{Numeric thresholds used to binarize modification
-probabilities into accessible (\code{0}; probability >= \code{threshMod}),
-protected (\code{1}; probability < \code{threshUnmod}), or unknown
-(\code{NA}) states.}
+\code{se} that contains read-level modification probabilities in
+\code{[0, 1]}, where high values indicate accessible (methylated) positions.}
 
 \item{min_frag_data_len}{Ignore fragments whose genomic span (from the
 leftmost to rightmost non-\code{NA} data point) is shorter than
@@ -39,11 +33,11 @@ leftmost to rightmost non-\code{NA} data point) is shorter than
 (non-\code{NA}) positions below \code{min_frag_data_dens}.}
 
 \item{max_spacing}{Integer specifying the maximum spacing (in bases)
-between positions when counting co-occurrences of state pairs
-(\code{00}, \code{01}, \code{10}, \code{11}) across the SMF dataset.}
+between positions when computing expected co-occurrence counts for state
+pairs (\code{N00}, \code{N01}, \code{N10}, \code{N11}) across the SMF dataset.}
 
-\item{aggrSamples}{Logical. If \code{TRUE}, co-occurrence frequencies
-are aggregated across all samples. If \code{FALSE}, a separate frequency
+\item{aggrSamples}{Logical. If \code{TRUE}, expected co-occurrence counts
+are aggregated across all samples. If \code{FALSE}, a separate count
 matrix is returned for each sample.}
 
 \item{ncpu}{Number of CPU cores to use for parallel processing.}
@@ -53,17 +47,19 @@ for debugging.}
 }
 \value{
 If \code{aggrSamples = TRUE}, a \code{matrix} containing aggregated
-co-occurrence frequencies for \code{00}, \code{01}, \code{10}, and \code{11} at spacings
-from 1 to \code{max_spacing}.
+expected co-occurrence counts for \code{N00}, \code{N01}, \code{N10},
+and \code{N11} at spacings from 1 to \code{max_spacing}.
 
 If \code{aggrSamples = FALSE}, a \code{list} of matrices, one per sample,
-where each matrix contains the corresponding co-occurrence frequencies.
+where each matrix contains the corresponding expected co-occurrence counts.
 }
 \description{
-Computes co-occurrence frequencies of binary accessibility states
-(\code{00}, \code{01}, \code{10}, \code{11}) at varying spacings within a
+Computes expected co-occurrence counts for accessibility state pairs
+(\code{N00}, \code{N01}, \code{N10}, \code{N11}) at varying spacings within a
 \code{SummarizedExperiment} object containing single-molecule
-footprinting (SMF) modification probabilities. Frequencies are calculated
+footprinting (SMF) modification probabilities. Counts are calculated
 for distances up to \code{max_spacing}, either per sample or aggregated
-across all samples.
+across all samples. Expected counts are computed as sums of products of
+modification probabilities: e.g. \code{N00 += p_i * p_j} for each valid
+position pair at spacing \code{s}, where high \code{p} = accessible.
 }

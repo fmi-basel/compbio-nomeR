@@ -112,7 +112,7 @@ vector of footprint lengths used for inference (i.e., the user-supplied
 }
 \description{
 Performs Bayesian inference of footprint abundances in single-molecule
-footprinting data (e.g., NOMe-seq) using \code{rstan}'s implementation of
+footprinting data (NOMe-seq, SAMOSA, Fiber-seq, etc.) using \code{rstan}'s implementation of
 Hamiltonian Monte Carlo (HMC) with the No-U-Turn Sampler (NUTS). The
 algorithm draws samples from the posterior distribution defined by the
 underlying Bayesian model.

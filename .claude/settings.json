@@ -7,7 +7,42 @@
       "Bash(sed -i 's/prepare data for nomeR prediction/prepare data for footBayes prediction/g' /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/R/get_ctable_from_SE.R)",
       "Bash(sed -i 's/## creating a list of binding models for nomeR/## creating a list of binding models for footBayes/g; *)",
       "Bash(Rscript -e \"devtools::test\\('.', reporter = 'progress'\\)\")",
-      "Bash(Rscript -e \"pkgbuild::compile_dll\\('.'\\)\")"
+      "Bash(Rscript -e \"pkgbuild::compile_dll\\('.'\\)\")",
+      "Read(//tungstenfs/scratch/gpeters/ozonevge/nomeR_manuscript/07_BENCHMARK_SMFTOOLS/01_SAMOSA_INVITRO_CHROM/**)",
+      "Bash(grep -E \"\\\\.\\(R|cpp|hpp\\)$\")",
+      "Bash(Rscript -e \"Rcpp::compileAttributes\\('.'\\)\")",
+      "Bash(Rscript -e \"devtools::test\\(filter='correct_modprob'\\)\")",
+      "Bash(ls /tungstenfs/scratch/gpeters/ozonevge/Programming/RPackages/R-dev/footBayes 2>/dev/null | head -5; ls /tungstenfs/scratch/gpeters/ozonevge/Programming/RPackages/R-dev/ 2>/dev/null | head -10)",
+      "Read(//tungstenfs/scratch/gpeters/ozonevge/Programming/RPackages/R-dev/footBayes/**)",
+      "Read(//tungstenfs/scratch/gpeters/ozonevge/Programming/RPackages/R-dev/**)",
+      "Bash(Rscript -e \"devtools::check\\(\\)\")",
+      "Read(//tungstenfs/temp/xenons_scratch/xenon6/ozonevge/claude-66273/-tachyon-groups/scratch/gpeters/ozonevge/claude-66273/-tachyon-groups-scratch-gpeters-ozonevge-Programming-RPackages-compbio-nomeR/a0e36fdc-3d75-44be-bf34-e8d0a29a0254/tasks/**)",
+      "Bash(Rscript -e \"devtools::install\\(lib='/tungstenfs/scratch/gpeters/ozonevge/Programming/RPackages/R-dev'\\)\")",
+      "Bash(Rscript -e \"remotes::install_local\\('.', lib='/tungstenfs/scratch/gpeters/ozonevge/Programming/RPackages/R-dev', force=TRUE, upgrade='never'\\)\")",
+      "Bash(grep -n \"^\\\\*\\\\* R$\\\\|^DONE\\\\|installed\\\\|footBayes\" /tungstenfs/temp/xenons_scratch/xenon6/ozonevge/claude-66273/-tachyon-groups-scratch-gpeters-ozonevge-Programming-RPackages-compbio-nomeR/a0e36fdc-3d75-44be-bf34-e8d0a29a0254/tasks/biomwye7l.output)",
+      "Bash(sed -i 's/library\\(footBayes\\)/library\\(nomeR\\)/g; s/test_check\\(\"footBayes\"\\)/test_check\\(\"nomeR\"\\)/g' /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/tests/testthat.R)",
+      "Bash(sed -i 's/footBayes:::/nomeR:::/g; s/footBayes::/nomeR::/g' /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/tests/testthat/test-correct_modprob_SE.R)",
+      "Bash(sed -i 's/_footBayes_/_nomeR_/g; s/R_init_footBayes/R_init_nomeR/g' /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/src/RcppExports.cpp)",
+      "Bash(sed -i \"s/footBayes was compiled/nomeR was compiled/g\" /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/src/functions_export_rcpp.cpp)",
+      "Bash(sed -i \"s/accessible as footBayes:::/accessible as nomeR:::/g\" /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/src/seqbias_correction.cpp)",
+      "Bash(Rscript -e \"devtools::document\\(\\)\")",
+      "Bash(sed -i 's/footBayes C++ prediction/nomeR C++ prediction/g; s/footBayes prediction/nomeR prediction/g' /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/R/validate_prepare_SE.R /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/R/validate_prepare_listOrMat.R)",
+      "Bash(sed -i 's/creating a list of binding models for footBayes/creating a list of binding models for nomeR/g; s/run_cpp_footBayes/run_cpp_nomeR/g; s/cpp_footBayes/cpp_nomeR/g' /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/R/predict_footprints.R)",
+      "Bash(sed -i 's/default = \"footBayes_output\\\\//default = \"nomeR_output\\\\//g; s|<lib>/footBayes/exec|<lib>/nomeR/exec|g; s|script -> exec/ -> footBayes/ -> <lib>/|script -> exec/ -> nomeR/ -> <lib>/|g; s|so that the footBayes|so that the nomeR|g' /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/exec/predict_footprints-SAMOSA.R /tachyon/groups/scratch/gpeters/ozonevge/Programming/RPackages/compbio-nomeR/exec/footprint_spectral_analysis-SAMOSA.R)",
+      "Bash(Rscript -e ' *)",
+      "Bash(wait)",
+      "Read(//tungstenfs/temp/xenons_scratch/xenon6/ozonevge/RtmpxictUq/file31481f23eb90ba/nomeR.Rcheck/_problems/**)",
+      "Read(//tungstenfs/temp/xenons_scratch/xenon6/ozonevge/**)",
+      "Bash(Rscript -e \"cat\\('start in nomeR ns?', 'start' %in% ls\\(asNamespace\\('nomeR'\\)\\), '\\\\n'\\)\")",
+      "Bash(Rscript -e \"pkgload::load_all\\('.', quiet=TRUE\\); testthat::test_file\\('tests/testthat/test-center_coverprob_on_anchors.R'\\)\")",
+      "Bash(Rscript -e \"pkgload::load_all\\('.', quiet=TRUE\\); devtools::test\\(\\)\")",
+      "Bash(Rscript -e \"pkgbuild::compile_dll\\(\\)\")",
+      "Bash(Rscript -e \"pkgbuild::build\\(\\)\")",
+      "Bash(Rscript -e \"devtools::check\\(quiet=FALSE\\)\")",
+      "Bash(rm -rf /tungstenfs/scratch/gpeters/ozonevge/Programming/RPackages/R-dev/00LOCK-nomeR && echo \"Lock removed \\(or did not exist\\)\")"
+    ],
+    "additionalDirectories": [
+      "/tungstenfs/scratch/gpeters/ozonevge/Programming/RPackages/R-dev/00LOCK-nomeR"
     ]
   }
 }

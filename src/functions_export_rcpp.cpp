@@ -41,7 +41,7 @@ Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs,    // vec
 
     int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
-    Rcpp::Rcout<<"footBayes was compiled without OpenMP. ncpu does not have an effect.\n";
+    Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have an effect.\n";
 #endif
 
 
@@ -103,7 +103,7 @@ Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs,  
 
     int Ncpu_ = Rcpp::as<int >(Ncpu);
 #ifndef _OPENMP
-    Rcpp::Rcout<<"footBayes was compiled without OpenMP. ncpu does not have effect.\n";
+    Rcpp::Rcout<<"nomeR was compiled without OpenMP. ncpu does not have effect.\n";
 #endif
 
 

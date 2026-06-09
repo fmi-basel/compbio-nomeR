@@ -9,7 +9,7 @@ get_SeqContext_control_beta_shapes_SE(
   neg_control_sampleName,
   pos_control_sampleName,
   assayName = "mod_prob",
-  min_n_data = 100
+  min_obs = 100L
 )
 }
 \arguments{
@@ -18,23 +18,37 @@ containing read-level data, such as that returned by
 \code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.}
 
 \item{neg_control_sampleName}{Character scalar. Sample name for the negative
-control (i.e., an SMF experiment without MTase treatment).}
+control (SMF experiment without MTase treatment).}
 
 \item{pos_control_sampleName}{Character scalar. Sample name for the positive
-control (i.e., an SMF experiment with MTase treatment on naked DNA).}
+control (SMF experiment with MTase treatment on naked DNA).}
 
 \item{assayName}{Character scalar specifying the name of the assay in
-\code{se} that contains read-level modification probabilities.}
+\code{se} that contains read-level modification probabilities in
+\code{[0, 1]}, where high values indicate accessible (methylated) positions.}
 
-\item{min_n_data}{Integer. Minimum number of data points required per
-sequence context. Contexts with fewer observations are merged into the
-\code{"other"} category.}
+\item{min_obs}{Integer. Minimum number of finite observations required in
+\strong{both} controls for a context to receive its own fitted parameters.
+Contexts below this threshold in either control are collapsed into
+\code{"OTHER"}. Default: \code{100}.}
 }
 \value{
-A \code{list} of two \code{data.table}s containing Beta distribution
-shape parameters for the positive and negative controls:
-\code{positiveControlShapes} and \code{negativeControlShapes}.
+A \code{data.table} with one row per fitted sequence context and
+columns:
+\describe{
+\item{seqcont}{Context label (\code{"OTHER"} for pooled sparse contexts).}
+\item{n_pos, n_neg}{Number of observations used for fitting.}
+\item{alpha_pos, beta_pos}{Beta shape parameters for the positive control.}
+\item{alpha_neg, beta_neg}{Beta shape parameters for the negative control.}
+}
 }
 \description{
-Fit Beta distribution shapes for positive and negative controls
+Fits Beta distribution shape parameters (via method of moments) for each
+sequence context using modification probabilities from a positive and a
+negative control sample stored in a \code{SummarizedExperiment}.
+}
+\details{
+Sequence contexts with fewer than \code{min_obs} finite observations in
+\strong{either} control are pooled into a single \code{"OTHER"} category before
+fitting, so that all downstream correction has a fallback.
 }

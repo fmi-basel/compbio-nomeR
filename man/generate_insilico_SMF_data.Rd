@@ -42,7 +42,8 @@ treated as the explicit indices of informative positions.}
 \value{
 A \code{list} containing:
 \describe{
-\item{\code{DATA}}{A \code{matrix} with the simulated SMF data.}
+\item{\code{DATA}}{A \code{matrix} with simulated SMF modification
+probabilities (0 = fully protected, 1 = fully accessible).}
 \item{\code{TRUE_CONF}}{A \code{data.frame} with the true footprint positions for each molecule.}
 \item{\code{ftp_pos_prob}}{Normalized positional start probabilities used for footprint placement.}
 }

@@ -8,8 +8,6 @@ single-molecule footprinting (SMF) data}
 ftp_spectral_analysis_SE(
   se,
   assayName = "mod_prob",
-  threshMod = 0.5,
-  threshUnmod = threshMod,
   min_frag_data_len = 50L,
   min_frag_data_dens = 0.05,
   max_spacing = 200,
@@ -40,12 +38,8 @@ containing read-level data, such as that returned by
 \code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.}
 
 \item{assayName}{Character scalar specifying the name of the assay in
-\code{se} that contains read-level modification probabilities.}
-
-\item{threshUnmod, threshMod}{Numeric thresholds used to binarize modification
-probabilities into accessible (\code{0}; probability >= \code{threshMod}),
-protected (\code{1}; probability < \code{threshUnmod}), or unknown
-(\code{NA}) states.}
+\code{se} that contains read-level modification probabilities in
+\code{[0, 1]}, where high values indicate accessible (methylated) positions.}
 
 \item{min_frag_data_len}{Ignore fragments whose genomic span (from the
 leftmost to rightmost non-\code{NA} data point) is shorter than
@@ -55,8 +49,8 @@ leftmost to rightmost non-\code{NA} data point) is shorter than
 (non-\code{NA}) positions below \code{min_frag_data_dens}.}
 
 \item{max_spacing}{Integer specifying the maximum spacing (in bases)
-between positions when counting co-occurrences of state pairs
-(\code{00}, \code{01}, \code{10}, \code{11}) across the SMF dataset.}
+between positions when computing expected co-occurrence counts for state
+pairs (\code{N00}, \code{N01}, \code{N10}, \code{N11}) across the SMF dataset.}
 
 \item{ftp_lengths}{Numeric vector of footprint lengths for which abundances
 should be inferred. Length 1 is reserved for background and must not be

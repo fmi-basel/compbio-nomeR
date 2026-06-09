@@ -23,8 +23,8 @@ predict_footprints(
 \item If a \code{matrix}, rows correspond to reads (or fragments) and columns
 correspond to positions in the region of interest (ROI).
 \item If a \code{list}, each element must be a vector containing SMF data.
-Data must be binarized: '0' represents accessible (methylated) positions,
-'1' represents protected (unmethylated) positions, and all other positions
+Data must be binarized: '1' represents accessible (methylated) positions,
+'0' represents protected (unmethylated) positions, and all other positions
 should be \code{NA}.
 }}
 

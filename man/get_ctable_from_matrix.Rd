@@ -2,15 +2,16 @@
 % Please edit documentation in R/get_ctable_from_matrix.R
 \name{get_ctable_from_matrix}
 \alias{get_ctable_from_matrix}
-\title{Create co-occurrence count tables (00, 01, 10, 11) from a binary SMF data matrix}
+\title{Create co-occurrence count tables (N00, N01, N10, N11) from an SMF data matrix}
 \usage{
 get_ctable_from_matrix(data, max_spacing = 200L, ncpu = 1L, verbose = FALSE)
 }
 \arguments{
-\item{data}{A binary matrix of SMF data for a single ROI.}
+\item{data}{A numeric matrix of SMF modification probabilities for a single ROI.
+Values must be in \code{[0, 1]} or \code{NA}.}
 
 \item{max_spacing}{Integer specifying the maximum spacing (in bases)
-between positions for which co-occurrence frequencies are computed.}
+between positions for which co-occurrence counts are computed.}
 
 \item{ncpu}{Number of CPU cores to use for parallel computation.}
 
@@ -18,14 +19,18 @@ between positions for which co-occurrence frequencies are computed.}
 messages for debugging.}
 }
 \value{
-A \code{data.frame} containing co-occurrence frequencies for \code{00}, \code{01},
-\code{10}, and \code{11} at each spacing from 1 up to \code{max_spacing}.
+A \code{data.frame} containing expected co-occurrence counts for \code{N00},
+\code{N01}, \code{N10}, and \code{N11} at each spacing from 1 up to
+\code{max_spacing}.
 }
 \description{
-Computes co-occurrence frequencies of binary accessibility states
-(\code{00}, \code{01}, \code{10}, \code{11}) at varying spacings within a matrix representing
-a single-molecule footprinting (SMF) region of interest (ROI).
-Rows correspond to individual molecules (or fragments) and columns
-correspond to genomic positions. In the matrix, \code{1} represents a
-protected position and \code{0} represents an accessible position.
+Computes expected co-occurrence counts for accessibility state pairs
+(\code{N00}, \code{N01}, \code{N10}, \code{N11}) at varying spacings within
+a matrix of single-molecule footprinting (SMF) modification probabilities.
+Rows correspond to individual molecules (or fragments) and columns correspond
+to genomic positions. Each cell holds a modification probability in \code{[0, 1]},
+where high values indicate accessible (methylated) positions and low values
+indicate protected (unmethylated) positions. \code{NA} encodes missing data.
+Expected counts are computed as sums of products of probabilities:
+e.g. \code{N00 += p_i * p_j} for each valid pair at spacing \code{s}.
 }

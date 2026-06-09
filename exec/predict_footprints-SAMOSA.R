@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
 ## R script (v6) for predicting footprints in SAMOSA/FiberSeq generated BAM file
 
-## Resolve the lib directory this script was installed into so that the footBayes
+## Resolve the lib directory this script was installed into so that the nomeR
 ## version loaded is always the one bundled with this script.
-## Installed layout: <lib>/footBayes/exec/<this-script>.R
-## Three dirname() calls climb: script -> exec/ -> footBayes/ -> <lib>/
+## Installed layout: <lib>/nomeR/exec/<this-script>.R
+## Three dirname() calls climb: script -> exec/ -> nomeR/ -> <lib>/
 local({
     argv <- commandArgs(trailingOnly = FALSE)
     f    <- sub("--file=", "", grep("--file=", argv, value = TRUE))
@@ -68,24 +68,24 @@ option_list <- list(
     make_option(c("--correctseqbias"),
                 type="character",
                 default = "no_correction",
-                help="Method for correcting sequence biases. Can be 'no_correction', 'BetaCorrect' - bayesian correction of modification probabilities. [default %default]"),
-     make_option(c("--negbetas"),
+                help="Method for correcting sequence biases. Can be 'no_correction',
+                'BetaCorrect' - Bayesian correction using Beta distributions (requires --betaparams),
+                'BetaUniform' - Bayesian correction using Beta-Uniform mixtures (requires --betaunifparams; isotonic regression applied by default, disable with --noisotonic). [default %default]"),
+    make_option(c("--betaparams"),
                 type="character",
                 default = NULL,
-                help="path to TXT file containing shapes for beta distribution inferred from negative controls.
-							Used for correction of modification probabilities. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) shapes in %default]"),
-    make_option(c("--posbetas"),
+                help="[BetaCorrect] Path to TXT file with Beta distribution parameters for positive and negative controls, as produced by get_SeqContext_control_beta_shapes_SE() (columns: seqcont n_pos alpha_pos beta_pos n_neg alpha_neg beta_neg)."),
+    make_option(c("--betaunifparams"),
                 type="character",
                 default = NULL,
-                help="path to TXT file containing shapes for beta distribution inferred from positive controls.
-							Used for correction of modification probabilities. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) shapes in %default]"),
+                help="[BetaUniform] Path to TXT file with Beta-Uniform mixture parameters produced by fit_SeqContext_BetaUnif_params_SE() (columns: seqcont alpha_pos beta_pos eps_pos alpha_neg beta_neg eps_neg n_pos n_neg converged mlrp_ok)."),
     make_option(c("--refseq"),
                 type="character",
                 default = NULL,
                 help="path to fasta file containing reference sequence"),
     make_option(c("--kmer"),
                 type="integer",
-                default = 7,
+                default = 5,
                 help="width of sequence context for correction. [default %default]"),
      make_option(c("--kmerblacklist"),
                 type="character",
@@ -100,13 +100,18 @@ option_list <- list(
                 action="store_true",
                 default=FALSE,
                 help="Perform quantile normalization of modification probabilities to match distribution of uncorrected probabilities. [default: FALSE]"),
+    make_option(c("--noisotonic"),
+                type="logical",
+                action="store_true",
+                default=FALSE,
+                help="[BetaUniform] Disable pool-adjacent-violators (PAV) isotonic regression that enforces monotonicity between raw and corrected probabilities. By default isotonic regression is applied. [default: FALSE]"),
     ### output options
     make_option(c("-o", "--outputdir"),
-                default = "footBayes_output/",
+                default = "nomeR_output/",
                 type="character",
                 help="Folder to store output files. [default %default]"),
     make_option(c("-z", "--tempdir"),
-                #default = "footBayes_output/tempfolder",
+                #default = "nomeR_output/tempfolder",
                 type="character",
                 help="Folder to store temporary files. [default <output_dir>/tempfolder]"),
     make_option(c("-w", "--noenrich"),
@@ -179,7 +184,7 @@ suppressPackageStartupMessages({
     library(Rsamtools)
     library(ggplot2)
     library(parallel)
-    library(footBayes)
+    library(nomeR)
     library(mcprogress)
     library(Biostrings)
 })
@@ -225,19 +230,28 @@ if(!grepl(pattern = "\\d+,\\d+",opt$tilewidthstep)){
 }
 
 ##### check parameters for sequence bias correction #####
-if(!opt$correctseqbias %in% c("no_correction","BetaCorrect")){
-    cli::cli_abort("--correctseqbias allowed to be only 'no_correction' or 'BetaCorrect'.")
+if(!opt$correctseqbias %in% c("no_correction","BetaCorrect","BetaUniform")){
+    cli::cli_abort("--correctseqbias must be one of 'no_correction', 'BetaCorrect', 'BetaUniform'.")
 }
 
-if(opt$correctseqbias != "no_correction"){
-    if(!is.null(opt$negbetas) && !file.exists(opt$negbetas))
-        cli::cli_abort("Couldn't find file specified by --negbetas {opt$negbetas}")
-    if(!is.null(opt$posbetas) && !file.exists(opt$posbetas))
-        cli::cli_abort("Couldn't find file specified by --posbetas {opt$posbetas}")
+if(opt$correctseqbias == "BetaCorrect"){
+    if(is.null(opt$betaparams))
+        cli::cli_abort("--correctseqbias BetaCorrect requires --betaparams.")
+    if(!file.exists(opt$betaparams))
+        cli::cli_abort("Couldn't find file specified by --betaparams {opt$betaparams}")
     if(!is.null(opt$refseq) && !file.exists(opt$refseq))
         cli::cli_abort("Couldn't find file specified by --refseq {opt$refseq}")
-    if(!is.null(opt$kmerblacklist) && !file.exists(opt$kmerblacklist))
-        cli::cli_abort("Couldn't find file specified by --kmerblacklist {opt$kmerblacklist}")
+    if(opt$kmer <= 0)
+        cli::cli_abort("Incorrect parameter --kmer: {opt$kmer}")
+}
+
+if(opt$correctseqbias == "BetaUniform"){
+    if(is.null(opt$betaunifparams))
+        cli::cli_abort("--correctseqbias BetaUniform requires --betaunifparams.")
+    if(!file.exists(opt$betaunifparams))
+        cli::cli_abort("Couldn't find file specified by --betaunifparams {opt$betaunifparams}")
+    if(!is.null(opt$refseq) && !file.exists(opt$refseq))
+        cli::cli_abort("Couldn't find file specified by --refseq {opt$refseq}")
     if(opt$kmer <= 0)
         cli::cli_abort("Incorrect parameter --kmer: {opt$kmer}")
 }
@@ -349,7 +363,7 @@ if(!is.null(opt$ftpmodelyaml)){
     ftplen_range <- range(fsa_data$ftp_spectrum$ftp_length)
     ftp_len_mat[which(ftp_len_mat[,1] < ftplen_range[1]),1] <- ftplen_range[1]
     ftp_len_mat[which(ftp_len_mat[,2] > ftplen_range[2]),2] <- ftplen_range[2]
-    ftp_models <- footBayes::get_ftp_PWMs_for_prediction(ftp_spectrum = as.data.frame(fsa_data$ftp_spectrum),
+    ftp_models <- nomeR::get_ftp_PWMs_for_prediction(ftp_spectrum = as.data.frame(fsa_data$ftp_spectrum),
                                               ftp_len_mat = ftp_len_mat,
                                               bg_cover = fsa_data$bgcoverprior,
                                               ftp_protect_prob = fsa_data$ftpprotectprob)
@@ -507,30 +521,43 @@ format_index <- function(i, max_i) {
 
 
 ### load data for correction of sequence bias ###
+control_params <- NULL
 if(opt$correctseqbias == "BetaCorrect"){
-    if(!is.null(opt$negbetas) && !is.null(opt$posbetas)){
-        negcontrol_shapes <- data.table(read.table(opt$negbetas,
-                                                   header = F,
-                                                   col.names = c("seqcont",
-                                                                 "n_dat",
-                                                                 "shape1",
-                                                                 "shape2")))
-        poscontrol_shapes <- data.table(read.table(opt$posbetas,
-                                                   header = F,
-                                                   col.names = c("seqcont",
-                                                                 "n_dat",
-                                                                 "shape1",
-                                                                 "shape2")))
-    } else{
-        cli::cli_abort("For sequence bias correction both --negbetas and --posbetas files must be provided. Please provide both files or set --correctseqbias to 'no_correction'.")
+    control_params <- data.table::data.table(read.table(opt$betaparams, header = TRUE))
+
+    ## check whether the control parameters are valid
+    if(nrow(control_params) == 0){
+        stop("No control parameters found for sequence bias correction.")
     }
+    ## check whether the control parameters contain all required columns
+    req_cols <- c("alpha_pos", "beta_pos", "alpha_neg", "beta_neg")
+    missing  <- setdiff(req_cols, names(control_params))
+    if (length(missing))
+        cli::cli_abort("File {.file {opt$betaparams}} is missing columns for method 'BetaCorrect': {paste(missing, collapse=', ')}")
+    ## check if sequence contexts in control parameters are consistent with the k-mer width and reference sequence (if provided)
+    seqconts <- grep("OTHER", control_params[["seqcont"]], invert = TRUE, value = TRUE)
+    if(any(nchar(seqconts) != opt$kmer)){
+        cli::cli_abort("Sequence contexts in {.file {opt$betaparams}} don't match the specified k-mer width of {opt$kmer}. Please check the input file and parameters.")
+    }
+} else if(opt$correctseqbias == "BetaUniform"){
+    control_params <- data.table::data.table(read.table(opt$betaunifparams, header = TRUE))
+    ## check whether the control parameters contain all required columns
+    req_cols <- c("alpha_pos", "beta_pos", "eps_pos", "alpha_neg", "beta_neg", "eps_neg")
+    missing  <- setdiff(req_cols, names(control_params))
+    if (length(missing))
+        cli::cli_abort("File {.file {opt$betaunifparams}} is missing columns for method 'BetaUniform': {paste(missing, collapse=', ')}")
+    ## check if sequence contexts in control parameters are consistent with the k-mer width and reference sequence (if provided)
+    seqconts <- grep("OTHER", control_params[["seqcont"]], invert = TRUE, value = TRUE)
+    if(any(nchar(seqconts) != opt$kmer)){
+        cli::cli_abort("Sequence contexts in {.file {opt$betaunifparams}} don't match the specified k-mer width of {opt$kmer}. Please check the input file and parameters.")
+    }
+
+
 } else{
     if(!opt$filterkmerblacklist){
         opt$kmer <- 0L
         opt$refseq <- NULL
     }
-    negcontrol_shapes <- NULL
-    poscontrol_shapes <- NULL
 }
 ## filter k-mers if a blacklist is provided
 if(!is.null(opt$kmerblacklist)){
@@ -547,7 +574,7 @@ n_chunks <- length(sel_regions)
 
 ## by default assayName is mod_prob. but if sequence bias correction was done it should be changed to mod_prob_corrected
 assayName <- "mod_prob"
-if(opt$correctseqbias != "no_correction" && !is.null(negcontrol_shapes) && !is.null(poscontrol_shapes))
+if(opt$correctseqbias != "no_correction" && !is.null(control_params))
     assayName <- "mod_prob_corrected"
 if(!is.null(kmer_blacklist))
     kmer_blacklist <- Biostrings::DNAStringSet(kmer_blacklist[["kmer"]])
@@ -588,23 +615,22 @@ pred_out <- mcprogress::pmclapply(
         rownames(se) <- seq_along(se)
 
         # ----- 2.1 (optional) correction of sequence bias ------
-        if(opt$correctseqbias == "BetaCorrect"){
-            if(!is.null(negcontrol_shapes) && !is.null(poscontrol_shapes)){
-                cli::cli_inform("Bayesian beta correction of sequence biases")
-                se <- footBayes::correct_modprob_SE(se,
-                                         neg_control_shapes = negcontrol_shapes,
-                                         pos_control_shapes = poscontrol_shapes,
-                                         qnorm_to_raw = opt$quantnorm)
-            }
+        if(opt$correctseqbias != "no_correction" && !is.null(control_params)){
+            cli::cli_inform("Correction of sequence biases ({opt$correctseqbias})")
+            se <- nomeR::correct_modprob_SE(se,
+                                     control_params = control_params,
+                                     method         = opt$correctseqbias,
+                                     isotonic       = !opt$noisotonic,
+                                     qnorm_to_raw   = opt$quantnorm)
         }
         if(opt$filterkmerblacklist && !is.null(kmer_blacklist)){
             cli::cli_inform("Filtering blacklisted k-mer sequence contexts")
             keep_rows <- which(!(rowData(se)[,"sequenceContext"] %in% kmer_blacklist))
             se <- se[keep_rows, ]
         }
-        #cli::cli_progress_step("Running footBayes::predict_footprints_SE for {se$n_reads} fragments in the region {as.character(reg)} [{i} out of {n_chunks}]")
+        #cli::cli_progress_step("Running nomeR::predict_footprints_SE for {se$n_reads} fragments in the region {as.character(reg)} [{i} out of {n_chunks}]")
         cli::cli_inform("Running prediction on assay {assayName} for {se$n_reads} fragments in the region {as.character(reg)} [{i} out of {n_chunks}]")
-        pred_list_dt <- footBayes::predict_footprints_SE(se = se,
+        pred_list_dt <- nomeR::predict_footprints_SE(se = se,
                                                      assayName = assayName,
                                                      footprint_models = ftp_models$ftp_models,
                                                      bgprotectprob = ftp_models$bgprotectprob,
@@ -632,11 +658,11 @@ pred_out <- mcprogress::pmclapply(
             linkers_temp_bed <- file.path(chunk_dir,"linkers_ftps.bed")
 
             ## write nucleosome ftp BED12
-            footBayes::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "Nucl"],
+            nomeR::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "Nucl"],
                                           file = nucl_temp_bed,
                                           append=FALSE)
             ## write TF ftp BED12
-            footBayes::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "TF"],
+            nomeR::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "TF"],
                                           file = tf_temp_bed,
                                           append=FALSE)
             ## reduce background footprints to get linkers
@@ -652,7 +678,7 @@ pred_out <- mcprogress::pmclapply(
             linkers$fragID <- names(linkers)
             linkers <- data.table::as.data.table(linkers)
             ## write linkers BED12
-            footBayes::write_ftp_decoding_bed(ftp_decode_dt = linkers,
+            nomeR::write_ftp_decoding_bed(ftp_decode_dt = linkers,
                                           file = linkers_temp_bed,
                                           append=FALSE)
         }
@@ -674,7 +700,7 @@ pred_out <- mcprogress::pmclapply(
             tf_score_Zstat_temp_wig <- file.path(chunk_dir,"tf_score_mean_Zstat.wig")
             tf_pval_temp_wig <- file.path(chunk_dir,"tf_pval.wig")
             tf_fdr_temp_wig <- file.path(chunk_dir,"tf_fdr.wig")            
-            enr_dt <- footBayes::calculate_tile_BG_TF_enrichments(cover_dt = pred_list_dt$COVER_PROB,
+            enr_dt <- nomeR::calculate_tile_BG_TF_enrichments(cover_dt = pred_list_dt$COVER_PROB,
                                                         tile_width = tile_width,
                                                         tile_step = tile_step,
                                                         threads = threads_predict

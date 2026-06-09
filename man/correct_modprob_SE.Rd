@@ -6,13 +6,14 @@
 \usage{
 correct_modprob_SE(
   se,
+  control_params,
+  method = c("BetaCorrect", "BetaUniform"),
   assayName = "mod_prob",
   corrected_assayName = "mod_prob_corrected",
-  neg_control_shapes,
-  pos_control_shapes,
   mod_prior = 0.5,
   eps = .Machine$double.eps,
-  qnorm_to_raw = FALSE
+  isotonic = TRUE,
+  qnorm_to_raw = TRUE
 )
 }
 \arguments{
@@ -20,29 +21,38 @@ correct_modprob_SE(
 containing read-level data, such as that returned by
 \code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.}
 
+\item{control_params}{A \code{data.table} returned by either
+\code{\link{get_SeqContext_control_beta_shapes_SE}} (for
+\code{method = "BetaCorrect"}) or
+\code{\link{fit_SeqContext_BetaUnif_params_SE}} (for
+\code{method = "BetaUniform"}).}
+
+\item{method}{Character scalar. Correction method: \code{"BetaCorrect"} or
+\code{"BetaUniform"}.}
+
 \item{assayName}{Character scalar specifying the name of the assay in
-\code{se} that contains read-level modification probabilities.}
+\code{se} that contains read-level modification probabilities in
+\code{[0, 1]}, where high values indicate accessible (methylated) positions.}
 
 \item{corrected_assayName}{Character scalar. Name of the additional assay
-added to the returned \code{se} that will contain the corrected
-read-level modification probabilities.}
+added to the returned \code{se}.}
 
-\item{neg_control_shapes}{A \code{data.table} containing Beta distribution
-shape parameters for the negative control experiment (no MTase treatment),
-as returned by \code{\link{get_SeqContext_control_beta_shapes_SE}}.}
+\item{mod_prior}{Numeric in (0, 1). Prior probability of a modified
+(accessible) base. Used as \code{pi_pos} in the Bayesian posterior.
+Default: \code{0.5}.}
 
-\item{pos_control_shapes}{A \code{data.table} containing Beta distribution
-shape parameters for the positive control experiment (MTase treatment of
-naked DNA), as returned by \code{\link{get_SeqContext_control_beta_shapes_SE}}.}
+\item{eps}{Numeric. Clamping tolerance for boundary probabilities (only used
+by \code{method = "BetaCorrect"}). Default: \code{.Machine$double.eps}.}
 
-\item{mod_prior}{Numeric. Prior probability of a modified base.}
+\item{isotonic}{Logical. If \code{TRUE} (default), apply pool-adjacent-
+violators (PAV) isotonic regression per sequence context after computing
+the Bayesian posterior, enforcing monotonicity between raw and corrected
+probabilities. Set to \code{FALSE} to return the raw posterior without
+isotonic smoothing. Only applicable when \code{method = "BetaUniform"}.}
 
-\item{eps}{Numeric. Small value used to clamp modification probabilities away
-from the exact boundaries 0 and 1 before evaluating the Beta log-densities.
-Defaults to \code{.Machine$double.eps}.}
-
-\item{qnorm_to_raw}{Logical. If \code{TRUE}, perform quantile normalisation of
-the corrected probabilities to match the distribution of the raw probabilities.}
+\item{qnorm_to_raw}{Logical. If \code{TRUE}, apply quantile normalisation so
+the corrected probabilities match the marginal distribution of the raw
+probabilities. Default: \code{TRUE}.}
 }
 \value{
 The input \code{se} with an additional assay (named by
@@ -50,7 +60,18 @@ The input \code{se} with an additional assay (named by
 probabilities.
 }
 \description{
-Applies a per-position Bayesian correction to raw modification probabilities
-using Beta distributions fitted to negative-control (unmodified) and
-positive-control (fully modified) samples, stratified by sequence context.
+Applies per-position Bayesian correction to raw modification probabilities
+using fitted control models stratified by sequence context.
+
+Two methods are supported:
+\describe{
+\item{\code{"BetaCorrect"}}{Bayesian posterior using Beta distributions fitted
+by method of moments to positive and negative controls. Parameters are
+obtained from \code{\link{get_SeqContext_control_beta_shapes_SE}}.}
+\item{\code{"BetaUniform"}}{Bayesian posterior using Beta-Uniform mixture
+models fitted by constrained EM+Newton-Raphson. Includes built-in
+pool-adjacent-violators isotonic regression to enforce monotonicity
+between raw and corrected probabilities. Parameters are obtained from
+\code{\link{fit_SeqContext_BetaUnif_params_SE}}.}
+}
 }

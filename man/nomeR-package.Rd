@@ -6,28 +6,30 @@
 \alias{nomeR-package}
 \title{The 'nomeR' package.}
 \description{
-Regulation of gene expression by DNA binding proteins, such as sequence
-specific transcription factor (TF), is a key step which drives a plethora of
-biological processes.
-During the past decade, remarkable achievements have been made in
-understanding how TFs regulate their targets  using ChIP-seq and ATAC-seq
-assays.
-However, these assays provide only averaged information of larger cell
-populations. Hence, such assays are unable to detect states of binding at
-single-DNA-molecule resolution.
-In contrast, emerging single-molecule footprinting (SMF) technologies, such
-as the Nucleosome Occupancy and Methylome Sequencing (NOMe-seq) assay,
-provide information about states of binding sites at single-DNA-molecule
-resolution and allow better molecular characterization of inherently
-stochastic processes of protein-DNA interactions.
+Regulation of gene expression by DNA-binding proteins, such as
+sequence-specific transcription factors (TFs), is a key process driving
+many biological phenotypes. While bulk assays such as ChIP-seq and ATAC-seq
+have advanced our understanding of TF binding, they only provide
+population-averaged information and cannot resolve stochastic variation
+at single-DNA-molecule resolution.
 
-Despite the many advantages that single molecule footprinting technologies
-bring for studying mechanisms of gene regulation, rigorous statistical
-models for the analysis of datasets generated using these technologies are
-still missing.
-Here, we present, to our knowledge, the first statistical model for
-inference and predictions of footprints for unbiased quantitative analysis
-and interpretation of SMF datasets.
+Single-molecule footprinting (SMF) technologies — including NOMe-seq,
+SAMOSA, Fiber-seq, DAF-seq, FOODIE, and others — overcome this limitation
+by recording the methylation state of individual DNA molecules, enabling
+inference of protein-DNA interactions at single-molecule resolution.
+
+nomeR provides a Bayesian statistical framework for the analysis of
+SMF data from any such technology. The package implements:
+\itemize{
+\item Footprint Spectral Analysis (FSA): Bayesian inference of the
+footprint length spectrum and emission probabilities from a sample
+of single molecules.
+\item Genome-wide footprint prediction: per-molecule footprint
+configuration decoding and per-tile enrichment scoring using
+Hidden Markov Models with posterior or Viterbi decoding.
+}
+Both components accept continuous modification probabilities directly,
+without requiring binarization of the input data.
 }
 \references{
 Stan Development Team (NA). RStan: the R interface to Stan. R package

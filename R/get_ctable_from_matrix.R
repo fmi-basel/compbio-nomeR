@@ -24,11 +24,18 @@
 #' \code{N01}, \code{N10}, and \code{N11} at each spacing from 1 up to
 #' \code{max_spacing}.
 #'
+#' @importFrom cli cli_warn
 #' @export
 get_ctable_from_matrix <- function(data,
                                    max_spacing = 200L,
                                    ncpu = 1L,
                                    verbose = FALSE) {
+
+    cli::cli_warn(c(
+        "!" = "{.fn get_ctable_from_matrix} is a legacy interface and will be deprecated in a future release.",
+        "i" = "Input {.arg data} is expected to contain accessibility values: {.val 1} = accessible, {.val 0} = protected.",
+        "i" = "Use {.fn get_ctable_from_SE} for the current interface."
+    ))
 
     ### validate data
     data <- validate_prepare_listOrMat(data)

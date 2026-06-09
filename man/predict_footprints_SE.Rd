@@ -8,8 +8,6 @@ SummarizedExperiment containing single-molecule footprinting (SMF) data}
 predict_footprints_SE(
   se,
   assayName = "mod_prob",
-  threshMod = 0.5,
-  threshUnmod = threshMod,
   min_frag_data_len = 50L,
   min_frag_data_dens = 0.05,
   footprint_models,
@@ -30,12 +28,8 @@ containing read-level data, such as that returned by
 \code{SingleMoleculeGenomicsIO::readModBam}, including modification probabilities.}
 
 \item{assayName}{Character scalar specifying the name of the assay in
-\code{se} that contains read-level modification probabilities.}
-
-\item{threshUnmod, threshMod}{Numeric thresholds used to binarize modification
-probabilities into accessible (\code{0}; probability >= \code{threshMod}),
-protected (\code{1}; probability < \code{threshUnmod}), or unknown
-(\code{NA}) states.}
+\code{se} that contains read-level modification probabilities in
+\code{[0, 1]}, where high values indicate accessible (methylated) positions.}
 
 \item{min_frag_data_len}{Ignore fragments whose genomic span (from the
 leftmost to rightmost non-\code{NA} data point) is shorter than

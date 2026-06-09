@@ -2,14 +2,22 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 calcStartCoverProbs_cpp <- function(fragIDs, fragPos, modProbVec, binding_models, bgprotectprob, bgprior, ftpConfigMethod, aggrByGroup, keepStartProb, Ncpu, verbose) {
-    .Call(`_footBayes_calcStartCoverProbs_cpp`, fragIDs, fragPos, modProbVec, binding_models, bgprotectprob, bgprior, ftpConfigMethod, aggrByGroup, keepStartProb, Ncpu, verbose)
+    .Call(`_nomeR_calcStartCoverProbs_cpp`, fragIDs, fragPos, modProbVec, binding_models, bgprotectprob, bgprior, ftpConfigMethod, aggrByGroup, keepStartProb, Ncpu, verbose)
 }
 
 count_spacing_freq_cpp <- function(fragIDs, fragPos, modProbVec, maxspacing, Ncpu, verbose) {
-    .Call(`_footBayes_count_spacing_freq_cpp`, fragIDs, fragPos, modProbVec, maxspacing, Ncpu, verbose)
+    .Call(`_nomeR_count_spacing_freq_cpp`, fragIDs, fragPos, modProbVec, maxspacing, Ncpu, verbose)
 }
 
 calculate_theor_joint_prob_cpp <- function(ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing) {
-    .Call(`_footBayes_calculate_theor_joint_prob_cpp`, ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing)
+    .Call(`_nomeR_calculate_theor_joint_prob_cpp`, ftp_cover_priors, bg_protect_prob, footprint_protect_prob, max_spacing)
+}
+
+.fit_one_context_cpp <- function(pos_data, neg_data, eps_max_pos = 0.15, eps_max_neg = 0.25, max_iter = 100L, tol = 1e-7) {
+    .Call(`_nomeR_fit_one_context_cpp`, pos_data, neg_data, eps_max_pos, eps_max_neg, max_iter, tol)
+}
+
+.correct_posterior_cpp <- function(raw_p, param_idx, alpha_pos, beta_pos, eps_pos, alpha_neg, beta_neg, eps_neg, pi_pos = 0.5, isotonic = TRUE) {
+    .Call(`_nomeR_correct_posterior_cpp`, raw_p, param_idx, alpha_pos, beta_pos, eps_pos, alpha_neg, beta_neg, eps_neg, pi_pos, isotonic)
 }
 

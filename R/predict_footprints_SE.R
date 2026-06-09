@@ -28,9 +28,9 @@
 #'     \item the original \code{mod_prob} assay,
 #'     \item additional assays with calculated posterior coverage
 #'       probabilities (and start probabilities if \code{keepStartProb = TRUE})
-#'       (e.g. "Nucl_coverProb_footBayes"), and
+#'       (e.g. "Nucl_coverProb_nomeR"), and
 #'     \item predicted footprint configurations stored as \code{IntegerList}
-#'     objects in \code{colData} (e.g. column "Nucl_footBayes").
+#'     objects in \code{colData} (e.g. column "Nucl_nomeR").
 #'   }
 #'
 #'   If \code{returnAs="data.table"} - a list containing data.tables for:
@@ -94,7 +94,7 @@ predict_footprints_SE <- function(se,
 
     ftpConfigMethod <- match.arg(ftpConfigMethod)
     returnAs <- match.arg(returnAs)
-    ### validate se object and prepare data for footBayes prediction
+    ### validate se object and prepare data for nomeR prediction
     dataList <- validate_prepare_SE(se,
                                     assayName,
                                     min_frag_data_len,
@@ -317,12 +317,12 @@ predict_footprints_SE <- function(se,
             ftpnames <- setdiff(colnames(predict_res[["COVER_PROB"]]),
                                 c(fcols, "mod_prob", "gpos_idx"))
 
-            footBayes_assayNames <- c("mod_prob", paste(rep(ftpnames, 2),
+            nomeR_assayNames <- c("mod_prob", paste(rep(ftpnames, 2),
                                                     rep(c("coverProb", "startProb"),
                                                         each = length(ftpnames)),
-                                                    "footBayes",
+                                                    "nomeR",
                                                     sep = "_"))
-            assayAnno <- data.frame(assayName = footBayes_assayNames,
+            assayAnno <- data.frame(assayName = nomeR_assayNames,
                                     ftpName = c("mod_prob", rep(ftpnames, 2)),
                                     probName = c("COVER_PROB",
                                                  rep(c("COVER_PROB", "START_PROB"),
@@ -333,7 +333,7 @@ predict_footprints_SE <- function(se,
             ## background_startProb and background_coverProb are identical.
             ## keep only coverProb
             assayAnno <- assayAnno[assayAnno$assayName !=
-                                       "background_startProb_footBayes", , drop = FALSE]
+                                       "background_startProb_nomeR", , drop = FALSE]
 
             ## create list of assays
             assayList <- lapply(
@@ -412,8 +412,8 @@ predict_footprints_SE <- function(se,
                         return(irL)
                     }, simplify = FALSE, USE.NAMES = TRUE)
 
-                ## remove "--" for colnames and add footBayes suffix
-                ftp_colnm <- paste0(gsub("-", "_", ftp), "_footBayes")
+                ## remove "--" for colnames and add nomeR suffix
+                ftp_colnm <- paste0(gsub("-", "_", ftp), "_nomeR")
                 coldat[[ftp_colnm]] <- lIRl
             }
 
@@ -424,7 +424,7 @@ predict_footprints_SE <- function(se,
             ## add readLevelData assayNames
             mtdat$readLevelData$assayNames <- assayNames(seOut)
             mtdat$readLevelData$colDataColumns <- c(mtdat$readLevelData$colDataColumns,
-                                                    paste0(ftpConf_ftpnames, "_footBayes"))
+                                                    paste0(ftpConf_ftpnames, "_nomeR"))
 
             metadata(seOut) <- mtdat
             seOut

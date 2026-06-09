@@ -1,5 +1,5 @@
 #' Checks SummarizedExperiment and prepares data structure for the
-#' footBayes C++ prediction functions
+#' nomeR C++ prediction functions
 #'
 #' @param data \code{matrix} or \code{list} with SMF data
 #' @param assayName Character scalar describing the name of the assay in

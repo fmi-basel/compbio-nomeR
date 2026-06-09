@@ -34,7 +34,7 @@ get_ftp_models_for_prediction <- function(infer_summary) {
     if (is.null(infer_summary[["ESTIMATES"]]) ||
         is.null(infer_summary[["FTP_SUGGEST"]])) {
         stop("Incorrect input. infer_summary must be a list containing ",
-             "ESTIMATES and FTP_SUGGEST. See ?footBayes::get_ftp_inference_summary")
+             "ESTIMATES and FTP_SUGGEST. See ?nomeR::get_ftp_inference_summary")
     }
 
     if (is.null(row.names(infer_summary[["FTP_SUGGEST"]]))) {

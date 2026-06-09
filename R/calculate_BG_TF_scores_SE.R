@@ -22,9 +22,9 @@
 #' @export
 #'
 calculate_BG_TF_scores_SE <- function(se,
-                                      bgAssayNames = c("background_coverProb_footBayes"),
-                                      tfAssayNames = c("TF_coverProb_footBayes"),
-                                      nuclAssayNames = c("Nucl_coverProb_footBayes"),
+                                      bgAssayNames = c("background_coverProb_nomeR"),
+                                      tfAssayNames = c("TF_coverProb_nomeR"),
+                                      nuclAssayNames = c("Nucl_coverProb_nomeR"),
                                       mod_probAssayName = "mod_prob",
                                       psc = 0.1) {
 
@@ -75,10 +75,10 @@ calculate_BG_TF_scores_SE <- function(se,
         assayList <- list(assay(se, mod_probAssayName),
                           bg_scores_DF,
                           tf_scores_DF)
-        names(assayList) <- c(mod_probAssayName, "BG_score_footBayes", "TF_score_footBayes")
+        names(assayList) <- c(mod_probAssayName, "BG_score_nomeR", "TF_score_nomeR")
     } else{
-        assayList <- list("BG_score_footBayes" = bg_scores_DF,
-                          "TF_score_footBayes" = tf_scores_DF)
+        assayList <- list("BG_score_nomeR" = bg_scores_DF,
+                          "TF_score_nomeR" = tf_scores_DF)
     }
 
     seOut <- SummarizedExperiment(

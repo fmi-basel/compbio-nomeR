@@ -1,124 +1,116 @@
 
-
-#' Get Beta distribution shape parameters using method of moments
+#' Fit Beta distribution shapes per sequence context using method of moments
 #'
 #' @param x Numeric vector of modification probabilities.
-#'
-#' @returns A \code{list} with elements \code{n_dat} (number of values used),
-#'   \code{shape1}, and \code{shape2} (Beta distribution shape parameters).
+#' @returns A list with `n_dat`, `alpha`, `beta`.
 #' @noRd
 #' @keywords internal
 #' @importFrom stats var
 .fit_beta_mom <- function(x) {
     m  <- mean(x)
     v  <- var(x)
-
     common <- m * (1 - m) / v - 1
-    shape1 <- m * common
-    shape2 <- (1 - m) * common
-
-    list(n_dat = length(x), shape1 = shape1, shape2 = shape2)
+    list(n_dat = length(x), alpha = m * common, beta = (1 - m) * common)
 }
 
 
-#' Fit Beta distribution shapes per sequence context for a control sample
+#' Assign joint fit-context labels to SE rows
 #'
-#' @param se A \code{SummarizedExperiment} object.
-#' @param assayName Character scalar. Name of the assay containing modification
-#'   probabilities.
-#' @param control_samplename Character scalar. Name of the control sample.
-#' @param min_n_data Integer. Minimum number of data points required per
-#'   sequence context.
+#' Returns the fit-context label for every row in `se`: contexts with at least
+#' `min_obs` finite observations in **both** controls keep their own name;
+#' all others are mapped to `"OTHER"`.
 #'
-#' @returns A \code{data.table} containing Beta distribution shape parameters
-#'   for each sequence context.
+#' @return A character vector of length `nrow(se)`.
 #' @noRd
 #' @keywords internal
-#' @importFrom SummarizedExperiment SummarizedExperiment assay rowData colData
-#'     colData<-
-#' @importFrom SparseArray NaArray nnawhich
-#' @importFrom GenomicRanges GPos match seqnames start end strand
-#' @importFrom Seqinfo seqinfo
-#' @importFrom IRanges subsetByOverlaps IRanges IRangesList
-#' @importFrom S4Vectors DataFrame SimpleList metadata metadata<-
-#'     make_zero_col_DFrame
-#' @importFrom rlang .data
-#' @import data.table
-.get_beta_shapes <- function(se,assayName,control_samplename,min_n_data = 100){
-
-    cnt_data <- assay(se, assayName)[,control_samplename]
-
-    seqcont <- rowData(se)[,"sequenceContext"]
-
-    ## get shapes for control
-    ### get M-indices of non-NAs
-    cnt_nonNA_data <- nnawhich(cnt_data, arr.ind = TRUE)
-    ## count number of data points per sequence context add add any sequence contexts with less than min_n_data
-    ## data points to groups other
-    cnt_seq_ndat <- data.frame(table("sequenceContext" = as.character(seqcont[cnt_nonNA_data[,1]]))) %>%
-        mutate(new_seq_cont = ifelse(.data$Freq > min_n_data,as.character(.data$sequenceContext),"other"))
-
-    ## add columns with indices for redefined sequence contexts
-    cnt_nonNA_data <- cbind(cnt_nonNA_data,
-                               match(as.character(seqcont[cnt_nonNA_data[,1]]),cnt_seq_ndat$sequenceContext))
-    seqmodprobs <- split(cnt_data[as.matrix(cnt_nonNA_data[,1:2])], ## mod_probs
-                         cnt_seq_ndat$new_seq_cont[cnt_nonNA_data[,3]]  ## sequence context
-    )
-    shapes <- rbindlist(lapply(names(seqmodprobs),
-                                  function(scnt){
-                                      sh <- .fit_beta_mom(seqmodprobs[[scnt]])
-                                      data.table(seqcont = scnt,
-                                                 n_dat = sh$n_dat,
-                                                 shape1 = sh$shape1,
-                                                 shape2 = sh$shape2)
-                                  }))
-    return(shapes)
-
+.joint_fit_ctx <- function(seqcont, neg_ctx, pos_ctx, min_obs) {
+    all_ctx <- union(unique(neg_ctx), unique(pos_ctx))
+    neg_n   <- tabulate(match(neg_ctx, all_ctx), nbins = length(all_ctx))
+    pos_n   <- tabulate(match(pos_ctx, all_ctx), nbins = length(all_ctx))
+    names(neg_n) <- names(pos_n) <- all_ctx
+    keep_ctx <- all_ctx[neg_n >= min_obs & pos_n >= min_obs]
+    ifelse(seqcont %in% keep_ctx, seqcont, "OTHER")
 }
 
 
 #' Fit Beta distribution shapes for positive and negative controls
 #'
+#' Fits Beta distribution shape parameters (via method of moments) for each
+#' sequence context using modification probabilities from a positive and a
+#' negative control sample stored in a \code{SummarizedExperiment}.
+#'
+#' Sequence contexts with fewer than \code{min_obs} finite observations in
+#' **either** control are pooled into a single `"OTHER"` category before
+#' fitting, so that all downstream correction has a fallback.
+#'
 #' @param neg_control_sampleName Character scalar. Sample name for the negative
-#'   control (i.e., an SMF experiment without MTase treatment).
+#'   control (SMF experiment without MTase treatment).
 #' @param pos_control_sampleName Character scalar. Sample name for the positive
-#'   control (i.e., an SMF experiment with MTase treatment on naked DNA).
-#' @param min_n_data Integer. Minimum number of data points required per
-#'   sequence context. Contexts with fewer observations are merged into the
-#'   \code{"other"} category.
+#'   control (SMF experiment with MTase treatment on naked DNA).
+#' @param min_obs Integer. Minimum number of finite observations required in
+#'   **both** controls for a context to receive its own fitted parameters.
+#'   Contexts below this threshold in either control are collapsed into
+#'   `"OTHER"`. Default: \code{100}.
 #' @inheritParams predict_footprints_SE
 #'
-#' @returns A \code{list} of two \code{data.table}s containing Beta distribution
-#'   shape parameters for the positive and negative controls:
-#'   \code{positiveControlShapes} and \code{negativeControlShapes}.
+#' @returns A \code{data.table} with one row per fitted sequence context and
+#'   columns:
+#'   \describe{
+#'     \item{seqcont}{Context label (`"OTHER"` for pooled sparse contexts).}
+#'     \item{n_pos, n_neg}{Number of observations used for fitting.}
+#'     \item{alpha_pos, beta_pos}{Beta shape parameters for the positive control.}
+#'     \item{alpha_neg, beta_neg}{Beta shape parameters for the negative control.}
+#'   }
 #' @export
-#' @importFrom SummarizedExperiment SummarizedExperiment rowData colData
-#'     assay assayNames
-#' @importFrom SparseArray NaArray nnawhich
-#' @importFrom GenomicRanges GPos match seqnames start end
-#' @importFrom IRanges subsetByOverlaps
-#' @importFrom S4Vectors DataFrame SimpleList metadata
+#' @importFrom SummarizedExperiment assay rowData
+#' @importFrom SparseArray nnawhich
 #' @import data.table
 get_SeqContext_control_beta_shapes_SE <- function(se,
-                                       neg_control_sampleName,
-                                       pos_control_sampleName,
-                                       assayName = "mod_prob",
-                                       min_n_data = 100){
+                                                   neg_control_sampleName,
+                                                   pos_control_sampleName,
+                                                   assayName  = "mod_prob",
+                                                   min_obs    = 100L) {
 
-    ## check if sequence context is present
     stopifnot("sequenceContext" %in% colnames(rowData(se)))
-    stopifnot(all(c(neg_control_sampleName,pos_control_sampleName) %in% colnames(se)))
+    stopifnot(all(c(neg_control_sampleName, pos_control_sampleName) %in% colnames(se)))
+    min_obs <- as.integer(min_obs)
 
-    ## get shapes for positive control
-    negcnt_shapes <- .get_beta_shapes(se = se,
-                                      assayName = assayName,
-                                      control_samplename = neg_control_sampleName,
-                                      min_n_data = min_n_data)
-    poscnt_shapes <- .get_beta_shapes(se = se,
-                                      assayName = assayName,
-                                      control_samplename = pos_control_sampleName,
-                                      min_n_data = min_n_data)
+    seqcont <- as.character(rowData(se)[, "sequenceContext"])
 
-    list("positiveControlShapes" = poscnt_shapes,
-         "negativeControlShapes" = negcnt_shapes)
+    neg_data <- assay(se, assayName)[, neg_control_sampleName]
+    pos_data <- assay(se, assayName)[, pos_control_sampleName]
+
+    neg_nonna_idx <- nnawhich(neg_data, arr.ind = TRUE)
+    pos_nonna_idx <- nnawhich(pos_data, arr.ind = TRUE)
+
+    neg_ctx <- seqcont[neg_nonna_idx[, 1]]
+    pos_ctx <- seqcont[pos_nonna_idx[, 1]]
+
+    row_fit_ctx  <- .joint_fit_ctx(seqcont, neg_ctx, pos_ctx, min_obs)
+    neg_fit_ctx  <- row_fit_ctx[neg_nonna_idx[, 1]]
+    pos_fit_ctx  <- row_fit_ctx[pos_nonna_idx[, 1]]
+
+    neg_vals <- neg_data[neg_nonna_idx]
+    pos_vals <- pos_data[pos_nonna_idx]
+
+    neg_split <- split(neg_vals, neg_fit_ctx)
+    pos_split <- split(pos_vals, pos_fit_ctx)
+
+    fit_ctxs <- union(names(neg_split), names(pos_split))
+
+    rbindlist(lapply(fit_ctxs, function(ctx) {
+        nv <- neg_split[[ctx]]
+        pv <- pos_split[[ctx]]
+        neg_sh <- if (length(nv) >= 2L) .fit_beta_mom(nv) else list(n_dat=0L, alpha=1, beta=1)
+        pos_sh <- if (length(pv) >= 2L) .fit_beta_mom(pv) else list(n_dat=0L, alpha=1, beta=1)
+        data.table(
+            seqcont   = ctx,
+            n_pos     = as.integer(pos_sh$n_dat),
+            alpha_pos = pos_sh$alpha,
+            beta_pos  = pos_sh$beta,
+            n_neg     = as.integer(neg_sh$n_dat),
+            alpha_neg = neg_sh$alpha,
+            beta_neg  = neg_sh$beta
+        )
+    }))
 }

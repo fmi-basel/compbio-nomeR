@@ -1,4 +1,4 @@
-#' The 'footBayes' package.
+#' The 'nomeR' package.
 #'
 #' @description
 #'
@@ -14,7 +14,7 @@
 #' by recording the methylation state of individual DNA molecules, enabling
 #' inference of protein-DNA interactions at single-molecule resolution.
 #'
-#' footBayes provides a Bayesian statistical framework for the analysis of
+#' nomeR provides a Bayesian statistical framework for the analysis of
 #' SMF data from any such technology. The package implements:
 #' \itemize{
 #'   \item Footprint Spectral Analysis (FSA): Bayesian inference of the
@@ -27,7 +27,7 @@
 #' Both components accept continuous modification probabilities directly,
 #' without requiring binarization of the input data.
 #'
-#' @useDynLib footBayes, .registration = TRUE
+#' @useDynLib nomeR, .registration = TRUE
 #' @import methods
 #' @import Rcpp
 #' @importFrom rstantools rstan_config

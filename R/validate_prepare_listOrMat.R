@@ -1,6 +1,10 @@
-#' Checks and prepares data structure for the footBayes C++ prediction functions
+#' Checks and prepares data structure for the nomeR C++ prediction functions
 #'
-#' @param data \code{matrix} or \code{list} with SMF modification probability data
+#' @param data \code{matrix} or \code{list} with SMF protection data. 
+#'              0 - accessible position; 1 - inaccessible position; NA - missing data.
+#'              If \code{matrix}, rows are fragments and columns are positions. 
+#'              If \code{list}, each element is a numeric vector of protection for a fragment,
+#'              and the names of the list elements are used as fragment names in the output.
 #'
 #' @return \code{list} with slots - data_list and fragnames
 #'

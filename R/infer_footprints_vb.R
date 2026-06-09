@@ -12,7 +12,7 @@
 #'   \code{N01}, \code{N10}, and \code{N11}, where \code{S} is the spacing and
 #'   the four \code{N**} columns contain observed joint counts (00, 01, 10, 11)
 #'   at that spacing. Such tables can be produced with
-#'   \code{footBayes::count_joint_frequencies()},
+#'   \code{nomeR::count_joint_frequencies()},
 #'   \code{fetchNOMe::get_cooccurrence_ctable_from_bams()} or
 #'   \code{footprintR::countStatePairs}.
 #' @param ftp_lengths Numeric vector of footprint lengths for which abundances

@@ -81,14 +81,14 @@ test_that("predict_footprints_SE PosteriorDecoding method returns valid output",
                                  ncpu              = 1)
 
     ## same assay structure as other methods
-    expect_true(all(c("Nucl_coverProb_footBayes", "TF_coverProb_footBayes",
-                      "background_coverProb_footBayes") %in% assayNames(out)))
+    expect_true(all(c("Nucl_coverProb_nomeR", "TF_coverProb_nomeR",
+                      "background_coverProb_nomeR") %in% assayNames(out)))
 
     ## footprint configs present in colData
-    expect_true(all(c("Nucl_footBayes", "TF_footBayes") %in% names(colData(out))))
+    expect_true(all(c("Nucl_nomeR", "TF_nomeR") %in% names(colData(out))))
 
     ## scores in [0,1]
-    all_scores <- unlist(lapply(colData(out)$Nucl_footBayes$s1,
+    all_scores <- unlist(lapply(colData(out)$Nucl_nomeR$s1,
                                 function(ir) S4Vectors::mcols(ir)$score))
     expect_true(all(all_scores >= 0 - .Machine$double.eps^0.5 &
                         all_scores <= 1 + .Machine$double.eps^0.5))
@@ -130,10 +130,10 @@ test_that("predict_footprints_SE keepStartProb=FALSE omits startProb assays", {
                                  keepStartProb     = FALSE,
                                  ncpu              = 1)
 
-    expect_false(any(grepl("_startProb_footBayes", assayNames(out))))
-    expect_true(all(c("Nucl_coverProb_footBayes",
-                      "TF_coverProb_footBayes",
-                      "background_coverProb_footBayes") %in% assayNames(out)))
+    expect_false(any(grepl("_startProb_nomeR", assayNames(out))))
+    expect_true(all(c("Nucl_coverProb_nomeR",
+                      "TF_coverProb_nomeR",
+                      "background_coverProb_nomeR") %in% assayNames(out)))
 })
 
 
@@ -150,11 +150,11 @@ test_that("predict_footprints_SE aggrByGroup=FALSE reports per-name assays and c
                                  ncpu              = 1)
 
     ## assay names use model NAMEs ("Nucl", "TF"), same here since NAME==GROUP
-    expect_true(all(c("Nucl_coverProb_footBayes", "TF_coverProb_footBayes") %in%
+    expect_true(all(c("Nucl_coverProb_nomeR", "TF_coverProb_nomeR") %in%
                         assayNames(out)))
 
     ## colData columns named by ftp_name
-    expect_true(all(c("Nucl_footBayes", "TF_footBayes") %in% names(colData(out))))
+    expect_true(all(c("Nucl_nomeR", "TF_nomeR") %in% names(colData(out))))
 })
 
 
@@ -168,7 +168,7 @@ test_that("predict_footprints_SE cover probabilities sum to 1 at each non-NA pos
                                  bgcoverprior      = 0.59,
                                  ncpu              = 1)
 
-    cover_assays <- grep("_coverProb_footBayes", assayNames(out), value = TRUE)
+    cover_assays <- grep("_coverProb_nomeR", assayNames(out), value = TRUE)
 
     ## for each sample column, sum the cover-prob assays at every row position
     for (sI in seq_len(ncol(out))) {

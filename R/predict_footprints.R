@@ -9,8 +9,8 @@
 #'   - If a \code{matrix}, rows correspond to reads (or fragments) and columns
 #'   correspond to positions in the region of interest (ROI).
 #'   - If a \code{list}, each element must be a vector containing SMF data.
-#'   Data must be binarized: '0' represents accessible (methylated) positions,
-#'   '1' represents protected (unmethylated) positions, and all other positions
+#'   Data must be binarized: '1' represents accessible (methylated) positions,
+#'   '0' represents protected (unmethylated) positions, and all other positions
 #'   should be \code{NA}.
 #' @param footprint_models A list of footprint models for proteins. Each element
 #'   must contain:
@@ -86,6 +86,7 @@
 #' @importFrom checkmate makeAssertCollection assert_logical assert_int
 #'     reportAssertions
 #' @importFrom parallel detectCores
+#' @importFrom cli cli_warn
 #'
 #' @references
 #' Fariselli, P., Martelli, P. L., & Casadio, R. (2005).
@@ -106,12 +107,12 @@
 #' ft.pr <- 1-bg.pr
 #' ft.len <- 15
 #'
-#' ## creating a list of binding models for footBayes
+#' ## creating a list of binding models for nomeR
 #' ftp.models <- list(list("PROTECT_PROB" = rep(0.99,ft.len),
 #'                         "COVER_PRIOR" = ft.pr,
 #'                         "NAME" = "FOOTPRINT"))
 #'
-#' footBayes.out <- predict_footprints(data=rmatr,
+#' nomeR.out <- predict_footprints(data=rmatr,
 #'                                 footprint_models = ftp.models,
 #'                                 bgprotectprob = 0.05,
 #'                                 bgcoverprior = bg.pr)
@@ -125,6 +126,12 @@ predict_footprints <- function(data,
                                keepStartProb = FALSE,
                                ncpu = 1L,
                                verbose = FALSE) {
+
+    cli::cli_warn(c(
+        "!" = "{.fn predict_footprints} is a legacy interface and will be deprecated in a future release.",
+        "i" = "Input {.arg data} is expected to contain accessibility values: {.val 1} = accessible, {.val 0} = protected.",
+        "i" = "Use {.fn predict_footprints_SE} for the current interface."
+    ))
 
     ## check arguments
     coll <- makeAssertCollection()
@@ -161,7 +168,7 @@ predict_footprints <- function(data,
     reportAssertions(coll)
 
     if (verbose) {
-        .message_timestamp("Calling run_cpp_footBayes...")
+        .message_timestamp("Calling run_cpp_nomeR...")
     }
     ## the C++ needs only fidx_glob, fragpos, mod_prob
     predict_res_list <- calcStartCoverProbs_cpp(
@@ -181,7 +188,7 @@ predict_footprints <- function(data,
               !is.null(predict_res_list[["COVER_PROB"]]),
               !is.null(predict_res_list[["FOOTPRINT_CONF"]])))) {
         if (verbose) {
-            .message_timestamp("convert cpp_footBayes output to data.frame...")
+            .message_timestamp("convert cpp_nomeR output to data.frame...")
         }
 
         if(!keepStartProb){

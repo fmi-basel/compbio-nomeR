@@ -43,7 +43,7 @@ get_ctable_from_SE <- function(se,
                                ncpu = 1L,
                                verbose = FALSE) {
 
-    ### validate se object and prepare data for footBayes prediction
+    ### validate se object and prepare data for nomeR prediction
     dataList <- validate_prepare_SE(se = se,
                                     assayName = assayName,
                                     min_frag_data_len = min_frag_data_len,

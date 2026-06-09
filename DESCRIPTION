@@ -1,11 +1,11 @@
-Package: footBayes
+Package: nomeR
 Type: Package
 Title: Bayesian Statistical Framework for Single-Molecule Footprinting Data Analysis
 Date: 2025-05-16
-Version: 0.0.1
+Version: 0.9.5
 Authors@R: person(given = "Evgeniy A.", family = "Ozonov",
                   email = "evgeniy.ozonov@fmi.ch", role = c("aut", "cre"))
-Description: footBayes implements a Bayesian probabilistic framework for the
+Description: nomeR implements a Bayesian probabilistic framework for the
     analysis of single-molecule footprinting (SMF) data from any SMF assay,
     including NOMe-seq, SAMOSA, Fiber-seq, DAF-seq, FOODIE, and other
     methyltransferase-based footprinting technologies. The package provides
@@ -17,7 +17,6 @@ Imports:
     cli,
     data.table,
     dplyr,
-    GenomeInfoDb,
     GenomicRanges,
     ggplot2,
     graphics,
@@ -56,8 +55,8 @@ Depends:
     R (>= 3.5)
 SystemRequirements: GNU make
 Config/testthat/edition: 3
-URL: https://github.com/fmi-basel/compbio-footBayes
-BugReports: https://github.com/fmi-basel/compbio-footBayes/issues
+URL: https://github.com/fmi-basel/compbio-nomeR
+BugReports: https://github.com/fmi-basel/compbio-nomeR/issues
 biocViews: Epigenetics, LongRead, Sequencing, Coverage
 Config/roxygen2/version: 8.0.0
 RoxygenNote: 7.3.3

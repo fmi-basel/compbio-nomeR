@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // calcStartCoverProbs_cpp
 Rcpp::List calcStartCoverProbs_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::NumericVector& modProbVec, const Rcpp::List& binding_models, const Rcpp::NumericVector& bgprotectprob, const Rcpp::NumericVector& bgprior, const Rcpp::CharacterVector& ftpConfigMethod, const Rcpp::LogicalVector& aggrByGroup, const Rcpp::LogicalVector& keepStartProb, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
-RcppExport SEXP _footBayes_calcStartCoverProbs_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP modProbVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP ftpConfigMethodSEXP, SEXP aggrByGroupSEXP, SEXP keepStartProbSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+RcppExport SEXP _nomeR_calcStartCoverProbs_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP modProbVecSEXP, SEXP binding_modelsSEXP, SEXP bgprotectprobSEXP, SEXP bgpriorSEXP, SEXP ftpConfigMethodSEXP, SEXP aggrByGroupSEXP, SEXP keepStartProbSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -34,7 +34,7 @@ END_RCPP
 }
 // count_spacing_freq_cpp
 Rcpp::NumericMatrix count_spacing_freq_cpp(const Rcpp::IntegerVector& fragIDs, const Rcpp::IntegerVector& fragPos, const Rcpp::NumericVector& modProbVec, const Rcpp::IntegerVector& maxspacing, const Rcpp::NumericVector& Ncpu, const Rcpp::LogicalVector& verbose);
-RcppExport SEXP _footBayes_count_spacing_freq_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP modProbVecSEXP, SEXP maxspacingSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
+RcppExport SEXP _nomeR_count_spacing_freq_cpp(SEXP fragIDsSEXP, SEXP fragPosSEXP, SEXP modProbVecSEXP, SEXP maxspacingSEXP, SEXP NcpuSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -50,7 +50,7 @@ END_RCPP
 }
 // calculate_theor_joint_prob_cpp
 Rcpp::List calculate_theor_joint_prob_cpp(const Rcpp::NumericVector& ftp_cover_priors, const Rcpp::NumericVector& bg_protect_prob, const Rcpp::NumericVector& footprint_protect_prob, const Rcpp::IntegerVector& max_spacing);
-RcppExport SEXP _footBayes_calculate_theor_joint_prob_cpp(SEXP ftp_cover_priorsSEXP, SEXP bg_protect_probSEXP, SEXP footprint_protect_probSEXP, SEXP max_spacingSEXP) {
+RcppExport SEXP _nomeR_calculate_theor_joint_prob_cpp(SEXP ftp_cover_priorsSEXP, SEXP bg_protect_probSEXP, SEXP footprint_protect_probSEXP, SEXP max_spacingSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,22 +62,58 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fit_one_context_cpp
+List fit_one_context_cpp(NumericVector pos_data, NumericVector neg_data, double eps_max_pos, double eps_max_neg, int max_iter, double tol);
+RcppExport SEXP _nomeR_fit_one_context_cpp(SEXP pos_dataSEXP, SEXP neg_dataSEXP, SEXP eps_max_posSEXP, SEXP eps_max_negSEXP, SEXP max_iterSEXP, SEXP tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type pos_data(pos_dataSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type neg_data(neg_dataSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_max_pos(eps_max_posSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_max_neg(eps_max_negSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(fit_one_context_cpp(pos_data, neg_data, eps_max_pos, eps_max_neg, max_iter, tol));
+    return rcpp_result_gen;
+END_RCPP
+}
+// correct_posterior_cpp
+NumericVector correct_posterior_cpp(const NumericVector& raw_p, const IntegerVector& param_idx, const NumericVector& alpha_pos, const NumericVector& beta_pos, const NumericVector& eps_pos, const NumericVector& alpha_neg, const NumericVector& beta_neg, const NumericVector& eps_neg, double pi_pos, bool isotonic);
+RcppExport SEXP _nomeR_correct_posterior_cpp(SEXP raw_pSEXP, SEXP param_idxSEXP, SEXP alpha_posSEXP, SEXP beta_posSEXP, SEXP eps_posSEXP, SEXP alpha_negSEXP, SEXP beta_negSEXP, SEXP eps_negSEXP, SEXP pi_posSEXP, SEXP isotonicSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type raw_p(raw_pSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type param_idx(param_idxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type alpha_pos(alpha_posSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type beta_pos(beta_posSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type eps_pos(eps_posSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type alpha_neg(alpha_negSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type beta_neg(beta_negSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type eps_neg(eps_negSEXP);
+    Rcpp::traits::input_parameter< double >::type pi_pos(pi_posSEXP);
+    Rcpp::traits::input_parameter< bool >::type isotonic(isotonicSEXP);
+    rcpp_result_gen = Rcpp::wrap(correct_posterior_cpp(raw_p, param_idx, alpha_pos, beta_pos, eps_pos, alpha_neg, beta_neg, eps_neg, pi_pos, isotonic));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_footBayes_calcStartCoverProbs_cpp", (DL_FUNC) &_footBayes_calcStartCoverProbs_cpp, 11},
-    {"_footBayes_count_spacing_freq_cpp", (DL_FUNC) &_footBayes_count_spacing_freq_cpp, 6},
-    {"_footBayes_calculate_theor_joint_prob_cpp", (DL_FUNC) &_footBayes_calculate_theor_joint_prob_cpp, 4},
+    {"_nomeR_calcStartCoverProbs_cpp", (DL_FUNC) &_nomeR_calcStartCoverProbs_cpp, 11},
+    {"_nomeR_count_spacing_freq_cpp", (DL_FUNC) &_nomeR_count_spacing_freq_cpp, 6},
+    {"_nomeR_calculate_theor_joint_prob_cpp", (DL_FUNC) &_nomeR_calculate_theor_joint_prob_cpp, 4},
+    {"_nomeR_fit_one_context_cpp", (DL_FUNC) &_nomeR_fit_one_context_cpp, 6},
+    {"_nomeR_correct_posterior_cpp", (DL_FUNC) &_nomeR_correct_posterior_cpp, 10},
     {"_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_bg_fixed_mod, 0},
     {"_rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_ftp_bg_fixed_mod, 0},
     {"_rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4ftp_inference_informative_prior_mod, 0},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_footBayes(DllInfo *dll) {
+RcppExport void R_init_nomeR(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
