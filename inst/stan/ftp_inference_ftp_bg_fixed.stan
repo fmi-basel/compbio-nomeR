@@ -38,7 +38,7 @@ functions {
 
 
 data {
-  // input count coocurrnce table
+  // input count coocurrence table
   int n_spac;
   array[n_spac] int<lower=1> spacings;
   array[n_spac,4] real<lower=0> spacing_counts;
@@ -60,10 +60,10 @@ data {
 
 
   // footprint noise hyperparameters
-  real ftp_protect_min;
-  real ftp_protect_max;
-  real ftp_protect_mean;
-  real ftp_protect_totcount;
+ // real ftp_protect_min;
+ // real ftp_protect_max;
+ // real ftp_protect_mean;
+ // real ftp_protect_totcount;
 }
 
 transformed data {
