@@ -1,8 +1,8 @@
 #' Checks and prepares data structure for the nomeR C++ prediction functions
 #'
-#' @param data \code{matrix} or \code{list} with SMF protection data. 
-#'              0 - accessible position; 1 - inaccessible position; NA - missing data.
-#'              If \code{matrix}, rows are fragments and columns are positions. 
+#' @param data \code{matrix} or \code{list} with SMF protection data.
+#'              1 - accessible position; 0 - inaccessible position; NA - missing data.
+#'              If \code{matrix}, rows are fragments and columns are positions.
 #'              If \code{list}, each element is a numeric vector of protection for a fragment,
 #'              and the names of the list elements are used as fragment names in the output.
 #'
@@ -15,7 +15,7 @@ validate_prepare_listOrMat <- function(data) {
     if (test_matrix(data, mode = "numeric",
                     any.missing = TRUE, all.missing = FALSE,
                     min.rows = 1, min.cols = 1)) {
-        
+
         ## check if any values are not in [0,1] or NA
         if (any(!is.na(data) & (data < 0 | data > 1))) {
             stop("data must contain values in [0, 1] or NA")
@@ -57,7 +57,7 @@ validate_prepare_listOrMat <- function(data) {
                  unlist(data, recursive = TRUE, use.names = FALSE) > 1))) {
             stop("data must contain values in [0, 1] or NA")
         }
-        
+
         ## check if names exist, if not set it to 1:length
         if (is.null(names(data))) {
             names(data) <- seq_len(length(data))
@@ -83,11 +83,11 @@ validate_prepare_listOrMat <- function(data) {
         nonNA_data <- cbind(nonNA_data,
                             "fragpos" = nonNA_data[, "colidx"])
         fragnames <- names(data)
-        
+
     } else {
         stop("'data' must be 'matrix' or 'list'")
     }
-    
+
     ## order 1) by global fragment index fidx_glob; 2) by positions within fragments fragpos
     nonNA_data <- nonNA_data[order(nonNA_data[, "fidx_glob"],
                                    nonNA_data[, "fragpos"]), , drop = FALSE]

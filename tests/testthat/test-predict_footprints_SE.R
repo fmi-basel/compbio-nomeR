@@ -11,7 +11,6 @@
 }
 
 test_that("predict_footprints_SE works", {
-
     ## load data
     dlist <- readRDS(test_path("testdata/test-predict_footprints_SE_data.rds"))
 

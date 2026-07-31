@@ -57,7 +57,7 @@
 #'     colData<-
 #' @importFrom SparseArray NaArray
 #' @importFrom GenomicRanges GPos match seqnames start end strand
-#' @importFrom Seqinfo seqinfo
+#' @importFrom GenomeInfoDb seqinfo
 #' @importFrom IRanges subsetByOverlaps IRanges IRangesList
 #' @importFrom S4Vectors DataFrame SimpleList metadata metadata<-
 #'     make_zero_col_DFrame
@@ -312,7 +312,7 @@ predict_footprints_SE <- function(se,
             seOutRowRanges <- GenomicRanges::GPos(seqnames = posuniq[["chr"]],
                                                   pos = posuniq[["refpos"]],
                                                   strand = posuniq[["strand"]],
-                                                  seqinfo = Seqinfo::seqinfo(se))
+                                                  seqinfo = GenomeInfoDb::seqinfo(se))
 
             ftpnames <- setdiff(colnames(predict_res[["COVER_PROB"]]),
                                 c(fcols, "mod_prob", "gpos_idx"))

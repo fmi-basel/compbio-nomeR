@@ -57,13 +57,6 @@ data {
   // emission prob for footprints
   // in this version of the model this parameter is constant
   real<lower=0,upper=1> ftp_protect_prob;
-
-
-  // footprint noise hyperparameters
- // real ftp_protect_min;
- // real ftp_protect_max;
- // real ftp_protect_mean;
- // real ftp_protect_totcount;
 }
 
 transformed data {

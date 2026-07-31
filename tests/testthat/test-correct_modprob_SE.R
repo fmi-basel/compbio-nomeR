@@ -175,7 +175,7 @@ test_that("correct_modprob_SE BetaCorrect: shifts high/low probs in correct dire
         assays  = list(mod_prob = adf),
         rowData = S4Vectors::DataFrame(sequenceContext = rep("GCA", n_pos)))
     params <- make_bc_params(50, 2, 2, 50)
-    res    <- correct_modprob_SE(se, control_params = params, method = "BetaCorrect")
+    res    <- correct_modprob_SE(se, control_params = params, method = "BetaCorrect",qnorm_to_raw = FALSE)
     corr   <- as.vector(
         SummarizedExperiment::assay(res, "mod_prob_corrected")[["s1"]][
             cbind(rep(seq_len(n_pos), n_frags),
@@ -285,7 +285,7 @@ test_that("correct_modprob_SE BetaUniform: shifts high/low probs in correct dire
         assays  = list(mod_prob = adf),
         rowData = S4Vectors::DataFrame(sequenceContext = rep("GCA", n_pos)))
     params <- make_bu_params()
-    res    <- correct_modprob_SE(se, control_params = params, method = "BetaUniform")
+    res    <- correct_modprob_SE(se, control_params = params, method = "BetaUniform", qnorm_to_raw = FALSE)
     corr   <- as.vector(
         SummarizedExperiment::assay(res, "mod_prob_corrected")[["s1"]][
             cbind(rep(seq_len(n_pos), n_frags),

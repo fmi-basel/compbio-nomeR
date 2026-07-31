@@ -2,12 +2,12 @@ test_that("ftp_spectral_analysis_SE works", {
     ## load data
     dlist <- readRDS(test_path("testdata/test-predict_footprints_SE_data.rds"))
     expect_warning(tst_fsa <- ftp_spectral_analysis_SE(dlist$test_se,
-    																									 iter = 1,
-    																									 adapt_iter = 1,
-    																									 verbose = FALSE,
-    																									 max_nruns = 1,
-    																									 max_pareto_k = Inf,
-    																									 output_samples = 1))
+                                                       iter = 1,
+                                                       adapt_iter = 1,
+                                                       verbose = FALSE,
+                                                       max_nruns = 1,
+                                                       max_pareto_k = Inf,
+                                                       output_samples = 1))
 
 
     ## test that all columns are present

@@ -1,5 +1,4 @@
-#' @importFrom checkmate test_list assert_list assert_names assert_numeric
-#'     assert_number assert_character
+#' @importFrom checkmate test_list assert_list assert_names assert_numeric assert_number assert_character
 validate_footprint_models <- function(footprint_models,
                                       bgprotectprob,
                                       bgcoverprior,

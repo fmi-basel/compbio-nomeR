@@ -115,7 +115,7 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
         ))
 
         cli::cli_h2("Script paths")
-        cli::cli_dl(base::setNames(paths, names(paths)))
+        cli::cli_dl(paths)
     }
 
     invisible(paths)

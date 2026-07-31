@@ -158,7 +158,7 @@
 #'   \item{\code{"BetaCorrect"}}{Bayesian posterior using Beta distributions fitted
 #'     by method of moments to positive and negative controls. Parameters are
 #'     obtained from \code{\link{get_SeqContext_control_beta_shapes_SE}}.}
-#'   \item{\code{"BetaUniform"}}{Bayesian posterior using Beta-Uniform mixture
+#'   \item{\code{"BetaUniform"}}{ !!!EXPERIMENTAL!!! Bayesian posterior using Beta-Uniform mixture
 #'     models fitted by constrained EM+Newton-Raphson. Includes built-in
 #'     pool-adjacent-violators isotonic regression to enforce monotonicity
 #'     between raw and corrected probabilities. Parameters are obtained from

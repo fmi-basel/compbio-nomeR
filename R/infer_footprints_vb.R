@@ -24,7 +24,7 @@
 #'   All elements must be in \code{[0, 1]}. Together with \code{bg_prior_cover},
 #'   they will be scaled to sum to 1 if necessary (with a warning).
 #' @param bg_prior_cover Numeric value in \code{[0, 1]} specifying the
-#'   expected (prior) fraction of background (unprotected) positions. Used 
+#'   expected (prior) fraction of background (unprotected) positions. Used
 #'   together with
 #'   \code{ftp_prior_cover} to parameterize the prior Dirichlet distribution.
 #' @param total_cnt_prior_dirich Numeric value giving the total count parameter
@@ -172,7 +172,6 @@ infer_footprints_vb <- function(
                                                  ftp_bg_model,
                                                  bg_model_params,
                                                  ftp_model_params)
-
     vb_success <- FALSE
     run_iter <- 1
     best_pareto_k <- Inf

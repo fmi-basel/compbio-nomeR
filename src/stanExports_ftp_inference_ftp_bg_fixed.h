@@ -27,11 +27,11 @@ namespace model_ftp_inference_ftp_bg_fixed_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 25> locations_array__ =
+static constexpr std::array<const char*, 21> locations_array__ =
   {" (found before start of program)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 62, column 2 to column 32)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 66, column 2 to column 47)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 68, column 1 to line 77, column 4)",
+  " (in 'ftp_inference_ftp_bg_fixed', line 57, column 2 to column 32)",
+  " (in 'ftp_inference_ftp_bg_fixed', line 61, column 2 to column 47)",
+  " (in 'ftp_inference_ftp_bg_fixed', line 63, column 1 to line 72, column 4)",
   " (in 'ftp_inference_ftp_bg_fixed', line 34, column 2 to column 13)",
   " (in 'ftp_inference_ftp_bg_fixed', line 35, column 8 to column 14)",
   " (in 'ftp_inference_ftp_bg_fixed', line 35, column 2 to column 38)",
@@ -45,14 +45,10 @@ static constexpr std::array<const char*, 25> locations_array__ =
   " (in 'ftp_inference_ftp_bg_fixed', line 41, column 2 to column 30)",
   " (in 'ftp_inference_ftp_bg_fixed', line 44, column 2 to column 40)",
   " (in 'ftp_inference_ftp_bg_fixed', line 47, column 2 to column 41)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 49, column 2 to column 23)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 50, column 2 to column 23)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 51, column 2 to column 24)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 52, column 2 to column 28)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 56, column 9 to column 14)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 56, column 2 to column 76)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 58, column 2 to column 34)",
-  " (in 'ftp_inference_ftp_bg_fixed', line 62, column 10 to column 15)"};
+  " (in 'ftp_inference_ftp_bg_fixed', line 51, column 9 to column 14)",
+  " (in 'ftp_inference_ftp_bg_fixed', line 51, column 2 to column 76)",
+  " (in 'ftp_inference_ftp_bg_fixed', line 53, column 2 to column 34)",
+  " (in 'ftp_inference_ftp_bg_fixed', line 57, column 10 to column 15)"};
 #include <stan_meta_header.hpp>
 class model_ftp_inference_ftp_bg_fixed final : public model_base_crtp<model_ftp_inference_ftp_bg_fixed> {
 private:
@@ -65,10 +61,6 @@ private:
   double total_cnt_prior_dirich;
   double bg_protect_prob;
   double ftp_protect_prob;
-  double ftp_protect_min;
-  double ftp_protect_max;
-  double ftp_protect_mean;
-  double ftp_protect_totcount;
   Eigen::Matrix<double,-1,1> ftp_prior_alphas_data__;
   int max_spacing;
   Eigen::Map<Eigen::Matrix<double,-1,1>> ftp_prior_cover{nullptr, 0};
@@ -217,48 +209,23 @@ public:
       stan::math::check_less_or_equal(function__, "ftp_protect_prob",
         ftp_protect_prob, 1);
       current_statement__ = 17;
-      context__.validate_dims("data initialization", "ftp_protect_min",
-        "double", std::vector<size_t>{});
-      ftp_protect_min = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 17;
-      ftp_protect_min = context__.vals_r("ftp_protect_min")[(1 - 1)];
-      current_statement__ = 18;
-      context__.validate_dims("data initialization", "ftp_protect_max",
-        "double", std::vector<size_t>{});
-      ftp_protect_max = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 18;
-      ftp_protect_max = context__.vals_r("ftp_protect_max")[(1 - 1)];
-      current_statement__ = 19;
-      context__.validate_dims("data initialization", "ftp_protect_mean",
-        "double", std::vector<size_t>{});
-      ftp_protect_mean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 19;
-      ftp_protect_mean = context__.vals_r("ftp_protect_mean")[(1 - 1)];
-      current_statement__ = 20;
-      context__.validate_dims("data initialization", "ftp_protect_totcount",
-        "double", std::vector<size_t>{});
-      ftp_protect_totcount = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 20;
-      ftp_protect_totcount = context__.vals_r("ftp_protect_totcount")[(1 -
-        1)];
-      current_statement__ = 21;
       stan::math::validate_non_negative_index("ftp_prior_alphas", "n_ftp",
         n_ftp);
-      current_statement__ = 22;
+      current_statement__ = 18;
       ftp_prior_alphas_data__ = Eigen::Matrix<double,-1,1>::Constant(n_ftp,
                                   std::numeric_limits<double>::quiet_NaN());
       new (&ftp_prior_alphas)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(ftp_prior_alphas_data__.data(),
         n_ftp);
-      current_statement__ = 22;
+      current_statement__ = 18;
       stan::model::assign(ftp_prior_alphas,
         stan::math::multiply(ftp_prior_cover, total_cnt_prior_dirich),
         "assigning variable ftp_prior_alphas");
-      current_statement__ = 23;
+      current_statement__ = 19;
       max_spacing = std::numeric_limits<int>::min();
-      current_statement__ = 23;
+      current_statement__ = 19;
       max_spacing = stan::math::max(spacings);
-      current_statement__ = 24;
+      current_statement__ = 20;
       stan::math::validate_positive_index("ftp_abundances", "n_ftp", n_ftp);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);

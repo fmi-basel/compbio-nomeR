@@ -14,8 +14,7 @@
 #'
 #' @keywords internal
 #' @noRd
-#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData
-#'     assay assayNames
+#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges colData assay assayNames
 #' @importFrom SparseArray NaArray nnawhich
 #' @importFrom GenomicRanges GPos match seqnames start end
 #' @importFrom IRanges subsetByOverlaps

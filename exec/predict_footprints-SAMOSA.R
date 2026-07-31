@@ -70,7 +70,7 @@ option_list <- list(
                 default = "no_correction",
                 help="Method for correcting sequence biases. Can be 'no_correction',
                 'BetaCorrect' - Bayesian correction using Beta distributions (requires --betaparams),
-                'BetaUniform' - Bayesian correction using Beta-Uniform mixtures (requires --betaunifparams; isotonic regression applied by default, disable with --noisotonic). [default %default]"),
+                'BetaUniform' - [!!!EXPERIMENTAL!!!] Bayesian correction using Beta-Uniform mixtures (requires --betaunifparams; isotonic regression applied by default, disable with --noisotonic). [default %default]"),
     make_option(c("--betaparams"),
                 type="character",
                 default = NULL,
@@ -98,8 +98,8 @@ option_list <- list(
     make_option(c("--quantnorm"),
                 type="logical",
                 action="store_true",
-                default=FALSE,
-                help="Perform quantile normalization of modification probabilities to match distribution of uncorrected probabilities. [default: FALSE]"),
+                default=TRUE,
+                help="Perform quantile normalization of modification probabilities to match distribution of uncorrected probabilities. [default: TRUE]"),
     make_option(c("--noisotonic"),
                 type="logical",
                 action="store_true",
@@ -699,7 +699,7 @@ pred_out <- mcprogress::pmclapply(
             tf_score_temp_wig <- file.path(chunk_dir,"tf_score_mean.wig")
             tf_score_Zstat_temp_wig <- file.path(chunk_dir,"tf_score_mean_Zstat.wig")
             tf_pval_temp_wig <- file.path(chunk_dir,"tf_pval.wig")
-            tf_fdr_temp_wig <- file.path(chunk_dir,"tf_fdr.wig")            
+            tf_fdr_temp_wig <- file.path(chunk_dir,"tf_fdr.wig")
             enr_dt <- nomeR::calculate_tile_BG_TF_enrichments(cover_dt = pred_list_dt$COVER_PROB,
                                                         tile_width = tile_width,
                                                         tile_step = tile_step,
