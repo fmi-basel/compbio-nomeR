@@ -36,7 +36,7 @@ option_list <- list(
     make_option(c("--betaunifparams"),
                 type="character",
                 default = NULL,
-                help="[BetaUniform] Path to TXT file with Beta-Uniform mixture parameters produced by fit_SeqContext_BetaUnif_params_SE() (columns: seqcont alpha_pos beta_pos eps_pos alpha_neg beta_neg eps_neg n_pos n_neg converged mlrp_ok)."),
+                help="[BetaUniform] [!!!EXPERIMENTAL!!!] Path to TXT file with Beta-Uniform mixture parameters produced by fit_SeqContext_BetaUnif_params_SE() (columns: seqcont alpha_pos beta_pos eps_pos alpha_neg beta_neg eps_neg n_pos n_neg converged mlrp_ok)."),
     make_option(c("--refseq"),
                 type="character",
                 default = NULL,
@@ -127,7 +127,7 @@ suppressPackageStartupMessages({
     library(Rsamtools)
     library(ggplot2)
     library(parallel)
-    library(nomeR)    
+    library(nomeR)
     library(Biostrings)
 })
 
@@ -325,8 +325,8 @@ if(!is.null(opt$outpdf)){
 
 if(!is.null(opt$outfsayaml)){
     cli::cli_progress_step("Saving FSA results into YAML file  {.file {opt$outfsayaml}}")
-    fsa2exp <- list("ftp_spectrum" = fsa_data$ftp_spectrum[[1]] %>% 
-                                        dplyr::select(ftp_length,mean) %>% 
+    fsa2exp <- list("ftp_spectrum" = fsa_data$ftp_spectrum[[1]] %>%
+                                        dplyr::select(ftp_length,mean) %>%
                                         dplyr::filter(ftp_length > 1),
                     "bgcoverprior" = fsa_data$bg_coverage_mean[[1]],
                     "bgprotectprob" = fsa_data$bg_emis_mean[[1]],

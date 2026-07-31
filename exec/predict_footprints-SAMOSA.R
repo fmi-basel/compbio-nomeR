@@ -530,7 +530,7 @@ if(opt$correctseqbias == "BetaCorrect"){
         stop("No control parameters found for sequence bias correction.")
     }
     ## check whether the control parameters contain all required columns
-    req_cols <- c("alpha_pos", "beta_pos", "alpha_neg", "beta_neg")
+    req_cols <- c("seqcont","alpha_pos", "beta_pos", "alpha_neg", "beta_neg")
     missing  <- setdiff(req_cols, names(control_params))
     if (length(missing))
         cli::cli_abort("File {.file {opt$betaparams}} is missing columns for method 'BetaCorrect': {paste(missing, collapse=', ')}")
@@ -542,7 +542,7 @@ if(opt$correctseqbias == "BetaCorrect"){
 } else if(opt$correctseqbias == "BetaUniform"){
     control_params <- data.table::data.table(read.table(opt$betaunifparams, header = TRUE))
     ## check whether the control parameters contain all required columns
-    req_cols <- c("alpha_pos", "beta_pos", "eps_pos", "alpha_neg", "beta_neg", "eps_neg")
+    req_cols <- c("seqcont","alpha_pos", "beta_pos", "eps_pos", "alpha_neg", "beta_neg", "eps_neg")
     missing  <- setdiff(req_cols, names(control_params))
     if (length(missing))
         cli::cli_abort("File {.file {opt$betaunifparams}} is missing columns for method 'BetaUniform': {paste(missing, collapse=', ')}")
