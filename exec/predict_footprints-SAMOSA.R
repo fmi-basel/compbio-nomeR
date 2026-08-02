@@ -63,6 +63,11 @@ option_list <- list(
                 type="character",
                 default = "500,250",
                 help="Tile width and step (format: \"width,step\") for aggregating and calculating p-values for TF and BG. [default %default]"),
+    make_option(c("--coverpsc"),
+                type="numeric",
+                default = "0.1",
+                help="Pseudo-count for stabilization of coverage probabilities [default %default]"),
+
 
     ### options for correction of sequence bias
     make_option(c("--correctseqbias"),
@@ -85,9 +90,9 @@ option_list <- list(
                 help="path to fasta file containing reference sequence"),
     make_option(c("--kmer"),
                 type="integer",
-                default = 5,
+                default = 7,
                 help="width of sequence context for correction. [default %default]"),
-     make_option(c("--kmerblacklist"),
+    make_option(c("--kmerblacklist"),
                 type="character",
                 default = NULL,
                 help="path to TXT file containing k-mers to ignore due to their strong sequence biases. [default: bundled SAMOSA mESC (Abdulhay et al, 2023) blacklist in %default]"),
@@ -162,7 +167,7 @@ if (!is.null(opt$libdir)) {
     extra_libs <- trimws(strsplit(opt$libdir, ":", fixed = TRUE)[[1]])
     extra_libs <- extra_libs[nchar(extra_libs) > 0 & dir.exists(extra_libs)]
     if (length(extra_libs) > 0)
-        .libPaths(c(extra_libs, .libPaths()))
+        .libPaths(c(extra_libs,.libPaths()))
 }
 
 #### LOAD LIBRARIES ####
@@ -364,9 +369,9 @@ if(!is.null(opt$ftpmodelyaml)){
     ftp_len_mat[which(ftp_len_mat[,1] < ftplen_range[1]),1] <- ftplen_range[1]
     ftp_len_mat[which(ftp_len_mat[,2] > ftplen_range[2]),2] <- ftplen_range[2]
     ftp_models <- nomeR::get_ftp_PWMs_for_prediction(ftp_spectrum = as.data.frame(fsa_data$ftp_spectrum),
-                                              ftp_len_mat = ftp_len_mat,
-                                              bg_cover = fsa_data$bgcoverprior,
-                                              ftp_protect_prob = fsa_data$ftpprotectprob)
+                                                     ftp_len_mat = ftp_len_mat,
+                                                     bg_cover = fsa_data$bgcoverprior,
+                                                     ftp_protect_prob = fsa_data$ftpprotectprob)
     ftp_models <- list("ftp_models" = ftp_models,
                        "bgprotectprob" = fsa_data$bgprotectprob,
                        "bgcoverprior" = fsa_data$bgcoverprior)
@@ -618,10 +623,10 @@ pred_out <- mcprogress::pmclapply(
         if(opt$correctseqbias != "no_correction" && !is.null(control_params)){
             cli::cli_inform("Correction of sequence biases ({opt$correctseqbias})")
             se <- nomeR::correct_modprob_SE(se,
-                                     control_params = control_params,
-                                     method         = opt$correctseqbias,
-                                     isotonic       = !opt$noisotonic,
-                                     qnorm_to_raw   = opt$quantnorm)
+                                            control_params = control_params,
+                                            method         = opt$correctseqbias,
+                                            isotonic       = !opt$noisotonic,
+                                            qnorm_to_raw   = opt$quantnorm)
         }
         if(opt$filterkmerblacklist && !is.null(kmer_blacklist)){
             cli::cli_inform("Filtering blacklisted k-mer sequence contexts")
@@ -668,10 +673,10 @@ pred_out <- mcprogress::pmclapply(
             ## reduce background footprints to get linkers
             linkers <- pred_list_dt$FOOTPRINT_CONF[ftp_group == "background"]
             linkers <- GenomicRanges::GRanges(seqnames = linkers$seqnames,
-                               IRanges(start = linkers$start,
-                                       width=linkers$width),
-                               strand = linkers$strand,
-                               fragID = linkers$fragID)
+                                              IRanges(start = linkers$start,
+                                                      width=linkers$width),
+                                              strand = linkers$strand,
+                                              fragID = linkers$fragID)
             linkers <- split(linkers,linkers$fragID)
             linkers <- GenomicRanges::reduce(linkers)
             linkers <- unlist(linkers)
@@ -701,9 +706,10 @@ pred_out <- mcprogress::pmclapply(
             tf_pval_temp_wig <- file.path(chunk_dir,"tf_pval.wig")
             tf_fdr_temp_wig <- file.path(chunk_dir,"tf_fdr.wig")
             enr_dt <- nomeR::calculate_tile_BG_TF_enrichments(cover_dt = pred_list_dt$COVER_PROB,
-                                                        tile_width = tile_width,
-                                                        tile_step = tile_step,
-                                                        threads = threads_predict
+                                                              tile_width = tile_width,
+                                                              tile_step = tile_step,
+                                                              threads = threads_predict,
+                                                              psc = opt$coverpsc
             )
 
 
