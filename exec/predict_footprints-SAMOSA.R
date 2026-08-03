@@ -1,5 +1,11 @@
 #!/usr/bin/env Rscript
 ## R script (v6) for predicting footprints in SAMOSA/FiberSeq generated BAM file
+## BAM file is expected to have MM and ML tags
+
+## Enzyme: EcoGII or Hia5
+## Informative position: Adenines
+## Accessibility decoding: Methylated - accessible, Unmethylated  - protected
+
 
 ## Resolve the lib directory this script was installed into so that the nomeR
 ## version loaded is always the one bundled with this script.
@@ -17,14 +23,14 @@ local({
 library(optparse)
 
 option_list <- list(
-    ### input options
+    #### input options ####
     make_option(c("-b", "--bamfile"),
                 type="character",
                 help="BAM file containing 6mA modification probabilities for SAMOSA/FiberSeq data"),
     make_option(c("-s", "--fsayaml"),
                 type="character",
                 help="[OPTIONAL] Path to an YAML file containing results of footprint spectrum analysis.
-                If --fsayaml --ftpmodelyaml are not provided, the footprint spectral analysis will be done for input BAM file.
+                If neither of --fsayaml --ftpmodelyaml are not provided, the script will abort with an error.
                 If --ftpmodelyaml is provided the --fsayaml will be ignored."),
     make_option(c("-f", "--ftpmodelyaml"),
                 type="character",
@@ -35,8 +41,7 @@ option_list <- list(
                 type="character",
                 help="[OPTIONAL] BED file with region of interest. If not provided the analysis will be performed genome-wide."),
 
-    ### options specifying model
-    ##### options for footprint model type
+    #### options specifying model ####
     make_option(c("--bgnoiselengths"),
                 type="character",
                 default="2:5:1",
@@ -69,7 +74,7 @@ option_list <- list(
                 help="Pseudo-count for stabilization of coverage probabilities [default %default]"),
 
 
-    ### options for correction of sequence bias
+    #### options for correction of sequence bias ####
     make_option(c("--correctseqbias"),
                 type="character",
                 default = "no_correction",
@@ -110,7 +115,7 @@ option_list <- list(
                 action="store_true",
                 default=FALSE,
                 help="[BetaUniform] Disable pool-adjacent-violators (PAV) isotonic regression that enforces monotonicity between raw and corrected probabilities. By default isotonic regression is applied. [default: FALSE]"),
-    ### output options
+    #### output options ####
     make_option(c("-o", "--outputdir"),
                 default = "nomeR_output/",
                 type="character",
@@ -128,7 +133,7 @@ option_list <- list(
                 default=FALSE,
                 help="Skip writing output BED12 files containing footprints for Nucl, TF and Linkers? [default %default]"),
 
-    ### running options
+    #### running options ####
     make_option(c("-c","--chunksize"),
                 type = "integer",
                 default = 5000000,
@@ -148,7 +153,7 @@ option_list <- list(
                 help="Overwrite existing output folder if already exists?
                 WARNING: If the folder defined by --outputdir exists and -e is set all existing files will be deleted. [default %default]"),
 
-    ### library options
+    #### library options ####
     make_option(c("--libdir"),
                 type="character",
                 default=NULL,
