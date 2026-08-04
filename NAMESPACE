@@ -2,6 +2,7 @@
 
 export(calculate_BG_TF_scores_SE)
 export(calculate_tile_BG_TF_enrichments)
+export(calculate_tile_footprint_enrichments)
 export(center_coverprob_on_anchors)
 export(correct_modprob_SE)
 export(extract_assay_datatable)

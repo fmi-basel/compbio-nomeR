@@ -419,6 +419,13 @@ write_dt_wig <- function(dt,
     ## keep seqnames, start and scoreColumn only
     sel_cols = c("seqnames", "start", scoreColumn)
     dt2 <- dt[, ..sel_cols]
+    ## remove data with NAs in scoreColumn
+
+    dt2 <- dt2[!is.na(get(scoreColumn))]
+    if(nrow(dt2) == 0){
+        cli::cli_abort("All values in column {scoreColumn} are NAs.")
+    }
+
     ## split dt2 by chr
     dt2 <- split(dt2,f=dt2[["seqnames"]])
 
@@ -591,6 +598,7 @@ if(!is.null(kmer_blacklist))
 
 pred_out <- mcprogress::pmclapply(
     mc.cores = threads_mclap,
+    #lapply(
     X = seq_along(sel_regions),
     FUN = function(i){
 
@@ -694,6 +702,7 @@ pred_out <- mcprogress::pmclapply(
         }
 
         # ---- 5. calculate and write enrichments for tiles ----
+
         if(!opt$noenrich){
             cli::cli_inform("Calculating enrichments and writing BIGWIG files for region {as.character(reg)} [{i} out of {n_chunks}]")
 
@@ -710,13 +719,14 @@ pred_out <- mcprogress::pmclapply(
             tf_score_Zstat_temp_wig <- file.path(chunk_dir,"tf_score_mean_Zstat.wig")
             tf_pval_temp_wig <- file.path(chunk_dir,"tf_pval.wig")
             tf_fdr_temp_wig <- file.path(chunk_dir,"tf_fdr.wig")
-            enr_dt <- nomeR::calculate_tile_BG_TF_enrichments(cover_dt = pred_list_dt$COVER_PROB,
-                                                              tile_width = tile_width,
-                                                              tile_step = tile_step,
-                                                              threads = threads_predict,
-                                                              psc = opt$coverpsc
-            )
 
+            enr_dt <- calculate_tile_footprint_enrichments(cover_dt = pred_list_dt$COVER_PROB,
+                                                                  tile_width = tile_width,
+                                                                  tile_step = tile_step,
+                                                                  ftp_names = c("background","TF"),
+                                                                  threads = threads_predict,
+                                                                  psc = opt$coverpsc
+            )
 
             ## adjust end so that width is tile_step to remove tile overlapping
             enr_dt <- enr_dt[,end := start + tile_step - 1]
@@ -725,10 +735,10 @@ pred_out <- mcprogress::pmclapply(
             ## add frag coverage, -log10(p-val) and -log10(FDR)
             pval_psc <- 1e-100
             enr_dt <- enr_dt[,':='(frag_cover = n_data_points/n_inf_pos,
-                                   bg_neglogPval = -log10(bg_score_mean_Ztest_pval + pval_psc),
-                                   bg_neglogFDR  = -log10(bg_score_mean_FDR        + pval_psc),
-                                   tf_neglogPval = -log10(tf_score_mean_Ztest_pval + pval_psc),
-                                   tf_neglogFDR  = -log10(tf_score_mean_FDR        + pval_psc))]
+                                   bg_neglogPval = -log10(background_score_mean_Ztest_pval + pval_psc),
+                                   bg_neglogFDR  = -log10(background_score_mean_FDR        + pval_psc),
+                                   tf_neglogPval = -log10(TF_score_mean_Ztest_pval + pval_psc),
+                                   tf_neglogFDR  = -log10(TF_score_mean_FDR        + pval_psc))]
 
             ## write mean_frag_cover - average fragment coverage per informative position
             write_dt_wig(dt = enr_dt,
@@ -739,11 +749,11 @@ pred_out <- mcprogress::pmclapply(
             #write bg wig files
             write_dt_wig(dt = enr_dt,
                          tilewid = tile_step,
-                         scoreColumn = "bg_score_mean",
+                         scoreColumn = "background_score_mean",
                          file = bg_score_temp_wig)
             write_dt_wig(dt = enr_dt,
                          tilewid = tile_step,
-                         scoreColumn = "bg_score_mean_Zstat",
+                         scoreColumn = "background_score_mean_Zstat",
                          file = bg_score_Zstat_temp_wig)
             write_dt_wig(dt = enr_dt,
                          tilewid = tile_step,
@@ -757,11 +767,11 @@ pred_out <- mcprogress::pmclapply(
             #write tf wig files
             write_dt_wig(dt = enr_dt,
                          tilewid = tile_step,
-                         scoreColumn = "tf_score_mean",
+                         scoreColumn = "TF_score_mean",
                          file = tf_score_temp_wig)
             write_dt_wig(dt = enr_dt,
                          tilewid = tile_step,
-                         scoreColumn = "tf_score_mean_Zstat",
+                         scoreColumn = "TF_score_mean_Zstat",
                          file = tf_score_Zstat_temp_wig)
             write_dt_wig(dt = enr_dt,
                          tilewid = tile_step,
