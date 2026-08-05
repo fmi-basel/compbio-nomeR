@@ -111,7 +111,7 @@ calculate_tile_footprint_enrichments <- function(cover_dt,
     tile_aggr_stats <- smftile_ov[, {
         res <- lapply(.SD, mean, na.rm = TRUE)
         names(res) <- mean_cols
-        c(list(n_data_points = .N, n_inf_pos = uniqueN(i.start)), res)
+        c(list(n_data_points = .N, n_inf_pos = uniqueN(i.start),mod_prob_mean = mean(mod_prob,na.rm=T)), res)
     }, by = .(seqnames, start, end, tile_ID),
        .SDcols = score_cols]
 
