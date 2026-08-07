@@ -755,11 +755,11 @@ files2concat <- bind_rows(mcprogress::pmclapply(
             ftp_bed_files <- chunk_file_struct %>%
                 filter(filetype == "footprints")
 
-            for(i in 1:nrow(ftp_bed_files)){
-                dir.create(dirname(ftp_bed_files$file[i]),
+            for(f in 1:nrow(ftp_bed_files)){
+                dir.create(dirname(ftp_bed_files$file[f]),
                            recursive = TRUE,showWarnings = FALSE)
-                nomeR::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == ftp_bed_files$ftp_group[i]],
-                                              file = ftp_bed_files$file[i],
+                nomeR::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == ftp_bed_files$ftp_group[f]],
+                                              file = ftp_bed_files$file[f],
                                               append=FALSE)
             }
         }
@@ -794,12 +794,12 @@ files2concat <- bind_rows(mcprogress::pmclapply(
             ## write wig files
             cur_wig_files <- chunk_file_struct %>%
                 filter(fileext == "wig")
-            for(i in 1:nrow(cur_wig_files)){
-                dir.create(dirname(cur_wig_files$file[i]),recursive = TRUE,showWarnings = FALSE)
+            for(f in 1:nrow(cur_wig_files)){
+                dir.create(dirname(cur_wig_files$file[f]),recursive = TRUE,showWarnings = FALSE)
                 write_dt_wig(dt = enr_dt,
                              tilewid = tile_step,
-                             scoreColumn = cur_wig_files$scoreColumn[i],
-                             file = cur_wig_files$file[i])
+                             scoreColumn = cur_wig_files$scoreColumn[f],
+                             file = cur_wig_files$file[f])
 
 
             }
