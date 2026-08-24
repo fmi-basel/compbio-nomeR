@@ -54,13 +54,13 @@ option_list <- list(
                 default="20:50:10",
                 help="Length ranges and steps for transcription factor footprints (format: \"min:max:step\", e.g. \"20:50:10\" for lengths 20,30,40,50). [default %default]
                 Set to \"none\" to skip transcription factor model.
-                If --ftpmodelyaml is set the --bgnoiselengths has no effect."),
+                If --ftpmodelyaml is set the --tflengths has no effect."),
     make_option(c("--nucllengths"),
                 type="character",
                 default="100:200:10",
                 help="Length ranges and steps for nucleosome footprints (format: \"min:max:step\", e.g. \"100:200:10\" for lengths 100,110,120,...,200). [default %default]
                 Set to \"none\" to skip nucleosome model.
-                If --ftpmodelyaml is set the --bgnoiselengths has no effect."),
+                If --ftpmodelyaml is set the --nucllengths has no effect."),
     make_option(c("-d", "--ftpdecoding"),
                 type="character",
                 default="PosteriorDecoding",
@@ -137,8 +137,14 @@ option_list <- list(
     #### running options ####
     make_option(c("-c","--chunksize"),
                 type = "integer",
-                default = 5000000,
+                default = 100000,
                 help="For genome-wide analyses, the footprint prediction is carried out consecutively for genomic regions of size --chunksize. [default %default]"
+    ),
+    make_option(c("--maxCoverage"),
+                type = "integer",
+                default = 500,
+                help="Maximal coverage for which samtools pileup will allocate cache memory.
+                Reads exceeding the maximum coverage per positions are ignored. [default %default]"
     ),
     make_option(c("-t", "--threads"),
                 type="integer",
@@ -298,6 +304,13 @@ if(opt$noenrich && opt$noftps){
 if(opt$chunksize <= 100000){
     cli::cli_abort("--chunksize can't be lower than 100,000. Provided --chunksize {opt$chunksize}")
 }
+if(opt$maxCoverage <= 0){
+    cli::cli_abort("--maxCoverage is not positive. Provided --maxCoverage {opt$maxCoverage}")
+}
+
+if(opt$maxCoverage >= 2000){
+    cli::cli_warn("WARNING! --maxCoverage is {opt$maxCoverage}. Using too high maxCoverage may result in exceesive memory usage for genome-wide analysis.")
+}
 if(opt$threads < 1){
     cli::cli_abort("--threads can't be lower than 1. Provided --threads {opt$threads}")
 }
@@ -406,7 +419,7 @@ sel_regions <- unlist(tile(sel_regions,width = opt$chunksize))
 #names(sel_regions) <- as.character(sel_regions)
 sel_regions <- GenomicRanges::sort(sel_regions,ignore.strand=TRUE)
 
-## define chunk_id for parquet partitioning and other
+## define chunk_id 
 sel_regions$chunk_id <- 1:length(sel_regions)
 names(sel_regions) <- paste0("chunk_id_",sel_regions$chunk_id)
 ## export bed with genomic chunks
@@ -416,7 +429,6 @@ rtracklayer::export.bed(sel_regions,
 
 
 #### function for writing data.table into wig file ####
-
 write_dt_wig <- function(dt,
                          tilewid,
                          scoreColumn,
@@ -428,8 +440,8 @@ write_dt_wig <- function(dt,
     ## keep seqnames, start and scoreColumn only
     sel_cols = c("seqnames", "start", scoreColumn)
     dt2 <- dt[, ..sel_cols]
-    ## remove data with NAs in scoreColumn
 
+    ## remove data with NAs in scoreColumn
     dt2 <- dt2[!is.na(get(scoreColumn))]
     if(nrow(dt2) == 0){
         cli::cli_abort("All values in column {scoreColumn} are NAs.")
@@ -703,6 +715,8 @@ files2concat <- bind_rows(mcprogress::pmclapply(
                                                    modbase = "a",
                                                    sequenceContextWidth = opt$kmer,
                                                    sequenceReference = opt$refseq,
+                                                   level = "quickread",
+                                                   maxCoverage = opt$maxCoverage,
                                                    trim = TRUE,
                                                    BPPARAM = BiocParallel::MulticoreParam(workers = threads_predict),
                                                    verbose = F)
@@ -908,7 +922,7 @@ if(!opt$noenrich){
 }
 cli::cli_progress_done()
 
-## final set of create files
+## final set of generated files
 final_file_set <- bind_rows(merged_out_files_df %>%
                                 filter(fileext == "bed") %>%
                                 rename(merged_file = "file"),
@@ -931,7 +945,7 @@ if(!opt$noenrich){
     if(file.exists(cov_fls$file))
         cli::cli_li("Data coverage: {.file enrichments/frag_data_cover.bw}")
     modpr_fls <- final_file_set %>% filter(filetype == "mod_prob_mean")
-    if(file.exists(cov_fls$file))
+    if(file.exists(modpr_fls$file))
         cli::cli_li("Average modification probabilities: {.file enrichments/mod_prob_mean.bw}")
 
     cli::cli_li("Average predicted log10-transformed posterior coverage probabilities for each footprint model are located in the folder: {.file enrichments/mean_scores}")
