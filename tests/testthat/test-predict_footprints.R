@@ -10,8 +10,8 @@
 }
 
 test_that("wrong parameters for predict_footprints are handled correctly",{
-    expect_error(predict_footprints(data = "aaa"))
-    expect_error(predict_footprints(data = matrix()))
+    expect_error(expect_warning(predict_footprints(data = "aaa"), "is a legacy interface"))
+    expect_error(expect_warning(predict_footprints(data = matrix()), "is a legacy interface"))
 
     ## check whether ncpu handled correctly
     ## create dummy random data
@@ -31,11 +31,13 @@ test_that("wrong parameters for predict_footprints are handled correctly",{
                             "COVER_PRIOR" = ft.pr,
                             "NAME" = "FOOTPRINT"))
 
-    expect_error(nomeR.out <- predict_footprints(data = rmatr,
-                                                 footprint_models = ftp.models,
-                                                 bgprotectprob = 0.05,
-                                                 bgcoverprior = bg.pr,
-                                                 ncpu = -1))
+    expect_error(expect_warning(
+        nomeR.out <- predict_footprints(data = rmatr,
+                                        footprint_models = ftp.models,
+                                        bgprotectprob = 0.05,
+                                        bgcoverprior = bg.pr,
+                                        ncpu = -1),
+        "is a legacy interface"))
 
 })
 
@@ -58,12 +60,14 @@ test_that("predict_footprints returns correct object",{
                             "COVER_PRIOR" = ft.pr,
                             "NAME" = "FOOTPRINT"))
 
-    nomeR.out <- predict_footprints(data = rmatr,
-                                    footprint_models = ftp.models,
-                                    bgprotectprob = 0.05,
-                                    bgcoverprior = bg.pr,
-                                    keepStartProb=TRUE,
-                                    ncpu = 1L)
+    expect_warning(
+        nomeR.out <- predict_footprints(data = rmatr,
+                                        footprint_models = ftp.models,
+                                        bgprotectprob = 0.05,
+                                        bgcoverprior = bg.pr,
+                                        keepStartProb = TRUE,
+                                        ncpu = 1L),
+        "is a legacy interface")
 
     ## check whether slots exist
     expect_true(all(c("START_PROB", "COVER_PROB", "FOOTPRINT_CONF") %in% names(nomeR.out)))
@@ -93,27 +97,26 @@ test_that("predict_footprints returns correct object",{
     ## check if sum of cover probs sum up to 1
     cover.prob.rowsum <- rowSums(nomeR.out[["COVER_PROB"]][, c("FOOTPRINT", "background")])
     expect_true(all(abs(cover.prob.rowsum - 1) < 1.0e-8))
-
 })
-
 
 test_that("predict_footprints returns expected probabilities and ftp configuration",{
 
     ## load data
     dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))
 
-
     ## calculate for all footprints aggregated by group
-    testinsil <- predict_footprints(data=dlist$test_dat_mat,
-                                    footprint_models = dlist$ftp_models,
-                                    bgprotectprob = 0.05304034,
-                                    bgcoverprior = 0.4822005,
-                                    aggrByGroup = TRUE,
-                                    ftpConfigMethod = "Viterbi",
-                                    keepStartProb=TRUE,
-                                    ncpu = 1L)
+    expect_warning(
+        testinsil <- predict_footprints(data = dlist$test_dat_mat,
+                                        footprint_models = dlist$ftp_models,
+                                        bgprotectprob = 0.05304034,
+                                        bgcoverprior = 0.4822005,
+                                        aggrByGroup = TRUE,
+                                        ftpConfigMethod = "Viterbi",
+                                        keepStartProb = TRUE,
+                                        ncpu = 1L),
+        "is a legacy interface")
+    
     ## check start probs
-
     expect_equal(testinsil$START_PROB,dlist$exp_output$START_PROB)
     ## check cover probs
     expect_equal(testinsil$COVER_PROB,dlist$exp_output$COVER_PROB)
@@ -123,43 +126,45 @@ test_that("predict_footprints returns expected probabilities and ftp configurati
     map_conf <- map_conf[order(map_conf$start),]
     row.names(map_conf) <- NULL
     exp_conf <- data.frame(seq = 1,
-                           start=c(151,273,492),
-                           width=c(50,150,150),
-                           ftp_name = c("ftp1--50","ftp2--150","ftp2--150"),
-                           ftp_group = c("ftp1","ftp2","ftp2")
+                           start = c(151, 273, 492),
+                           width = c(50, 150, 150),
+                           ftp_name = c("ftp1--50", "ftp2--150", "ftp2--150"),
+                           ftp_group = c("ftp1", "ftp2", "ftp2")
                            #score = c(0.9421603, 0.9496543, 0.8856803)
                            )
-    expect_equal(map_conf[,colnames(exp_conf)],exp_conf)
+    expect_equal(map_conf[, colnames(exp_conf)], exp_conf)
 
 
     ## check if Posterior-Viterbi is correct
-    testinsil <- predict_footprints(data=dlist$test_dat_mat,
-                                    footprint_models = dlist$ftp_models,
-                                    bgprotectprob = 0.05304034,
-                                    bgcoverprior = 0.4822005,
-                                    aggrByGroup = TRUE,
-                                    ftpConfigMethod = "PV",
-                                    keepStartProb=TRUE,
-                                    ncpu = 1L)
+    expect_warning(
+        testinsil <- predict_footprints(data = dlist$test_dat_mat,
+                                        footprint_models = dlist$ftp_models,
+                                        bgprotectprob = 0.05304034,
+                                        bgcoverprior = 0.4822005,
+                                        aggrByGroup = TRUE,
+                                        ftpConfigMethod = "PV",
+                                        keepStartProb = TRUE,
+                                        ncpu = 1L),
+        "is a legacy interface")
     map_conf <- subset(testinsil$FOOTPRINT_CONF,ftp_name != "background")
-    map_conf <- map_conf[order(map_conf$start),]
+    map_conf <- map_conf[order(map_conf$start), ]
     row.names(map_conf) <- NULL
 
-    expect_equal(map_conf[,colnames(exp_conf)],exp_conf)
-
+    expect_equal(map_conf[, colnames(exp_conf)], exp_conf)
 })
-
 
 test_that("predict_footprints PosteriorDecoding method returns valid output", {
     rmatr <- .make_rmatr()
     ftp.models <- .make_single_ftp_models()
 
-    out <- predict_footprints(data            = rmatr,
-                              footprint_models = ftp.models,
-                              bgprotectprob    = 0.05,
-                              bgcoverprior     = 0.5,
-                              ftpConfigMethod  = "PosteriorDecoding",
-                              ncpu             = 1L)
+    expect_warning(
+        out <- predict_footprints(data = rmatr,
+                                  footprint_models = ftp.models,
+                                  bgprotectprob = 0.05,
+                                  bgcoverprior = 0.5,
+                                  ftpConfigMethod = "PosteriorDecoding",
+                                  ncpu = 1L),
+        "is a legacy interface")
 
     expect_named(out, c("COVER_PROB", "FOOTPRINT_CONF"))
     expect_true(all(c("FOOTPRINT", "background") %in% colnames(out$COVER_PROB)))
@@ -175,44 +180,44 @@ test_that("predict_footprints PosteriorDecoding method returns valid output", {
     expect_true(all(abs(cover_sum - 1) < 1e-8))
 })
 
-
 test_that("predict_footprints ncpu=1 and ncpu=2 produce identical results", {
     dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))
 
-    run <- function(ncpu)
-        predict_footprints(data             = dlist$test_dat_mat,
-                           footprint_models  = dlist$ftp_models,
-                           bgprotectprob     = 0.05304034,
-                           bgcoverprior      = 0.4822005,
-                           aggrByGroup       = TRUE,
-                           ftpConfigMethod   = "PV",
-                           keepStartProb     = TRUE,
-                           ncpu              = ncpu)
+    run <- function(ncpu) {
+        predict_footprints(data = dlist$test_dat_mat,
+                           footprint_models = dlist$ftp_models,
+                           bgprotectprob = 0.05304034,
+                           bgcoverprior = 0.4822005,
+                           aggrByGroup = TRUE,
+                           ftpConfigMethod = "PV",
+                           keepStartProb = TRUE,
+                           ncpu = ncpu)
+    }
 
-    out1 <- run(1L)
-    out2 <- run(2L)
+    expect_warning(out1 <- run(1L), "is a legacy interface")
+    expect_warning(out2 <- run(2L), "is a legacy interface")
 
-    expect_equal(out1$START_PROB,     out2$START_PROB)
-    expect_equal(out1$COVER_PROB,     out2$COVER_PROB)
+    expect_equal(out1$START_PROB, out2$START_PROB)
+    expect_equal(out1$COVER_PROB, out2$COVER_PROB)
     expect_equal(out1$FOOTPRINT_CONF, out2$FOOTPRINT_CONF)
 })
-
 
 test_that("predict_footprints keepStartProb=FALSE omits START_PROB", {
     rmatr <- .make_rmatr()
     ftp.models <- .make_single_ftp_models()
 
-    out <- predict_footprints(data             = rmatr,
-                              footprint_models  = ftp.models,
-                              bgprotectprob     = 0.05,
-                              bgcoverprior      = 0.5,
-                              keepStartProb     = FALSE,
-                              ncpu              = 1L)
+    expect_warning(
+        out <- predict_footprints(data = rmatr,
+                                  footprint_models = ftp.models,
+                                  bgprotectprob = 0.05,
+                                  bgcoverprior = 0.5,
+                                  keepStartProb = FALSE,
+                                  ncpu = 1L),
+        "is a legacy interface")
 
     expect_named(out, c("COVER_PROB", "FOOTPRINT_CONF"))
     expect_false("START_PROB" %in% names(out))
 })
-
 
 test_that("predict_footprints accepts list input and matches matrix input", {
     rmatr <- .make_rmatr()
@@ -220,21 +225,25 @@ test_that("predict_footprints accepts list input and matches matrix input", {
 
     lst <- lapply(seq_len(nrow(rmatr)), function(i) rmatr[i, ])
 
-    out_mat <- predict_footprints(data             = rmatr,
-                                  footprint_models  = ftp.models,
-                                  bgprotectprob     = 0.05,
-                                  bgcoverprior      = 0.5,
-                                  keepStartProb     = TRUE,
-                                  ncpu              = 1L)
-    out_lst <- predict_footprints(data             = lst,
-                                  footprint_models  = ftp.models,
-                                  bgprotectprob     = 0.05,
-                                  bgcoverprior      = 0.5,
-                                  keepStartProb     = TRUE,
-                                  ncpu              = 1L)
+    expect_warning(
+        out_mat <- predict_footprints(data = rmatr,
+                                      footprint_models = ftp.models,
+                                      bgprotectprob = 0.05,
+                                      bgcoverprior = 0.5,
+                                      keepStartProb = TRUE,
+                                      ncpu = 1L),
+        "is a legacy interface")
+    expect_warning(
+        out_lst <- predict_footprints(data = lst,
+                                      footprint_models = ftp.models,
+                                      bgprotectprob = 0.05,
+                                      bgcoverprior = 0.5,
+                                      keepStartProb = TRUE,
+                                      ncpu = 1L),
+        "is a legacy interface")
 
-    expect_equal(out_lst$COVER_PROB,     out_mat$COVER_PROB)
-    expect_equal(out_lst$START_PROB,     out_mat$START_PROB)
+    expect_equal(out_lst$COVER_PROB, out_mat$COVER_PROB)
+    expect_equal(out_lst$START_PROB, out_mat$START_PROB)
     expect_equal(out_lst$FOOTPRINT_CONF, out_mat$FOOTPRINT_CONF)
 })
 
@@ -243,13 +252,15 @@ test_that("predict_footprints aggrByGroup=FALSE reports per-name columns", {
     dlist <- readRDS(test_path("testdata/test-predict_footprints_data.rds"))
     model_names <- vapply(dlist$ftp_models, `[[`, character(1), "NAME")
 
-    out <- predict_footprints(data             = dlist$test_dat_mat,
-                              footprint_models  = dlist$ftp_models,
-                              bgprotectprob     = 0.05304034,
-                              bgcoverprior      = 0.4822005,
-                              aggrByGroup       = FALSE,
-                              keepStartProb     = TRUE,
-                              ncpu              = 1L)
+    expect_warning(
+        out <- predict_footprints(data = dlist$test_dat_mat,
+                                  footprint_models = dlist$ftp_models,
+                                  bgprotectprob = 0.05304034,
+                                  bgcoverprior = 0.4822005,
+                                  aggrByGroup = FALSE,
+                                  keepStartProb = TRUE,
+                                  ncpu = 1L),
+        "is a legacy interface")
 
     ## output columns are footprint NAMEs, not GROUPs
     expect_true(all(model_names %in% colnames(out$COVER_PROB)))
@@ -266,11 +277,13 @@ test_that("predict_footprints works for a single-fragment input", {
     single_row <- matrix(as.integer(rnorm(60) >= 0.5), nrow = 1)
     ftp.models <- .make_single_ftp_models(ft.len = 15)
 
-    out <- predict_footprints(data             = single_row,
-                              footprint_models  = ftp.models,
-                              bgprotectprob     = 0.05,
-                              bgcoverprior      = 0.5,
-                              ncpu              = 1L)
+    expect_warning(
+        out <- predict_footprints(data = single_row,
+                                  footprint_models = ftp.models,
+                                  bgprotectprob = 0.05,
+                                  bgcoverprior = 0.5,
+                                  ncpu = 1L),
+        "is a legacy interface")
 
     expect_equal(nrow(out$COVER_PROB), ncol(single_row))
     cover_sum <- rowSums(out$COVER_PROB[, c("FOOTPRINT", "background")])
@@ -282,12 +295,12 @@ test_that("predict_footprints verbose=TRUE runs without error", {
     rmatr <- .make_rmatr(nr = 5)
     ftp.models <- .make_single_ftp_models()
 
-    expect_no_error(
-        predict_footprints(data             = rmatr,
-                           footprint_models  = ftp.models,
-                           bgprotectprob     = 0.05,
-                           bgcoverprior      = 0.5,
-                           verbose           = TRUE,
-                           ncpu              = 1L)
-    )
+    expect_warning(expect_no_error(
+        predict_footprints(data = rmatr,
+                           footprint_models = ftp.models,
+                           bgprotectprob = 0.05,
+                           bgcoverprior = 0.5,
+                           verbose = TRUE,
+                           ncpu = 1L)
+    ), "is a legacy interface")
 })
