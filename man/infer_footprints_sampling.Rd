@@ -162,8 +162,12 @@ ftp_5_10_data <- data.frame("S" = 1:15,
 
 
 ## HMC inference for footprints in the data
+## Important! The number of iterations is set to a low value to speed up 
+## computations - in a real application it should be set much higher 
+## (the default value is 2000)
 inf_output <- infer_footprints_sampling(cooc_ctable = ftp_5_10_data,
-                                        ftp_lengths = 2:15, ncpu = 2)
+                                        ftp_lengths = 2:15, ncpu = 2, 
+                                        iter = 100)
 
 ## plot footprint spectrum
 get_ftp_inference_summary(inf_output, plot = TRUE)
