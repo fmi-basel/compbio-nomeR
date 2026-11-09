@@ -2,8 +2,10 @@
 
 export(calculate_BG_TF_scores_SE)
 export(calculate_tile_BG_TF_enrichments)
+export(calculate_tile_footprint_enrichments)
 export(center_coverprob_on_anchors)
 export(correct_modprob_SE)
+export(create_adaptive_bam_chunks)
 export(extract_assay_datatable)
 export(fit_SeqContext_BetaUnif_params_SE)
 export(ftp_spectral_analysis_SE)
@@ -37,6 +39,7 @@ importFrom(GenomicRanges,
   reduce,
   seqnames,
   slidingWindows,
+  sort,
   start,
   strand
 )
@@ -46,6 +49,7 @@ importFrom(IRanges,
   subsetByOverlaps
 )
 importFrom(RcppParallel,RcppParallelLibs)
+importFrom(Rsamtools,idxstatsBam)
 importFrom(S4Vectors,
   "metadata<-",
   DataFrame,

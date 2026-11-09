@@ -1,5 +1,11 @@
 #!/usr/bin/env Rscript
-## R script (v6) for predicting footprints in SAMOSA/FiberSeq generated BAM file
+## R script (v7) for predicting footprints in SAMOSA/FiberSeq generated BAM file
+## BAM file is expected to have MM and ML tags
+
+## Enzyme: EcoGII or Hia5
+## Informative position: Adenines
+## Accessibility decoding: Methylated - accessible, Unmethylated  - protected
+
 
 ## Resolve the lib directory this script was installed into so that the nomeR
 ## version loaded is always the one bundled with this script.
@@ -17,26 +23,26 @@ local({
 library(optparse)
 
 option_list <- list(
-    ### input options
+    #### input options ####
     make_option(c("-b", "--bamfile"),
                 type="character",
                 help="BAM file containing 6mA modification probabilities for SAMOSA/FiberSeq data"),
     make_option(c("-s", "--fsayaml"),
                 type="character",
                 help="[OPTIONAL] Path to an YAML file containing results of footprint spectrum analysis.
-                If --fsayaml --ftpmodelyaml are not provided, the footprint spectral analysis will be done for input BAM file.
-                If --ftpmodelyaml is provided the --fsayaml will be ignored."),
+                If neither of --fsayaml --ftpmodelyaml are not provided, the script will abort with an error.
+                If --ftpmodelyaml is provided the --fsayaml will be ignored.
+                If --ftpmodelyaml is absent and --fsayaml is provided the footprint models will be constructed for
+                TF and Nucl based on footprint spectrum from the --fsayaml file."),
     make_option(c("-f", "--ftpmodelyaml"),
                 type="character",
                 help="[OPTIONAL] Path to an YAML file containing footprint models.
-                If not provided, the footprint models will be constructed using footprint spectrum in --fsayaml or
-                based on footprint spectral analysis of the input BAM file."),
+                If not provided, the footprint models will be constructed using footprint spectrum in --fsayaml."),
     make_option(c("-r", "--regionbed"),
                 type="character",
                 help="[OPTIONAL] BED file with region of interest. If not provided the analysis will be performed genome-wide."),
 
-    ### options specifying model
-    ##### options for footprint model type
+    #### options specifying model ####
     make_option(c("--bgnoiselengths"),
                 type="character",
                 default="2:5:1",
@@ -48,13 +54,13 @@ option_list <- list(
                 default="20:50:10",
                 help="Length ranges and steps for transcription factor footprints (format: \"min:max:step\", e.g. \"20:50:10\" for lengths 20,30,40,50). [default %default]
                 Set to \"none\" to skip transcription factor model.
-                If --ftpmodelyaml is set the --bgnoiselengths has no effect."),
+                If --ftpmodelyaml is set the --tflengths has no effect."),
     make_option(c("--nucllengths"),
                 type="character",
                 default="100:200:10",
                 help="Length ranges and steps for nucleosome footprints (format: \"min:max:step\", e.g. \"100:200:10\" for lengths 100,110,120,...,200). [default %default]
                 Set to \"none\" to skip nucleosome model.
-                If --ftpmodelyaml is set the --bgnoiselengths has no effect."),
+                If --ftpmodelyaml is set the --nucllengths has no effect."),
     make_option(c("-d", "--ftpdecoding"),
                 type="character",
                 default="PosteriorDecoding",
@@ -69,7 +75,7 @@ option_list <- list(
                 help="Pseudo-count for stabilization of coverage probabilities [default %default]"),
 
 
-    ### options for correction of sequence bias
+    #### options for correction of sequence bias ####
     make_option(c("--correctseqbias"),
                 type="character",
                 default = "no_correction",
@@ -110,7 +116,7 @@ option_list <- list(
                 action="store_true",
                 default=FALSE,
                 help="[BetaUniform] Disable pool-adjacent-violators (PAV) isotonic regression that enforces monotonicity between raw and corrected probabilities. By default isotonic regression is applied. [default: FALSE]"),
-    ### output options
+    #### output options ####
     make_option(c("-o", "--outputdir"),
                 default = "nomeR_output/",
                 type="character",
@@ -128,11 +134,24 @@ option_list <- list(
                 default=FALSE,
                 help="Skip writing output BED12 files containing footprints for Nucl, TF and Linkers? [default %default]"),
 
-    ### running options
+    #### running options ####
     make_option(c("-c","--chunksize"),
                 type = "integer",
                 default = 5000000,
-                help="For genome-wide analyses, the footprint prediction is carried out consecutively for genomic regions of size --chunksize. [default %default]"
+                help="For genome-wide analyses, the footprint prediction is carried out consecutively for genomic regions of size --chunksize. Ignored when --targetreads is set. [default %default]"
+    ),
+    make_option(c("--targetreads"),
+                type = "integer",
+                default = NULL,
+                help="Target number of reads per adaptive genomic chunk. When set, --chunksize is
+                ignored and adaptive chunking based on the BAI linear index is used instead of
+                fixed-width tiling. Requires a BAI index file alongside --bamfile. [default %default]"
+    ),
+    make_option(c("--maxCoverage"),
+                type = "integer",
+                default = 500,
+                help="Maximal coverage for which samtools pileup will allocate cache memory.
+                Reads exceeding the maximum coverage per positions are ignored. [default %default]"
     ),
     make_option(c("-t", "--threads"),
                 type="integer",
@@ -148,7 +167,7 @@ option_list <- list(
                 help="Overwrite existing output folder if already exists?
                 WARNING: If the folder defined by --outputdir exists and -e is set all existing files will be deleted. [default %default]"),
 
-    ### library options
+    #### library options ####
     make_option(c("--libdir"),
                 type="character",
                 default=NULL,
@@ -169,6 +188,8 @@ if (!is.null(opt$libdir)) {
     if (length(extra_libs) > 0)
         .libPaths(c(extra_libs,.libPaths()))
 }
+
+
 
 #### LOAD LIBRARIES ####
 if(opt$verbose)
@@ -269,6 +290,7 @@ if(opt$filterkmerblacklist){
     if(opt$kmer <= 0)
         cli::cli_abort("Incorrect parameter --kmer: {opt$kmer}")
 }
+
 ##### check output options #####
 if(!dir.exists(opt$outputdir)){
     dir.create(opt$outputdir)
@@ -286,8 +308,18 @@ if(opt$noenrich && opt$noftps){
 
 
 ##### check chunk size option #####
-if(opt$chunksize <= 100000){
+if(is.null(opt$targetreads) && opt$chunksize <= 100000){
     cli::cli_abort("--chunksize can't be lower than 100,000. Provided --chunksize {opt$chunksize}")
+}
+if(!is.null(opt$targetreads) && opt$targetreads < 1L){
+    cli::cli_abort("--targetreads must be a positive integer. Provided --targetreads {opt$targetreads}")
+}
+if(opt$maxCoverage <= 0){
+    cli::cli_abort("--maxCoverage is not positive. Provided --maxCoverage {opt$maxCoverage}")
+}
+
+if(opt$maxCoverage >= 2000){
+    cli::cli_warn("WARNING! --maxCoverage is {opt$maxCoverage}. Using too high maxCoverage may result in exceesive memory usage for genome-wide analysis.")
 }
 if(opt$threads < 1){
     cli::cli_abort("--threads can't be lower than 1. Provided --threads {opt$threads}")
@@ -298,58 +330,10 @@ cli::cli_h1("Start analysis with the following options:")
 cli::cli_dl(opt)
 cli::cli_h1("")
 
-
-
-#### DEFINE BACKGROUND NOISE MODEL LENGTHS ####
-if(!is.null(opt$bgnoiselengths) && opt$bgnoiselengths != "none"){
-    bg_len_strs <- str_split_fixed(opt$bgnoiselengths,pattern = ":",n=3)
-    bg_len_mat <- matrix(as.numeric(bg_len_strs),nrow=1)
-    if(any(is.na(bg_len_mat))){
-        cli::cli_abort("Couldn't parse --bgnoiselengths. --bgnoiselengths must be of format \"min:max:step\", e.g. \"2:5:1\" for lengths 2,3,4,5. Provided --bgnoiselengths {opt$bgnoiselengths}")
-    }
-    colnames(bg_len_mat) <- c("min_ftp_len","max_ftp_len","by")
-    row.names(bg_len_mat) <- "background"
-} else{
-    bg_len_mat <- NULL
-}
-#### DEFINE TRANSCRIPTION FACTOR MODEL LENGTHS ####
-if(!is.null(opt$tflengths) && opt$tflengths != "none"){
-    tf_len_strs <- str_split_fixed(opt$tflengths,pattern = ":",n=3)
-    tf_len_mat <- matrix(as.numeric(tf_len_strs),nrow=1)
-    if(any(is.na(tf_len_mat))){
-        cli::cli_abort("Couldn't parse --tflengths. --tflengths must be of format \"min:max:step\", e.g. \"20:50:10\" for lengths 20,30,40,50. Provided --tflengths {opt$tflengths}")
-    }
-    colnames(tf_len_mat) <- c("min_ftp_len","max_ftp_len","by")
-    row.names(tf_len_mat) <- "TF"
-} else{
-    tf_len_mat <- NULL
-}
-#### DEFINE NUCLEOSOME MODEL LENGTHS ####
-if(!is.null(opt$nucllengths) && opt$nucllengths != "none"){
-    nucl_len_strs <- str_split_fixed(opt$nucllengths,pattern = ":",n=3)
-    nucl_len_mat <- matrix(as.numeric(nucl_len_strs),nrow=1)
-    if(any(is.na(nucl_len_mat))){
-        cli::cli_abort("Couldn't parse --nucllengths. --nucllengths must be of format \"min:max:step\", e.g. \"100:200:10\" for lengths 100,110,120,...,200. Provided --nucllengths {opt$nucllengths}")
-    }
-    colnames(nucl_len_mat) <- c("min_ftp_len","max_ftp_len","by")
-    row.names(nucl_len_mat) <- "Nucl"
-} else{
-    nucl_len_mat <- NULL
-}
-
-if(all(is.null(c(bg_len_mat,tf_len_mat,nucl_len_mat)) && is.null(opt$ftpmodelyaml))){
-    cli::cli_abort("At least one of the models (background noise, TF or nucleosome) must be defined. Please provide at least one of the following parameters: --bgnoiselengths, --tflengths, --nucllengths or --ftpmodelyaml.")
-}
-
-ftp_len_mat <- rbind(bg_len_mat,tf_len_mat,nucl_len_mat)
-
-#### LOAD FOOTPRINT MODELS OR RESULTS OF FOOTPRINT SPECTRUM ANALYSIS ####
-##### construct seqinfo object from bam header ######
-bam_header <- Rsamtools::scanBamHeader(files = opt$bamfile,what = c("targets"))
-seqinfo_bam <- Seqinfo::Seqinfo(seqnames = names(bam_header[[1]]$targets),
-                                bam_header[[1]]$targets)
-
-
+#####  DEFINE FOOTPRINT MODELS #####
+## if --ftpmodelyaml is defined we load user-provided footprint models from yaml file
+## if not, we load the footprint spectrum and construct TF and Nucl footprints from it
+## we have to define variables ftp_models and ftp_group_names
 if(!is.null(opt$ftpmodelyaml)){
     ## load footprint model from a YAML file
     ftp_models <- yaml::read_yaml(opt$ftpmodelyaml)
@@ -360,10 +344,56 @@ if(!is.null(opt$ftpmodelyaml)){
         cli::cli_abort("Can't find one of \"ftp_models\" \"bgprotectprob\" \"bgcoverprior\". All three must be present in the input YAML: {opt$ftpmodelyaml}")
     }
 
-
+    ## retrieve names of groups for which we will calculate enrichments etc.
+    ftp_group_names <- unique(sapply(ftp_models$ftp_models,function(x){x$GROUP}))
 } else if(!is.null(opt$fsayaml)){
+
     ## load footprint spectrum from a YAML file
     fsa_data <- yaml::read_yaml(opt$fsayaml)
+
+    ## by default we only use TF and Nucl footprint groups
+    ## define footprint lengths for background noise models
+    if(!is.null(opt$bgnoiselengths) && opt$bgnoiselengths != "none"){
+        bg_len_strs <- str_split_fixed(opt$bgnoiselengths,pattern = ":",n=3)
+        bg_len_mat <- matrix(as.numeric(bg_len_strs),nrow=1)
+        if(any(is.na(bg_len_mat))){
+            cli::cli_abort("Couldn't parse --bgnoiselengths. --bgnoiselengths must be of format \"min:max:step\", e.g. \"2:5:1\" for lengths 2,3,4,5. Provided --bgnoiselengths {opt$bgnoiselengths}")
+        }
+        colnames(bg_len_mat) <- c("min_ftp_len","max_ftp_len","by")
+        row.names(bg_len_mat) <- "background"
+    } else{
+        bg_len_mat <- NULL
+    }
+    ## define footprint lengths for TF models
+    if(!is.null(opt$tflengths) && opt$tflengths != "none"){
+        tf_len_strs <- str_split_fixed(opt$tflengths,pattern = ":",n=3)
+        tf_len_mat <- matrix(as.numeric(tf_len_strs),nrow=1)
+        if(any(is.na(tf_len_mat))){
+            cli::cli_abort("Couldn't parse --tflengths. --tflengths must be of format \"min:max:step\", e.g. \"20:50:10\" for lengths 20,30,40,50. Provided --tflengths {opt$tflengths}")
+        }
+        colnames(tf_len_mat) <- c("min_ftp_len","max_ftp_len","by")
+        row.names(tf_len_mat) <- "TF"
+    } else{
+        tf_len_mat <- NULL
+    }
+    ## define footprint lengths for Nucl models
+    if(!is.null(opt$nucllengths) && opt$nucllengths != "none"){
+        nucl_len_strs <- str_split_fixed(opt$nucllengths,pattern = ":",n=3)
+        nucl_len_mat <- matrix(as.numeric(nucl_len_strs),nrow=1)
+        if(any(is.na(nucl_len_mat))){
+            cli::cli_abort("Couldn't parse --nucllengths. --nucllengths must be of format \"min:max:step\", e.g. \"100:200:10\" for lengths 100,110,120,...,200. Provided --nucllengths {opt$nucllengths}")
+        }
+        colnames(nucl_len_mat) <- c("min_ftp_len","max_ftp_len","by")
+        row.names(nucl_len_mat) <- "Nucl"
+    } else{
+        nucl_len_mat <- NULL
+    }
+    if(all(is.null(c(bg_len_mat,tf_len_mat,nucl_len_mat)) && is.null(opt$ftpmodelyaml))){
+        cli::cli_abort("At least one of the models (background noise, TF or nucleosome) must be defined. Please provide at least one of the following parameters: --bgnoiselengths, --tflengths, --nucllengths or --ftpmodelyaml.")
+    }
+
+    ftp_len_mat <- rbind(bg_len_mat,tf_len_mat,nucl_len_mat)
+
     ## check if minimum and maximum ftp lengths in the spectrum and in the ftp_len_mat are consistent
     ftplen_range <- range(fsa_data$ftp_spectrum$ftp_length)
     ftp_len_mat[which(ftp_len_mat[,1] < ftplen_range[1]),1] <- ftplen_range[1]
@@ -375,26 +405,53 @@ if(!is.null(opt$ftpmodelyaml)){
     ftp_models <- list("ftp_models" = ftp_models,
                        "bgprotectprob" = fsa_data$bgprotectprob,
                        "bgcoverprior" = fsa_data$bgcoverprior)
+    ## retrieve names of groups for which we will calculate enrichments etc.
+    ftp_group_names <- unique(sapply(ftp_models$ftp_models,function(x){x$GROUP}))
 }
 
 
 #### DEFINE REGIONS AND GENOMIC BINNING FOR PREDICTION ####
-if(!is.null(opt$regionbed)){
-    ## if bed file is provided load the region
-    sel_regions <- rtracklayer::import.bed(opt$regionbed)
-} else{
-    cli::cli_alert_info(text = "Creating genomic tiles of length {opt$chunksize}bp for genome-wide analysis.")
-    ## if no bed file provided, load bam header and extract names and seqlengths
-    sel_regions <- GRanges(seqinfo_bam)
-}
-## tile the regions into opt$chunksize chunks
-sel_regions <- unlist(tile(sel_regions,width = opt$chunksize))
-#names(sel_regions) <- as.character(sel_regions)
-sel_regions <- GenomicRanges::sort(sel_regions,ignore.strand=TRUE)
+##### construct seqinfo object from bam header ######
+bam_header <- Rsamtools::scanBamHeader(files = opt$bamfile,what = c("targets"))
+seqinfo_bam <- Seqinfo::Seqinfo(seqnames = names(bam_header[[1]]$targets),
+                                bam_header[[1]]$targets)
 
-## define chunk_id for parquet partitioning and other
-sel_regions$chunk_id <- 1:length(sel_regions)
-names(sel_regions) <- paste0("chunk_id_",sel_regions$chunk_id)
+if(!is.null(opt$targetreads)){
+    ## Adaptive chunking: estimate read density from BAI linear index, no BAM scan needed
+    bam_index <- paste0(opt$bamfile, ".bai")
+    if(!file.exists(bam_index))
+        cli::cli_abort("--targetreads requires a BAI index alongside --bamfile. Not found: {bam_index}")
+    cli::cli_alert_info("Creating adaptive genomic chunks targeting {opt$targetreads} reads per chunk.")
+    sel_regions <- nomeR::create_adaptive_bam_chunks(
+        bamfile      = opt$bamfile,
+        target_reads = opt$targetreads,
+        bam_index    = bam_index
+    )
+    if(!is.null(opt$regionbed)){
+        region_gr   <- rtracklayer::import.bed(opt$regionbed)
+        #sel_regions <- sel_regions[GenomicRanges::overlapsAny(sel_regions,region_gr,ignore.strand = TRUE)]
+        sel_regions <- IRanges::subsetByOverlaps(sel_regions, region_gr, ignore.strand = TRUE)
+        sel_regions <- GenomicRanges::sort(sel_regions, ignore.strand = TRUE)
+    }
+} else{
+    if(!is.null(opt$regionbed)){
+        ## if bed file is provided load the region
+        sel_regions <- rtracklayer::import.bed(opt$regionbed)
+    } else{
+        cli::cli_alert_info(text = "Creating genomic tiles of length {opt$chunksize}bp for genome-wide analysis.")
+        ## if no bed file provided, load bam header and extract names and seqlengths
+        sel_regions <- GRanges(seqinfo_bam)
+    }
+    ## tile the regions into opt$chunksize chunks
+    sel_regions <- unlist(tile(sel_regions, width = opt$chunksize))
+    sel_regions <- GenomicRanges::sort(sel_regions, ignore.strand = TRUE)
+}
+
+## define chunk_id (zero-padded so names sort correctly in shell globs)
+n_chunks_total <- length(sel_regions)
+sel_regions$chunk_id <- seq_len(n_chunks_total)
+names(sel_regions) <- sprintf(paste0("chunk_id_%0", nchar(n_chunks_total), "d"),
+                               seq_len(n_chunks_total))
 ## export bed with genomic chunks
 rtracklayer::export.bed(sel_regions,
                         con = file.path(opt$outputdir,
@@ -402,7 +459,6 @@ rtracklayer::export.bed(sel_regions,
 
 
 #### function for writing data.table into wig file ####
-
 write_dt_wig <- function(dt,
                          tilewid,
                          scoreColumn,
@@ -414,6 +470,13 @@ write_dt_wig <- function(dt,
     ## keep seqnames, start and scoreColumn only
     sel_cols = c("seqnames", "start", scoreColumn)
     dt2 <- dt[, ..sel_cols]
+
+    ## remove data with NAs in scoreColumn
+    dt2 <- dt2[!is.na(get(scoreColumn))]
+    if(nrow(dt2) == 0){
+        cli::cli_abort("All values in column {scoreColumn} are NAs.")
+    }
+
     ## split dt2 by chr
     dt2 <- split(dt2,f=dt2[["seqnames"]])
 
@@ -448,80 +511,25 @@ write_dt_wig <- function(dt,
                    })
 }
 
-#### PREDICT FOOTPRINTS ####
-options(cli.width = 500)
-
-cli::cli_progress_step("Footprint prediction using mode {opt$ftpdecoding}. Output will be stored in {opt$outputdir}")
-##### define temporary filenames and files for final output #####
-## all temporary files for each genomic chunk will be stored into a separate folder
-dir.create(opt$tempdir,recursive = TRUE,showWarnings = FALSE)
-
-
-if(!opt$noftps){
-    ## folder with temporary files
-    ftp_dir <- file.path(opt$outputdir,"footprints")
-    ## delete existing directory and create a new one
-    unlink(ftp_dir,recursive=TRUE)
-    dir.create(ftp_dir)
-
-    nucl_bed <- file.path(ftp_dir,"nucleosomes_ftp.bed")
-    tf_bed <- file.path(ftp_dir,"tf_ftp.bed")
-    linker_bed <- file.path(ftp_dir,"linkers_ftp.bed")
-
-}
-if(!opt$noenrich){
-
-    bw_dir <- file.path(opt$outputdir,"enrichments")
-    ## delete existing directory and create a new one
-    unlink(bw_dir,recursive=TRUE)
-    dir.create(bw_dir)
-
-    ## nDataPoints - bw file with tile coverage
-    n_frag_cover_wig <- file.path(opt$tempdir,"frag_data_cover.wig")
-    n_frag_cover_bw <- file.path(bw_dir,"frag_data_cover.bw")
-
-    ## files for BG
-    #### average BGscore - mean of BGscores across informative positions overlapping each tile
-    bg_score_wig <- file.path(opt$tempdir,"bg_score_mean.wig")
-    bg_score_bw <- file.path(bw_dir,"bg_score_mean.bw")
-    #### BG score Z-statistics
-    bg_score_Zstat_wig <- file.path(opt$tempdir,"bg_score_mean_Zstat.wig")
-    bg_score_Zstat_bw <- file.path(bw_dir,"bg_score_mean_Zstat.bw")
-    #### -log10(p-vals)
-    bg_pval_wig <- file.path(opt$tempdir,"bg_neglogPval.wig")
-    bg_pval_bw <- file.path(bw_dir,"bg_neglogPval.bw")
-    #### -log10(FDR)
-    bg_fdr_wig <- file.path(opt$tempdir,"bg_neglogFDR.wig")
-    bg_fdr_bw <- file.path(bw_dir,"bg_neglogFDR.bw")
-
-
-    ## files for TF
-    #### average TFscore - mean of TFscores across informative positions overlapping each tile
-    tf_score_wig <- file.path(opt$tempdir,"tf_score_mean.wig")
-    tf_score_bw <- file.path(bw_dir,"tf_score_mean.bw")
-    #### TF score Z-statistics
-    tf_score_Zstat_wig <- file.path(opt$tempdir,"tf_score_mean_Zstat.wig")
-    tf_score_Zstat_bw <- file.path(bw_dir,"tf_score_mean_Zstat.bw")
-    #### -log10(p-vals)
-    tf_pval_wig <- file.path(opt$tempdir,"tf_neglogPval.wig")
-    tf_pval_bw <- file.path(bw_dir,"tf_neglogPval.bw")
-    #### -log10(FDR)
-    tf_fdr_wig <- file.path(opt$tempdir,"tf_neglogFDR.wig")
-    tf_fdr_bw <- file.path(bw_dir,"tf_neglogFDR.bw")
-
-}
-
-
-### define threads share between mclapply and predict_footprints_SE
-#mclapply_threads_share <- 0.5
-#threads_mclap <- max(floor(opt$threads * mclapply_threads_share),1)
-#threads_predict <- max(floor(opt$threads/threads_mclap),1)
-threads_mclap <- opt$threads
-threads_predict <- 1
-
-
-format_index <- function(i, max_i) {
-    sprintf(paste0("%0", nchar(max_i), "d"), i)
+#### function for convert character to safe filename ####
+safe_filename <- function(x, replacement = "_", max_length = 255) {
+    x <- as.character(x)
+    # Remove reserved characters (Windows/Unix): < > : " / \ | ? * and control chars
+    x <- gsub("[<>:\"/\\\\|?*[:cntrl:]]", replacement, x)
+    # Collapse whitespace to replacement
+    x <- gsub("\\s+", replacement, x)
+    # Collapse repeated replacements
+    x <- gsub(paste0("(", replacement, ")+"), replacement, x, fixed = FALSE)
+    # Strip leading/trailing replacements, spaces, and dots (trailing dots/spaces illegal on Windows)
+    x <- gsub(paste0("^[", replacement, ". ]+|[", replacement, ". ]+$"), "", x)
+    # Guard against Windows reserved device names
+    reserved <- "^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$"
+    x <- ifelse(grepl(reserved, x, ignore.case = TRUE), paste0(x, replacement), x)
+    # Truncate
+    x <- substr(x, 1, max_length)
+    # Fallback for empty result
+    x <- ifelse(nchar(x) == 0, "unnamed", x)
+    x
 }
 
 
@@ -574,6 +582,121 @@ if(!is.null(opt$kmerblacklist)){
 
 
 
+
+#### FOOTPRINT PREDICTION ####
+options(cli.width = 500)
+
+cli::cli_progress_step("Footprint prediction using mode {opt$ftpdecoding}. Output will be stored in {opt$outputdir}")
+##### define temporary filenames and files for final output #####
+## all temporary files for each genomic chunk will be stored into a separate folder
+dir.create(opt$tempdir,recursive = TRUE,showWarnings = FALSE)
+
+get_outfile_structure <- function(ftp_grnames,
+                                  loc_folder = ".",
+                                  noftps = FALSE,
+                                  noenrich = FALSE){
+
+    ### structure for the enrichments folder (in outputdir or tempfolder/chunk_id the structure is similar)
+    # enrichments
+    #     |
+    #     |- frag_data_cover.bw (file with data coverage)
+    #     |- mod_prob_mean.bw (file with average mod_prob)
+    #     |
+    #     |- Z-statistics
+    #     |         |
+    #     |         |- ftp1.bw
+    #     |         |- ftp2.bw
+    #     |         ....
+    #     |
+    #     |- mean_scores
+    #     |         |- ftp1.bw
+    #     |         |...
+    #     |- neglPVal
+    #     |         |- ftp1.bw
+    #     |         |...
+    #     |- neglFDR
+    #     |         |- ftp1.bw
+    #     |         |...
+    # footprints
+    #     |
+    #     |- ftp1.bed
+    #     |- ftp2.bed
+    #     ...
+
+    ## get BED files
+    if(!noftps){
+        ## folder BED files with footprints
+        ftp_dir <- file.path(loc_folder,"footprints")
+
+        ## for every ftp_group from ftp_grnames define to which file they should be stored
+        ## create safe filenames. Special for background: convert name to linkers
+        bedfnames <- safe_filename(paste0(gsub("background","linkers",ftp_grnames),".bed"))
+        ## bed_outfile has relative path and the final path should be preceded either by opt$outputdir or opt$tempfolder/chunk_id
+        ftp_bed_outfiles_df <- data.frame(ftp_group = ftp_grnames,
+                                          filetype = "footprints",
+                                          fileext = "bed",
+                                          file = file.path(ftp_dir,bedfnames))
+    } else{
+        ftp_bed_outfiles_df <- NULL
+    }
+
+    if(!noenrich){
+        enrich_dir <- file.path(loc_folder,"enrichments")
+        wig_raw_data_files <- data.frame(ftp_group = NA,
+                                         filetype = c("frag_data_cover",
+                                                      "mod_prob_mean"),
+                                         fileext = "wig",
+                                         scoreColumn = c("frag_cover","mod_prob_mean"),
+                                         file = file.path(enrich_dir,c("frag_data_cover.wig",
+                                                                       "mod_prob_mean.wig")))
+
+        ## create data.frame describing where wig should be stored
+        ## mean scores
+        scores_wig_files <- data.frame(ftp_group = ftp_grnames,
+                                       filetype = "mean_score",
+                                       fileext = "wig",
+                                       scoreColumn = paste0(ftp_grnames,"_score_mean"),
+                                       file = file.path(enrich_dir,"mean_scores",safe_filename(paste0(ftp_grnames,"_mean_score.wig"))))
+        ## z-statistics
+        zstats_wig_files <- data.frame(ftp_group = ftp_grnames,
+                                       filetype = "Z-statistics",
+                                       fileext = "wig",
+                                       scoreColumn = paste0(ftp_grnames,"_score_mean_Zstat"),
+                                       file = file.path(enrich_dir,"Z-statistics",safe_filename(paste0(ftp_grnames,"_Zstat.wig"))))
+
+        ## negative log10 p.val
+        neglPval_wig_files <- data.frame(ftp_group = ftp_grnames,
+                                         filetype = "neglPval",
+                                         fileext = "wig",
+                                         scoreColumn = paste0(ftp_grnames,"_neglogPval"),
+                                         file = file.path(enrich_dir,"neglPval",safe_filename(paste0(ftp_grnames,"_neglPval.wig"))))
+
+        ## negative log10 FDR
+        neglFDR_wig_files <- data.frame(ftp_group = ftp_grnames,
+                                        filetype = "neglFDR",
+                                        fileext = "wig",
+                                        scoreColumn = paste0(ftp_grnames,"_neglogFDR"),
+                                        file = file.path(enrich_dir,"neglFDR",safe_filename(paste0(ftp_grnames,"_neglFDR.wig"))))
+        wig_outfiles_df <- bind_rows(wig_raw_data_files,
+                                     scores_wig_files,
+                                     zstats_wig_files,
+                                     neglPval_wig_files,
+                                     neglFDR_wig_files)
+    } else{
+        wig_outfiles_df <- NULL
+    }
+
+    file_struct <- bind_rows(ftp_bed_outfiles_df,
+                             wig_outfiles_df)
+    return(file_struct)
+
+}
+
+
+format_index <- function(i, max_i) {
+    sprintf(paste0("%0", nchar(max_i), "d"), i)
+}
+
 ##### LOOP FOR PREDICTING FOOTPRINTS IN GENOMIC CHUNKS ######
 n_chunks <- length(sel_regions)
 
@@ -584,8 +707,17 @@ if(opt$correctseqbias != "no_correction" && !is.null(control_params))
 if(!is.null(kmer_blacklist))
     kmer_blacklist <- Biostrings::DNAStringSet(kmer_blacklist[["kmer"]])
 
-pred_out <- mcprogress::pmclapply(
-    mc.cores = threads_mclap,
+
+### define threads share between mclapply and predict_footprints_SE
+#outer_workers <- min(opt$threads, n_chunks, 6L)   # 6 is a reasonable NFS cap
+#inner_ncpu    <- max(1L, opt$threads %/% outer_workers)
+outer_workers <- opt$threads
+inner_ncpu <- 1
+
+
+files2concat <- bind_rows(parallel::mclapply(
+    mc.cores = outer_workers,
+    #lapply(
     X = seq_along(sel_regions),
     FUN = function(i){
 
@@ -598,9 +730,14 @@ pred_out <- mcprogress::pmclapply(
         # Safe: only this worker touches this directory
         dir.create(chunk_dir, showWarnings = FALSE, recursive = TRUE)
 
+        ## get file structure for the current chunk
+        chunk_file_struct <- get_outfile_structure(ftp_grnames = ftp_group_names,
+                                                   loc_folder = chunk_dir,
+                                                   noftps = opt$noftps,
+                                                   noenrich = opt$noenrich)
+
         # ---- 2. run  existing predictions -----
         ### 05.03.2026: do not save the fst files. they take way too much space for genome-wide analysis
-        #if(!file.exists(cov_fst) || !file.exists(ftp_fst)){
 
         ## load data
         #cli::cli_progress_step("Fetching data from BAM file for region {as.character(reg)} [{i} out of {n_chunks}]")
@@ -609,8 +746,10 @@ pred_out <- mcprogress::pmclapply(
                                                    modbase = "a",
                                                    sequenceContextWidth = opt$kmer,
                                                    sequenceReference = opt$refseq,
+                                                   level = "quickread",
+                                                   maxCoverage = opt$maxCoverage,
                                                    trim = TRUE,
-                                                   BPPARAM = BiocParallel::MulticoreParam(workers = threads_predict),
+                                                   BPPARAM = BiocParallel::MulticoreParam(workers = inner_ncpu),
                                                    verbose = F)
 
         if(se$n_reads == 0){
@@ -643,7 +782,7 @@ pred_out <- mcprogress::pmclapply(
                                                      ftpConfigMethod = opt$ftpdecoding,
                                                      aggrByGroup = TRUE,
                                                      returnAs = "data.table",
-                                                     ncpu = threads_predict,
+                                                     ncpu = inner_ncpu,
                                                      #ncpu = opt$threads,
                                                      min_frag_data_len = 0L,
                                                      min_frag_data_dens = 0.0,
@@ -658,122 +797,94 @@ pred_out <- mcprogress::pmclapply(
             cli::cli_inform("Writing predicted footprints into temporary BED files for region {as.character(reg)} [{i} out of {n_chunks}]")
 
             ## temporary files
-            nucl_temp_bed <- file.path(chunk_dir,"nucl_ftps.bed")
-            tf_temp_bed <- file.path(chunk_dir,"tf_ftps.bed")
-            linkers_temp_bed <- file.path(chunk_dir,"linkers_ftps.bed")
+            ftp_bed_files <- chunk_file_struct %>%
+                filter(filetype == "footprints")
 
-            ## write nucleosome ftp BED12
-            nomeR::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "Nucl"],
-                                          file = nucl_temp_bed,
-                                          append=FALSE)
-            ## write TF ftp BED12
-            nomeR::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == "TF"],
-                                          file = tf_temp_bed,
-                                          append=FALSE)
-            ## reduce background footprints to get linkers
-            linkers <- pred_list_dt$FOOTPRINT_CONF[ftp_group == "background"]
-            linkers <- GenomicRanges::GRanges(seqnames = linkers$seqnames,
-                                              IRanges(start = linkers$start,
-                                                      width=linkers$width),
-                                              strand = linkers$strand,
-                                              fragID = linkers$fragID)
-            linkers <- split(linkers,linkers$fragID)
-            linkers <- GenomicRanges::reduce(linkers)
-            linkers <- unlist(linkers)
-            linkers$fragID <- names(linkers)
-            linkers <- data.table::as.data.table(linkers)
-            ## write linkers BED12
-            nomeR::write_ftp_decoding_bed(ftp_decode_dt = linkers,
-                                          file = linkers_temp_bed,
-                                          append=FALSE)
+            for(f in 1:nrow(ftp_bed_files)){
+                dir.create(dirname(ftp_bed_files$file[f]),
+                           recursive = TRUE,showWarnings = FALSE)
+                nomeR::write_ftp_decoding_bed(ftp_decode_dt = pred_list_dt$FOOTPRINT_CONF[ftp_group == ftp_bed_files$ftp_group[f]],
+                                              file = ftp_bed_files$file[f],
+                                              append=FALSE)
+            }
         }
 
         # ---- 5. calculate and write enrichments for tiles ----
         if(!opt$noenrich){
             cli::cli_inform("Calculating enrichments and writing BIGWIG files for region {as.character(reg)} [{i} out of {n_chunks}]")
 
-            ## temporary files
-            n_frag_cover_temp_wig <- file.path(chunk_dir,"frag_data_cover.wig")
-            ### BG
-            bg_score_temp_wig <- file.path(chunk_dir,"bg_score_mean.wig")
-            bg_score_Zstat_temp_wig <- file.path(chunk_dir,"bg_score_mean_Zstat.wig")
-            bg_pval_temp_wig <- file.path(chunk_dir,"bg_pval.wig")
-            bg_fdr_temp_wig <- file.path(chunk_dir,"bg_fdr.wig")
-
-            ### TF
-            tf_score_temp_wig <- file.path(chunk_dir,"tf_score_mean.wig")
-            tf_score_Zstat_temp_wig <- file.path(chunk_dir,"tf_score_mean_Zstat.wig")
-            tf_pval_temp_wig <- file.path(chunk_dir,"tf_pval.wig")
-            tf_fdr_temp_wig <- file.path(chunk_dir,"tf_fdr.wig")
-            enr_dt <- nomeR::calculate_tile_BG_TF_enrichments(cover_dt = pred_list_dt$COVER_PROB,
-                                                              tile_width = tile_width,
-                                                              tile_step = tile_step,
-                                                              threads = threads_predict,
-                                                              psc = opt$coverpsc
+            enr_dt <- nomeR::calculate_tile_footprint_enrichments(cover_dt = pred_list_dt$COVER_PROB,
+                                                                  tile_width = tile_width,
+                                                                  tile_step = tile_step,
+                                                                  ftp_names = ftp_group_names,
+                                                                  threads = inner_ncpu,
+                                                                  psc = opt$coverpsc
             )
-
 
             ## adjust end so that width is tile_step to remove tile overlapping
             enr_dt <- enr_dt[,end := start + tile_step - 1]
             data.table::setorder(enr_dt, seqnames, start)
 
             ## add frag coverage, -log10(p-val) and -log10(FDR)
+            pfdr_cols <- c(paste0(ftp_group_names,"_score_mean_Ztest_pval"),
+                           paste0(ftp_group_names,"_score_mean_FDR"))
+            neglognames <-c(paste0(ftp_group_names,"_neglogPval"),
+                            paste0(ftp_group_names,"_neglogFDR"))
             pval_psc <- 1e-100
-            enr_dt <- enr_dt[,':='(frag_cover = n_data_points/n_inf_pos,
-                                   bg_neglogPval = -log10(bg_score_mean_Ztest_pval + pval_psc),
-                                   bg_neglogFDR  = -log10(bg_score_mean_FDR        + pval_psc),
-                                   tf_neglogPval = -log10(tf_score_mean_Ztest_pval + pval_psc),
-                                   tf_neglogFDR  = -log10(tf_score_mean_FDR        + pval_psc))]
+            enr_dt <- enr_dt[, (c("frag_cover", neglognames)) := {
+                res <- lapply(.SD, function(x) { -log10(x + pval_psc) })
+                c(list(n_data_points / n_inf_pos), res)
+            }, .SDcols = pfdr_cols]
 
-            ## write mean_frag_cover - average fragment coverage per informative position
-            write_dt_wig(dt = enr_dt,
-                         tilewid = tile_step,
-                         scoreColumn = "frag_cover",
-                         file = n_frag_cover_temp_wig)
-
-            #write bg wig files
-            write_dt_wig(dt = enr_dt,
-                         tilewid = tile_step,
-                         scoreColumn = "bg_score_mean",
-                         file = bg_score_temp_wig)
-            write_dt_wig(dt = enr_dt,
-                         tilewid = tile_step,
-                         scoreColumn = "bg_score_mean_Zstat",
-                         file = bg_score_Zstat_temp_wig)
-            write_dt_wig(dt = enr_dt,
-                         tilewid = tile_step,
-                         scoreColumn = "bg_neglogPval",
-                         file = bg_pval_temp_wig)
-            write_dt_wig(dt = enr_dt,
-                         tilewid = tile_step,
-                         scoreColumn = "bg_neglogFDR",
-                         file = bg_fdr_temp_wig)
-
-            #write tf wig files
-            write_dt_wig(dt = enr_dt,
-                         tilewid = tile_step,
-                         scoreColumn = "tf_score_mean",
-                         file = tf_score_temp_wig)
-            write_dt_wig(dt = enr_dt,
-                         tilewid = tile_step,
-                         scoreColumn = "tf_score_mean_Zstat",
-                         file = tf_score_Zstat_temp_wig)
-            write_dt_wig(dt = enr_dt,
-                         tilewid = tile_step,
-                         scoreColumn = "tf_neglogPval",
-                         file = tf_pval_temp_wig)
-            write_dt_wig(dt = enr_dt,
-                         tilewid = tile_step,
-                         scoreColumn = "tf_neglogFDR",
-                         file = tf_fdr_temp_wig)
+            ## write wig files
+            cur_wig_files <- chunk_file_struct %>%
+                filter(fileext == "wig")
+            for(f in 1:nrow(cur_wig_files)){
+                dir.create(dirname(cur_wig_files$file[f]),recursive = TRUE,showWarnings = FALSE)
+                write_dt_wig(dt = enr_dt,
+                             tilewid = tile_step,
+                             scoreColumn = cur_wig_files$scoreColumn[f],
+                             file = cur_wig_files$file[f])
 
 
+            }
         }
+
+        ### define data.frame for concatenating wig files into one wig file
+        curwigs2cat <- chunk_file_struct %>% mutate(chunk_id = chunk_id,scoreColumn=NULL)
+        return(curwigs2cat)
+
+
     }
+))
 
-)
 
+### create data.frame for concatenating bed files.
+merged_bed_files_df <- get_outfile_structure(ftp_grnames = ftp_group_names,
+                                             loc_folder = opt$outputdir,
+                                             noftps = opt$noftps,
+                                             noenrich = TRUE) %>%
+    select(ftp_group,filetype,fileext,file)
+### create data.frame for concatenating wig files. The reason why we store them in tempdir is bacause we need to convert them into bw files later and place in outputdir
+merged_wig_files_df <- get_outfile_structure(ftp_grnames = ftp_group_names,
+                                             loc_folder = opt$tempdir,
+                                             noftps = TRUE,
+                                             noenrich = opt$noenrich)%>%
+    select(ftp_group,filetype,fileext,file)
 
+merged_files_df <- bind_rows(merged_bed_files_df,merged_wig_files_df) %>%
+    rename(file="merged_file")
+
+## check if any files are missing
+missing_files <- files2concat$file[!file.exists(files2concat$file)]
+if(length(missing_files) > 0){
+    missing_files <- paste(missing_files,collapse = "\n")
+    cli::cli_warn("Some files are missing:\n {missing_files}")
+}
+
+files2concat <- files2concat %>%
+    filter(file.exists(file)) %>%
+    left_join(merged_files_df, by = join_by(ftp_group,filetype,fileext))
 
 #### functions for concatenating temporary files ####
 concat_files <- function(files,
@@ -795,142 +906,90 @@ concat_files <- function(files,
     invisible(output)
 }
 
-merge_temp_files <- function(filepattern,
-                             tempdir,
-                             chunk_id_vec,
-                             outputfile){
-    ## construct temprorary files names for merging
-    #chunk_id <- sprintf("%05d", chunk_id_vec)
-    chunk_id <- format_index(chunk_id_vec,
-                             max_i = max(chunk_id_vec))
-    chunk_dirs <- file.path(tempdir, paste0("chunk_", chunk_id))
-    files <- file.path(chunk_dirs,
-                       filepattern)
-    ## filter files that do not exist
-    files <- files[file.exists(files)]
-    if(length(files) == 0)
-        return(NULL)
-    invisible(concat_files(files = files,
-                           output = outputfile))
-}
-
-
 cli::cli_progress_step("Merging temporary files")
-merge_files_df <- data.frame(fpat = character(0), fout = character(0), fbw = character(0))
 
-if (!opt$noenrich) {
-    merge_files_df <- rbind(merge_files_df, data.frame(
-        fpat = c("frag_data_cover.wig",
-                 "bg_score_mean.wig",
-                 "bg_score_mean_Zstat.wig",
-                 "bg_pval.wig",
-                 "bg_fdr.wig",
-                 "tf_score_mean.wig",
-                 "tf_score_mean_Zstat.wig",
-                 "tf_pval.wig",
-                 "tf_fdr.wig"),
-        fout = c(n_frag_cover_wig,
-                 bg_score_wig,
-                 bg_score_Zstat_wig,
-                 bg_pval_wig,
-                 bg_fdr_wig,
-                 tf_score_wig,
-                 tf_score_Zstat_wig,
-                 tf_pval_wig,
-                 tf_fdr_wig),
-        fbw  = c(n_frag_cover_bw,
-                 bg_score_bw,
-                 bg_score_Zstat_bw,
-                 bg_pval_bw,
-                 bg_fdr_bw,
-                 tf_score_bw,
-                 tf_score_Zstat_bw,
-                 tf_pval_bw,
-                 tf_fdr_bw)
-    ))
-}
+merged_out_files_df <- do.call(rbind,(by(data = files2concat, INDICES = files2concat$merged_file,
+                                         FUN = function(df){
 
-if (!opt$noftps) {
-    merge_files_df <- rbind(merge_files_df, data.frame(
-        fpat = c("nucl_ftps.bed", "tf_ftps.bed", "linkers_ftps.bed"),
-        fout = c(nucl_bed, tf_bed, linker_bed),
-        fbw  = c(NA_character_, NA_character_, NA_character_)
-    ))
-}
+                                             mrg_file <- unique(df$merged_file)
+                                             if(length(mrg_file) != 1){
+                                                 cli::cli_warn("More than one file to store merged data. Using only the first one.")
+                                             }
+                                             dir.create(dirname(mrg_file),recursive = TRUE,showWarnings = F)
+                                             mrg_file <- concat_files(files = df$file,
+                                                                      output = mrg_file[1])
 
-fo <- lapply(1:nrow(merge_files_df),
-             function(i){
-                 merge_temp_files(filepattern = merge_files_df$fpat[i],
-                                  tempdir = opt$tempdir,
-                                  chunk_id_vec = seq_along(sel_regions),
-                                  outputfile = merge_files_df$fout[i])
-             })
+                                             outd <- df[1,] %>% select(ftp_group,filetype,fileext) %>%
+                                                 mutate(merged_file = mrg_file)
 
+                                             return(outd)
 
-### convert enrichments wig to bigwigs
+                                         },simplify=FALSE)))
+row.names(merged_out_files_df) <- NULL
+
+## convert concatenated wig files into bigwig files
+merged_wg_files <- merged_out_files_df %>%
+    filter(fileext == "wig")
+merged_bw_files_df <- merged_wg_files %>%
+    left_join(get_outfile_structure(ftp_grnames = ftp_group_names,
+                                    loc_folder = opt$outputdir,
+                                    noftps = TRUE,
+                                    noenrich = opt$noenrich) %>%
+                  mutate(fileext = "bw",
+                         file = gsub("\\.wig$",".bw",file)) %>%
+                  rename(file="bw_file"),
+              by = c("ftp_group","filetype"))
 cli::cli_progress_step("Converting Wig to BigWig")
 if(!opt$noenrich){
-    fo <- lapply(1:nrow(merge_files_df),
+    fo <- lapply(1:nrow(merged_bw_files_df),
                  function(i){
-                     if(!is.na(merge_files_df$fbw[i]) && file.exists(merge_files_df$fout[i])){
-                         rtracklayer::wigToBigWig(x = merge_files_df$fout[i],
+                     if(!is.na(merged_bw_files_df$bw_file[i]) && file.exists(merged_bw_files_df$merged_file[i])){
+                         dir.create(dirname(merged_bw_files_df$bw_file[i]),recursive = TRUE,showWarnings = F)
+                         rtracklayer::wigToBigWig(x = merged_bw_files_df$merged_file[i],
                                                   seqinfo = seqinfo_bam,
-                                                  dest = merge_files_df$fbw[i])
+                                                  dest = merged_bw_files_df$bw_file[i])
                      }
                  })
 }
 cli::cli_progress_done()
 
+## final set of generated files
+final_file_set <- bind_rows(merged_out_files_df %>%
+                                filter(fileext == "bed") %>%
+                                rename(merged_file = "file"),
+                            merged_bw_files_df %>% select(ftp_group,filetype,fileext.y,bw_file) %>%
+                                rename(fileext.y = 'fileext',bw_file = "file"))
+
 
 cli::cli_alert_success("Footprint prediction has been finished!")
 cli::cli_h1("The following output files have been stored:")
 cli::cli_ol()
-
+final_file_set <- final_file_set %>%
+    filter(file.exists(file))
 if(!opt$noftps){
-    cli::cli_li("{.field BED12 files with footprints:}")
-    ulid <- cli::cli_ul()
-    if(file.exists(nucl_bed))
-        cli::cli_li("Nucleosomes: {.file {nucl_bed}}")
-    if(file.exists(tf_bed))
-        cli::cli_li("Transcription factors: {.file {tf_bed}}")
-    if(file.exists(linker_bed))
-        cli::cli_li("Linkers: {.file {linker_bed}}")
-    cli::cli_end(ulid)
+    cli::cli_li("{.field BED12 files with footprints are located in the folder {.file footprints}}")
 }
 if(!opt$noenrich){
-    cli::cli_li("{.field Average BG/TF scores and neg. log-p-values BigWig files in sliding windows of width {tile_width} with step {tile_step}:}")
+    cli::cli_li("{.field Genomic BigWig files in sliding windows of width {tile_width} with step {tile_step}:}")
     ulid <- cli::cli_ul()
-    if(file.exists(n_frag_cover_bw))
-        cli::cli_li("Data coverage: {.file {n_frag_cover_bw}}")
+    cov_fls <- final_file_set %>% filter(filetype == "frag_data_cover")
+    if(file.exists(cov_fls$file))
+        cli::cli_li("Data coverage: {.file enrichments/frag_data_cover.bw}")
+    modpr_fls <- final_file_set %>% filter(filetype == "mod_prob_mean")
+    if(file.exists(modpr_fls$file))
+        cli::cli_li("Average modification probabilities: {.file enrichments/mod_prob_mean.bw}")
 
-    cli::cli_li("Accessible positions (background):")
-    bglid <- cli::cli_ul()
-    if(file.exists(bg_score_bw))
-        cli::cli_li("Average BG-scores: {.file {bg_score_bw}}")
-    if(file.exists(bg_score_Zstat_bw))
-        cli::cli_li("Z-statistics for BG-scores: {.file {bg_score_Zstat_bw}}")
-    if(file.exists(bg_pval_bw))
-        cli::cli_li("-log10(p-values): {.file {bg_pval_bw}}")
-    if(file.exists(bg_fdr_bw))
-        cli::cli_li("-log10(FDR): {.file {bg_fdr_bw}}")
-
-    cli::cli_end(bglid)
-
-    cli::cli_li("TF-covered positions:")
-    tflid <- cli::cli_ul()
-    if(file.exists(tf_score_bw))
-        cli::cli_li("Average TF-scores: {.file {tf_score_bw}}")
-    if(file.exists(tf_score_Zstat_bw))
-        cli::cli_li("Z-statistics for TF-scores: {.file {tf_score_Zstat_bw}}")
-    if(file.exists(tf_pval_bw))
-        cli::cli_li("-log10(p-values): {.file {tf_pval_bw}}")
-    if(file.exists(tf_fdr_bw))
-        cli::cli_li("-log10(FDR): {.file {tf_fdr_bw}}")
-
-    cli::cli_end(tflid)
-
+    cli::cli_li("Average predicted log10-transformed posterior coverage probabilities for each footprint model are located in the folder: {.file enrichments/mean_scores}")
+    cli::cli_li("Z-statistics for enrichment of posterior coverage probabilities for each footprint model are located in the folder: {.file enrichments/Z-statistics}")
+    cli::cli_li("Corresponding -log10(p-values) are located in the folder: {.file enrichments/neglPval}")
+    cli::cli_li("Similarly -log10(FDR) for enrichments are located in the folder: {.file enrichments/neglFDR}")
     cli::cli_end(ulid)
 }
+
+
+
 
 cli::cli_end()
 closeAllConnections()
+## delete temprary folder
+unlink(x = opt$tempdir,recursive = TRUE)

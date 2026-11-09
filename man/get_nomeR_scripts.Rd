@@ -2,46 +2,74 @@
 % Please edit documentation in R/get_nomeR_scripts.R
 \name{get_nomeR_scripts}
 \alias{get_nomeR_scripts}
-\title{Locate and Describe the nomeR Command-Line Scripts}
+\title{Locate and Describe the nomeR Command-Line Scripts and Bundled Data}
 \usage{
 get_nomeR_scripts(print_usage = TRUE)
 }
 \arguments{
-\item{print_usage}{Logical. If \code{TRUE} (default) a short usage guide
-is printed to the console.}
+\item{print_usage}{Logical. If \code{TRUE} (default) a short usage guide is
+printed to the console.}
 }
 \value{
-A named character vector with elements \code{footprint_spectral_analysis}
-and \code{predict_footprints}, each containing the absolute path to the
-corresponding installed script.  Returns \code{NA} for any script that
-cannot be found in the current installation.
+A named list with two elements:
+\describe{
+\item{\code{scripts}}{Named character vector of installed script paths:
+\code{footprint_spectral_analysis}, \code{predict_footprints_SAMOSA},
+\code{predict_footprints_NOMe_Seq}.}
+\item{\code{extdata}}{Named character vector of bundled data-file paths:
+\code{SAMOSA_footprint_models}, \code{NOMe_Seq_footprint_models},
+\code{SAMOSA_BetaCorrect_params}.}
+}
+Any file not found in the current installation is returned as
+\code{NA_character_}.
 }
 \description{
-Returns the full paths to the two independent Rscript-based workflows
-bundled with nomeR and prints a short usage guide.
+Returns the full paths to the Rscript-based workflows bundled with nomeR
+and to three pre-computed reference data files, and prints a short usage
+guide.
 
-The two scripts implement separate statistical models and can be used
-independently or in combination:
-
+\strong{Scripts:}
 \describe{
 \item{\code{footprint_spectral_analysis-SAMOSA.R}}{
 \strong{Footprint Spectral Analysis (FSA).}
-Estimates the footprint length spectrum and emission probabilities
-from a BAM file.  The results are saved as a YAML file that can
-optionally be passed to the prediction script to derive footprint
-models.  Can also be used standalone to characterise the footprint
-size distribution of an experiment.}
+Estimates the footprint length spectrum and emission probabilities from
+a SAMOSA / Fiber-seq BAM file.  Results are saved as a YAML that can be
+passed to the SAMOSA prediction script via \code{--fsayaml}.}
 \item{\code{predict_footprints-SAMOSA.R}}{
-\strong{Genome-wide Footprint Prediction.}
-Predicts per-molecule footprints genome-wide and computes per-tile
-enrichment BigWig tracks.  Footprint models can be supplied either
-as an FSA YAML (from the script above) or as a pre-built model YAML
-(\code{--ftpmodelyaml}), making the script usable without running
-FSA first.}
+\strong{Footprint prediction -- SAMOSA / Fiber-seq.}
+Per-molecule footprint prediction and per-tile enrichment
+BigWig tracks for 6mA SAMOSA / Fiber-seq data.  Supports Bayesian
+k-mer sequence-bias correction (\code{--correctseqbias BetaCorrect} or
+\code{BetaUniform}).  Footprint models supplied via \code{--fsayaml} or
+\code{--ftpmodelyaml} (takes priority).}
+\item{\code{predict_footprints-NOMe-Seq.R}}{
+\strong{Footprint prediction -- NOMe-seq.}
+Per-molecule footprint prediction and per-tile enrichment
+BigWig tracks for bisulfite GCH NOMe-seq data from QuasR- or
+Bismark-aligned BAM files.  Footprint models supplied via
+\code{--fsayaml} or \code{--ftpmodelyaml}.  No sequence-bias
+correction is currently available.}
+}
+
+\strong{Bundled reference data (\code{inst/extdata}):}
+\describe{
+\item{\code{mESC_Abdulhai_etal_SAMOSA_ftp_models_10_200_by_10_flat_prior.yaml}}{
+Pre-built SAMOSA / Fiber-seq footprint models (Abdulhay et al. 2023,
+mESC): footprints of 10, 20, \ldots, 200 bp with equal prior
+probabilities.  Pass to \code{--ftpmodelyaml}.}
+\item{\code{mESC_Guo_etal_2017_NOMe-Seq_ftp_models_10_200_by10_flat_prior.yaml}}{
+Pre-built NOMe-seq footprint models (Guo et al. 2017, mESC): footprints
+of 10, 20, \ldots, 200 bp with equal prior probabilities.  Pass to
+\code{--ftpmodelyaml}.}
+\item{\code{mESC_Abdulhay_etal_2023_SAMOSA_BetaCorrect_fit_kmer_7.txt}}{
+7-mer Beta-distribution parameters for Bayesian sequence-bias correction
+of SAMOSA data (Abdulhay et al. 2023, mESC).  Pass to
+\code{--betaparams} when using \code{--correctseqbias BetaCorrect}.}
 }
 }
 \examples{
 paths <- get_nomeR_scripts(print_usage = FALSE)
-paths
+paths$scripts
+paths$extdata
 
 }
