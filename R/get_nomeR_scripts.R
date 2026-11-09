@@ -13,14 +13,14 @@
 #'     a SAMOSA / Fiber-seq BAM file.  Results are saved as a YAML that can be
 #'     passed to the SAMOSA prediction script via \code{--fsayaml}.}
 #'   \item{\code{predict_footprints-SAMOSA.R}}{
-#'     \strong{Footprint prediction — SAMOSA / Fiber-seq.}
+#'     \strong{Footprint prediction -- SAMOSA / Fiber-seq.}
 #'     Per-molecule footprint prediction and per-tile enrichment
 #'     BigWig tracks for 6mA SAMOSA / Fiber-seq data.  Supports Bayesian
 #'     k-mer sequence-bias correction (\code{--correctseqbias BetaCorrect} or
 #'     \code{BetaUniform}).  Footprint models supplied via \code{--fsayaml} or
 #'     \code{--ftpmodelyaml} (takes priority).}
 #'   \item{\code{predict_footprints-NOMe-Seq.R}}{
-#'     \strong{Footprint prediction — NOMe-seq.}
+#'     \strong{Footprint prediction -- NOMe-seq.}
 #'     Per-molecule footprint prediction and per-tile enrichment
 #'     BigWig tracks for bisulfite GCH NOMe-seq data from QuasR- or
 #'     Bismark-aligned BAM files.  Footprint models supplied via
@@ -100,8 +100,8 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
     if (print_usage) {
         cli::cli_h1("nomeR command-line scripts")
 
-        ## ── 1. Footprint Spectral Analysis ────────────────────────────────────
-        cli::cli_h2("1. Footprint Spectral Analysis — SAMOSA / Fiber-seq")
+        ## -- 1. Footprint Spectral Analysis ------------------------------------
+        cli::cli_h2("1. Footprint Spectral Analysis -- SAMOSA / Fiber-seq")
         cli::cli_text(
             "Estimates the footprint length spectrum and emission probabilities
             from a random sample of single molecules. Results are saved as a
@@ -128,8 +128,8 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
             "--libdir"     = "Colon-separated extra R library paths."
         ))
 
-        ## ── 2. SAMOSA Prediction ──────────────────────────────────────────────
-        cli::cli_h2("2. Footprint Prediction — SAMOSA / Fiber-seq")
+        ## -- 2. SAMOSA Prediction ----------------------------------------------
+        cli::cli_h2("2. Footprint Prediction -- SAMOSA / Fiber-seq")
         cli::cli_text(
             "Per-molecule footprint prediction and per-tile enrichment
             BigWig tracks for 6mA SAMOSA / Fiber-seq data. Footprint models are
@@ -187,8 +187,8 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
             "--libdir"             = "Colon-separated extra R library paths."
         ))
 
-        ## ── 3. NOMe-Seq Prediction ────────────────────────────────────────────
-        cli::cli_h2("3. Footprint Prediction — NOMe-seq")
+        ## -- 3. NOMe-Seq Prediction --------------------------------------------
+        cli::cli_h2("3. Footprint Prediction -- NOMe-seq")
         cli::cli_text(
             "Per-molecule footprint prediction and per-tile enrichment
             BigWig tracks for bisulfite GCH NOMe-seq data from QuasR- or
@@ -231,7 +231,7 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
             "--libdir"         = "Colon-separated extra R library paths."
         ))
 
-        ## ── Bundled reference data ────────────────────────────────────────────
+        ## -- Bundled reference data --------------------------------------------
         cli::cli_h2("Bundled reference data")
         cli::cli_text(
             "Three pre-computed reference files are shipped with nomeR and can
@@ -256,7 +256,7 @@ get_nomeR_scripts <- function(print_usage = TRUE) {
         cli::cli_text("{.strong Paths:}")
         cli::cli_dl(extdata)
 
-        ## ── Script paths ──────────────────────────────────────────────────────
+        ## -- Script paths ------------------------------------------------------
         cli::cli_h2("Script paths")
         cli::cli_dl(scripts)
     }

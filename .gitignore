@@ -12,8 +12,11 @@ RDS/*
 PLOTS/*
 TABLES/*
 autom4te.cache/*
+.claude/*
 TODO
 *.nfs*
 model_deriv_docs/*
 config.*
 .positai
+*Rcheck/*
+*.tar.gz

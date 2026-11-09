@@ -32,13 +32,15 @@ Imports:
     rstan (>= 2.18.1),
     rstantools (>= 2.4.0),
     GenomeInfoDb,
+    Rsamtools,
     S4Vectors,
     SparseArray,
     stats,
     stringr,
     SummarizedExperiment,
     truncdist
-Suggests: 
+Suggests:
+    BiocGenerics,
     testthat (>= 3.0.0)
 LinkingTo: 
     BH (>= 1.66.0),
@@ -58,5 +60,4 @@ Config/testthat/edition: 3
 URL: https://github.com/fmi-basel/compbio-nomeR
 BugReports: https://github.com/fmi-basel/compbio-nomeR/issues
 biocViews: Epigenetics, LongRead, Sequencing, Coverage
-Config/roxygen2/version: 8.0.0
-RoxygenNote: 7.3.3
+Config/roxygen2/version: 8.1.0

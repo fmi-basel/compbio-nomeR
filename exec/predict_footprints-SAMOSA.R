@@ -137,8 +137,15 @@ option_list <- list(
     #### running options ####
     make_option(c("-c","--chunksize"),
                 type = "integer",
-                default = 100000,
-                help="For genome-wide analyses, the footprint prediction is carried out consecutively for genomic regions of size --chunksize. [default %default]"
+                default = 5000000,
+                help="For genome-wide analyses, the footprint prediction is carried out consecutively for genomic regions of size --chunksize. Ignored when --targetreads is set. [default %default]"
+    ),
+    make_option(c("--targetreads"),
+                type = "integer",
+                default = NULL,
+                help="Target number of reads per adaptive genomic chunk. When set, --chunksize is
+                ignored and adaptive chunking based on the BAI linear index is used instead of
+                fixed-width tiling. Requires a BAI index file alongside --bamfile. [default %default]"
     ),
     make_option(c("--maxCoverage"),
                 type = "integer",
@@ -301,8 +308,11 @@ if(opt$noenrich && opt$noftps){
 
 
 ##### check chunk size option #####
-if(opt$chunksize <= 100000){
+if(is.null(opt$targetreads) && opt$chunksize <= 100000){
     cli::cli_abort("--chunksize can't be lower than 100,000. Provided --chunksize {opt$chunksize}")
+}
+if(!is.null(opt$targetreads) && opt$targetreads < 1L){
+    cli::cli_abort("--targetreads must be a positive integer. Provided --targetreads {opt$targetreads}")
 }
 if(opt$maxCoverage <= 0){
     cli::cli_abort("--maxCoverage is not positive. Provided --maxCoverage {opt$maxCoverage}")
@@ -406,22 +416,42 @@ bam_header <- Rsamtools::scanBamHeader(files = opt$bamfile,what = c("targets"))
 seqinfo_bam <- Seqinfo::Seqinfo(seqnames = names(bam_header[[1]]$targets),
                                 bam_header[[1]]$targets)
 
-if(!is.null(opt$regionbed)){
-    ## if bed file is provided load the region
-    sel_regions <- rtracklayer::import.bed(opt$regionbed)
+if(!is.null(opt$targetreads)){
+    ## Adaptive chunking: estimate read density from BAI linear index, no BAM scan needed
+    bam_index <- paste0(opt$bamfile, ".bai")
+    if(!file.exists(bam_index))
+        cli::cli_abort("--targetreads requires a BAI index alongside --bamfile. Not found: {bam_index}")
+    cli::cli_alert_info("Creating adaptive genomic chunks targeting {opt$targetreads} reads per chunk.")
+    sel_regions <- nomeR::create_adaptive_bam_chunks(
+        bamfile      = opt$bamfile,
+        target_reads = opt$targetreads,
+        bam_index    = bam_index
+    )
+    if(!is.null(opt$regionbed)){
+        region_gr   <- rtracklayer::import.bed(opt$regionbed)
+        #sel_regions <- sel_regions[GenomicRanges::overlapsAny(sel_regions,region_gr,ignore.strand = TRUE)]
+        sel_regions <- IRanges::subsetByOverlaps(sel_regions, region_gr, ignore.strand = TRUE)
+        sel_regions <- GenomicRanges::sort(sel_regions, ignore.strand = TRUE)
+    }
 } else{
-    cli::cli_alert_info(text = "Creating genomic tiles of length {opt$chunksize}bp for genome-wide analysis.")
-    ## if no bed file provided, load bam header and extract names and seqlengths
-    sel_regions <- GRanges(seqinfo_bam)
+    if(!is.null(opt$regionbed)){
+        ## if bed file is provided load the region
+        sel_regions <- rtracklayer::import.bed(opt$regionbed)
+    } else{
+        cli::cli_alert_info(text = "Creating genomic tiles of length {opt$chunksize}bp for genome-wide analysis.")
+        ## if no bed file provided, load bam header and extract names and seqlengths
+        sel_regions <- GRanges(seqinfo_bam)
+    }
+    ## tile the regions into opt$chunksize chunks
+    sel_regions <- unlist(tile(sel_regions, width = opt$chunksize))
+    sel_regions <- GenomicRanges::sort(sel_regions, ignore.strand = TRUE)
 }
-## tile the regions into opt$chunksize chunks
-sel_regions <- unlist(tile(sel_regions,width = opt$chunksize))
-#names(sel_regions) <- as.character(sel_regions)
-sel_regions <- GenomicRanges::sort(sel_regions,ignore.strand=TRUE)
 
-## define chunk_id 
-sel_regions$chunk_id <- 1:length(sel_regions)
-names(sel_regions) <- paste0("chunk_id_",sel_regions$chunk_id)
+## define chunk_id (zero-padded so names sort correctly in shell globs)
+n_chunks_total <- length(sel_regions)
+sel_regions$chunk_id <- seq_len(n_chunks_total)
+names(sel_regions) <- sprintf(paste0("chunk_id_%0", nchar(n_chunks_total), "d"),
+                               seq_len(n_chunks_total))
 ## export bed with genomic chunks
 rtracklayer::export.bed(sel_regions,
                         con = file.path(opt$outputdir,
@@ -663,14 +693,6 @@ get_outfile_structure <- function(ftp_grnames,
 }
 
 
-### define threads share between mclapply and predict_footprints_SE
-#mclapply_threads_share <- 0.5
-#threads_mclap <- max(floor(opt$threads * mclapply_threads_share),1)
-#threads_predict <- max(floor(opt$threads/threads_mclap),1)
-threads_mclap <- opt$threads
-threads_predict <- 1
-
-
 format_index <- function(i, max_i) {
     sprintf(paste0("%0", nchar(max_i), "d"), i)
 }
@@ -685,11 +707,20 @@ if(opt$correctseqbias != "no_correction" && !is.null(control_params))
 if(!is.null(kmer_blacklist))
     kmer_blacklist <- Biostrings::DNAStringSet(kmer_blacklist[["kmer"]])
 
-files2concat <- bind_rows(mcprogress::pmclapply(
-    mc.cores = threads_mclap,
+
+### define threads share between mclapply and predict_footprints_SE
+#outer_workers <- min(opt$threads, n_chunks, 6L)   # 6 is a reasonable NFS cap
+#inner_ncpu    <- max(1L, opt$threads %/% outer_workers)
+outer_workers <- opt$threads
+inner_ncpu <- 1
+
+
+files2concat <- bind_rows(parallel::mclapply(
+    mc.cores = outer_workers,
     #lapply(
     X = seq_along(sel_regions),
     FUN = function(i){
+
         reg <- sel_regions[i]
         # ---- 1. create a folder for storing temporary files ----
         #chunk_id <- sprintf("%05d", i)
@@ -718,7 +749,7 @@ files2concat <- bind_rows(mcprogress::pmclapply(
                                                    level = "quickread",
                                                    maxCoverage = opt$maxCoverage,
                                                    trim = TRUE,
-                                                   BPPARAM = BiocParallel::MulticoreParam(workers = threads_predict),
+                                                   BPPARAM = BiocParallel::MulticoreParam(workers = inner_ncpu),
                                                    verbose = F)
 
         if(se$n_reads == 0){
@@ -751,7 +782,7 @@ files2concat <- bind_rows(mcprogress::pmclapply(
                                                      ftpConfigMethod = opt$ftpdecoding,
                                                      aggrByGroup = TRUE,
                                                      returnAs = "data.table",
-                                                     ncpu = threads_predict,
+                                                     ncpu = inner_ncpu,
                                                      #ncpu = opt$threads,
                                                      min_frag_data_len = 0L,
                                                      min_frag_data_dens = 0.0,
@@ -786,7 +817,7 @@ files2concat <- bind_rows(mcprogress::pmclapply(
                                                                   tile_width = tile_width,
                                                                   tile_step = tile_step,
                                                                   ftp_names = ftp_group_names,
-                                                                  threads = threads_predict,
+                                                                  threads = inner_ncpu,
                                                                   psc = opt$coverpsc
             )
 
