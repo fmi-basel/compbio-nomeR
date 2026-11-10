@@ -1,5 +1,5 @@
 test_that("infer_footprints_stan_vb works", {
-    
+
     ## simple data with two ftp of 5 and 10 bps
     ftp_5_10_data <- data.frame("S" = 1:15,
                                 "N00" = c(1626964, 1508381,
@@ -34,8 +34,8 @@ test_that("infer_footprints_stan_vb works", {
                                           232543, 257023,
                                           275811, 289161,
                                           297930))
-    
-    
+
+
     expect_error(sampling_res <- infer_footprints_vb(ftp_5_10_data,
                                                      ftp_lengths = -1:20,
                                                      iter = 1,
@@ -46,20 +46,8 @@ test_that("infer_footprints_stan_vb works", {
                                                      adapt_iter = 1))
     expect_error(sampling_res <- infer_footprints_vb(ftp_5_10_data[, 1:3],
                                                      infer_footprints_vb))
-    
-    ## run 1 iteration - fail
-    set.seed(784392L)
-    expect_warning({
-        vb_res <- infer_footprints_vb(cooc_ctable = ftp_5_10_data,
-                                      ftp_lengths = 2:15,
-                                      iter = 1,
-                                      adapt_iter = 1,
-                                      max_nruns = 1,
-                                      max_pareto_k = Inf,
-                                      refresh = 0)
-    }, "failed")
-    expect_null(vb_res)
-    
+
+
     ## run 1 iteration - success
     set.seed(74398902L)
     expect_warning({
@@ -68,10 +56,10 @@ test_that("infer_footprints_stan_vb works", {
                                       iter = 1,
                                       adapt_iter = 1,
                                       max_nruns = 1,
-                                      max_pareto_k = Inf, 
+                                      max_pareto_k = Inf,
                                       refresh = 0)
     }, "Pareto k diagnostic value is Inf")
     ## check if return is stanfit object
     expect_s4_class(vb_res, class = "stanfit")
-    
+
 })

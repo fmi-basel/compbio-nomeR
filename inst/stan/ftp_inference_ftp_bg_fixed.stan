@@ -32,7 +32,7 @@ functions {
   array[] int spacings, // vector of spacings
   int n_spac, // length of the vector of spacings
   int max_spacing, // maximum spacing in spacings
-  real[,] emp_joint_counts // coocurrence count table, this matrix must contain in the first row total number of 0 and 1, i.e. at S=1
+  array[,] real emp_joint_counts // coocurrence count table, this matrix must contain in the first row total number of 0 and 1, i.e. at S=1
   );
 }
 
