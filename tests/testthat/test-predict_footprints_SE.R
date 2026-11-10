@@ -26,14 +26,16 @@ test_that("predict_footprints_SE works", {
                                    "GROUP" = "TF"))
     ## test Viterbi
 
-    ftp_pred <- predict_footprints_SE(se = dlist$test_se,
-                                      footprint_models = ftp_models,
-                                      bgprotectprob = 0.01,
-                                      bgcoverprior = 0.59,
-                                      ftpConfigMethod = "Viterbi",
-                                      keepStartProb=TRUE,
-                                      ncpu = 1,
-                                      profile=T)
+    suppressMessages(expect_message(
+        ftp_pred <- predict_footprints_SE(se = dlist$test_se,
+                                          footprint_models = ftp_models,
+                                          bgprotectprob = 0.01,
+                                          bgcoverprior = 0.59,
+                                          ftpConfigMethod = "Viterbi",
+                                          keepStartProb=TRUE,
+                                          ncpu = 1,
+                                          profile = TRUE),
+        "posterior calculations"))
     ## remove timing metadata
     mtdat <- metadata(ftp_pred)
     mtdat$timings <- NULL
@@ -47,7 +49,7 @@ test_that("predict_footprints_SE works", {
                                       bgprotectprob = 0.01,
                                       bgcoverprior = 0.59,
                                       ftpConfigMethod = "PV",
-                                      keepStartProb=TRUE,
+                                      keepStartProb = TRUE,
                                       ncpu = 1)
     ## remove timing metadata
     mtdat <- metadata(ftp_pred)
@@ -72,12 +74,12 @@ test_that("predict_footprints_SE PosteriorDecoding method returns valid output",
     dlist <- readRDS(test_path("testdata/test-predict_footprints_SE_data.rds"))
     ftp_models <- .se_ftp_models()
 
-    out <- predict_footprints_SE(se               = dlist$test_se,
-                                 footprint_models  = ftp_models,
-                                 bgprotectprob     = 0.01,
-                                 bgcoverprior      = 0.59,
-                                 ftpConfigMethod   = "PosteriorDecoding",
-                                 ncpu              = 1)
+    out <- predict_footprints_SE(se = dlist$test_se,
+                                 footprint_models = ftp_models,
+                                 bgprotectprob = 0.01,
+                                 bgcoverprior = 0.59,
+                                 ftpConfigMethod = "PosteriorDecoding",
+                                 ncpu = 1)
 
     ## same assay structure as other methods
     expect_true(all(c("Nucl_coverProb_nomeR", "TF_coverProb_nomeR",
@@ -99,13 +101,13 @@ test_that("predict_footprints_SE ncpu=1 and ncpu=2 produce identical results", {
     ftp_models <- .se_ftp_models()
 
     run <- function(ncpu)
-        predict_footprints_SE(se               = dlist$test_se,
-                              footprint_models  = ftp_models,
-                              bgprotectprob     = 0.01,
-                              bgcoverprior      = 0.59,
-                              ftpConfigMethod   = "PV",
-                              keepStartProb     = TRUE,
-                              ncpu              = ncpu)
+        predict_footprints_SE(se = dlist$test_se,
+                              footprint_models = ftp_models,
+                              bgprotectprob = 0.01,
+                              bgcoverprior = 0.59,
+                              ftpConfigMethod = "PV",
+                              keepStartProb = TRUE,
+                              ncpu = ncpu)
 
     out1 <- run(1)
     out2 <- run(2)
@@ -122,12 +124,12 @@ test_that("predict_footprints_SE keepStartProb=FALSE omits startProb assays", {
     dlist <- readRDS(test_path("testdata/test-predict_footprints_SE_data.rds"))
     ftp_models <- .se_ftp_models()
 
-    out <- predict_footprints_SE(se               = dlist$test_se,
-                                 footprint_models  = ftp_models,
-                                 bgprotectprob     = 0.01,
-                                 bgcoverprior      = 0.59,
-                                 keepStartProb     = FALSE,
-                                 ncpu              = 1)
+    out <- predict_footprints_SE(se = dlist$test_se,
+                                 footprint_models = ftp_models,
+                                 bgprotectprob = 0.01,
+                                 bgcoverprior = 0.59,
+                                 keepStartProb = FALSE,
+                                 ncpu = 1)
 
     expect_false(any(grepl("_startProb_nomeR", assayNames(out))))
     expect_true(all(c("Nucl_coverProb_nomeR",
@@ -140,13 +142,13 @@ test_that("predict_footprints_SE aggrByGroup=FALSE reports per-name assays and c
     dlist <- readRDS(test_path("testdata/test-predict_footprints_SE_data.rds"))
     ftp_models <- .se_ftp_models()
 
-    out <- predict_footprints_SE(se               = dlist$test_se,
-                                 footprint_models  = ftp_models,
-                                 bgprotectprob     = 0.01,
-                                 bgcoverprior      = 0.59,
-                                 aggrByGroup       = FALSE,
-                                 keepStartProb     = FALSE,
-                                 ncpu              = 1)
+    out <- predict_footprints_SE(se = dlist$test_se,
+                                 footprint_models = ftp_models,
+                                 bgprotectprob = 0.01,
+                                 bgcoverprior = 0.59,
+                                 aggrByGroup = FALSE,
+                                 keepStartProb = FALSE,
+                                 ncpu = 1)
 
     ## assay names use model NAMEs ("Nucl", "TF"), same here since NAME==GROUP
     expect_true(all(c("Nucl_coverProb_nomeR", "TF_coverProb_nomeR") %in%
@@ -161,11 +163,11 @@ test_that("predict_footprints_SE cover probabilities sum to 1 at each non-NA pos
     dlist <- readRDS(test_path("testdata/test-predict_footprints_SE_data.rds"))
     ftp_models <- .se_ftp_models()
 
-    out <- predict_footprints_SE(se               = dlist$test_se,
-                                 footprint_models  = ftp_models,
-                                 bgprotectprob     = 0.01,
-                                 bgcoverprior      = 0.59,
-                                 ncpu              = 1)
+    out <- predict_footprints_SE(se = dlist$test_se,
+                                 footprint_models = ftp_models,
+                                 bgprotectprob = 0.01,
+                                 bgcoverprior = 0.59,
+                                 ncpu = 1)
 
     cover_assays <- grep("_coverProb_nomeR", assayNames(out), value = TRUE)
 
@@ -186,12 +188,12 @@ test_that("predict_footprints_SE errors when all fragments are filtered out", {
     ftp_models <- .se_ftp_models()
 
     expect_error(
-        predict_footprints_SE(se                = dlist$test_se,
-                              footprint_models   = ftp_models,
-                              bgprotectprob      = 0.01,
-                              bgcoverprior       = 0.59,
-                              min_frag_data_len  = 100000L,
-                              ncpu               = 1),
+        predict_footprints_SE(se = dlist$test_se,
+                              footprint_models = ftp_models,
+                              bgprotectprob = 0.01,
+                              bgcoverprior = 0.59,
+                              min_frag_data_len = 100000L,
+                              ncpu = 1),
         regexp = "No fragments"
     )
 })
@@ -202,12 +204,12 @@ test_that("predict_footprints_SE verbose=TRUE runs without error", {
     ftp_models <- .se_ftp_models()
 
     expect_no_error(
-        predict_footprints_SE(se               = dlist$test_se,
-                              footprint_models  = ftp_models,
-                              bgprotectprob     = 0.01,
-                              bgcoverprior      = 0.59,
-                              verbose           = TRUE,
-                              ncpu              = 1)
+        predict_footprints_SE(se = dlist$test_se,
+                              footprint_models = ftp_models,
+                              bgprotectprob = 0.01,
+                              bgcoverprior = 0.59,
+                              verbose = TRUE,
+                              ncpu = 1)
     )
 })
 

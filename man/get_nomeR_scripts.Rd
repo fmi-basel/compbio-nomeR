@@ -36,14 +36,14 @@ Estimates the footprint length spectrum and emission probabilities from
 a SAMOSA / Fiber-seq BAM file.  Results are saved as a YAML that can be
 passed to the SAMOSA prediction script via \code{--fsayaml}.}
 \item{\code{predict_footprints-SAMOSA.R}}{
-\strong{Footprint prediction — SAMOSA / Fiber-seq.}
+\strong{Footprint prediction -- SAMOSA / Fiber-seq.}
 Per-molecule footprint prediction and per-tile enrichment
 BigWig tracks for 6mA SAMOSA / Fiber-seq data.  Supports Bayesian
 k-mer sequence-bias correction (\code{--correctseqbias BetaCorrect} or
 \code{BetaUniform}).  Footprint models supplied via \code{--fsayaml} or
 \code{--ftpmodelyaml} (takes priority).}
 \item{\code{predict_footprints-NOMe-Seq.R}}{
-\strong{Footprint prediction — NOMe-seq.}
+\strong{Footprint prediction -- NOMe-seq.}
 Per-molecule footprint prediction and per-tile enrichment
 BigWig tracks for bisulfite GCH NOMe-seq data from QuasR- or
 Bismark-aligned BAM files.  Footprint models supplied via
